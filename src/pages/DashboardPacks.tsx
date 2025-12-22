@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
+import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ import { toast } from 'sonner';
 
 export default function DashboardPacks() {
   const { packs, loading, createPack, updatePack, deletePack } = useMyPacks();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [editForm, setEditForm] = useState<Partial<Pack>>({});
@@ -93,27 +95,31 @@ export default function DashboardPacks() {
   return (
     <div className="min-h-screen bg-background">
       <DashboardSidebar />
+      <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
       
       <div className="lg:pl-64">
-        <DashboardHeader title="Packs" />
+        <DashboardHeader 
+          title="Packs" 
+          onMenuClick={() => setMobileMenuOpen(true)}
+        />
         
         <main className="p-4 lg:p-8 max-w-4xl">
-          <div className="mb-8 flex items-center justify-between">
+          <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-semibold text-foreground mb-2">Vos offres</h2>
-              <p className="text-muted-foreground">Configurez les packs proposés à vos clients.</p>
+              <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Vos offres</h2>
+              <p className="text-sm text-muted-foreground">Configurez les packs proposés à vos clients.</p>
             </div>
-            <Button onClick={() => setIsCreating(true)} disabled={isCreating}>
+            <Button onClick={() => setIsCreating(true)} disabled={isCreating} className="w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               Nouveau pack
             </Button>
           </div>
 
           {isCreating && (
-            <Card variant="elevated" className="p-6 mb-4 border-2 border-primary/20">
+            <Card variant="elevated" className="p-4 sm:p-6 mb-4 border-2 border-primary/20">
               <h3 className="font-semibold mb-4">Nouveau pack</h3>
               <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="new-name">Nom *</Label>
                     <Input
@@ -133,7 +139,7 @@ export default function DashboardPacks() {
                       placeholder="49"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 sm:col-span-2 lg:col-span-1">
                     <Label htmlFor="new-duration">Durée</Label>
                     <Input
                       id="new-duration"
@@ -152,11 +158,11 @@ export default function DashboardPacks() {
                     placeholder="Description du pack..."
                   />
                 </div>
-                <div className="flex justify-end gap-2">
-                  <Button variant="ghost" onClick={() => setIsCreating(false)}>
+                <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+                  <Button variant="ghost" onClick={() => setIsCreating(false)} className="w-full sm:w-auto">
                     Annuler
                   </Button>
-                  <Button onClick={handleCreate}>
+                  <Button onClick={handleCreate} className="w-full sm:w-auto">
                     Créer
                   </Button>
                 </div>
@@ -164,21 +170,21 @@ export default function DashboardPacks() {
             </Card>
           )}
           
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {packs.length === 0 && !isCreating ? (
-              <Card variant="elevated" className="p-8 text-center">
+              <Card variant="elevated" className="p-6 sm:p-8 text-center">
                 <p className="text-muted-foreground mb-4">Aucun pack créé pour le moment.</p>
-                <Button onClick={() => setIsCreating(true)}>
+                <Button onClick={() => setIsCreating(true)} className="w-full sm:w-auto">
                   <Plus className="w-4 h-4 mr-2" />
                   Créer votre premier pack
                 </Button>
               </Card>
             ) : (
               packs.map((pack) => (
-                <Card key={pack.id} variant="elevated" className="p-6">
+                <Card key={pack.id} variant="elevated" className="p-4 sm:p-6">
                   {editingId === pack.id ? (
                     <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor={`name-${pack.id}`}>Nom</Label>
                           <Input
@@ -196,7 +202,7 @@ export default function DashboardPacks() {
                             onChange={(e) => setEditForm({ ...editForm, price: parseFloat(e.target.value) || 0 })}
                           />
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2 sm:col-span-2 lg:col-span-1">
                           <Label htmlFor={`duration-${pack.id}`}>Durée</Label>
                           <Input
                             id={`duration-${pack.id}`}
@@ -213,26 +219,24 @@ export default function DashboardPacks() {
                           onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
                         />
                       </div>
-                      <div className="flex justify-end gap-2">
-                        <Button variant="ghost" onClick={() => setEditingId(null)}>
+                      <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+                        <Button variant="ghost" onClick={() => setEditingId(null)} className="w-full sm:w-auto">
                           Annuler
                         </Button>
-                        <Button onClick={handleSave}>
+                        <Button onClick={handleSave} className="w-full sm:w-auto">
                           Enregistrer
                         </Button>
                       </div>
                     </div>
                   ) : (
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-6">
-                        <div>
-                          <h3 className="font-semibold text-lg text-foreground">{pack.name}</h3>
-                          <p className="text-sm text-muted-foreground">{pack.description}</p>
-                        </div>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-lg text-foreground truncate">{pack.name}</h3>
+                        <p className="text-sm text-muted-foreground line-clamp-2">{pack.description}</p>
                       </div>
-                      <div className="flex items-center gap-6">
-                        <div className="text-right">
-                          <p className="text-2xl font-bold text-foreground">{pack.price}€</p>
+                      <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6">
+                        <div className="text-left sm:text-right">
+                          <p className="text-xl sm:text-2xl font-bold text-foreground">{pack.price}€</p>
                           <div className="flex items-center gap-1 text-sm text-muted-foreground">
                             <Clock className="w-4 h-4" />
                             {pack.duration || 'Non défini'}

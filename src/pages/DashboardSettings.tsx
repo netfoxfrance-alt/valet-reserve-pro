@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
+import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,7 @@ export default function DashboardSettings() {
   const { center, loading, updateCenter } = useMyCenter();
   const { user } = useAuth();
   const { toast } = useToast();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   
@@ -147,7 +149,7 @@ export default function DashboardSettings() {
     return (
       <div className="min-h-screen bg-background">
         <DashboardSidebar />
-        <div className="lg:pl-64 p-8">
+        <div className="lg:pl-64 p-4 sm:p-8">
           <Skeleton className="h-8 w-48 mb-8" />
           <Skeleton className="h-64 w-full max-w-2xl" />
         </div>
@@ -158,29 +160,33 @@ export default function DashboardSettings() {
   return (
     <div className="min-h-screen bg-background">
       <DashboardSidebar />
+      <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
       
       <div className="lg:pl-64">
-        <DashboardHeader title="Paramètres" />
+        <DashboardHeader 
+          title="Paramètres" 
+          onMenuClick={() => setMobileMenuOpen(true)}
+        />
         
         <main className="p-4 lg:p-8 max-w-2xl">
           {/* Logo Section */}
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold text-foreground mb-2">Logo du centre</h2>
-            <p className="text-muted-foreground mb-6">Apparaît sur votre page de réservation.</p>
+          <section className="mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Logo du centre</h2>
+            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">Apparaît sur votre page de réservation.</p>
             
-            <Card variant="elevated" className="p-6">
-              <div className="flex items-center gap-6">
+            <Card variant="elevated" className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
                 {/* Logo Preview */}
                 <div className="relative">
                   {logoUrl ? (
                     <img 
                       src={logoUrl} 
                       alt="Logo" 
-                      className="w-24 h-24 rounded-xl object-cover border border-border"
+                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border border-border"
                     />
                   ) : (
-                    <div className="w-24 h-24 bg-primary rounded-xl flex items-center justify-center">
-                      <Sparkles className="w-10 h-10 text-primary-foreground" />
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 bg-primary rounded-xl flex items-center justify-center">
+                      <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-primary-foreground" />
                     </div>
                   )}
                   {uploadingLogo && (
@@ -191,7 +197,7 @@ export default function DashboardSettings() {
                 </div>
 
                 {/* Upload Controls */}
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 items-center sm:items-start">
                   <input
                     type="file"
                     accept="image/png,image/jpeg,image/webp"
@@ -218,7 +224,7 @@ export default function DashboardSettings() {
                       Supprimer
                     </Button>
                   )}
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground text-center sm:text-left">
                     JPG, PNG ou WebP. Max 2 Mo.
                   </p>
                 </div>
@@ -226,11 +232,11 @@ export default function DashboardSettings() {
             </Card>
           </section>
 
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold text-foreground mb-2">Informations du centre</h2>
-            <p className="text-muted-foreground mb-6">Ces informations seront affichées aux clients.</p>
+          <section className="mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Informations du centre</h2>
+            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">Ces informations seront affichées aux clients.</p>
             
-            <Card variant="elevated" className="p-6 space-y-5">
+            <Card variant="elevated" className="p-4 sm:p-6 space-y-4 sm:space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="name">Nom du centre</Label>
                 <Input
@@ -260,11 +266,11 @@ export default function DashboardSettings() {
             </Card>
           </section>
           
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold text-foreground mb-2">Page de réservation</h2>
-            <p className="text-muted-foreground mb-6">Personnalisez l'accueil de vos clients.</p>
+          <section className="mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Page de réservation</h2>
+            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">Personnalisez l'accueil de vos clients.</p>
             
-            <Card variant="elevated" className="p-6 space-y-5">
+            <Card variant="elevated" className="p-4 sm:p-6 space-y-4 sm:space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="welcome_message">Message d'accueil</Label>
                 <Textarea
@@ -277,11 +283,11 @@ export default function DashboardSettings() {
             </Card>
           </section>
           
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold text-foreground mb-2">Assistant IA</h2>
-            <Card variant="elevated" className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
+          <section className="mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Assistant IA</h2>
+            <Card variant="elevated" className="p-4 sm:p-6">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1 min-w-0">
                   <p className="font-medium text-foreground">Activer l'assistant IA</p>
                   <p className="text-sm text-muted-foreground">
                     Permet aux clients de poser des questions via le chat.
@@ -296,7 +302,7 @@ export default function DashboardSettings() {
           </section>
           
           <div className="flex justify-end">
-            <Button variant="premium" onClick={handleSave} disabled={saving}>
+            <Button variant="premium" onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
               {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}
             </Button>
           </div>
