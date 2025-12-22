@@ -3,10 +3,11 @@ import { Button } from '@/components/ui/button';
 
 interface DashboardHeaderProps {
   title: string;
+  subtitle?: string;
   onMenuClick?: () => void;
 }
 
-export function DashboardHeader({ title, onMenuClick }: DashboardHeaderProps) {
+export function DashboardHeader({ title, subtitle, onMenuClick }: DashboardHeaderProps) {
   return (
     <header className="h-16 border-b border-border bg-background flex items-center justify-between px-4 lg:px-8">
       <div className="flex items-center gap-4">
@@ -23,7 +24,10 @@ export function DashboardHeader({ title, onMenuClick }: DashboardHeaderProps) {
             <Sparkles className="w-4 h-4 text-primary-foreground" />
           </div>
         </div>
-        <h1 className="text-lg font-semibold text-foreground hidden lg:block">{title}</h1>
+        <div className="hidden lg:block">
+          <h1 className="text-lg font-semibold text-foreground">{title}</h1>
+          {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+        </div>
       </div>
       
       <div className="flex items-center gap-2">

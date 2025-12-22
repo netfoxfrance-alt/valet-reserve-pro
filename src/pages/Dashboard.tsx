@@ -1,59 +1,134 @@
 import { useState } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { AppointmentCard } from '@/components/dashboard/AppointmentCard';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, Users, TrendingUp, Clock } from 'lucide-react';
-import { Appointment } from '@/types/booking';
-import { packs } from '@/lib/packs';
+import { Badge } from '@/components/ui/badge';
+import { Calendar, Users, TrendingUp, Clock, User, Phone, Check, X } from 'lucide-react';
+import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
+import { useMyCenter } from '@/hooks/useCenter';
+import { format, isToday, isTomorrow, parseISO } from 'date-fns';
+import { fr } from 'date-fns/locale';
+import { Skeleton } from '@/components/ui/skeleton';
 
-// Mock data
-const mockAppointments: Appointment[] = [
-  {
-    id: '1',
-    clientName: 'Marie Dubois',
-    clientPhone: '06 12 34 56 78',
-    clientEmail: 'marie@exemple.fr',
-    pack: packs[1],
-    date: new Date(),
-    time: '10:00',
-    vehicleType: 'berline',
-    status: 'confirmed',
-  },
-  {
-    id: '2',
-    clientName: 'Pierre Martin',
-    clientPhone: '06 98 76 54 32',
-    clientEmail: 'pierre@exemple.fr',
-    pack: packs[2],
-    date: new Date(),
-    time: '14:00',
-    vehicleType: 'suv',
-    status: 'confirmed',
-  },
-  {
-    id: '3',
-    clientName: 'Sophie Bernard',
-    clientPhone: '06 11 22 33 44',
-    clientEmail: 'sophie@exemple.fr',
-    pack: packs[0],
-    date: new Date(Date.now() + 86400000),
-    time: '09:00',
-    vehicleType: 'citadine',
-    status: 'pending',
-  },
-];
+const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+  pending: { label: 'En attente', variant: 'secondary' },
+  confirmed: { label: 'Confirmé', variant: 'default' },
+  completed: { label: 'Terminé', variant: 'outline' },
+  cancelled: { label: 'Annulé', variant: 'destructive' },
+};
 
-const stats = [
-  { name: "Aujourd'hui", value: '3', icon: Calendar, color: 'bg-primary/10 text-primary' },
-  { name: 'Cette semaine', value: '12', icon: TrendingUp, color: 'bg-accent/10 text-accent' },
-  { name: 'Clients total', value: '156', icon: Users, color: 'bg-secondary text-secondary-foreground' },
-  { name: 'Durée moyenne', value: '2h15', icon: Clock, color: 'bg-muted text-muted-foreground' },
-];
+const vehicleLabels: Record<string, string> = {
+  citadine: 'Citadine',
+  berline: 'Berline',
+  suv: 'SUV / 4x4',
+  utilitaire: 'Utilitaire',
+};
+
+function AppointmentCard({ appointment, onUpdateStatus }: { 
+  appointment: Appointment; 
+  onUpdateStatus: (id: string, status: Appointment['status']) => void;
+}) {
+  const status = statusConfig[appointment.status] || statusConfig.pending;
+  const date = parseISO(appointment.appointment_date);
+  
+  let dateLabel = format(date, "EEEE d MMMM", { locale: fr });
+  if (isToday(date)) dateLabel = "Aujourd'hui";
+  if (isTomorrow(date)) dateLabel = "Demain";
+
+  return (
+    <Card variant="elevated" className="p-5">
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center">
+            <User className="w-5 h-5 text-foreground" />
+          </div>
+          <div>
+            <p className="font-medium text-foreground">{appointment.client_name}</p>
+            <p className="text-sm text-muted-foreground">
+              {vehicleLabels[appointment.vehicle_type] || appointment.vehicle_type}
+            </p>
+          </div>
+        </div>
+        <Badge variant={status.variant}>{status.label}</Badge>
+      </div>
+      
+      <div className="space-y-2 text-sm mb-4">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Calendar className="w-4 h-4" />
+          <span>{dateLabel} à {appointment.appointment_time.slice(0, 5)}</span>
+        </div>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Phone className="w-4 h-4" />
+          <span>{appointment.client_phone}</span>
+        </div>
+        {appointment.pack && (
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Clock className="w-4 h-4" />
+            <span>{appointment.pack.name} - {appointment.pack.price}€</span>
+          </div>
+        )}
+      </div>
+      
+      {appointment.status === 'pending' && (
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1"
+            onClick={() => onUpdateStatus(appointment.id, 'confirmed')}
+          >
+            <Check className="w-4 h-4 mr-1" />
+            Confirmer
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onUpdateStatus(appointment.id, 'cancelled')}
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
+      
+      {appointment.status === 'confirmed' && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full"
+          onClick={() => onUpdateStatus(appointment.id, 'completed')}
+        >
+          Marquer comme terminé
+        </Button>
+      )}
+    </Card>
+  );
+}
 
 export default function Dashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { appointments, loading, updateStatus } = useMyAppointments();
+  const { center } = useMyCenter();
+  
+  const todayAppointments = appointments.filter(a => {
+    const date = parseISO(a.appointment_date);
+    return isToday(date) && a.status !== 'cancelled';
+  });
+  
+  const upcomingAppointments = appointments.filter(a => {
+    const date = parseISO(a.appointment_date);
+    return date >= new Date() && a.status !== 'cancelled';
+  });
+
+  const handleUpdateStatus = async (id: string, status: Appointment['status']) => {
+    await updateStatus(id, status);
+  };
+
+  const stats = [
+    { name: "Aujourd'hui", value: todayAppointments.length.toString(), icon: Calendar, color: 'bg-primary/10 text-primary' },
+    { name: 'À venir', value: upcomingAppointments.length.toString(), icon: TrendingUp, color: 'bg-accent/10 text-accent' },
+    { name: 'Total', value: appointments.length.toString(), icon: Users, color: 'bg-secondary text-secondary-foreground' },
+  ];
   
   return (
     <div className="min-h-screen bg-background">
@@ -62,12 +137,13 @@ export default function Dashboard() {
       <div className="lg:pl-64">
         <DashboardHeader 
           title="Rendez-vous" 
+          subtitle={center?.name}
           onMenuClick={() => setMobileMenuOpen(true)}
         />
         
         <main className="p-4 lg:p-8">
           {/* Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-3 gap-4 mb-8">
             {stats.map((stat) => (
               <Card key={stat.name} variant="elevated" className="p-5">
                 <div className="flex items-center gap-4">
@@ -84,21 +160,40 @@ export default function Dashboard() {
           </div>
           
           {/* Appointments section */}
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-foreground">Prochains rendez-vous</h2>
-              <p className="text-sm text-muted-foreground">Gérez vos réservations à venir</p>
-            </div>
-            <Button variant="outline" size="sm">
-              Voir tout
-            </Button>
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-foreground">Prochains rendez-vous</h2>
+            <p className="text-sm text-muted-foreground">Gérez vos réservations à venir</p>
           </div>
           
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {mockAppointments.map((appointment) => (
-              <AppointmentCard key={appointment.id} appointment={appointment} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} variant="elevated" className="p-5">
+                  <Skeleton className="h-12 w-12 rounded-xl mb-4" />
+                  <Skeleton className="h-4 w-32 mb-2" />
+                  <Skeleton className="h-4 w-24" />
+                </Card>
+              ))}
+            </div>
+          ) : upcomingAppointments.length === 0 ? (
+            <Card variant="elevated" className="p-8 text-center">
+              <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="font-semibold text-foreground mb-2">Aucun rendez-vous à venir</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Partagez votre lien de réservation pour recevoir vos premiers clients.
+              </p>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {upcomingAppointments.map((appointment) => (
+                <AppointmentCard 
+                  key={appointment.id} 
+                  appointment={appointment} 
+                  onUpdateStatus={handleUpdateStatus}
+                />
+              ))}
+            </div>
+          )}
         </main>
       </div>
     </div>

@@ -2,9 +2,10 @@ import { Sparkles } from 'lucide-react';
 
 interface BookingHeaderProps {
   centerName?: string;
+  welcomeMessage?: string | null;
 }
 
-export function BookingHeader({ centerName = "Auto Clean Center" }: BookingHeaderProps) {
+export function BookingHeader({ centerName = "Auto Clean Center", welcomeMessage }: BookingHeaderProps) {
   return (
     <header className="w-full py-6 px-4">
       <div className="max-w-4xl mx-auto flex items-center justify-between">

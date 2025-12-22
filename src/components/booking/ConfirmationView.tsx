@@ -10,9 +10,11 @@ interface ConfirmationViewProps {
   date: Date;
   time: string;
   clientName: string;
+  centerName?: string;
+  centerAddress?: string | null;
 }
 
-export function ConfirmationView({ pack, date, time, clientName }: ConfirmationViewProps) {
+export function ConfirmationView({ pack, date, time, clientName, centerName = "Auto Clean Center", centerAddress }: ConfirmationViewProps) {
   return (
     <div className="w-full max-w-lg mx-auto text-center animate-scale-in">
       <div className="mb-8">
@@ -67,11 +69,13 @@ export function ConfirmationView({ pack, date, time, clientName }: ConfirmationV
             </div>
             <div>
               <p className="font-medium text-foreground">
-                Auto Clean Center
+                {centerName}
               </p>
-              <p className="text-sm text-muted-foreground">
-                123 Avenue du Nettoyage, 75000 Paris
-              </p>
+              {centerAddress && (
+                <p className="text-sm text-muted-foreground">
+                  {centerAddress}
+                </p>
+              )}
             </div>
           </div>
         </div>
