@@ -196,23 +196,16 @@ export default function DashboardSettings() {
                     type="file"
                     accept="image/png,image/jpeg,image/webp"
                     onChange={handleLogoUpload}
-                    className="sr-only"
+                    className="hidden"
                     id="logo-upload"
                   />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    asChild
+                  <label
+                    htmlFor="logo-upload"
+                    className={`inline-flex items-center justify-center h-9 px-3 rounded-md border border-input bg-background text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${uploadingLogo ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
                   >
-                    <label
-                      htmlFor="logo-upload"
-                      className={`inline-flex items-center justify-center ${uploadingLogo ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
-                      aria-disabled={uploadingLogo}
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      {logoUrl ? 'Changer le logo' : 'Ajouter un logo'}
-                    </label>
-                  </Button>
+                    <Upload className="w-4 h-4 mr-2" />
+                    {logoUrl ? 'Changer le logo' : 'Ajouter un logo'}
+                  </label>
                   {logoUrl && (
                     <Button 
                       variant="ghost" 
