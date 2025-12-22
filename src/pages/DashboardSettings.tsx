@@ -56,8 +56,19 @@ export default function DashboardSettings() {
   };
 
   const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('handleLogoUpload triggered', event.target.files);
     const file = event.target.files?.[0];
-    if (!file || !user) return;
+    if (!file) {
+      console.log('No file selected');
+      return;
+    }
+    if (!user) {
+      console.log('No user');
+      toast({ title: 'Erreur', description: 'Vous devez être connecté.', variant: 'destructive' });
+      return;
+    }
+
+    console.log('File selected:', file.name, file.type, file.size);
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
@@ -185,14 +196,20 @@ export default function DashboardSettings() {
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept="image/*"
+                    accept="image/png,image/jpeg,image/webp"
                     onChange={handleLogoUpload}
-                    className="hidden"
+                    className="sr-only"
+                    id="logo-upload"
                   />
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => fileInputRef.current?.click()}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      console.log('Button clicked, fileInputRef:', fileInputRef.current);
+                      fileInputRef.current?.click();
+                    }}
                     disabled={uploadingLogo}
                   >
                     <Upload className="w-4 h-4 mr-2" />
