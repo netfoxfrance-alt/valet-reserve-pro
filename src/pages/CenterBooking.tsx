@@ -8,6 +8,7 @@ import { PackRecommendation } from '@/components/booking/PackRecommendation';
 import { CalendarPicker } from '@/components/booking/CalendarPicker';
 import { ClientForm, ClientData } from '@/components/booking/ClientForm';
 import { ConfirmationView } from '@/components/booking/ConfirmationView';
+import { CenterLanding } from '@/components/booking/CenterLanding';
 import { BookingAnswers, VehicleType, CleaningObjective, VehicleCondition, TimePreference } from '@/types/booking';
 import { useCenterBySlug, Pack } from '@/hooks/useCenter';
 import { useCreateAppointment } from '@/hooks/useAppointments';
@@ -19,6 +20,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 
 type BookingStep = 
+  | 'landing'
   | 'vehicle-type'
   | 'objective'
   | 'condition'
@@ -31,6 +33,7 @@ type BookingStep =
   | 'confirmation';
 
 const stepOrder: BookingStep[] = [
+  'landing',
   'vehicle-type',
   'objective',
   'condition',
@@ -75,7 +78,7 @@ export default function CenterBooking() {
   const { createAppointment, loading: submitting } = useCreateAppointment();
   const { toast } = useToast();
   
-  const [currentStep, setCurrentStep] = useState<BookingStep>('vehicle-type');
+  const [currentStep, setCurrentStep] = useState<BookingStep>('landing');
   const [answers, setAnswers] = useState<BookingAnswers>({});
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -83,7 +86,8 @@ export default function CenterBooking() {
   const [clientData, setClientData] = useState<ClientData | null>(null);
   
   const currentStepIndex = stepOrder.indexOf(currentStep);
-  const questionSteps = 6;
+  const questionSteps = 6; // Steps 1-6 are questions (vehicle-type to time-preference)
+  const questionStartIndex = 1; // landing is index 0
   
   const goToNextStep = () => {
     const nextIndex = currentStepIndex + 1;
@@ -97,6 +101,10 @@ export default function CenterBooking() {
     if (prevIndex >= 0) {
       setCurrentStep(stepOrder[prevIndex]);
     }
+  };
+
+  const handleStartBooking = () => {
+    goToNextStep();
   };
   
   const handleVehicleType = (type: VehicleType) => {
@@ -171,7 +179,9 @@ export default function CenterBooking() {
     goToNextStep();
   };
   
-  const showBackButton = currentStepIndex > 0 && currentStep !== 'confirmation';
+  const showBackButton = currentStepIndex > 1 && currentStep !== 'confirmation';
+  const isInQuestionFlow = currentStepIndex >= questionStartIndex && currentStepIndex < questionStartIndex + questionSteps;
+  const currentQuestionNumber = currentStepIndex - questionStartIndex + 1;
 
   // Loading state
   if (loading) {
@@ -205,16 +215,30 @@ export default function CenterBooking() {
     );
   }
 
-  // No packs configured
+  // Landing page (no packs check here - show landing even without packs)
+  if (currentStep === 'landing') {
+    return (
+      <CenterLanding 
+        center={center} 
+        onStartBooking={handleStartBooking}
+        hasPacks={packs.length > 0}
+      />
+    );
+  }
+
+  // No packs configured (after landing)
   if (packs.length === 0) {
     return (
       <div className="min-h-screen bg-background">
         <BookingHeader centerName={center.name} />
         <div className="px-4 py-16 max-w-md mx-auto text-center">
           <h2 className="text-xl font-semibold text-foreground mb-2">Pas encore de packs disponibles</h2>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground mb-6">
             Ce centre n'a pas encore configuré ses offres. Revenez bientôt !
           </p>
+          <Button variant="outline" onClick={() => setCurrentStep('landing')}>
+            Retour
+          </Button>
         </div>
       </div>
     );
@@ -250,8 +274,8 @@ export default function CenterBooking() {
             </div>
           )}
           
-          {currentStepIndex < questionSteps && (
-            <ProgressBar currentStep={currentStepIndex + 1} totalSteps={questionSteps} />
+          {isInQuestionFlow && (
+            <ProgressBar currentStep={currentQuestionNumber} totalSteps={questionSteps} />
           )}
           
           {currentStep === 'vehicle-type' && (
