@@ -181,59 +181,6 @@ export default function Index() {
         </div>
       </section>
       
-      {/* Comparison */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Free vs Pro
-            </h2>
-            <p className="text-muted-foreground text-lg">
-              Choisissez l'offre qui correspond à vos besoins.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-            {/* Free Column */}
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
-                  <MessageSquare className="w-6 h-6 text-foreground" />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground">Oclinko Free</h3>
-              </div>
-              <p className="text-muted-foreground mb-6">
-                Recevez des demandes de devis. Vous gérez la qualification, les questions et l'organisation du rendez-vous.
-              </p>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Client envoie une demande libre</li>
-                <li>• Vous posez les questions</li>
-                <li>• Vous expliquez vos offres</li>
-                <li>• Vous organisez le RDV manuellement</li>
-              </ul>
-            </div>
-
-            {/* Pro Column */}
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground">Oclinko Pro</h3>
-              </div>
-              <p className="text-muted-foreground mb-6">
-                Recevez des rendez-vous qualifiés. Le client a répondu aux questions, choisi une prestation, et validé un créneau.
-              </p>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Questionnaire intelligent automatique</li>
-                <li>• Prestation recommandée avec prix</li>
-                <li>• Créneau réservé dans votre agenda</li>
-                <li>• Client qualifié, prêt à payer</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Trust signals */}
       <section className="py-16 px-4 bg-surface-subtle">
