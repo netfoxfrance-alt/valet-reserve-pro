@@ -48,7 +48,7 @@ export default function Auth() {
     toast({
       title: isSignUp ? 'Compte créé !' : 'Connexion réussie',
       description: isSignUp 
-        ? 'Votre centre a été créé automatiquement.' 
+        ? 'Votre espace a été créé automatiquement.' 
         : 'Bienvenue dans votre espace pro.',
     });
     
@@ -62,7 +62,7 @@ export default function Auth() {
           <Link to="/" className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl mb-6">
             <Sparkles className="w-8 h-8 text-primary-foreground" />
           </Link>
-          <h1 className="text-2xl font-bold text-foreground mb-2">AUTOCARE Pro</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">OCLINKO</h1>
           <p className="text-muted-foreground">
             {isSignUp ? 'Créez votre compte professionnel' : 'Connectez-vous à votre espace professionnel'}
           </p>

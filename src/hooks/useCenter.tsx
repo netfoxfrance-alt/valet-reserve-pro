@@ -13,6 +13,7 @@ export interface Center {
   logo_url: string | null;
   welcome_message: string | null;
   ai_enabled: boolean;
+  subscription_plan: 'free' | 'pro';
   created_at: string;
   updated_at: string;
 }

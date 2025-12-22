@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, Settings, Package, Clock, Sparkles, LogOut, Share2, Copy, Check } from 'lucide-react';
+import { Calendar, Settings, Package, Clock, Sparkles, LogOut, Share2, Copy, Check, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { useMyCenter } from '@/hooks/useCenter';
@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const navigation = [
   { name: 'Rendez-vous', href: '/dashboard', icon: Calendar },
+  { name: 'Demandes', href: '/dashboard/requests', icon: MessageSquare },
   { name: 'Disponibilités', href: '/dashboard/availability', icon: Clock },
   { name: 'Packs', href: '/dashboard/packs', icon: Package },
   { name: 'Paramètres', href: '/dashboard/settings', icon: Settings },
@@ -48,7 +49,7 @@ export function DashboardSidebar() {
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <Sparkles className="w-4 h-4 text-primary-foreground" />
           </div>
-          <span className="font-semibold text-foreground">AUTOCARE</span>
+          <span className="font-semibold text-foreground">OCLINKO</span>
         </Link>
       </div>
       
@@ -58,7 +59,7 @@ export function DashboardSidebar() {
           <div className="bg-primary/5 rounded-xl p-3">
             <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
               <Share2 className="w-4 h-4" />
-              Votre lien de réservation
+              Votre lien client
             </div>
             <div className="flex gap-2">
               <code className="flex-1 text-xs bg-background rounded-lg px-2 py-1.5 text-muted-foreground truncate">
