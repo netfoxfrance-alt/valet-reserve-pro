@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,6 +13,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
+import { cn } from '@/lib/utils';
 import { Sparkles, Upload, Trash2, Loader2 } from 'lucide-react';
 
 export default function DashboardSettings() {
@@ -22,9 +23,6 @@ export default function DashboardSettings() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
-
-  const logoInputRef = useRef<HTMLInputElement | null>(null);
-  
   const [settings, setSettings] = useState({
     name: '',
     address: '',
@@ -201,7 +199,6 @@ export default function DashboardSettings() {
                 {/* Upload Controls */}
                 <div className="flex flex-col gap-2 items-center sm:items-start">
                   <input
-                    ref={logoInputRef}
                     type="file"
                     accept="image/*"
                     onChange={handleLogoUpload}
@@ -209,17 +206,17 @@ export default function DashboardSettings() {
                     id="logo-upload"
                   />
 
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => logoInputRef.current?.click()}
-                    disabled={uploadingLogo}
-                    className="w-full sm:w-auto"
+                  <Label
+                    htmlFor="logo-upload"
+                    className={cn(
+                      buttonVariants({ variant: 'outline', size: 'sm' }),
+                      uploadingLogo && 'pointer-events-none opacity-50',
+                      "w-full sm:w-auto cursor-pointer"
+                    )}
                   >
                     <Upload className="w-4 h-4" />
                     {logoUrl ? 'Changer le logo' : 'Ajouter un logo'}
-                  </Button>
+                  </Label>
 
                   {logoUrl && (
                     <Button
