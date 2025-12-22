@@ -14,16 +14,235 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          appointment_date: string
+          appointment_time: string
+          center_id: string
+          client_email: string
+          client_name: string
+          client_phone: string
+          created_at: string | null
+          id: string
+          notes: string | null
+          pack_id: string | null
+          status: string | null
+          updated_at: string | null
+          vehicle_type: string
+        }
+        Insert: {
+          appointment_date: string
+          appointment_time: string
+          center_id: string
+          client_email: string
+          client_name: string
+          client_phone: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          pack_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+          vehicle_type: string
+        }
+        Update: {
+          appointment_date?: string
+          appointment_time?: string
+          center_id?: string
+          client_email?: string
+          client_name?: string
+          client_phone?: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          pack_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+          vehicle_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_pack_id_fkey"
+            columns: ["pack_id"]
+            isOneToOne: false
+            referencedRelation: "packs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      availability: {
+        Row: {
+          center_id: string
+          created_at: string | null
+          day_of_week: number
+          enabled: boolean | null
+          end_time: string
+          id: string
+          start_time: string
+        }
+        Insert: {
+          center_id: string
+          created_at?: string | null
+          day_of_week: number
+          enabled?: boolean | null
+          end_time: string
+          id?: string
+          start_time: string
+        }
+        Update: {
+          center_id?: string
+          created_at?: string | null
+          day_of_week?: number
+          enabled?: boolean | null
+          end_time?: string
+          id?: string
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "availability_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      centers: {
+        Row: {
+          address: string | null
+          ai_enabled: boolean | null
+          created_at: string | null
+          email: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          owner_id: string
+          phone: string | null
+          slug: string
+          updated_at: string | null
+          welcome_message: string | null
+        }
+        Insert: {
+          address?: string | null
+          ai_enabled?: boolean | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          owner_id: string
+          phone?: string | null
+          slug: string
+          updated_at?: string | null
+          welcome_message?: string | null
+        }
+        Update: {
+          address?: string | null
+          ai_enabled?: boolean | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          owner_id?: string
+          phone?: string | null
+          slug?: string
+          updated_at?: string | null
+          welcome_message?: string | null
+        }
+        Relationships: []
+      }
+      packs: {
+        Row: {
+          active: boolean | null
+          center_id: string
+          created_at: string | null
+          description: string | null
+          duration: string | null
+          features: string[] | null
+          id: string
+          name: string
+          price: number
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          center_id: string
+          created_at?: string | null
+          description?: string | null
+          duration?: string | null
+          features?: string[] | null
+          id?: string
+          name: string
+          price: number
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          center_id?: string
+          created_at?: string | null
+          description?: string | null
+          duration?: string | null
+          features?: string[] | null
+          id?: string
+          name?: string
+          price?: number
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "packs_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "owner"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +369,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "owner"],
+    },
   },
 } as const
