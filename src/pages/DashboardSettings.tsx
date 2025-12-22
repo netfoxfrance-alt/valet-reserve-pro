@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { Card } from '@/components/ui/card';
@@ -20,7 +20,7 @@ export default function DashboardSettings() {
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  
   const [settings, setSettings] = useState({
     name: '',
     address: '',
@@ -113,9 +113,8 @@ export default function DashboardSettings() {
       toast({ title: 'Erreur', description: 'Impossible de télécharger le logo.', variant: 'destructive' });
     } finally {
       setUploadingLogo(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      // reset input value handled by browser via label-triggered input
+      event.target.value = '';
     }
   };
 
@@ -194,26 +193,25 @@ export default function DashboardSettings() {
                 {/* Upload Controls */}
                 <div className="flex flex-col gap-2">
                   <input
-                    ref={fileInputRef}
                     type="file"
                     accept="image/png,image/jpeg,image/webp"
                     onChange={handleLogoUpload}
                     className="sr-only"
                     id="logo-upload"
                   />
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      console.log('Button clicked, fileInputRef:', fileInputRef.current);
-                      fileInputRef.current?.click();
-                    }}
-                    disabled={uploadingLogo}
+                    asChild
                   >
-                    <Upload className="w-4 h-4 mr-2" />
-                    {logoUrl ? 'Changer le logo' : 'Ajouter un logo'}
+                    <label
+                      htmlFor="logo-upload"
+                      className={`inline-flex items-center justify-center ${uploadingLogo ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
+                      aria-disabled={uploadingLogo}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      {logoUrl ? 'Changer le logo' : 'Ajouter un logo'}
+                    </label>
                   </Button>
                   {logoUrl && (
                     <Button 
