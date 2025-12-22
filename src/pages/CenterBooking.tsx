@@ -9,9 +9,12 @@ import { CalendarPicker } from '@/components/booking/CalendarPicker';
 import { ClientForm, ClientData } from '@/components/booking/ClientForm';
 import { ConfirmationView } from '@/components/booking/ConfirmationView';
 import { CenterLanding } from '@/components/booking/CenterLanding';
+import { ContactRequestForm, ContactRequestData } from '@/components/booking/ContactRequestForm';
+import { ContactConfirmation } from '@/components/booking/ContactConfirmation';
 import { BookingAnswers, VehicleType, CleaningObjective, VehicleCondition, TimePreference } from '@/types/booking';
 import { useCenterBySlug, Pack } from '@/hooks/useCenter';
 import { useCreateAppointment } from '@/hooks/useAppointments';
+import { useCreateContactRequest } from '@/hooks/useContactRequests';
 import { Car, Truck, Target, RefreshCw, FileCheck, Sparkles, Droplets, Clock, Zap, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
@@ -21,6 +24,8 @@ import { useToast } from '@/hooks/use-toast';
 
 type BookingStep = 
   | 'landing'
+  | 'contact-form'
+  | 'contact-confirmation'
   | 'vehicle-type'
   | 'objective'
   | 'condition'
@@ -31,20 +36,6 @@ type BookingStep =
   | 'calendar'
   | 'client-info'
   | 'confirmation';
-
-const stepOrder: BookingStep[] = [
-  'landing',
-  'vehicle-type',
-  'objective',
-  'condition',
-  'interior',
-  'exterior',
-  'time-preference',
-  'recommendation',
-  'calendar',
-  'client-info',
-  'confirmation',
-];
 
 // Recommandation de pack basée sur les réponses
 function recommendPack(answers: BookingAnswers, packs: Pack[]): Pack | null {
@@ -76,6 +67,7 @@ export default function CenterBooking() {
   const { slug } = useParams<{ slug: string }>();
   const { center, packs, loading, error } = useCenterBySlug(slug || '');
   const { createAppointment, loading: submitting } = useCreateAppointment();
+  const { createContactRequest, loading: submittingContact } = useCreateContactRequest();
   const { toast } = useToast();
   
   const [currentStep, setCurrentStep] = useState<BookingStep>('landing');
@@ -84,52 +76,59 @@ export default function CenterBooking() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [clientData, setClientData] = useState<ClientData | null>(null);
+  const [contactData, setContactData] = useState<ContactRequestData | null>(null);
   
-  const currentStepIndex = stepOrder.indexOf(currentStep);
-  const questionSteps = 6; // Steps 1-6 are questions (vehicle-type to time-preference)
-  const questionStartIndex = 1; // landing is index 0
-  
-  const goToNextStep = () => {
-    const nextIndex = currentStepIndex + 1;
-    if (nextIndex < stepOrder.length) {
-      setCurrentStep(stepOrder[nextIndex]);
-    }
-  };
+  // Determine if center is Pro (has subscription_plan === 'pro')
+  const isPro = center?.subscription_plan === 'pro';
   
   const goToPrevStep = () => {
-    const prevIndex = currentStepIndex - 1;
-    if (prevIndex >= 0) {
-      setCurrentStep(stepOrder[prevIndex]);
+    if (currentStep === 'contact-form') {
+      setCurrentStep('landing');
+    } else if (currentStep === 'vehicle-type') {
+      setCurrentStep('landing');
+    } else {
+      // Pro flow navigation
+      const proSteps: BookingStep[] = ['landing', 'vehicle-type', 'objective', 'condition', 'interior', 'exterior', 'time-preference', 'recommendation', 'calendar', 'client-info', 'confirmation'];
+      const currentIndex = proSteps.indexOf(currentStep);
+      if (currentIndex > 0) {
+        setCurrentStep(proSteps[currentIndex - 1]);
+      }
     }
   };
 
   const handleStartBooking = () => {
-    goToNextStep();
+    if (isPro && packs.length > 0) {
+      // Pro flow: start questionnaire
+      setCurrentStep('vehicle-type');
+    } else {
+      // Free flow: show contact form
+      setCurrentStep('contact-form');
+    }
   };
   
   const handleVehicleType = (type: VehicleType) => {
     setAnswers({ ...answers, vehicleType: type });
-    goToNextStep();
+    setCurrentStep('objective');
   };
   
   const handleObjective = (objective: CleaningObjective) => {
     setAnswers({ ...answers, objective });
-    goToNextStep();
+    setCurrentStep('condition');
   };
   
   const handleCondition = (condition: VehicleCondition) => {
     setAnswers({ ...answers, condition });
-    goToNextStep();
+    setCurrentStep('interior');
   };
   
   const handleInterior = (interior: boolean) => {
     setAnswers({ ...answers, interior });
-    goToNextStep();
+    setCurrentStep('exterior');
   };
   
   const handleExterior = (exterior: boolean) => {
     setAnswers({ ...answers, exterior });
-    goToNextStep();
+    setCurrentStep('time-preference');
   };
   
   const handleTimePreference = (preference: TimePreference) => {
@@ -137,17 +136,17 @@ export default function CenterBooking() {
     setAnswers(newAnswers);
     const pack = recommendPack(newAnswers, packs);
     setSelectedPack(pack);
-    goToNextStep();
+    setCurrentStep('recommendation');
   };
   
   const handlePackSelect = () => {
-    goToNextStep();
+    setCurrentStep('calendar');
   };
   
   const handleDateSelect = (date: Date, time: string) => {
     setSelectedDate(date);
     setSelectedTime(time);
-    goToNextStep();
+    setCurrentStep('client-info');
   };
   
   const handleClientSubmit = async (data: ClientData) => {
@@ -176,12 +175,40 @@ export default function CenterBooking() {
       return;
     }
     
-    goToNextStep();
+    setCurrentStep('confirmation');
+  };
+
+  const handleContactSubmit = async (data: ContactRequestData) => {
+    if (!center) return;
+    
+    setContactData(data);
+    
+    const { error } = await createContactRequest({
+      center_id: center.id,
+      client_name: data.name,
+      client_phone: data.phone,
+      message: data.message,
+    });
+    
+    if (error) {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible d\'envoyer votre demande. Veuillez réessayer.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    setCurrentStep('contact-confirmation');
   };
   
-  const showBackButton = currentStepIndex > 1 && currentStep !== 'confirmation';
-  const isInQuestionFlow = currentStepIndex >= questionStartIndex && currentStepIndex < questionStartIndex + questionSteps;
-  const currentQuestionNumber = currentStepIndex - questionStartIndex + 1;
+  const showBackButton = currentStep !== 'landing' && currentStep !== 'confirmation' && currentStep !== 'contact-confirmation';
+  
+  // Calculate progress for Pro questionnaire
+  const proQuestionSteps = ['vehicle-type', 'objective', 'condition', 'interior', 'exterior', 'time-preference'];
+  const isInQuestionFlow = proQuestionSteps.includes(currentStep);
+  const currentQuestionNumber = proQuestionSteps.indexOf(currentStep) + 1;
+  const totalQuestionSteps = proQuestionSteps.length;
 
   // Loading state
   if (loading) {
@@ -205,7 +232,7 @@ export default function CenterBooking() {
           </div>
           <h1 className="text-xl font-semibold text-foreground mb-2">Centre non trouvé</h1>
           <p className="text-muted-foreground mb-6">
-            Ce lien de réservation n'existe pas ou a été désactivé.
+            Ce lien n'existe pas ou a été désactivé.
           </p>
           <Link to="/">
             <Button variant="outline">Retour à l'accueil</Button>
@@ -215,31 +242,55 @@ export default function CenterBooking() {
     );
   }
 
-  // Landing page (no packs check here - show landing even without packs)
+  // Landing page
   if (currentStep === 'landing') {
     return (
       <CenterLanding 
         center={center} 
         onStartBooking={handleStartBooking}
         hasPacks={packs.length > 0}
+        isPro={isPro}
       />
     );
   }
 
-  // No packs configured (after landing)
-  if (packs.length === 0) {
+  // Free flow: Contact form
+  if (currentStep === 'contact-form') {
     return (
       <div className="min-h-screen bg-background">
         <BookingHeader centerName={center.name} />
-        <div className="px-4 py-16 max-w-md mx-auto text-center">
-          <h2 className="text-xl font-semibold text-foreground mb-2">Pas encore de packs disponibles</h2>
-          <p className="text-muted-foreground mb-6">
-            Ce centre n'a pas encore configuré ses offres. Revenez bientôt !
-          </p>
-          <Button variant="outline" onClick={() => setCurrentStep('landing')}>
-            Retour
-          </Button>
-        </div>
+        <main className="px-4 pb-16 pt-8">
+          <div className="max-w-4xl mx-auto">
+            {showBackButton && (
+              <div className="mb-6">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={goToPrevStep}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  Retour
+                </Button>
+              </div>
+            )}
+            <ContactRequestForm onSubmit={handleContactSubmit} isSubmitting={submittingContact} />
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Free flow: Contact confirmation
+  if (currentStep === 'contact-confirmation' && contactData) {
+    return (
+      <div className="min-h-screen bg-background">
+        <BookingHeader centerName={center.name} />
+        <main className="px-4 pb-16 pt-8">
+          <div className="max-w-4xl mx-auto">
+            <ContactConfirmation clientName={contactData.name} centerName={center.name} />
+          </div>
+        </main>
       </div>
     );
   }
@@ -275,7 +326,7 @@ export default function CenterBooking() {
           )}
           
           {isInQuestionFlow && (
-            <ProgressBar currentStep={currentQuestionNumber} totalSteps={questionSteps} />
+            <ProgressBar currentStep={currentQuestionNumber} totalSteps={totalQuestionSteps} />
           )}
           
           {currentStep === 'vehicle-type' && (

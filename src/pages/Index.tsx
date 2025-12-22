@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Sparkles, ArrowRight, Calendar, Users, BarChart3, Link2, Zap, Shield, Clock } from 'lucide-react';
+import { Sparkles, ArrowRight, Calendar, Users, BarChart3, Link2, Zap, Shield, Clock, MessageSquare, Check } from 'lucide-react';
 
 export default function Index() {
   return (
@@ -13,7 +13,7 @@ export default function Index() {
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-xl text-foreground tracking-tight">AUTOCARE</span>
+            <span className="font-semibold text-xl text-foreground tracking-tight">OCLINKO</span>
           </div>
           <Link to="/auth">
             <Button>
@@ -31,13 +31,13 @@ export default function Index() {
             Pour les professionnels du detailing auto
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-foreground tracking-tight mb-6 animate-fade-in-up">
-            Votre page de réservation
+            Votre lien client
             <br />
-            <span className="text-muted-foreground">en 5 minutes.</span>
+            <span className="text-muted-foreground">professionnel en 5 min.</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up stagger-1">
-            Créez votre lien personnalisé, configurez vos packs et horaires,
-            et laissez vos clients réserver en autonomie. Sans commission.
+            Créez votre page pro personnalisée, recevez des demandes clients qualifiées, 
+            et développez votre activité sans effort.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up stagger-2">
             <Link to="/auth">
@@ -48,7 +48,7 @@ export default function Index() {
             </Link>
           </div>
           <p className="text-sm text-muted-foreground mt-4 animate-fade-in-up stagger-3">
-            Gratuit • Sans engagement • Prêt en 5 minutes
+            Version gratuite disponible • Sans engagement
           </p>
         </div>
       </section>
@@ -64,10 +64,10 @@ export default function Index() {
               <div className="text-center md:text-left flex-1">
                 <h3 className="text-xl font-semibold text-foreground mb-2">Votre lien unique</h3>
                 <p className="text-muted-foreground mb-4">
-                  Chaque professionnel obtient son propre lien de réservation à partager avec ses clients.
+                  Chaque professionnel obtient son propre lien à partager avec ses clients.
                 </p>
                 <div className="inline-flex items-center gap-2 bg-muted px-4 py-2 rounded-lg font-mono text-sm">
-                  <span className="text-muted-foreground">autocare.app/c/</span>
+                  <span className="text-muted-foreground">oclinko.app/c/</span>
                   <span className="text-primary font-semibold">votre-centre</span>
                 </div>
               </div>
@@ -75,91 +75,157 @@ export default function Index() {
           </Card>
         </div>
       </section>
-      
-      {/* Features */}
+
+      {/* Pricing Section */}
       <section className="py-20 px-4 bg-surface-subtle">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Tout ce dont vous avez besoin
+              Deux offres, un objectif
             </h2>
             <p className="text-muted-foreground text-lg">
-              Un outil simple et complet pour gérer vos réservations.
+              Développez votre clientèle, à votre rythme.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Free Plan */}
             <Card variant="elevated" className="p-8">
-              <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
-                <Calendar className="w-7 h-7 text-primary" />
+              <div className="mb-6">
+                <h3 className="text-xl font-semibold text-foreground mb-1">Oclinko Free</h3>
+                <p className="text-muted-foreground text-sm">Présence en ligne simplifiée</p>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">Réservations automatiques</h3>
-              <p className="text-muted-foreground">
-                Vos clients réservent directement en ligne selon vos disponibilités. Plus d'appels, plus de SMS.
-              </p>
+              
+              <div className="mb-6">
+                <span className="text-4xl font-bold text-foreground">Gratuit</span>
+                <span className="text-muted-foreground ml-2">pour toujours</span>
+              </div>
+              
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span className="text-foreground">Page professionnelle personnalisée</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span className="text-foreground">Formulaire de demande simple</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span className="text-foreground">Notifications par email</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span className="text-foreground">Lien unique partageable</span>
+                </li>
+              </ul>
+              
+              <Link to="/auth">
+                <Button variant="outline" size="lg" className="w-full">
+                  Commencer gratuitement
+                </Button>
+              </Link>
             </Card>
-            
-            <Card variant="elevated" className="p-8">
-              <div className="w-14 h-14 bg-accent/10 rounded-2xl flex items-center justify-center mb-6">
-                <Sparkles className="w-7 h-7 text-accent" />
+
+            {/* Pro Plan */}
+            <Card variant="elevated" className="p-8 ring-2 ring-primary relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
+                Recommandé
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">Assistant IA intégré</h3>
-              <p className="text-muted-foreground">
-                L'IA recommande le pack idéal à vos clients en fonction de leurs besoins. Upsell automatique.
-              </p>
-            </Card>
-            
-            <Card variant="elevated" className="p-8">
-              <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center mb-6">
-                <BarChart3 className="w-7 h-7 text-secondary-foreground" />
+              
+              <div className="mb-6">
+                <h3 className="text-xl font-semibold text-foreground mb-1">Oclinko Pro</h3>
+                <p className="text-muted-foreground text-sm">Automatisation complète</p>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">Tableau de bord pro</h3>
-              <p className="text-muted-foreground">
-                Suivez vos rendez-vous, gérez vos packs et configurez vos horaires depuis une interface simple.
-              </p>
+              
+              <div className="mb-6">
+                <span className="text-4xl font-bold text-foreground">19€</span>
+                <span className="text-muted-foreground ml-2">/ mois</span>
+              </div>
+              
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span className="text-foreground">Tout ce qui est dans Free</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span className="text-foreground">Questionnaire intelligent</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span className="text-foreground">Recommandation automatique</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span className="text-foreground">Agenda intégré avec créneaux</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span className="text-foreground">Rendez-vous qualifiés uniquement</span>
+                </li>
+              </ul>
+              
+              <Link to="/auth">
+                <Button variant="premium" size="lg" className="w-full">
+                  Essayer Pro
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
             </Card>
           </div>
         </div>
       </section>
-
-      {/* How it works for pros */}
+      
+      {/* Comparison */}
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Lancez-vous en 3 étapes
+              Free vs Pro
             </h2>
+            <p className="text-muted-foreground text-lg">
+              Choisissez l'offre qui correspond à vos besoins.
+            </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-6 text-xl font-bold">
-                1
+          <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+            {/* Free Column */}
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
+                  <MessageSquare className="w-6 h-6 text-foreground" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground">Oclinko Free</h3>
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">Créez votre compte</h3>
-              <p className="text-muted-foreground">
-                Inscription gratuite en 30 secondes. Votre espace est prêt immédiatement.
+              <p className="text-muted-foreground mb-6">
+                Recevez des demandes de devis. Vous gérez la qualification, les questions et l'organisation du rendez-vous.
               </p>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>• Client envoie une demande libre</li>
+                <li>• Vous posez les questions</li>
+                <li>• Vous expliquez vos offres</li>
+                <li>• Vous organisez le RDV manuellement</li>
+              </ul>
             </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-6 text-xl font-bold">
-                2
+
+            {/* Pro Column */}
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground">Oclinko Pro</h3>
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">Configurez vos packs</h3>
-              <p className="text-muted-foreground">
-                Ajoutez vos offres, définissez vos prix et vos disponibilités.
+              <p className="text-muted-foreground mb-6">
+                Recevez des rendez-vous qualifiés. Le client a répondu aux questions, choisi une prestation, et validé un créneau.
               </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-6 text-xl font-bold">
-                3
-              </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">Partagez votre lien</h3>
-              <p className="text-muted-foreground">
-                Diffusez votre lien sur vos réseaux, votre site ou vos cartes de visite.
-              </p>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>• Questionnaire intelligent automatique</li>
+                <li>• Prestation recommandée avec prix</li>
+                <li>• Créneau réservé dans votre agenda</li>
+                <li>• Client qualifié, prêt à payer</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -172,8 +238,8 @@ export default function Index() {
             <div className="flex flex-col items-center gap-3">
               <Shield className="w-8 h-8 text-primary" />
               <div>
-                <p className="font-semibold text-foreground">100% gratuit</p>
-                <p className="text-sm text-muted-foreground">Sans commission sur vos prestations</p>
+                <p className="font-semibold text-foreground">Sans commission</p>
+                <p className="text-sm text-muted-foreground">Vos revenus restent vos revenus</p>
               </div>
             </div>
             <div className="flex flex-col items-center gap-3">
@@ -198,7 +264,7 @@ export default function Index() {
       <section className="py-20 md:py-32 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-            Prêt à simplifier vos réservations ?
+            Prêt à simplifier votre quotidien ?
           </h2>
           <p className="text-lg text-muted-foreground mb-10">
             Rejoignez les professionnels qui gagnent du temps chaque jour.
@@ -219,10 +285,10 @@ export default function Index() {
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-foreground">AUTOCARE</span>
+            <span className="font-semibold text-foreground">OCLINKO</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © 2024 AUTOCARE. Tous droits réservés.
+            © 2024 OCLINKO. Tous droits réservés.
           </p>
         </div>
       </footer>

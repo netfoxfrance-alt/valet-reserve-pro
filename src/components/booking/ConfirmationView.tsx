@@ -14,7 +14,7 @@ interface ConfirmationViewProps {
   centerAddress?: string | null;
 }
 
-export function ConfirmationView({ pack, date, time, clientName, centerName = "Auto Clean Center", centerAddress }: ConfirmationViewProps) {
+export function ConfirmationView({ pack, date, time, clientName, centerName = "Centre", centerAddress }: ConfirmationViewProps) {
   return (
     <div className="w-full max-w-lg mx-auto text-center animate-scale-in">
       <div className="mb-8">

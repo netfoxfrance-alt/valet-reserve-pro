@@ -127,6 +127,7 @@ export type Database = {
           owner_id: string
           phone: string | null
           slug: string
+          subscription_plan: Database["public"]["Enums"]["subscription_plan"]
           updated_at: string | null
           welcome_message: string | null
         }
@@ -141,6 +142,7 @@ export type Database = {
           owner_id: string
           phone?: string | null
           slug: string
+          subscription_plan?: Database["public"]["Enums"]["subscription_plan"]
           updated_at?: string | null
           welcome_message?: string | null
         }
@@ -155,10 +157,49 @@ export type Database = {
           owner_id?: string
           phone?: string | null
           slug?: string
+          subscription_plan?: Database["public"]["Enums"]["subscription_plan"]
           updated_at?: string | null
           welcome_message?: string | null
         }
         Relationships: []
+      }
+      contact_requests: {
+        Row: {
+          center_id: string
+          client_name: string
+          client_phone: string
+          created_at: string
+          id: string
+          message: string | null
+          status: string
+        }
+        Insert: {
+          center_id: string
+          client_name: string
+          client_phone: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          status?: string
+        }
+        Update: {
+          center_id?: string
+          client_name?: string
+          client_phone?: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_requests_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       packs: {
         Row: {
@@ -243,6 +284,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "owner"
+      subscription_plan: "free" | "pro"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -371,6 +413,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "owner"],
+      subscription_plan: ["free", "pro"],
     },
   },
 } as const

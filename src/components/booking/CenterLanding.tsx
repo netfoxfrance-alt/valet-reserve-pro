@@ -7,9 +7,10 @@ interface CenterLandingProps {
   center: Center;
   onStartBooking: () => void;
   hasPacks: boolean;
+  isPro: boolean;
 }
 
-export function CenterLanding({ center, onStartBooking, hasPacks }: CenterLandingProps) {
+export function CenterLanding({ center, onStartBooking, hasPacks, isPro }: CenterLandingProps) {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -87,7 +88,7 @@ export function CenterLanding({ center, onStartBooking, hasPacks }: CenterLandin
 
           {/* CTA Button */}
           <div className="text-center">
-            {hasPacks ? (
+            {isPro && hasPacks ? (
               <>
                 <Button 
                   variant="premium" 
@@ -103,19 +104,20 @@ export function CenterLanding({ center, onStartBooking, hasPacks }: CenterLandin
                 </p>
               </>
             ) : (
-              <Card variant="elevated" className="p-6 text-center">
-                <p className="text-muted-foreground">
-                  Les réservations en ligne seront bientôt disponibles.
+              <>
+                <Button 
+                  variant="premium" 
+                  size="xl" 
+                  onClick={onStartBooking}
+                  className="w-full sm:w-auto"
+                >
+                  Demander un devis
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+                <p className="text-sm text-muted-foreground mt-4">
+                  Envoyez-nous votre demande, nous vous recontactons rapidement
                 </p>
-                {center.phone && (
-                  <p className="mt-2">
-                    Contactez-nous au{' '}
-                    <a href={`tel:${center.phone}`} className="text-primary font-medium">
-                      {center.phone}
-                    </a>
-                  </p>
-                )}
-              </Card>
+              </>
             )}
           </div>
         </div>
@@ -125,7 +127,7 @@ export function CenterLanding({ center, onStartBooking, hasPacks }: CenterLandin
       <footer className="py-8 px-4 border-t border-border mt-auto">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-sm text-muted-foreground">
-            Propulsé par AUTOCARE
+            Propulsé par OCLINKO
           </p>
         </div>
       </footer>

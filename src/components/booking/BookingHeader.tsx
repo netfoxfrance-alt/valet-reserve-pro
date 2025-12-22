@@ -5,7 +5,7 @@ interface BookingHeaderProps {
   welcomeMessage?: string | null;
 }
 
-export function BookingHeader({ centerName = "Auto Clean Center", welcomeMessage }: BookingHeaderProps) {
+export function BookingHeader({ centerName = "Centre", welcomeMessage }: BookingHeaderProps) {
   return (
     <header className="w-full py-6 px-4">
       <div className="max-w-4xl mx-auto flex items-center justify-between">
@@ -14,7 +14,7 @@ export function BookingHeader({ centerName = "Auto Clean Center", welcomeMessage
             <Sparkles className="w-5 h-5 text-primary-foreground" />
           </div>
           <div>
-            <span className="font-semibold text-foreground tracking-tight">AUTOCARE</span>
+            <span className="font-semibold text-foreground tracking-tight">OCLINKO</span>
             {centerName && (
               <span className="hidden sm:inline text-muted-foreground ml-2">• {centerName}</span>
             )}
