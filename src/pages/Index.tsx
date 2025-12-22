@@ -36,8 +36,7 @@ export default function Index() {
             <span className="text-muted-foreground">dans un seul espace.</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up stagger-1">
-            Créez votre page pro personnalisée, recevez des demandes clients qualifiées, 
-            et développez votre activité sans effort.
+            Votre page pro personnalisée en ligne, qui prend les rendez-vous et organise votre planning.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up stagger-2">
             <Link to="/auth">
