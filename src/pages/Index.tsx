@@ -28,7 +28,7 @@ export default function Index() {
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-8 animate-fade-in-up">
             <Zap className="w-4 h-4" />
-            Pour les professionnels du detailing auto
+            Pour les professionnels du nettoyage
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-foreground tracking-tight mb-6 animate-fade-in-up">
             Tout votre business de nettoyage,
