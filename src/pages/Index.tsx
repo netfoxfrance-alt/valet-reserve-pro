@@ -31,9 +31,9 @@ export default function Index() {
             Pour les professionnels du detailing auto
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-foreground tracking-tight mb-6 animate-fade-in-up">
-            Votre lien client
+            Tout votre business de nettoyage,
             <br />
-            <span className="text-muted-foreground">professionnel en 5 min.</span>
+            <span className="text-muted-foreground">dans un seul espace.</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up stagger-1">
             Créez votre page pro personnalisée, recevez des demandes clients qualifiées, 
