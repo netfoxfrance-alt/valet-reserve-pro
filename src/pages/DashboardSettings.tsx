@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -22,6 +22,8 @@ export default function DashboardSettings() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+
+  const logoInputRef = useRef<HTMLInputElement | null>(null);
   
   const [settings, setSettings] = useState({
     name: '',
@@ -199,28 +201,35 @@ export default function DashboardSettings() {
                 {/* Upload Controls */}
                 <div className="flex flex-col gap-2 items-center sm:items-start">
                   <input
+                    ref={logoInputRef}
                     type="file"
-                    accept="image/png,image/jpeg,image/webp"
+                    accept="image/*"
                     onChange={handleLogoUpload}
-                    className="hidden"
+                    className="sr-only"
                     id="logo-upload"
                   />
-                  <label
-                    htmlFor="logo-upload"
-                    className={`inline-flex items-center justify-center h-9 px-3 rounded-md border border-input bg-background text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${uploadingLogo ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => logoInputRef.current?.click()}
+                    disabled={uploadingLogo}
+                    className="w-full sm:w-auto"
                   >
-                    <Upload className="w-4 h-4 mr-2" />
+                    <Upload className="w-4 h-4" />
                     {logoUrl ? 'Changer le logo' : 'Ajouter un logo'}
-                  </label>
+                  </Button>
+
                   {logoUrl && (
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       onClick={handleRemoveLogo}
                       disabled={uploadingLogo}
                       className="text-destructive hover:text-destructive"
                     >
-                      <Trash2 className="w-4 h-4 mr-2" />
+                      <Trash2 className="w-4 h-4" />
                       Supprimer
                     </Button>
                   )}
