@@ -139,22 +139,18 @@ export default function Index() {
               </div>
               
               <div className="mb-6">
-                <span className="text-4xl font-bold text-foreground">19€</span>
+                <span className="text-4xl font-bold text-foreground">49€</span>
                 <span className="text-muted-foreground ml-2">/ mois</span>
               </div>
               
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                  <span className="text-foreground">Tout ce qui est dans Free</span>
+                  <span className="text-foreground">Personnalisation complète de la page</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                  <span className="text-foreground">Questionnaire intelligent</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                  <span className="text-foreground">Recommandation automatique</span>
+                  <span className="text-foreground">Questionnaire intelligent inclus</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
@@ -162,7 +158,15 @@ export default function Index() {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                  <span className="text-foreground">Rendez-vous qualifiés uniquement</span>
+                  <span className="text-foreground">Prise de RDV qualifiés directement</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span className="text-foreground">Tableau de bord pour organiser</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span className="text-foreground">Accès à la base de données client</span>
                 </li>
               </ul>
               
