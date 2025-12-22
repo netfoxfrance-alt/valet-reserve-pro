@@ -3,7 +3,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
+import CenterBooking from "./pages/CenterBooking";
 import Booking from "./pages/Booking";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -11,27 +13,47 @@ import DashboardAvailability from "./pages/DashboardAvailability";
 import DashboardPacks from "./pages/DashboardPacks";
 import DashboardSettings from "./pages/DashboardSettings";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/booking" element={<Booking />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/availability" element={<DashboardAvailability />} />
-          <Route path="/dashboard/packs" element={<DashboardPacks />} />
-          <Route path="/dashboard/settings" element={<DashboardSettings />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/booking" element={<Booking />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/c/:slug" element={<CenterBooking />} />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/availability" element={
+              <ProtectedRoute>
+                <DashboardAvailability />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/packs" element={
+              <ProtectedRoute>
+                <DashboardPacks />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/settings" element={
+              <ProtectedRoute>
+                <DashboardSettings />
+              </ProtectedRoute>
+            } />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

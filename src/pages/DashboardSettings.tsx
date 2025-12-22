@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { Card } from '@/components/ui/card';
@@ -7,15 +7,57 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { useMyCenter } from '@/hooks/useCenter';
+import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function DashboardSettings() {
+  const { center, loading, updateCenter } = useMyCenter();
+  const { toast } = useToast();
+  const [saving, setSaving] = useState(false);
   const [settings, setSettings] = useState({
-    centerName: 'Auto Clean Center',
-    address: '123 Avenue du Nettoyage, 75000 Paris',
-    phone: '01 23 45 67 89',
-    welcomeMessage: 'Réservez le nettoyage adapté à votre véhicule.',
-    aiEnabled: true,
+    name: '',
+    address: '',
+    phone: '',
+    welcome_message: '',
+    ai_enabled: true,
   });
+
+  useEffect(() => {
+    if (center) {
+      setSettings({
+        name: center.name || '',
+        address: center.address || '',
+        phone: center.phone || '',
+        welcome_message: center.welcome_message || '',
+        ai_enabled: center.ai_enabled ?? true,
+      });
+    }
+  }, [center]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    const { error } = await updateCenter(settings);
+    setSaving(false);
+    
+    if (error) {
+      toast({ title: 'Erreur', description: error, variant: 'destructive' });
+    } else {
+      toast({ title: 'Enregistré', description: 'Vos modifications ont été sauvegardées.' });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <DashboardSidebar />
+        <div className="lg:pl-64 p-8">
+          <Skeleton className="h-8 w-48 mb-8" />
+          <Skeleton className="h-64 w-full max-w-2xl" />
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen bg-background">
@@ -25,18 +67,17 @@ export default function DashboardSettings() {
         <DashboardHeader title="Paramètres" />
         
         <main className="p-4 lg:p-8 max-w-2xl">
-          {/* Center info */}
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-foreground mb-2">Informations du centre</h2>
             <p className="text-muted-foreground mb-6">Ces informations seront affichées aux clients.</p>
             
             <Card variant="elevated" className="p-6 space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="centerName">Nom du centre</Label>
+                <Label htmlFor="name">Nom du centre</Label>
                 <Input
-                  id="centerName"
-                  value={settings.centerName}
-                  onChange={(e) => setSettings({ ...settings, centerName: e.target.value })}
+                  id="name"
+                  value={settings.name}
+                  onChange={(e) => setSettings({ ...settings, name: e.target.value })}
                 />
               </div>
               
@@ -60,32 +101,25 @@ export default function DashboardSettings() {
             </Card>
           </section>
           
-          {/* Welcome message */}
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-foreground mb-2">Page de réservation</h2>
             <p className="text-muted-foreground mb-6">Personnalisez l'accueil de vos clients.</p>
             
             <Card variant="elevated" className="p-6 space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="welcomeMessage">Message d'accueil</Label>
+                <Label htmlFor="welcome_message">Message d'accueil</Label>
                 <Textarea
-                  id="welcomeMessage"
-                  value={settings.welcomeMessage}
-                  onChange={(e) => setSettings({ ...settings, welcomeMessage: e.target.value })}
+                  id="welcome_message"
+                  value={settings.welcome_message}
+                  onChange={(e) => setSettings({ ...settings, welcome_message: e.target.value })}
                   rows={3}
                 />
-                <p className="text-xs text-muted-foreground">
-                  Ce message apparaît en haut de la page de réservation.
-                </p>
               </div>
             </Card>
           </section>
           
-          {/* AI settings */}
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-foreground mb-2">Assistant IA</h2>
-            <p className="text-muted-foreground mb-6">Gérez l'assistant intelligent pour vos clients.</p>
-            
             <Card variant="elevated" className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -95,16 +129,16 @@ export default function DashboardSettings() {
                   </p>
                 </div>
                 <Switch
-                  checked={settings.aiEnabled}
-                  onCheckedChange={(checked) => setSettings({ ...settings, aiEnabled: checked })}
+                  checked={settings.ai_enabled}
+                  onCheckedChange={(checked) => setSettings({ ...settings, ai_enabled: checked })}
                 />
               </div>
             </Card>
           </section>
           
           <div className="flex justify-end">
-            <Button variant="premium">
-              Enregistrer les modifications
+            <Button variant="premium" onClick={handleSave} disabled={saving}>
+              {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}
             </Button>
           </div>
         </main>

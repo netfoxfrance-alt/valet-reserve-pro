@@ -8,6 +8,7 @@ import { User, Phone, Mail, MessageSquare } from 'lucide-react';
 
 interface ClientFormProps {
   onSubmit: (data: ClientData) => void;
+  isSubmitting?: boolean;
 }
 
 export interface ClientData {
@@ -17,7 +18,7 @@ export interface ClientData {
   notes: string;
 }
 
-export function ClientForm({ onSubmit }: ClientFormProps) {
+export function ClientForm({ onSubmit, isSubmitting = false }: ClientFormProps) {
   const [formData, setFormData] = useState<ClientData>({
     name: '',
     phone: '',
@@ -120,9 +121,9 @@ export function ClientForm({ onSubmit }: ClientFormProps) {
             variant="premium" 
             size="lg" 
             className="w-full"
-            disabled={!isValid}
+            disabled={!isValid || isSubmitting}
           >
-            Confirmer ma réservation
+            {isSubmitting ? 'Confirmation...' : 'Confirmer ma réservation'}
           </Button>
         </form>
       </Card>
