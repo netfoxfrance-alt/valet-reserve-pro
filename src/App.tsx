@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import DashboardAvailability from "./pages/DashboardAvailability";
 import DashboardPacks from "./pages/DashboardPacks";
 import DashboardSettings from "./pages/DashboardSettings";
+import DashboardRequests from "./pages/DashboardRequests";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -32,6 +33,11 @@ const App = () => (
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/requests" element={
+              <ProtectedRoute>
+                <DashboardRequests />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/availability" element={
