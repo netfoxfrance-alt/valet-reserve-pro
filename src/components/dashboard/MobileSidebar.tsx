@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, Settings, Package, Clock, Sparkles, LogOut, Share2, Copy, Check, MessageSquare, X } from 'lucide-react';
+import { Calendar, Settings, Package, Clock, LogOut, Share2, Copy, Check, MessageSquare, X } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { useMyCenter } from '@/hooks/useCenter';
@@ -59,7 +60,7 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
         <SheetHeader className="px-4 h-16 border-b border-border flex flex-row items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-primary-foreground" />
+              <Logo size="sm" variant="light" />
             </div>
             <SheetTitle className="font-semibold text-foreground">CleaningPage</SheetTitle>
           </div>

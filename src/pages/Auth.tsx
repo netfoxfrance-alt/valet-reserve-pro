@@ -4,7 +4,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Sparkles, Mail, Lock, AlertCircle } from 'lucide-react';
+import { Mail, Lock, AlertCircle } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -60,7 +61,7 @@ export default function Auth() {
       <div className="w-full max-w-md animate-fade-in-up">
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl mb-6">
-            <Sparkles className="w-8 h-8 text-primary-foreground" />
+            <Logo size="lg" variant="light" />
           </Link>
           <h1 className="text-2xl font-bold text-foreground mb-2">CleaningPage</h1>
           <p className="text-muted-foreground">

@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Sparkles, MapPin, Phone, ArrowRight } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
+import { MapPin, Phone, ArrowRight } from 'lucide-react';
 import { Center } from '@/hooks/useCenter';
 
 interface CenterLandingProps {
@@ -24,7 +25,7 @@ export function CenterLanding({ center, onStartBooking, hasPacks, isPro }: Cente
             />
           ) : (
             <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-primary-foreground" />
+              <Logo size="md" variant="light" />
             </div>
           )}
           <span className="font-semibold text-xl text-foreground tracking-tight">{center.name}</span>
