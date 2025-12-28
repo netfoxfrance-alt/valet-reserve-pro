@@ -52,15 +52,6 @@ export function CalendarPicker({ onSelect, duration }: CalendarPickerProps) {
   
   return (
     <div className="w-full max-w-lg mx-auto animate-fade-in-up">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl md:text-3xl font-semibold text-foreground mb-2 tracking-tight">
-          Choisissez votre créneau
-        </h2>
-        <p className="text-muted-foreground">
-          Durée du rendez-vous : {duration}
-        </p>
-      </div>
-      
       <Card variant="elevated" className="p-6">
         {/* Week navigation */}
         <div className="flex items-center justify-between mb-6">
