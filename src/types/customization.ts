@@ -32,7 +32,7 @@ export const defaultCustomization: CenterCustomization = {
     show_hours: true,
     show_address: true,
     show_phone: true,
-    show_contact_form: true,
+    show_contact_form: false,
     dark_mode: false,
   },
   cover_url: null,
