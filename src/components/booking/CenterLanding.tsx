@@ -127,7 +127,7 @@ export function CenterLanding({ center, onStartBooking, hasPacks, isPro }: Cente
       <footer className="py-8 px-4 border-t border-border mt-auto">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-sm text-muted-foreground">
-            Propulsé par OCLINKO
+            Propulsé par CleaningPage
           </p>
         </div>
       </footer>
