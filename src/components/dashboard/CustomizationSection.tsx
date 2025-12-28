@@ -297,6 +297,17 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
 
             <div className="flex items-center justify-between py-2 border-t pt-4">
               <div>
+                <p className="font-medium text-foreground">Formulaire de contact</p>
+                <p className="text-sm text-muted-foreground">Permet aux visiteurs de vous envoyer une demande</p>
+              </div>
+              <Switch
+                checked={local.layout.show_contact_form}
+                onCheckedChange={(checked) => updateLayout({ show_contact_form: checked })}
+              />
+            </div>
+
+            <div className="flex items-center justify-between py-2 border-t pt-4">
+              <div>
                 <p className="font-medium text-foreground">Mode sombre</p>
                 <p className="text-sm text-muted-foreground">Utilise un thème sombre pour la page</p>
               </div>

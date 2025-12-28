@@ -12,6 +12,7 @@ export interface CenterCustomization {
     show_hours: boolean;
     show_address: boolean;
     show_phone: boolean;
+    show_contact_form: boolean;
     dark_mode: boolean;
   };
   cover_url: string | null;
@@ -31,6 +32,7 @@ export const defaultCustomization: CenterCustomization = {
     show_hours: true,
     show_address: true,
     show_phone: true,
+    show_contact_form: true,
     dark_mode: false,
   },
   cover_url: null,

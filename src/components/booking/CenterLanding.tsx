@@ -1,11 +1,17 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Logo } from '@/components/ui/Logo';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Phone, Clock, ArrowRight, Star, Car } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { MapPin, Phone, Clock, ArrowRight, Star, Car, User, MessageSquare, Send, CheckCircle } from 'lucide-react';
 import { Center, Pack } from '@/hooks/useCenter';
 import { CenterCustomization, defaultCustomization } from '@/types/customization';
 import { useMemo } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface CenterLandingProps {
   center: Center;
@@ -17,6 +23,13 @@ interface CenterLandingProps {
 }
 
 export function CenterLanding({ center, packs, onStartBooking, onSelectPack, hasPacks, isPro }: CenterLandingProps) {
+  const { toast } = useToast();
+  const [contactName, setContactName] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
+  const [contactMessage, setContactMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [contactSent, setContactSent] = useState(false);
+
   // Check if center is currently open (simple check based on current hour)
   const now = new Date();
   const currentHour = now.getHours();
@@ -39,6 +52,33 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     '--custom-secondary': customization.colors.secondary,
     '--custom-accent': customization.colors.accent,
   } as React.CSSProperties), [customization.colors]);
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contactName.trim() || !contactPhone.trim()) return;
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from('contact_requests')
+        .insert({
+          center_id: center.id,
+          client_name: contactName.trim(),
+          client_phone: contactPhone.trim(),
+          message: contactMessage.trim() || null,
+        });
+
+      if (error) throw error;
+
+      setContactSent(true);
+      toast({ title: 'Demande envoyée', description: 'Nous vous recontacterons rapidement.' });
+    } catch (error) {
+      console.error('Contact submit error:', error);
+      toast({ title: 'Erreur', description: "Impossible d'envoyer la demande.", variant: 'destructive' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div 
@@ -301,6 +341,150 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
               >
                 Spécialiste du nettoyage et de l'esthétique automobile.
               </p>
+            </div>
+          )}
+
+          {/* Contact Form Section */}
+          {customization.layout.show_contact_form && (
+            <div className="mb-8">
+              <h2 
+                className="text-lg font-semibold mb-4"
+                style={{ color: customization.layout.dark_mode ? 'white' : undefined }}
+              >
+                Nous contacter
+              </h2>
+              
+              {contactSent ? (
+                <Card 
+                  className="p-6 text-center"
+                  style={{
+                    backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : undefined,
+                    borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : undefined,
+                  }}
+                >
+                  <CheckCircle 
+                    className="w-12 h-12 mx-auto mb-3" 
+                    style={{ color: customization.colors.accent }}
+                  />
+                  <p 
+                    className="font-medium mb-1"
+                    style={{ color: customization.layout.dark_mode ? 'white' : undefined }}
+                  >
+                    Demande envoyée !
+                  </p>
+                  <p 
+                    className="text-sm"
+                    style={{ color: customization.layout.dark_mode ? '#9ca3af' : undefined }}
+                  >
+                    Nous vous recontacterons rapidement.
+                  </p>
+                </Card>
+              ) : (
+                <Card 
+                  className="p-5"
+                  style={{
+                    backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : undefined,
+                    borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : undefined,
+                  }}
+                >
+                  <form onSubmit={handleContactSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label 
+                        htmlFor="contact-name"
+                        style={{ color: customization.layout.dark_mode ? '#d1d5db' : undefined }}
+                      >
+                        Votre nom *
+                      </Label>
+                      <div className="relative">
+                        <User 
+                          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" 
+                          style={{ color: customization.layout.dark_mode ? '#6b7280' : undefined }}
+                        />
+                        <Input
+                          id="contact-name"
+                          type="text"
+                          placeholder="Jean Dupont"
+                          value={contactName}
+                          onChange={(e) => setContactName(e.target.value)}
+                          className="pl-10"
+                          style={{
+                            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : undefined,
+                            borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.2)' : undefined,
+                            color: customization.layout.dark_mode ? 'white' : undefined,
+                          }}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label 
+                        htmlFor="contact-phone"
+                        style={{ color: customization.layout.dark_mode ? '#d1d5db' : undefined }}
+                      >
+                        Téléphone *
+                      </Label>
+                      <div className="relative">
+                        <Phone 
+                          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" 
+                          style={{ color: customization.layout.dark_mode ? '#6b7280' : undefined }}
+                        />
+                        <Input
+                          id="contact-phone"
+                          type="tel"
+                          placeholder="06 12 34 56 78"
+                          value={contactPhone}
+                          onChange={(e) => setContactPhone(e.target.value)}
+                          className="pl-10"
+                          style={{
+                            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : undefined,
+                            borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.2)' : undefined,
+                            color: customization.layout.dark_mode ? 'white' : undefined,
+                          }}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label 
+                        htmlFor="contact-message"
+                        style={{ color: customization.layout.dark_mode ? '#d1d5db' : undefined }}
+                      >
+                        Message (optionnel)
+                      </Label>
+                      <div className="relative">
+                        <MessageSquare 
+                          className="absolute left-3 top-3 w-4 h-4" 
+                          style={{ color: customization.layout.dark_mode ? '#6b7280' : undefined }}
+                        />
+                        <Textarea
+                          id="contact-message"
+                          placeholder="Décrivez votre besoin..."
+                          value={contactMessage}
+                          onChange={(e) => setContactMessage(e.target.value)}
+                          className="pl-10 min-h-[80px] resize-none"
+                          style={{
+                            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : undefined,
+                            borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.2)' : undefined,
+                            color: customization.layout.dark_mode ? 'white' : undefined,
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <Button 
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full text-white"
+                      style={{ backgroundColor: customization.colors.primary }}
+                    >
+                      {isSubmitting ? 'Envoi...' : 'Envoyer ma demande'}
+                      <Send className="w-4 h-4 ml-2" />
+                    </Button>
+                  </form>
+                </Card>
+              )}
             </div>
           )}
         </div>
