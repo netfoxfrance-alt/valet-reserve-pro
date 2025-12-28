@@ -61,7 +61,7 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-primary-foreground" />
             </div>
-            <SheetTitle className="font-semibold text-foreground">OCLINKO</SheetTitle>
+            <SheetTitle className="font-semibold text-foreground">CleaningPage</SheetTitle>
           </div>
         </SheetHeader>
         

@@ -14,7 +14,7 @@ export function BookingHeader({ centerName = "Centre", welcomeMessage }: Booking
             <Sparkles className="w-5 h-5 text-primary-foreground" />
           </div>
           <div>
-            <span className="font-semibold text-foreground tracking-tight">OCLINKO</span>
+            <span className="font-semibold text-foreground tracking-tight">CleaningPage</span>
             {centerName && (
               <span className="hidden sm:inline text-muted-foreground ml-2">• {centerName}</span>
             )}

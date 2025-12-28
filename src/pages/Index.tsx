@@ -21,7 +21,7 @@ export default function Index() {
             <div className="w-10 h-10 bg-foreground rounded-xl flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <span className="font-semibold text-xl text-foreground tracking-tight">OCLINKO</span>
+            <span className="font-semibold text-xl text-foreground tracking-tight">CleaningPage</span>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/auth">
@@ -127,7 +127,7 @@ export default function Index() {
                   Chaque professionnel obtient son propre lien à partager avec ses clients.
                 </p>
                 <div className="inline-flex items-center gap-2 bg-secondary/60 px-4 py-2.5 rounded-full font-mono text-sm">
-                  <span className="text-muted-foreground">oclinko.app/c/</span>
+                  <span className="text-muted-foreground">www.cleaningpage.com/c/</span>
                   <span className="text-primary font-semibold">votre-centre</span>
                 </div>
               </div>
@@ -189,7 +189,7 @@ export default function Index() {
                       <div className="w-3 h-3 rounded-full bg-muted-foreground/30" />
                     </div>
                     <div className="flex-1 bg-white rounded-md px-3 py-1 text-xs text-muted-foreground">
-                      oclinko.app/c/clean-auto-pro
+                      www.cleaningpage.com/c/clean-auto-pro
                     </div>
                   </div>
 
@@ -288,7 +288,7 @@ export default function Index() {
                       <div className="w-3 h-3 rounded-full bg-muted-foreground/30" />
                     </div>
                     <div className="flex-1 bg-white rounded-md px-3 py-1 text-xs text-muted-foreground">
-                      oclinko.app/dashboard
+                      www.cleaningpage.com/dashboard
                     </div>
                   </div>
 
@@ -300,7 +300,7 @@ export default function Index() {
                         <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center">
                           <Sparkles className="w-4 h-4 text-white" />
                         </div>
-                        <span className="text-sm font-semibold">OCLINKO</span>
+                        <span className="text-sm font-semibold">CleaningPage</span>
                       </div>
                       <p className="text-xs text-muted-foreground mb-6 truncate">/clean-auto-pro</p>
 
@@ -511,7 +511,7 @@ export default function Index() {
             {/* Free Plan */}
             <Card variant="elevated" className="p-8 rounded-2xl hover:shadow-xl transition-shadow duration-300">
               <div className="mb-6">
-                <h3 className="text-xl font-semibold text-foreground mb-1">Oclinko Free</h3>
+                <h3 className="text-xl font-semibold text-foreground mb-1">CleaningPage Free</h3>
                 <p className="text-muted-foreground text-sm">Présence en ligne simplifiée</p>
               </div>
               
@@ -564,7 +564,7 @@ export default function Index() {
               </div>
               
               <div className="mb-6">
-                <h3 className="text-xl font-semibold text-foreground mb-1">Oclinko Pro</h3>
+                <h3 className="text-xl font-semibold text-foreground mb-1">CleaningPage Pro</h3>
                 <p className="text-muted-foreground text-sm">Automatisation complète</p>
               </div>
               
@@ -677,10 +677,10 @@ export default function Index() {
             <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-white" />
             </div>
-            <span className="font-semibold text-foreground">OCLINKO</span>
+            <span className="font-semibold text-foreground">CleaningPage</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © 2024 OCLINKO. Tous droits réservés.
+            © 2024 CleaningPage. Tous droits réservés.
           </p>
         </div>
       </footer>
