@@ -124,7 +124,6 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
     client_name: '',
     client_email: '',
     client_phone: '',
-    vehicle_type: 'berline',
     pack_id: '',
     appointment_date: format(new Date(), 'yyyy-MM-dd'),
     appointment_time: '09:00',
@@ -141,7 +140,8 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
     await onAdd({
       ...form,
       pack_id: form.pack_id || null,
-      client_email: form.client_email || 'non-fourni@example.com'
+      client_email: form.client_email || 'non-fourni@example.com',
+      vehicle_type: 'standard'
     });
     setLoading(false);
     setOpen(false);
@@ -149,7 +149,6 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
       client_name: '',
       client_email: '',
       client_phone: '',
-      vehicle_type: 'berline',
       pack_id: '',
       appointment_date: format(new Date(), 'yyyy-MM-dd'),
       appointment_time: '09:00',
@@ -198,20 +197,6 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
                 onChange={(e) => setForm({ ...form, client_email: e.target.value })}
                 placeholder="jean@email.com"
               />
-            </div>
-            <div className="space-y-2">
-              <Label>Type de véhicule</Label>
-              <Select value={form.vehicle_type} onValueChange={(v) => setForm({ ...form, vehicle_type: v })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="citadine">Citadine</SelectItem>
-                  <SelectItem value="berline">Berline</SelectItem>
-                  <SelectItem value="suv">SUV / 4x4</SelectItem>
-                  <SelectItem value="utilitaire">Utilitaire</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
             <div className="space-y-2">
               <Label>Formule</Label>
