@@ -120,6 +120,7 @@ export type Database = {
           address: string | null
           ai_enabled: boolean | null
           created_at: string | null
+          customization: Json | null
           email: string | null
           id: string
           logo_url: string | null
@@ -135,6 +136,7 @@ export type Database = {
           address?: string | null
           ai_enabled?: boolean | null
           created_at?: string | null
+          customization?: Json | null
           email?: string | null
           id?: string
           logo_url?: string | null
@@ -150,6 +152,7 @@ export type Database = {
           address?: string | null
           ai_enabled?: boolean | null
           created_at?: string | null
+          customization?: Json | null
           email?: string | null
           id?: string
           logo_url?: string | null

@@ -15,6 +15,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { Sparkles, Upload, Trash2, Loader2 } from 'lucide-react';
+import { CustomizationSection } from '@/components/dashboard/CustomizationSection';
+import { CenterCustomization, defaultCustomization } from '@/types/customization';
 
 export default function DashboardSettings() {
   const { center, loading, updateCenter } = useMyCenter();
@@ -31,6 +33,7 @@ export default function DashboardSettings() {
     ai_enabled: true,
   });
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [customization, setCustomization] = useState<CenterCustomization>(defaultCustomization);
 
   useEffect(() => {
     if (center) {
@@ -42,12 +45,13 @@ export default function DashboardSettings() {
         ai_enabled: center.ai_enabled ?? true,
       });
       setLogoUrl(center.logo_url);
+      setCustomization(center.customization || defaultCustomization);
     }
   }, [center]);
 
   const handleSave = async () => {
     setSaving(true);
-    const { error } = await updateCenter(settings);
+    const { error } = await updateCenter({ ...settings, customization });
     setSaving(false);
     
     if (error) {
@@ -288,6 +292,16 @@ export default function DashboardSettings() {
               </div>
             </Card>
           </section>
+
+          {/* Customization Section */}
+          {center && user && (
+            <CustomizationSection
+              centerId={center.id}
+              userId={user.id}
+              customization={customization}
+              onUpdate={setCustomization}
+            />
+          )}
           
           <section className="mb-6 sm:mb-8">
             <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Assistant IA</h2>
