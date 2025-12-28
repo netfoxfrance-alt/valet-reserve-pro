@@ -7,10 +7,10 @@ interface LogoProps {
 }
 
 const sizes = {
-  sm: 'w-6 h-6',
-  md: 'w-8 h-8',
-  lg: 'w-10 h-10',
-  xl: 'w-16 h-16',
+  sm: 'w-5 h-5',
+  md: 'w-6 h-6',
+  lg: 'w-8 h-8',
+  xl: 'w-12 h-12',
 };
 
 export function Logo({ className, size = 'md', variant = 'dark' }: LogoProps) {
@@ -18,31 +18,23 @@ export function Logo({ className, size = 'md', variant = 'dark' }: LogoProps) {
   
   return (
     <svg
-      viewBox="0 0 64 64"
+      viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={cn(sizes[size], className)}
     >
-      {/* Minimalist droplet with shine - luxury cleaning aesthetic */}
+      {/* Modern minimal "C" with abstract shine/sparkle - Linktree/Calendly style */}
       <path
-        d="M32 4C32 4 12 28 12 42C12 53.046 20.954 62 32 62C43.046 62 52 53.046 52 42C52 28 32 4 32 4Z"
-        fill={fillColor}
-      />
-      {/* Inner shine detail */}
-      <path
-        d="M26 36C26 36 22 42 22 46C22 51.523 26.477 56 32 56C37.523 56 42 51.523 42 46C42 42 38 36 38 36"
-        stroke={variant === 'light' ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.25)'}
-        strokeWidth="2"
+        d="M16 2C8.268 2 2 8.268 2 16s6.268 14 14 14c2.5 0 4.85-.65 6.9-1.8"
+        stroke={fillColor}
+        strokeWidth="3.5"
         strokeLinecap="round"
         fill="none"
       />
-      {/* Highlight dot */}
-      <circle
-        cx="24"
-        cy="38"
-        r="3"
-        fill={variant === 'light' ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.35)'}
-      />
+      {/* Sparkle/shine dots representing cleaning */}
+      <circle cx="26" cy="8" r="2.5" fill={fillColor} />
+      <circle cx="22" cy="14" r="1.8" fill={fillColor} />
+      <circle cx="27" cy="18" r="1.2" fill={fillColor} />
     </svg>
   );
 }
