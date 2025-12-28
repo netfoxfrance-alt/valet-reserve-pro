@@ -119,9 +119,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
 
   return (
     <section className="mb-6 sm:mb-8">
-      <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Personnalisation</h2>
-      <p className="text-sm text-muted-foreground mb-4 sm:mb-6">Personnalisez l'apparence de votre page de réservation.</p>
-
       <Card variant="elevated" className="p-4 sm:p-6">
         <Tabs defaultValue="colors" className="w-full">
           <TabsList className="grid w-full grid-cols-4 mb-6">
