@@ -96,24 +96,64 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
           {isPro && packs.length > 0 && (
             <div className="mb-8">
               <h2 className="text-lg font-semibold text-foreground mb-4">Nos formules</h2>
-              <div className="grid grid-cols-2 gap-3">
-                {packs.slice(0, 6).map((pack) => (
-                  <Card 
-                    key={pack.id}
-                    className="p-4 sm:p-5 text-center bg-card border border-border hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer group"
-                    onClick={() => onSelectPack?.(pack)}
-                  >
-                    <p className="font-medium text-foreground group-hover:text-primary transition-colors mb-1">
-                      {pack.name}
-                    </p>
-                    <p className="text-xl sm:text-2xl font-bold text-foreground">
-                      {pack.price}€
-                    </p>
-                    {pack.duration && (
-                      <p className="text-xs text-muted-foreground mt-1">{pack.duration}</p>
-                    )}
-                  </Card>
-                ))}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {packs.slice(0, 6).map((pack) => {
+                  const hasVariants = pack.price_variants && pack.price_variants.length > 0;
+                  const minPrice = hasVariants 
+                    ? Math.min(...pack.price_variants.map(v => v.price))
+                    : pack.price;
+
+                  return (
+                    <Card 
+                      key={pack.id}
+                      className="p-4 sm:p-5 bg-card border border-border hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer group"
+                      onClick={() => onSelectPack?.(pack)}
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                            {pack.name}
+                          </p>
+                          {pack.description && (
+                            <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
+                              {pack.description}
+                            </p>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg sm:text-xl font-bold text-foreground">
+                            {hasVariants ? `${minPrice}€` : `${pack.price}€`}
+                          </p>
+                          {hasVariants && (
+                            <p className="text-xs text-muted-foreground">à partir de</p>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {hasVariants && (
+                        <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border/50">
+                          {pack.price_variants.slice(0, 4).map((v, i) => (
+                            <span key={i} className="text-xs bg-secondary/50 px-2 py-1 rounded">
+                              {v.name}: {v.price}€
+                            </span>
+                          ))}
+                          {pack.price_variants.length > 4 && (
+                            <span className="text-xs text-muted-foreground px-2 py-1">
+                              +{pack.price_variants.length - 4}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      
+                      {pack.duration && (
+                        <p className="text-xs text-muted-foreground mt-2">
+                          <Clock className="w-3 h-3 inline mr-1" />
+                          {pack.duration}
+                        </p>
+                      )}
+                    </Card>
+                  );
+                })}
               </div>
             </div>
           )}

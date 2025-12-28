@@ -7,10 +7,10 @@ import { ConfirmationView } from '@/components/booking/ConfirmationView';
 import { CenterLanding } from '@/components/booking/CenterLanding';
 import { ContactRequestForm, ContactRequestData } from '@/components/booking/ContactRequestForm';
 import { ContactConfirmation } from '@/components/booking/ContactConfirmation';
-import { useCenterBySlug, Pack } from '@/hooks/useCenter';
+import { useCenterBySlug, Pack, PriceVariant } from '@/hooks/useCenter';
 import { useCreateAppointment } from '@/hooks/useAppointments';
 import { useCreateContactRequest } from '@/hooks/useContactRequests';
-import { AlertCircle, ChevronLeft, Check } from 'lucide-react';
+import { AlertCircle, ChevronLeft, Check, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -21,6 +21,7 @@ type BookingStep =
   | 'contact-form'
   | 'contact-confirmation'
   | 'select-pack'
+  | 'select-variant'
   | 'calendar'
   | 'client-info'
   | 'confirmation';
@@ -34,6 +35,7 @@ export default function CenterBooking() {
   
   const [currentStep, setCurrentStep] = useState<BookingStep>('landing');
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<PriceVariant | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [clientData, setClientData] = useState<ClientData | null>(null);
@@ -50,8 +52,17 @@ export default function CenterBooking() {
       case 'select-pack':
         setCurrentStep('landing');
         break;
-      case 'calendar':
+      case 'select-variant':
         if (packs.length > 1) {
+          setCurrentStep('select-pack');
+        } else {
+          setCurrentStep('landing');
+        }
+        break;
+      case 'calendar':
+        if (selectedPack?.price_variants && selectedPack.price_variants.length > 0) {
+          setCurrentStep('select-variant');
+        } else if (packs.length > 1) {
           setCurrentStep('select-pack');
         } else {
           setCurrentStep('landing');
@@ -68,21 +79,33 @@ export default function CenterBooking() {
   const handleStartBooking = () => {
     if (isPro && packs.length > 0) {
       if (packs.length === 1) {
-        // Only one pack, select it and go to calendar
-        setSelectedPack(packs[0]);
-        setCurrentStep('calendar');
+        const pack = packs[0];
+        setSelectedPack(pack);
+        if (pack.price_variants && pack.price_variants.length > 0) {
+          setCurrentStep('select-variant');
+        } else {
+          setCurrentStep('calendar');
+        }
       } else {
-        // Multiple packs, show selection
         setCurrentStep('select-pack');
       }
     } else {
-      // Free flow: show contact form
       setCurrentStep('contact-form');
     }
   };
 
   const handleSelectPack = (pack: Pack) => {
     setSelectedPack(pack);
+    setSelectedVariant(null);
+    if (pack.price_variants && pack.price_variants.length > 0) {
+      setCurrentStep('select-variant');
+    } else {
+      setCurrentStep('calendar');
+    }
+  };
+
+  const handleSelectVariant = (variant: PriceVariant) => {
+    setSelectedVariant(variant);
     setCurrentStep('calendar');
   };
   
@@ -103,7 +126,7 @@ export default function CenterBooking() {
       client_name: data.name,
       client_email: data.email,
       client_phone: data.phone,
-      vehicle_type: 'berline',
+      vehicle_type: selectedVariant?.name || 'berline',
       appointment_date: selectedDate.toISOString().split('T')[0],
       appointment_time: selectedTime,
       notes: data.notes,
@@ -146,6 +169,9 @@ export default function CenterBooking() {
   };
   
   const showBackButton = currentStep !== 'landing' && currentStep !== 'confirmation' && currentStep !== 'contact-confirmation';
+
+  // Get final price (variant or pack base price)
+  const finalPrice = selectedVariant?.price || selectedPack?.price || 0;
 
   // Loading state
   if (loading) {
@@ -240,7 +266,7 @@ export default function CenterBooking() {
     name: selectedPack.name,
     description: selectedPack.description || '',
     duration: selectedPack.duration || '1h',
-    price: selectedPack.price,
+    price: finalPrice,
     features: selectedPack.features || [],
   } : null;
   
@@ -277,43 +303,122 @@ export default function CenterBooking() {
               </div>
               
               <div className="grid gap-4 sm:grid-cols-2">
-                {packs.map((pack) => (
+                {packs.map((pack) => {
+                  const hasVariants = pack.price_variants && pack.price_variants.length > 0;
+                  const minPrice = hasVariants 
+                    ? Math.min(...pack.price_variants.map(v => v.price))
+                    : pack.price;
+
+                  return (
+                    <Card 
+                      key={pack.id}
+                      variant="elevated"
+                      className={`p-5 sm:p-6 cursor-pointer transition-all hover:shadow-lg hover:border-primary/40 ${
+                        selectedPack?.id === pack.id ? 'border-primary ring-2 ring-primary/20' : ''
+                      }`}
+                      onClick={() => handleSelectPack(pack)}
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h3 className="font-semibold text-lg text-foreground">{pack.name}</h3>
+                          {pack.description && (
+                            <p className="text-sm text-muted-foreground mt-1">{pack.description}</p>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-foreground">{minPrice}€</p>
+                          {hasVariants && (
+                            <p className="text-xs text-muted-foreground">à partir de</p>
+                          )}
+                          {pack.duration && !hasVariants && (
+                            <p className="text-sm text-muted-foreground">{pack.duration}</p>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {hasVariants && (
+                        <div className="flex flex-wrap gap-1.5 mb-3">
+                          {pack.price_variants.slice(0, 3).map((v, i) => (
+                            <span key={i} className="text-xs bg-secondary/50 px-2 py-1 rounded">
+                              {v.name}: {v.price}€
+                            </span>
+                          ))}
+                          {pack.price_variants.length > 3 && (
+                            <span className="text-xs text-muted-foreground px-2 py-1">
+                              +{pack.price_variants.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      
+                      {pack.features && pack.features.length > 0 && (
+                        <ul className="space-y-1.5 mt-4 pt-4 border-t border-border/50">
+                          {pack.features.slice(0, 4).map((feature, i) => (
+                            <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Variant Selection */}
+          {currentStep === 'select-variant' && selectedPack && (
+            <div>
+              <div className="text-center mb-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+                  {selectedPack.name}
+                </h1>
+                <p className="text-muted-foreground">
+                  Sélectionnez votre catégorie
+                </p>
+              </div>
+              
+              <div className="grid gap-3 sm:grid-cols-2">
+                {selectedPack.price_variants.map((variant, index) => (
                   <Card 
-                    key={pack.id}
+                    key={index}
                     variant="elevated"
-                    className={`p-5 sm:p-6 cursor-pointer transition-all hover:shadow-lg hover:border-primary/40 ${
-                      selectedPack?.id === pack.id ? 'border-primary ring-2 ring-primary/20' : ''
+                    className={`p-5 cursor-pointer transition-all hover:shadow-lg hover:border-primary/40 ${
+                      selectedVariant?.name === variant.name ? 'border-primary ring-2 ring-primary/20' : ''
                     }`}
-                    onClick={() => handleSelectPack(pack)}
+                    onClick={() => handleSelectVariant(variant)}
                   >
-                    <div className="flex justify-between items-start mb-3">
+                    <div className="flex justify-between items-center">
                       <div>
-                        <h3 className="font-semibold text-lg text-foreground">{pack.name}</h3>
-                        {pack.description && (
-                          <p className="text-sm text-muted-foreground mt-1">{pack.description}</p>
+                        <h3 className="font-semibold text-lg text-foreground">{variant.name}</h3>
+                        {selectedPack.duration && (
+                          <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                            <Clock className="w-4 h-4" />
+                            {selectedPack.duration}
+                          </p>
                         )}
                       </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-foreground">{pack.price}€</p>
-                        {pack.duration && (
-                          <p className="text-sm text-muted-foreground">{pack.duration}</p>
-                        )}
-                      </div>
+                      <p className="text-2xl font-bold text-foreground">{variant.price}€</p>
                     </div>
-                    
-                    {pack.features && pack.features.length > 0 && (
-                      <ul className="space-y-1.5 mt-4">
-                        {pack.features.slice(0, 4).map((feature, i) => (
-                          <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
                   </Card>
                 ))}
               </div>
+
+              {selectedPack.features && selectedPack.features.length > 0 && (
+                <Card variant="elevated" className="mt-6 p-5">
+                  <p className="text-sm font-medium text-foreground mb-3">Ce qui est inclus :</p>
+                  <ul className="grid sm:grid-cols-2 gap-2">
+                    {selectedPack.features.map((feature, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              )}
             </div>
           )}
           
@@ -325,7 +430,9 @@ export default function CenterBooking() {
                   Choisissez votre créneau
                 </h1>
                 <p className="text-muted-foreground">
-                  {packData.name} • {packData.price}€
+                  {packData.name}
+                  {selectedVariant && ` • ${selectedVariant.name}`}
+                  {` • ${packData.price}€`}
                 </p>
               </div>
               <CalendarPicker duration={packData.duration} onSelect={handleDateSelect} />

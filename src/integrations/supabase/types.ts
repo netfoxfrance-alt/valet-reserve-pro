@@ -212,6 +212,7 @@ export type Database = {
           id: string
           name: string
           price: number
+          price_variants: Json | null
           sort_order: number | null
           updated_at: string | null
         }
@@ -225,6 +226,7 @@ export type Database = {
           id?: string
           name: string
           price: number
+          price_variants?: Json | null
           sort_order?: number | null
           updated_at?: string | null
         }
@@ -238,6 +240,7 @@ export type Database = {
           id?: string
           name?: string
           price?: number
+          price_variants?: Json | null
           sort_order?: number | null
           updated_at?: string | null
         }
