@@ -13,6 +13,7 @@ import DashboardAvailability from "./pages/DashboardAvailability";
 import DashboardPacks from "./pages/DashboardPacks";
 import DashboardSettings from "./pages/DashboardSettings";
 import DashboardRequests from "./pages/DashboardRequests";
+import DashboardStats from "./pages/DashboardStats";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -53,6 +54,11 @@ const App = () => (
             <Route path="/dashboard/settings" element={
               <ProtectedRoute>
                 <DashboardSettings />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/stats" element={
+              <ProtectedRoute>
+                <DashboardStats />
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />

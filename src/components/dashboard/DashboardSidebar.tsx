@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, Settings, Package, Clock, LogOut, Share2, Copy, Check, MessageSquare } from 'lucide-react';
+import { Calendar, Settings, Package, Clock, LogOut, Share2, Copy, Check, MessageSquare, BarChart3 } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,10 +9,11 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
 const navigation = [
-  { name: 'Rendez-vous', href: '/dashboard', icon: Calendar },
+  { name: 'Réservations', href: '/dashboard', icon: Calendar },
   { name: 'Demandes', href: '/dashboard/requests', icon: MessageSquare },
+  { name: 'Formules', href: '/dashboard/packs', icon: Package },
+  { name: 'Statistiques', href: '/dashboard/stats', icon: BarChart3 },
   { name: 'Disponibilités', href: '/dashboard/availability', icon: Clock },
-  { name: 'Packs', href: '/dashboard/packs', icon: Package },
   { name: 'Paramètres', href: '/dashboard/settings', icon: Settings },
 ];
 
