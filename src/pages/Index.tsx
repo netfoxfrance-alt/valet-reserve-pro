@@ -6,12 +6,12 @@ import { Logo } from '@/components/ui/Logo';
 import { 
   ArrowRight, Calendar, Users, BarChart3, Link2, 
   Zap, Shield, Clock, Check, Car, Droplets, MapPin, Phone, 
-  Star, Settings, LogOut, ChevronRight
+  Star, Settings, LogOut, ChevronRight, Globe, Palette, Eye
 } from 'lucide-react';
 
 export default function Index() {
   const [activeSlide, setActiveSlide] = useState(0);
-  const [dashboardTab, setDashboardTab] = useState<'reservations' | 'formules' | 'stats' | 'settings'>('reservations');
+  const [dashboardTab, setDashboardTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings'>('reservations');
 
   return (
     <div className="min-h-screen bg-white">
@@ -372,6 +372,7 @@ export default function Index() {
                       <nav className="space-y-1">
                         {[
                           { icon: Calendar, label: 'Réservations', active: dashboardTab === 'reservations', tab: 'reservations' as const },
+                          { icon: Globe, label: 'Ma Page', active: dashboardTab === 'mypage', tab: 'mypage' as const },
                           { icon: Droplets, label: 'Formules', active: dashboardTab === 'formules', tab: 'formules' as const },
                           { icon: BarChart3, label: 'Statistiques', active: dashboardTab === 'stats', tab: 'stats' as const },
                           { icon: Settings, label: 'Paramètres', active: dashboardTab === 'settings', tab: 'settings' as const },
@@ -434,6 +435,102 @@ export default function Index() {
                                 </span>
                               </div>
                             ))}
+                          </div>
+                        </>
+                      )}
+
+                      {dashboardTab === 'mypage' && (
+                        <>
+                          <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold text-foreground">Ma Page</h3>
+                            <button className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded-lg">
+                              Enregistrer
+                            </button>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-4">
+                            {/* Preview */}
+                            <div>
+                              <p className="text-xs text-muted-foreground mb-2">Aperçu</p>
+                              <div className="bg-secondary/30 rounded-xl p-3 h-[280px] flex items-center justify-center">
+                                <div className="w-[120px] bg-card rounded-xl shadow-lg overflow-hidden border border-border/40">
+                                  <div className="h-12 bg-gradient-to-r from-primary to-primary/60" />
+                                  <div className="p-2 -mt-3">
+                                    <div className="w-6 h-6 bg-primary rounded-lg mx-auto flex items-center justify-center mb-1 border-2 border-white">
+                                      <Car className="w-3 h-3 text-white" />
+                                    </div>
+                                    <p className="text-[8px] font-semibold text-center text-foreground">Clean Auto</p>
+                                    <p className="text-[6px] text-muted-foreground text-center mb-2">Lavage premium</p>
+                                    <div className="space-y-1">
+                                      <div className="bg-secondary/50 rounded p-1 text-center">
+                                        <p className="text-[6px] text-foreground">Simple</p>
+                                        <p className="text-[7px] font-semibold text-primary">15€</p>
+                                      </div>
+                                      <div className="bg-secondary/50 rounded p-1 text-center">
+                                        <p className="text-[6px] text-foreground">Complet</p>
+                                        <p className="text-[7px] font-semibold text-primary">65€</p>
+                                      </div>
+                                    </div>
+                                    <div className="mt-2 bg-primary text-white text-[6px] text-center py-1 rounded">
+                                      Réserver
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Customization */}
+                            <div>
+                              <p className="text-xs text-muted-foreground mb-2">Personnalisation</p>
+                              <div className="space-y-3">
+                                <div className="bg-secondary/30 rounded-lg p-3">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Palette className="w-3 h-3 text-muted-foreground" />
+                                    <p className="text-xs text-foreground">Couleurs</p>
+                                  </div>
+                                  <div className="flex gap-1.5">
+                                    {['#3b82f6', '#ef4444', '#22c55e', '#8b5cf6', '#f97316'].map((color) => (
+                                      <div 
+                                        key={color}
+                                        className="w-5 h-5 rounded-full border-2 border-white shadow-sm cursor-pointer"
+                                        style={{ backgroundColor: color }}
+                                      />
+                                    ))}
+                                  </div>
+                                </div>
+                                
+                                <div className="bg-secondary/30 rounded-lg p-3">
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                      <Eye className="w-3 h-3 text-muted-foreground" />
+                                      <p className="text-xs text-foreground">Afficher horaires</p>
+                                    </div>
+                                    <div className="w-7 h-4 bg-primary rounded-full relative">
+                                      <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full" />
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                <div className="bg-secondary/30 rounded-lg p-3">
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                      <Phone className="w-3 h-3 text-muted-foreground" />
+                                      <p className="text-xs text-foreground">Formulaire contact</p>
+                                    </div>
+                                    <div className="w-7 h-4 bg-muted-foreground/30 rounded-full relative">
+                                      <div className="absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full" />
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                <div className="bg-secondary/30 rounded-lg p-3">
+                                  <p className="text-xs text-muted-foreground mb-1.5">Slogan</p>
+                                  <div className="bg-background rounded px-2 py-1 text-[10px] text-foreground">
+                                    Spécialiste du lavage premium
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </>
                       )}
