@@ -67,7 +67,53 @@ export function useMyAppointments() {
     return { error: error?.message || null };
   };
 
-  return { appointments, loading, updateStatus };
+  const createAppointment = async (data: {
+    pack_id?: string | null;
+    client_name: string;
+    client_email: string;
+    client_phone: string;
+    vehicle_type: string;
+    appointment_date: string;
+    appointment_time: string;
+    notes?: string;
+  }) => {
+    if (!center) return { error: 'Aucun centre trouvé' };
+    
+    const { data: newAppointment, error } = await supabase
+      .from('appointments')
+      .insert({
+        ...data,
+        center_id: center.id,
+      })
+      .select(`
+        *,
+        pack:packs(id, name, price, duration)
+      `)
+      .single();
+
+    if (!error && newAppointment) {
+      setAppointments([...appointments, newAppointment as Appointment].sort((a, b) => {
+        const dateCompare = a.appointment_date.localeCompare(b.appointment_date);
+        if (dateCompare !== 0) return dateCompare;
+        return a.appointment_time.localeCompare(b.appointment_time);
+      }));
+    }
+    return { error: error?.message || null };
+  };
+
+  const deleteAppointment = async (id: string) => {
+    const { error } = await supabase
+      .from('appointments')
+      .delete()
+      .eq('id', id);
+
+    if (!error) {
+      setAppointments(appointments.filter(a => a.id !== id));
+    }
+    return { error: error?.message || null };
+  };
+
+  return { appointments, loading, updateStatus, createAppointment, deleteAppointment };
 }
 
 // Hook pour créer un rendez-vous (côté client)
