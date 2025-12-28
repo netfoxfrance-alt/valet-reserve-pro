@@ -163,6 +163,67 @@ export default function Dashboard() {
             ))}
           </div>
           
+          {/* Statistics section */}
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4">Statistiques</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
+              <Card variant="elevated" className="p-4 sm:p-5">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-1">Ce mois</p>
+                <p className="text-2xl sm:text-3xl font-semibold text-foreground">{appointments.length}</p>
+                <p className="text-xs text-green-600">Réservations totales</p>
+              </Card>
+              <Card variant="elevated" className="p-4 sm:p-5">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-1">Chiffre d'affaires</p>
+                <p className="text-2xl sm:text-3xl font-semibold text-foreground">
+                  {appointments.reduce((sum, a) => sum + (a.pack?.price || 0), 0).toLocaleString('fr-FR')}€
+                </p>
+                <p className="text-xs text-green-600">Ce mois</p>
+              </Card>
+            </div>
+            
+            {/* Pack distribution */}
+            <Card variant="elevated" className="p-4 sm:p-5">
+              <p className="text-xs sm:text-sm text-muted-foreground mb-3">Répartition des formules</p>
+              <div className="space-y-3">
+                {(() => {
+                  const packCounts = appointments.reduce((acc, a) => {
+                    const packName = a.pack?.name || 'Sans formule';
+                    acc[packName] = (acc[packName] || 0) + 1;
+                    return acc;
+                  }, {} as Record<string, number>);
+                  
+                  const total = appointments.length || 1;
+                  const sortedPacks = Object.entries(packCounts)
+                    .sort(([, a], [, b]) => b - a)
+                    .slice(0, 4);
+                  
+                  return sortedPacks.map(([name, count]) => {
+                    const pct = Math.round((count / total) * 100);
+                    return (
+                      <div key={name}>
+                        <div className="flex justify-between text-xs sm:text-sm mb-1">
+                          <span className="text-foreground">{name}</span>
+                          <span className="text-muted-foreground">{pct}%</span>
+                        </div>
+                        <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-primary rounded-full transition-all"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  });
+                })()}
+                {appointments.length === 0 && (
+                  <p className="text-xs sm:text-sm text-muted-foreground text-center py-2">
+                    Aucune donnée disponible
+                  </p>
+                )}
+              </div>
+            </Card>
+          </div>
+
           {/* Appointments section */}
           <div className="mb-4 sm:mb-6">
             <h2 className="text-lg sm:text-xl font-semibold text-foreground">Prochains rendez-vous</h2>
