@@ -261,11 +261,92 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* Slide 2: Dashboard Mockup - Simplified for mobile */}
+              {/* Slide 2: Dashboard Mockup */}
               <div className="w-full flex-shrink-0 px-2 sm:px-4">
-                <div className="bg-card rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl overflow-hidden border border-border/60">
-                  {/* Browser Bar - Hidden on mobile */}
-                  <div className="hidden sm:flex bg-secondary/50 px-4 py-3 items-center gap-3 border-b border-border/40">
+                
+                {/* MOBILE VERSION - Phone mockup style */}
+                <div className="sm:hidden mx-auto max-w-[280px]">
+                  <div className="bg-card rounded-[2rem] shadow-2xl overflow-hidden border-4 border-foreground/10 relative">
+                    {/* Phone notch */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-5 bg-foreground/10 rounded-b-2xl" />
+                    
+                    {/* Screen content */}
+                    <div className="pt-8 pb-16 px-4 min-h-[400px] bg-background">
+                      {/* Header */}
+                      <div className="flex items-center justify-between mb-5">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center">
+                            <Logo size="sm" variant="light" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-semibold text-foreground">Clean Auto Pro</p>
+                            <p className="text-[10px] text-muted-foreground">Aujourd'hui</p>
+                          </div>
+                        </div>
+                        <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
+                          <Users className="w-4 h-4 text-muted-foreground" />
+                        </div>
+                      </div>
+                      
+                      {/* Stats cards */}
+                      <div className="grid grid-cols-2 gap-2 mb-4">
+                        <div className="bg-secondary/50 rounded-xl p-3">
+                          <p className="text-[10px] text-muted-foreground">RDV du jour</p>
+                          <p className="text-xl font-bold text-foreground">8</p>
+                          <p className="text-[10px] text-green-600">+2 nouveaux</p>
+                        </div>
+                        <div className="bg-secondary/50 rounded-xl p-3">
+                          <p className="text-[10px] text-muted-foreground">CA du jour</p>
+                          <p className="text-xl font-bold text-foreground">340€</p>
+                          <p className="text-[10px] text-green-600">+15%</p>
+                        </div>
+                      </div>
+                      
+                      {/* Upcoming bookings */}
+                      <p className="text-xs font-semibold text-foreground mb-2">Prochains RDV</p>
+                      <div className="space-y-2">
+                        {[
+                          { name: 'Jean M.', time: '10:00', pack: 'Complet', color: 'green' },
+                          { name: 'Marie D.', time: '11:30', pack: 'Intérieur', color: 'yellow' },
+                          { name: 'Pierre B.', time: '14:00', pack: 'Simple', color: 'blue' },
+                        ].map((booking, i) => (
+                          <div key={i} className="flex items-center gap-3 bg-secondary/30 rounded-xl p-3">
+                            <div className={`w-1 h-10 rounded-full ${
+                              booking.color === 'green' ? 'bg-green-500' :
+                              booking.color === 'yellow' ? 'bg-yellow-500' : 'bg-blue-500'
+                            }`} />
+                            <div className="flex-1">
+                              <p className="text-xs font-medium text-foreground">{booking.name}</p>
+                              <p className="text-[10px] text-muted-foreground">{booking.pack}</p>
+                            </div>
+                            <p className="text-xs font-semibold text-foreground">{booking.time}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Bottom navigation */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-card border-t border-border/40 px-6 py-3">
+                      <div className="flex justify-around">
+                        {[
+                          { icon: Calendar, active: true },
+                          { icon: Droplets, active: false },
+                          { icon: BarChart3, active: false },
+                          { icon: Settings, active: false },
+                        ].map((item, i) => (
+                          <div key={i} className={`p-2 rounded-xl ${item.active ? 'bg-primary/10' : ''}`}>
+                            <item.icon className={`w-5 h-5 ${item.active ? 'text-primary' : 'text-muted-foreground'}`} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* DESKTOP VERSION - Browser mockup */}
+                <div className="hidden sm:block bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60">
+                  {/* Browser Bar */}
+                  <div className="bg-secondary/50 px-4 py-3 flex items-center gap-3 border-b border-border/40">
                     <div className="flex gap-1.5">
                       <div className="w-3 h-3 rounded-full bg-muted-foreground/30" />
                       <div className="w-3 h-3 rounded-full bg-muted-foreground/30" />
@@ -277,9 +358,9 @@ export default function Index() {
                   </div>
 
                   {/* Dashboard Layout */}
-                  <div className="flex min-h-[320px] sm:min-h-[400px]">
-                    {/* Sidebar - Hidden on mobile, show simplified header */}
-                    <div className="hidden sm:block w-48 bg-secondary/30 border-r border-border/40 p-4 flex-shrink-0">
+                  <div className="flex min-h-[400px]">
+                    {/* Sidebar */}
+                    <div className="w-48 bg-secondary/30 border-r border-border/40 p-4 flex-shrink-0">
                       <div className="flex items-center gap-2 mb-2">
                         <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center">
                           <Logo size="sm" variant="light" />
@@ -319,22 +400,14 @@ export default function Index() {
                     </div>
 
                     {/* Main Content */}
-                    <div className="flex-1 p-4 sm:p-6">
-                      {/* Mobile Header for Dashboard */}
-                      <div className="flex sm:hidden items-center gap-2 mb-4 pb-3 border-b border-border/40">
-                        <div className="w-6 h-6 bg-foreground rounded-md flex items-center justify-center">
-                          <Logo size="sm" variant="light" className="w-3 h-3" />
-                        </div>
-                        <span className="text-xs font-semibold text-foreground">CleaningPage</span>
-                      </div>
-
+                    <div className="flex-1 p-6">
                       {dashboardTab === 'reservations' && (
                         <>
-                          <div className="flex items-center justify-between mb-4 sm:mb-6">
-                            <h3 className="text-sm sm:text-lg font-semibold text-foreground">Réservations</h3>
-                            <div className="bg-secondary px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs">
+                          <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-lg font-semibold text-foreground">Réservations</h3>
+                            <div className="bg-secondary px-3 py-1 rounded-full text-xs">
                               <span className="font-semibold text-primary">8</span>
-                              <span className="text-muted-foreground">/12</span>
+                              <span className="text-muted-foreground">/12 aujourd'hui</span>
                             </div>
                           </div>
 
@@ -342,17 +415,17 @@ export default function Index() {
                             {[
                               { name: 'Jean Martin', vehicle: 'Audi A4', time: '10:00', status: 'Confirmé', color: 'green' },
                               { name: 'Marie Dupont', vehicle: 'BMW X3', time: '11:30', status: 'En attente', color: 'yellow' },
-                              { name: 'Pierre Bernard', vehicle: 'Clio', time: '14:00', status: 'Arrivé', color: 'blue' },
+                              { name: 'Pierre Bernard', vehicle: 'Renault Clio', time: '14:00', status: 'Arrivé', color: 'blue' },
                             ].map((booking, i) => (
-                              <div key={i} className="flex items-center gap-2 sm:gap-3 bg-secondary/30 rounded-lg p-2 sm:p-3">
-                                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-primary/10 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-semibold text-primary flex-shrink-0">
+                              <div key={i} className="flex items-center gap-3 bg-secondary/30 rounded-lg p-3">
+                                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-xs font-semibold text-primary">
                                   {booking.name.split(' ').map(n => n[0]).join('')}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-xs sm:text-sm font-medium text-foreground truncate">{booking.name}</p>
-                                  <p className="text-[10px] sm:text-xs text-muted-foreground">{booking.vehicle} • {booking.time}</p>
+                                  <p className="text-sm font-medium text-foreground truncate">{booking.name}</p>
+                                  <p className="text-xs text-muted-foreground">{booking.vehicle} • {booking.time}</p>
                                 </div>
-                                <span className={`text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full flex-shrink-0 ${
+                                <span className={`text-xs px-2 py-1 rounded-full ${
                                   booking.color === 'green' ? 'bg-green-100 text-green-700' :
                                   booking.color === 'yellow' ? 'bg-yellow-100 text-yellow-700' :
                                   'bg-blue-100 text-blue-700'
@@ -367,23 +440,23 @@ export default function Index() {
 
                       {dashboardTab === 'formules' && (
                         <>
-                          <h3 className="text-sm sm:text-lg font-semibold text-foreground mb-4 sm:mb-6">Vos formules</h3>
-                          <div className="space-y-2 sm:space-y-3">
+                          <h3 className="text-lg font-semibold text-foreground mb-6">Vos formules</h3>
+                          <div className="space-y-3">
                             {[
-                              { name: 'Lavage simple', desc: 'Extérieur', price: '15€' },
-                              { name: 'Nettoyage intérieur', desc: 'Aspiration', price: '35€' },
-                              { name: 'Formule complète', desc: 'Int + ext', price: '65€' },
+                              { name: 'Lavage simple', desc: 'Extérieur uniquement', price: '15€' },
+                              { name: 'Nettoyage intérieur', desc: 'Aspiration et nettoyage', price: '35€' },
+                              { name: 'Formule complète', desc: 'Intérieur + extérieur', price: '65€' },
                             ].map((pack, i) => (
-                              <div key={i} className="flex items-center gap-2 sm:gap-4 bg-secondary/30 rounded-lg p-2 sm:p-4">
-                                <div className="w-8 h-8 sm:w-12 sm:h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                                  <Droplets className="w-4 h-4 sm:w-6 sm:h-6 text-primary" />
+                              <div key={i} className="flex items-center gap-4 bg-secondary/30 rounded-lg p-4">
+                                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                  <Droplets className="w-6 h-6 text-primary" />
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-xs sm:text-sm font-medium text-foreground truncate">{pack.name}</p>
-                                  <p className="text-[10px] sm:text-xs text-muted-foreground">{pack.desc}</p>
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-foreground">{pack.name}</p>
+                                  <p className="text-xs text-muted-foreground">{pack.desc}</p>
                                 </div>
-                                <p className="text-xs sm:text-sm font-semibold text-primary flex-shrink-0">{pack.price}</p>
-                                <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                                <p className="text-sm font-semibold text-primary">{pack.price}</p>
+                                <ChevronRight className="w-4 h-4 text-muted-foreground" />
                               </div>
                             ))}
                           </div>
@@ -392,33 +465,33 @@ export default function Index() {
 
                       {dashboardTab === 'stats' && (
                         <>
-                          <h3 className="text-sm sm:text-lg font-semibold text-foreground mb-4 sm:mb-6">Statistiques</h3>
-                          <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
-                            <div className="bg-secondary/30 rounded-lg p-3 sm:p-4">
-                              <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Ce mois</p>
-                              <p className="text-lg sm:text-2xl font-semibold text-foreground">127</p>
-                              <p className="text-[10px] sm:text-xs text-green-600">+12%</p>
+                          <h3 className="text-lg font-semibold text-foreground mb-6">Statistiques</h3>
+                          <div className="grid grid-cols-2 gap-4 mb-6">
+                            <div className="bg-secondary/30 rounded-lg p-4">
+                              <p className="text-xs text-muted-foreground mb-1">Ce mois</p>
+                              <p className="text-2xl font-semibold text-foreground">127</p>
+                              <p className="text-xs text-green-600">+12% vs mois dernier</p>
                             </div>
-                            <div className="bg-secondary/30 rounded-lg p-3 sm:p-4">
-                              <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">CA</p>
-                              <p className="text-lg sm:text-2xl font-semibold text-foreground">4 850€</p>
-                              <p className="text-[10px] sm:text-xs text-green-600">+8%</p>
+                            <div className="bg-secondary/30 rounded-lg p-4">
+                              <p className="text-xs text-muted-foreground mb-1">Chiffre d'affaires</p>
+                              <p className="text-2xl font-semibold text-foreground">4 850€</p>
+                              <p className="text-xs text-green-600">+8% vs mois dernier</p>
                             </div>
                           </div>
-                          <div className="bg-secondary/30 rounded-lg p-3 sm:p-4">
-                            <p className="text-[10px] sm:text-xs text-muted-foreground mb-2 sm:mb-3">Répartition</p>
+                          <div className="bg-secondary/30 rounded-lg p-4">
+                            <p className="text-xs text-muted-foreground mb-3">Répartition des formules</p>
                             <div className="space-y-2">
                               {[
-                                { name: 'Complète', pct: 45 },
-                                { name: 'Intérieur', pct: 30 },
-                                { name: 'Simple', pct: 25 },
+                                { name: 'Formule complète', pct: 45 },
+                                { name: 'Nettoyage intérieur', pct: 30 },
+                                { name: 'Lavage simple', pct: 25 },
                               ].map((item, i) => (
                                 <div key={i}>
-                                  <div className="flex justify-between text-[10px] sm:text-xs mb-1">
+                                  <div className="flex justify-between text-xs mb-1">
                                     <span className="text-foreground">{item.name}</span>
                                     <span className="text-muted-foreground">{item.pct}%</span>
                                   </div>
-                                  <div className="h-1.5 sm:h-2 bg-secondary rounded-full overflow-hidden">
+                                  <div className="h-2 bg-secondary rounded-full overflow-hidden">
                                     <div 
                                       className="h-full bg-primary rounded-full transition-all"
                                       style={{ width: `${item.pct}%` }}
@@ -433,18 +506,22 @@ export default function Index() {
 
                       {dashboardTab === 'settings' && (
                         <>
-                          <h3 className="text-sm sm:text-lg font-semibold text-foreground mb-4 sm:mb-6">Paramètres</h3>
-                          <div className="space-y-3 sm:space-y-4">
-                            <div className="bg-secondary/30 rounded-lg p-3 sm:p-4">
-                              <p className="text-[10px] sm:text-xs text-muted-foreground mb-2">Logo</p>
-                              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-card rounded-lg border border-border/40 flex items-center justify-center">
-                                <Car className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
+                          <h3 className="text-lg font-semibold text-foreground mb-6">Paramètres</h3>
+                          <div className="space-y-4">
+                            <div className="bg-secondary/30 rounded-lg p-4">
+                              <p className="text-xs text-muted-foreground mb-2">Logo du centre</p>
+                              <div className="w-16 h-16 bg-card rounded-lg border border-border/40 flex items-center justify-center">
+                                <Car className="w-8 h-8 text-muted-foreground" />
                               </div>
                             </div>
-                            <div className="bg-secondary/30 rounded-lg p-3 sm:p-4">
-                              <p className="text-[10px] sm:text-xs text-muted-foreground mb-1 sm:mb-2">Infos</p>
-                              <p className="text-xs sm:text-sm font-medium text-foreground">Clean Auto Pro</p>
-                              <p className="text-[10px] sm:text-xs text-muted-foreground">Paris</p>
+                            <div className="bg-secondary/30 rounded-lg p-4">
+                              <p className="text-xs text-muted-foreground mb-2">Informations</p>
+                              <p className="text-sm font-medium text-foreground">Clean Auto Pro</p>
+                              <p className="text-xs text-muted-foreground">12 rue du Lavage, 75001 Paris</p>
+                            </div>
+                            <div className="bg-secondary/30 rounded-lg p-4">
+                              <p className="text-xs text-muted-foreground mb-2">Horaires</p>
+                              <p className="text-sm text-foreground">Lun - Sam : 9h - 19h</p>
                             </div>
                           </div>
                         </>
@@ -455,7 +532,6 @@ export default function Index() {
               </div>
             </div>
           </div>
-
           {/* Toggle Button */}
           <div className="flex justify-center mt-6 sm:mt-8">
             <Button 
