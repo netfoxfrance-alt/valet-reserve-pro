@@ -1,23 +1,17 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { BookingHeader } from '@/components/booking/BookingHeader';
-import { ProgressBar } from '@/components/booking/ProgressBar';
-import { QuestionCard } from '@/components/booking/QuestionCard';
-import { OptionButton } from '@/components/booking/OptionButton';
-import { PackRecommendation } from '@/components/booking/PackRecommendation';
 import { CalendarPicker } from '@/components/booking/CalendarPicker';
 import { ClientForm, ClientData } from '@/components/booking/ClientForm';
 import { ConfirmationView } from '@/components/booking/ConfirmationView';
 import { CenterLanding } from '@/components/booking/CenterLanding';
 import { ContactRequestForm, ContactRequestData } from '@/components/booking/ContactRequestForm';
 import { ContactConfirmation } from '@/components/booking/ContactConfirmation';
-import { BookingAnswers, VehicleType, CleaningObjective, VehicleCondition, TimePreference } from '@/types/booking';
 import { useCenterBySlug, Pack } from '@/hooks/useCenter';
 import { useCreateAppointment } from '@/hooks/useAppointments';
 import { useCreateContactRequest } from '@/hooks/useContactRequests';
-import { Car, Truck, Target, RefreshCw, FileCheck, Sparkles, Droplets, Clock, Zap, AlertCircle } from 'lucide-react';
+import { AlertCircle, ChevronLeft, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
@@ -26,42 +20,10 @@ type BookingStep =
   | 'landing'
   | 'contact-form'
   | 'contact-confirmation'
-  | 'vehicle-type'
-  | 'objective'
-  | 'condition'
-  | 'interior'
-  | 'exterior'
-  | 'time-preference'
-  | 'recommendation'
+  | 'select-pack'
   | 'calendar'
   | 'client-info'
   | 'confirmation';
-
-// Recommandation de pack basée sur les réponses
-function recommendPack(answers: BookingAnswers, packs: Pack[]): Pack | null {
-  if (packs.length === 0) return null;
-  
-  const sortedPacks = [...packs].sort((a, b) => a.price - b.price);
-  const { objective, condition, interior, exterior } = answers;
-  
-  if (objective === 'remise-neuf' || objective === 'revente') {
-    return sortedPacks[sortedPacks.length - 1]; // Le plus cher
-  }
-  
-  if (condition === 'tres-sale') {
-    return sortedPacks[sortedPacks.length - 1];
-  }
-  
-  if (condition === 'sale' || (interior && exterior)) {
-    return sortedPacks[Math.floor(sortedPacks.length / 2)] || sortedPacks[0];
-  }
-  
-  if (objective === 'leasing') {
-    return sortedPacks[Math.floor(sortedPacks.length / 2)] || sortedPacks[0];
-  }
-  
-  return sortedPacks[0]; // Le moins cher
-}
 
 export default function CenterBooking() {
   const { slug } = useParams<{ slug: string }>();
@@ -71,7 +33,6 @@ export default function CenterBooking() {
   const { toast } = useToast();
   
   const [currentStep, setCurrentStep] = useState<BookingStep>('landing');
-  const [answers, setAnswers] = useState<BookingAnswers>({});
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -82,64 +43,46 @@ export default function CenterBooking() {
   const isPro = center?.subscription_plan === 'pro';
   
   const goToPrevStep = () => {
-    if (currentStep === 'contact-form') {
-      setCurrentStep('landing');
-    } else if (currentStep === 'vehicle-type') {
-      setCurrentStep('landing');
-    } else {
-      // Pro flow navigation
-      const proSteps: BookingStep[] = ['landing', 'vehicle-type', 'objective', 'condition', 'interior', 'exterior', 'time-preference', 'recommendation', 'calendar', 'client-info', 'confirmation'];
-      const currentIndex = proSteps.indexOf(currentStep);
-      if (currentIndex > 0) {
-        setCurrentStep(proSteps[currentIndex - 1]);
-      }
+    switch (currentStep) {
+      case 'contact-form':
+        setCurrentStep('landing');
+        break;
+      case 'select-pack':
+        setCurrentStep('landing');
+        break;
+      case 'calendar':
+        if (packs.length > 1) {
+          setCurrentStep('select-pack');
+        } else {
+          setCurrentStep('landing');
+        }
+        break;
+      case 'client-info':
+        setCurrentStep('calendar');
+        break;
+      default:
+        setCurrentStep('landing');
     }
   };
 
   const handleStartBooking = () => {
     if (isPro && packs.length > 0) {
-      // Pro flow: start questionnaire
-      setCurrentStep('vehicle-type');
+      if (packs.length === 1) {
+        // Only one pack, select it and go to calendar
+        setSelectedPack(packs[0]);
+        setCurrentStep('calendar');
+      } else {
+        // Multiple packs, show selection
+        setCurrentStep('select-pack');
+      }
     } else {
       // Free flow: show contact form
       setCurrentStep('contact-form');
     }
   };
-  
-  const handleVehicleType = (type: VehicleType) => {
-    setAnswers({ ...answers, vehicleType: type });
-    setCurrentStep('objective');
-  };
-  
-  const handleObjective = (objective: CleaningObjective) => {
-    setAnswers({ ...answers, objective });
-    setCurrentStep('condition');
-  };
-  
-  const handleCondition = (condition: VehicleCondition) => {
-    setAnswers({ ...answers, condition });
-    setCurrentStep('interior');
-  };
-  
-  const handleInterior = (interior: boolean) => {
-    setAnswers({ ...answers, interior });
-    setCurrentStep('exterior');
-  };
-  
-  const handleExterior = (exterior: boolean) => {
-    setAnswers({ ...answers, exterior });
-    setCurrentStep('time-preference');
-  };
-  
-  const handleTimePreference = (preference: TimePreference) => {
-    const newAnswers = { ...answers, timePreference: preference };
-    setAnswers(newAnswers);
-    const pack = recommendPack(newAnswers, packs);
+
+  const handleSelectPack = (pack: Pack) => {
     setSelectedPack(pack);
-    setCurrentStep('recommendation');
-  };
-  
-  const handlePackSelect = () => {
     setCurrentStep('calendar');
   };
   
@@ -160,7 +103,7 @@ export default function CenterBooking() {
       client_name: data.name,
       client_email: data.email,
       client_phone: data.phone,
-      vehicle_type: answers.vehicleType || 'berline',
+      vehicle_type: 'berline',
       appointment_date: selectedDate.toISOString().split('T')[0],
       appointment_time: selectedTime,
       notes: data.notes,
@@ -203,12 +146,6 @@ export default function CenterBooking() {
   };
   
   const showBackButton = currentStep !== 'landing' && currentStep !== 'confirmation' && currentStep !== 'contact-confirmation';
-  
-  // Calculate progress for Pro questionnaire
-  const proQuestionSteps = ['vehicle-type', 'objective', 'condition', 'interior', 'exterior', 'time-preference'];
-  const isInQuestionFlow = proQuestionSteps.includes(currentStep);
-  const currentQuestionNumber = proQuestionSteps.indexOf(currentStep) + 1;
-  const totalQuestionSteps = proQuestionSteps.length;
 
   // Loading state
   if (loading) {
@@ -249,10 +186,7 @@ export default function CenterBooking() {
         center={center}
         packs={packs}
         onStartBooking={handleStartBooking}
-        onSelectPack={(pack) => {
-          setSelectedPack(pack);
-          setCurrentStep('calendar');
-        }}
+        onSelectPack={handleSelectPack}
         hasPacks={packs.length > 0}
         isPro={isPro}
       />
@@ -300,8 +234,8 @@ export default function CenterBooking() {
     );
   }
 
-  // Convert Pack from hook to Pack type expected by PackRecommendation
-  const packForRecommendation = selectedPack ? {
+  // Pack data for views
+  const packData = selectedPack ? {
     id: selectedPack.id,
     name: selectedPack.name,
     description: selectedPack.description || '',
@@ -312,7 +246,7 @@ export default function CenterBooking() {
   
   return (
     <div className="min-h-screen bg-background">
-      <BookingHeader centerName={center.name} welcomeMessage={center.welcome_message} />
+      <BookingHeader centerName={center.name} />
       
       <main className="px-4 pb-16 pt-8">
         <div className="max-w-4xl mx-auto">
@@ -330,187 +264,83 @@ export default function CenterBooking() {
             </div>
           )}
           
-          {isInQuestionFlow && (
-            <ProgressBar currentStep={currentQuestionNumber} totalSteps={totalQuestionSteps} />
+          {/* Pack Selection */}
+          {currentStep === 'select-pack' && (
+            <div>
+              <div className="text-center mb-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+                  Choisissez votre formule
+                </h1>
+                <p className="text-muted-foreground">
+                  Sélectionnez la prestation qui vous convient
+                </p>
+              </div>
+              
+              <div className="grid gap-4 sm:grid-cols-2">
+                {packs.map((pack) => (
+                  <Card 
+                    key={pack.id}
+                    variant="elevated"
+                    className={`p-5 sm:p-6 cursor-pointer transition-all hover:shadow-lg hover:border-primary/40 ${
+                      selectedPack?.id === pack.id ? 'border-primary ring-2 ring-primary/20' : ''
+                    }`}
+                    onClick={() => handleSelectPack(pack)}
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="font-semibold text-lg text-foreground">{pack.name}</h3>
+                        {pack.description && (
+                          <p className="text-sm text-muted-foreground mt-1">{pack.description}</p>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-bold text-foreground">{pack.price}€</p>
+                        {pack.duration && (
+                          <p className="text-sm text-muted-foreground">{pack.duration}</p>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {pack.features && pack.features.length > 0 && (
+                      <ul className="space-y-1.5 mt-4">
+                        {pack.features.slice(0, 4).map((feature, i) => (
+                          <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </Card>
+                ))}
+              </div>
+            </div>
           )}
           
-          {currentStep === 'vehicle-type' && (
-            <QuestionCard 
-              question="Quel type de véhicule ?"
-              subtitle="Sélectionnez la catégorie de votre véhicule"
-            >
-              <OptionButton
-                label="Citadine"
-                description="Twingo, 208, Polo..."
-                icon={<Car className="w-5 h-5" />}
-                selected={answers.vehicleType === 'citadine'}
-                onClick={() => handleVehicleType('citadine')}
-              />
-              <OptionButton
-                label="Berline"
-                description="308, Golf, Série 3..."
-                icon={<Car className="w-5 h-5" />}
-                selected={answers.vehicleType === 'berline'}
-                onClick={() => handleVehicleType('berline')}
-              />
-              <OptionButton
-                label="SUV / 4x4"
-                description="Peugeot 3008, Tiguan, X3..."
-                icon={<Truck className="w-5 h-5" />}
-                selected={answers.vehicleType === 'suv'}
-                onClick={() => handleVehicleType('suv')}
-              />
-              <OptionButton
-                label="Utilitaire"
-                description="Kangoo, Partner, Transit..."
-                icon={<Truck className="w-5 h-5" />}
-                selected={answers.vehicleType === 'utilitaire'}
-                onClick={() => handleVehicleType('utilitaire')}
-              />
-            </QuestionCard>
+          {/* Calendar */}
+          {currentStep === 'calendar' && packData && (
+            <div>
+              <div className="text-center mb-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+                  Choisissez votre créneau
+                </h1>
+                <p className="text-muted-foreground">
+                  {packData.name} • {packData.price}€
+                </p>
+              </div>
+              <CalendarPicker duration={packData.duration} onSelect={handleDateSelect} />
+            </div>
           )}
           
-          {currentStep === 'objective' && (
-            <QuestionCard 
-              question="Quel est votre objectif ?"
-              subtitle="Cela nous aide à vous proposer le bon service"
-            >
-              <OptionButton
-                label="Entretien régulier"
-                description="Garder mon véhicule propre"
-                icon={<RefreshCw className="w-5 h-5" />}
-                selected={answers.objective === 'entretien'}
-                onClick={() => handleObjective('entretien')}
-              />
-              <OptionButton
-                label="Préparation à la revente"
-                description="Maximiser la valeur de mon véhicule"
-                icon={<Target className="w-5 h-5" />}
-                selected={answers.objective === 'revente'}
-                onClick={() => handleObjective('revente')}
-              />
-              <OptionButton
-                label="Fin de leasing"
-                description="Restitution du véhicule"
-                icon={<FileCheck className="w-5 h-5" />}
-                selected={answers.objective === 'leasing'}
-                onClick={() => handleObjective('leasing')}
-              />
-              <OptionButton
-                label="Remise à neuf"
-                description="Récupérer l'éclat d'origine"
-                icon={<Sparkles className="w-5 h-5" />}
-                selected={answers.objective === 'remise-neuf'}
-                onClick={() => handleObjective('remise-neuf')}
-              />
-            </QuestionCard>
-          )}
-          
-          {currentStep === 'condition' && (
-            <QuestionCard 
-              question="État actuel du véhicule ?"
-              subtitle="Soyez honnête, cela nous aide à prévoir le temps nécessaire"
-            >
-              <OptionButton
-                label="Légèrement sale"
-                description="Quelques traces, poussière légère"
-                selected={answers.condition === 'leger'}
-                onClick={() => handleCondition('leger')}
-              />
-              <OptionButton
-                label="Sale"
-                description="Taches, poussière, quelques odeurs"
-                selected={answers.condition === 'sale'}
-                onClick={() => handleCondition('sale')}
-              />
-              <OptionButton
-                label="Très sale"
-                description="Encrassement important, taches incrustées"
-                selected={answers.condition === 'tres-sale'}
-                onClick={() => handleCondition('tres-sale')}
-              />
-            </QuestionCard>
-          )}
-          
-          {currentStep === 'interior' && (
-            <QuestionCard 
-              question="Nettoyage intérieur ?"
-              subtitle="Sièges, tableau de bord, vitres intérieures..."
-            >
-              <OptionButton
-                label="Oui"
-                description="L'intérieur a besoin d'être nettoyé"
-                icon={<Sparkles className="w-5 h-5" />}
-                selected={answers.interior === true}
-                onClick={() => handleInterior(true)}
-              />
-              <OptionButton
-                label="Non"
-                description="L'intérieur est correct"
-                selected={answers.interior === false}
-                onClick={() => handleInterior(false)}
-              />
-            </QuestionCard>
-          )}
-          
-          {currentStep === 'exterior' && (
-            <QuestionCard 
-              question="Nettoyage extérieur ?"
-              subtitle="Carrosserie, vitres, jantes..."
-            >
-              <OptionButton
-                label="Oui"
-                description="L'extérieur a besoin d'être nettoyé"
-                icon={<Droplets className="w-5 h-5" />}
-                selected={answers.exterior === true}
-                onClick={() => handleExterior(true)}
-              />
-              <OptionButton
-                label="Non"
-                description="L'extérieur est correct"
-                selected={answers.exterior === false}
-                onClick={() => handleExterior(false)}
-              />
-            </QuestionCard>
-          )}
-          
-          {currentStep === 'time-preference' && (
-            <QuestionCard 
-              question="Quand souhaitez-vous ?"
-              subtitle="Nous adaptons nos disponibilités"
-            >
-              <OptionButton
-                label="Flexible"
-                description="Je peux m'adapter à vos créneaux"
-                icon={<Clock className="w-5 h-5" />}
-                selected={answers.timePreference === 'flexible'}
-                onClick={() => handleTimePreference('flexible')}
-              />
-              <OptionButton
-                label="Rapide"
-                description="J'ai besoin d'un créneau au plus vite"
-                icon={<Zap className="w-5 h-5" />}
-                selected={answers.timePreference === 'rapide'}
-                onClick={() => handleTimePreference('rapide')}
-              />
-            </QuestionCard>
-          )}
-          
-          {currentStep === 'recommendation' && packForRecommendation && (
-            <PackRecommendation pack={packForRecommendation} onSelect={handlePackSelect} />
-          )}
-          
-          {currentStep === 'calendar' && packForRecommendation && (
-            <CalendarPicker duration={packForRecommendation.duration} onSelect={handleDateSelect} />
-          )}
-          
+          {/* Client Info */}
           {currentStep === 'client-info' && (
             <ClientForm onSubmit={handleClientSubmit} isSubmitting={submitting} />
           )}
           
-          {currentStep === 'confirmation' && packForRecommendation && selectedDate && selectedTime && clientData && (
+          {/* Confirmation */}
+          {currentStep === 'confirmation' && packData && selectedDate && selectedTime && clientData && (
             <ConfirmationView 
-              pack={packForRecommendation}
+              pack={packData}
               date={selectedDate}
               time={selectedTime}
               clientName={clientData.name}
