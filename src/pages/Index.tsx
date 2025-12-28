@@ -659,7 +659,7 @@ export default function Index() {
       {/* Trust signals */}
       <section className="py-16 sm:py-24 md:py-36 px-4 sm:px-6 bg-secondary/30">
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-2xl mx-auto">
             <Card variant="elevated" className="p-5 sm:p-6 rounded-xl sm:rounded-2xl text-center hover:shadow-xl transition-shadow duration-300">
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
                 <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
@@ -674,13 +674,6 @@ export default function Index() {
               <p className="font-semibold text-foreground text-sm sm:text-base mb-1">Prêt en 5 min</p>
               <p className="text-xs sm:text-sm text-muted-foreground">Configuration ultra rapide</p>
             </Card>
-            <Card variant="elevated" className="p-5 sm:p-6 rounded-xl sm:rounded-2xl text-center hover:shadow-xl transition-shadow duration-300">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-              </div>
-              <p className="font-semibold text-foreground text-sm sm:text-base mb-1">Pour tous les pros</p>
-              <p className="text-xs sm:text-sm text-muted-foreground">Detailing, lavage, esthétique</p>
-            </Card>
           </div>
         </div>
       </section>
@@ -689,10 +682,10 @@ export default function Index() {
       <section className="py-16 sm:py-24 md:py-36 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 px-2">
-            Prêt à simplifier votre quotidien ?
+            Prêt à développer votre activité ?
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground mb-8 sm:mb-10 leading-relaxed px-2">
-            Rejoignez les professionnels qui gagnent du temps chaque jour.
+            Gagnez du temps et attirez plus de clients chaque jour.
           </p>
           <Link to="/auth">
             <Button size="lg" className="rounded-full px-6 sm:px-8 text-sm sm:text-base">
