@@ -28,7 +28,6 @@ export default function DashboardSettings() {
     address: '',
     phone: '',
     welcome_message: '',
-    ai_enabled: true,
   });
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
@@ -39,7 +38,6 @@ export default function DashboardSettings() {
         address: center.address || '',
         phone: center.phone || '',
         welcome_message: center.welcome_message || '',
-        ai_enabled: center.ai_enabled ?? true,
       });
       setLogoUrl(center.logo_url);
     }
@@ -289,23 +287,6 @@ export default function DashboardSettings() {
             </Card>
           </section>
           
-          <section className="mb-6 sm:mb-8">
-            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Assistant IA</h2>
-            <Card variant="elevated" className="p-4 sm:p-6">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-foreground">Activer l'assistant IA</p>
-                  <p className="text-sm text-muted-foreground">
-                    Permet aux clients de poser des questions via le chat.
-                  </p>
-                </div>
-                <Switch
-                  checked={settings.ai_enabled}
-                  onCheckedChange={(checked) => setSettings({ ...settings, ai_enabled: checked })}
-                />
-              </div>
-            </Card>
-          </section>
           
           <div className="flex justify-end">
             <Button variant="premium" onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
