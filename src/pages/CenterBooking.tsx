@@ -246,8 +246,13 @@ export default function CenterBooking() {
   if (currentStep === 'landing') {
     return (
       <CenterLanding 
-        center={center} 
+        center={center}
+        packs={packs}
         onStartBooking={handleStartBooking}
+        onSelectPack={(pack) => {
+          setSelectedPack(pack);
+          setCurrentStep('calendar');
+        }}
         hasPacks={packs.length > 0}
         isPro={isPro}
       />
