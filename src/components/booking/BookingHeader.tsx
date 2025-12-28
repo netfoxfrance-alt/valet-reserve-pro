@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 
 interface BookingHeaderProps {
   centerName?: string;
@@ -11,7 +11,7 @@ export function BookingHeader({ centerName = "Centre", welcomeMessage }: Booking
       <div className="max-w-4xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-primary-foreground" />
+            <Logo size="sm" variant="light" />
           </div>
           <div>
             <span className="font-semibold text-foreground tracking-tight">CleaningPage</span>

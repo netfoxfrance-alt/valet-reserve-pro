@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, Settings, Package, Clock, Sparkles, LogOut, Share2, Copy, Check, MessageSquare } from 'lucide-react';
+import { Calendar, Settings, Package, Clock, LogOut, Share2, Copy, Check, MessageSquare } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { useMyCenter } from '@/hooks/useCenter';
@@ -47,7 +48,7 @@ export function DashboardSidebar() {
       <div className="flex items-center gap-2 px-6 h-16 border-b border-border">
         <Link to="/" className="flex items-center gap-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-primary-foreground" />
+            <Logo size="sm" variant="light" />
           </div>
           <span className="font-semibold text-foreground">CleaningPage</span>
         </Link>

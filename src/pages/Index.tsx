@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Logo } from '@/components/ui/Logo';
 import { 
-  Sparkles, ArrowRight, Calendar, Users, BarChart3, Link2, 
+  ArrowRight, Calendar, Users, BarChart3, Link2, 
   Zap, Shield, Clock, Check, Car, Droplets, MapPin, Phone, 
   Star, Settings, LogOut, ChevronRight
 } from 'lucide-react';
@@ -19,7 +20,7 @@ export default function Index() {
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 bg-foreground rounded-xl flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
+              <Logo size="sm" variant="light" />
             </div>
             <span className="font-semibold text-xl text-foreground tracking-tight">CleaningPage</span>
           </div>
@@ -298,7 +299,7 @@ export default function Index() {
                     <div className="w-48 bg-secondary/30 border-r border-border/40 p-4 flex-shrink-0">
                       <div className="flex items-center gap-2 mb-2">
                         <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center">
-                          <Sparkles className="w-4 h-4 text-white" />
+                          <Logo size="sm" variant="light" />
                         </div>
                         <span className="text-sm font-semibold">CleaningPage</span>
                       </div>
@@ -675,7 +676,7 @@ export default function Index() {
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-white" />
+              <Logo size="sm" variant="light" />
             </div>
             <span className="font-semibold text-foreground">CleaningPage</span>
           </div>
