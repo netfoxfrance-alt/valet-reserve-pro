@@ -482,51 +482,93 @@ export default function Index() {
                             {/* Customization */}
                             <div>
                               <p className="text-xs text-muted-foreground mb-2">Personnalisation</p>
-                              <div className="space-y-3">
-                                <div className="bg-secondary/30 rounded-lg p-3">
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <Palette className="w-3 h-3 text-muted-foreground" />
-                                    <p className="text-xs text-foreground">Couleurs</p>
+                              
+                              {/* Tabs */}
+                              <div className="flex gap-1 mb-3 bg-secondary/50 p-1 rounded-lg">
+                                {[
+                                  { icon: Palette, label: 'Couleurs', active: true },
+                                  { icon: MapPin, label: 'Textes', active: false },
+                                  { icon: Eye, label: 'Affichage', active: false },
+                                  { icon: Car, label: 'Image', active: false },
+                                ].map((tab) => (
+                                  <div 
+                                    key={tab.label}
+                                    className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded text-[9px] ${
+                                      tab.active ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground'
+                                    }`}
+                                  >
+                                    <tab.icon className="w-2.5 h-2.5" />
+                                    <span className="hidden lg:inline">{tab.label}</span>
                                   </div>
-                                  <div className="flex gap-1.5">
-                                    {['#3b82f6', '#ef4444', '#22c55e', '#8b5cf6', '#f97316'].map((color) => (
+                                ))}
+                              </div>
+
+                              <div className="space-y-2.5">
+                                {/* Color presets */}
+                                <div className="bg-secondary/30 rounded-lg p-2.5">
+                                  <p className="text-[10px] text-muted-foreground mb-2">Thèmes prédéfinis</p>
+                                  <div className="grid grid-cols-3 gap-1.5">
+                                    {[
+                                      { name: 'Bleu', colors: ['#3b82f6', '#1e293b', '#10b981'] },
+                                      { name: 'Rouge', colors: ['#ef4444', '#1c1917', '#f59e0b'] },
+                                      { name: 'Vert', colors: ['#22c55e', '#14532d', '#3b82f6'] },
+                                      { name: 'Violet', colors: ['#8b5cf6', '#1e1b4b', '#ec4899'] },
+                                      { name: 'Orange', colors: ['#f97316', '#431407', '#06b6d4'] },
+                                      { name: 'Rose', colors: ['#ec4899', '#500724', '#8b5cf6'] },
+                                    ].map((theme) => (
                                       <div 
-                                        key={color}
-                                        className="w-5 h-5 rounded-full border-2 border-white shadow-sm cursor-pointer"
-                                        style={{ backgroundColor: color }}
-                                      />
+                                        key={theme.name}
+                                        className={`p-1.5 rounded border cursor-pointer ${theme.name === 'Bleu' ? 'border-primary ring-1 ring-primary/20' : 'border-border/50 hover:border-muted-foreground/50'}`}
+                                      >
+                                        <div className="flex gap-0.5 mb-1">
+                                          {theme.colors.map((c, i) => (
+                                            <div key={i} className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c }} />
+                                          ))}
+                                        </div>
+                                        <p className="text-[8px] text-muted-foreground text-center">{theme.name}</p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Custom colors */}
+                                <div className="bg-secondary/30 rounded-lg p-2.5">
+                                  <p className="text-[10px] text-muted-foreground mb-2">Couleurs personnalisées</p>
+                                  <div className="grid grid-cols-3 gap-2">
+                                    {[
+                                      { label: 'Principale', color: '#3b82f6' },
+                                      { label: 'Secondaire', color: '#1e293b' },
+                                      { label: 'Accent', color: '#10b981' },
+                                    ].map((item) => (
+                                      <div key={item.label} className="text-center">
+                                        <div 
+                                          className="w-6 h-6 rounded-lg mx-auto mb-1 border border-border/50"
+                                          style={{ backgroundColor: item.color }}
+                                        />
+                                        <p className="text-[8px] text-muted-foreground">{item.label}</p>
+                                      </div>
                                     ))}
                                   </div>
                                 </div>
                                 
-                                <div className="bg-secondary/30 rounded-lg p-3">
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                      <Eye className="w-3 h-3 text-muted-foreground" />
-                                      <p className="text-xs text-foreground">Afficher horaires</p>
-                                    </div>
-                                    <div className="w-7 h-4 bg-primary rounded-full relative">
-                                      <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full" />
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                <div className="bg-secondary/30 rounded-lg p-3">
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                      <Phone className="w-3 h-3 text-muted-foreground" />
-                                      <p className="text-xs text-foreground">Formulaire contact</p>
-                                    </div>
-                                    <div className="w-7 h-4 bg-muted-foreground/30 rounded-full relative">
-                                      <div className="absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full" />
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                <div className="bg-secondary/30 rounded-lg p-3">
-                                  <p className="text-xs text-muted-foreground mb-1.5">Slogan</p>
-                                  <div className="bg-background rounded px-2 py-1 text-[10px] text-foreground">
-                                    Spécialiste du lavage premium
+                                {/* Toggle options preview */}
+                                <div className="bg-secondary/30 rounded-lg p-2.5">
+                                  <p className="text-[10px] text-muted-foreground mb-2">Options d'affichage</p>
+                                  <div className="space-y-1.5">
+                                    {[
+                                      { label: 'Horaires', enabled: true },
+                                      { label: 'Adresse', enabled: true },
+                                      { label: 'Téléphone', enabled: true },
+                                      { label: 'Formulaire contact', enabled: false },
+                                      { label: 'Mode sombre', enabled: false },
+                                    ].map((opt) => (
+                                      <div key={opt.label} className="flex items-center justify-between">
+                                        <p className="text-[9px] text-foreground">{opt.label}</p>
+                                        <div className={`w-6 h-3 rounded-full relative ${opt.enabled ? 'bg-primary' : 'bg-muted-foreground/30'}`}>
+                                          <div className={`absolute top-0.5 w-2 h-2 bg-white rounded-full ${opt.enabled ? 'right-0.5' : 'left-0.5'}`} />
+                                        </div>
+                                      </div>
+                                    ))}
                                   </div>
                                 </div>
                               </div>
