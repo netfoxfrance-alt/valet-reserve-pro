@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
+import { CenterCustomization, defaultCustomization } from '@/types/customization';
+
 export interface Center {
   id: string;
   owner_id: string;
@@ -14,9 +16,22 @@ export interface Center {
   welcome_message: string | null;
   ai_enabled: boolean;
   subscription_plan: 'free' | 'pro';
+  customization: CenterCustomization;
   created_at: string;
   updated_at: string;
 }
+
+// Helper to parse customization from DB
+const parseCustomization = (data: unknown): CenterCustomization => {
+  if (!data || typeof data !== 'object') return defaultCustomization;
+  const parsed = data as Partial<CenterCustomization>;
+  return {
+    colors: { ...defaultCustomization.colors, ...(parsed.colors || {}) },
+    texts: { ...defaultCustomization.texts, ...(parsed.texts || {}) },
+    layout: { ...defaultCustomization.layout, ...(parsed.layout || {}) },
+    cover_url: parsed.cover_url ?? null,
+  };
+};
 
 export interface PriceVariant {
   name: string;
@@ -71,8 +86,11 @@ export function useMyCenter() {
 
       if (error) {
         setError(error.message);
-      } else {
-        setCenter(data);
+      } else if (data) {
+        setCenter({
+          ...data,
+          customization: parseCustomization(data.customization),
+        });
       }
       setLoading(false);
     };
@@ -83,9 +101,12 @@ export function useMyCenter() {
   const updateCenter = async (updates: Partial<Center>) => {
     if (!center) return { error: 'No center found' };
     
+    // Convert customization for DB storage
+    const dbUpdates: Record<string, unknown> = { ...updates };
+    
     const { error } = await supabase
       .from('centers')
-      .update(updates)
+      .update(dbUpdates)
       .eq('id', center.id);
 
     if (!error) {
@@ -134,7 +155,10 @@ export function useCenterBySlug(slug: string) {
         return;
       }
 
-      setCenter(centerData);
+      setCenter({
+        ...centerData,
+        customization: parseCustomization(centerData.customization),
+      });
 
       // Fetch packs
       const { data: packsData } = await supabase
