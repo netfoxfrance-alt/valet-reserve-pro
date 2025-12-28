@@ -18,6 +18,11 @@ export interface Center {
   updated_at: string;
 }
 
+export interface PriceVariant {
+  name: string;
+  price: number;
+}
+
 export interface Pack {
   id: string;
   center_id: string;
@@ -26,6 +31,7 @@ export interface Pack {
   duration: string | null;
   price: number;
   features: string[];
+  price_variants: PriceVariant[];
   sort_order: number;
   active: boolean;
   created_at: string;
@@ -138,7 +144,12 @@ export function useCenterBySlug(slug: string) {
         .eq('active', true)
         .order('sort_order');
 
-      setPacks(packsData || []);
+      // Transform packs to ensure price_variants is properly typed
+      const transformedPacks: Pack[] = (packsData || []).map(p => ({
+        ...p,
+        price_variants: (p.price_variants as unknown as PriceVariant[]) || [],
+      }));
+      setPacks(transformedPacks);
 
       // Fetch availability
       const { data: availabilityData } = await supabase
@@ -176,7 +187,12 @@ export function useMyPacks() {
         .eq('center_id', center.id)
         .order('sort_order');
 
-      setPacks(data || []);
+      // Transform packs to ensure price_variants is properly typed
+      const transformedPacks: Pack[] = (data || []).map(p => ({
+        ...p,
+        price_variants: (p.price_variants as unknown as PriceVariant[]) || [],
+      }));
+      setPacks(transformedPacks);
       setLoading(false);
     };
 
@@ -186,22 +202,32 @@ export function useMyPacks() {
   const createPack = async (pack: Omit<Pack, 'id' | 'center_id' | 'created_at' | 'updated_at'>) => {
     if (!center) return { error: 'No center found' };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const insertData: any = { ...pack, center_id: center.id };
+    
     const { data, error } = await supabase
       .from('packs')
-      .insert({ ...pack, center_id: center.id })
+      .insert(insertData)
       .select()
       .single();
 
     if (!error && data) {
-      setPacks([...packs, data]);
+      const transformedPack: Pack = {
+        ...data,
+        price_variants: (data.price_variants as unknown as PriceVariant[]) || [],
+      };
+      setPacks([...packs, transformedPack]);
     }
     return { data, error: error?.message || null };
   };
 
   const updatePack = async (id: string, updates: Partial<Pack>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updateData: any = { ...updates };
+    
     const { error } = await supabase
       .from('packs')
-      .update(updates)
+      .update(updateData)
       .eq('id', id);
 
     if (!error) {
