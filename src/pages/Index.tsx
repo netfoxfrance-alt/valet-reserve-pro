@@ -828,11 +828,8 @@ export default function Index() {
       </section>
       
       {/* Footer */}
-      <footer className="py-12 sm:py-16 px-4 sm:px-6 border-t border-border/50">
-        <div className="max-w-5xl mx-auto flex flex-col items-center gap-6">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-secondary/50 flex items-center justify-center shadow-lg shadow-black/5">
-            <Logo size="lg" className="opacity-80" />
-          </div>
+      <footer className="py-8 sm:py-10 px-4 sm:px-6 border-t border-border/50">
+        <div className="max-w-5xl mx-auto flex items-center justify-center">
           <p className="text-sm text-muted-foreground">
             © 2024 CleaningPage. Tous droits réservés.
           </p>
