@@ -9,7 +9,7 @@ import {
   Star, Settings, LogOut, ChevronRight, Globe, Palette, Eye,
   Instagram, MessageCircle, Share2, ExternalLink, Sparkles
 } from 'lucide-react';
-import mockupBanner from '@/assets/mockup-banner.jpg';
+import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 
 export default function Index() {
   const [dashboardTab, setDashboardTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings'>('reservations');
@@ -112,24 +112,22 @@ export default function Index() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
                     
-                    {/* Logo - centered at bottom */}
-                    <div className="absolute -bottom-7 left-1/2 -translate-x-1/2">
-                      <div className="w-16 h-16 sm:w-18 sm:h-18 bg-card rounded-2xl shadow-xl flex items-center justify-center border-4 border-card">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-foreground rounded-xl flex items-center justify-center">
-                          <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-background" />
-                        </div>
+                    {/* Logo - positioned left with nice styling */}
+                    <div className="absolute -bottom-6 left-4 sm:left-5">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-2xl shadow-xl flex items-center justify-center ring-4 ring-white">
+                        <span className="text-xl sm:text-2xl font-bold text-foreground">CA</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 sm:p-5 pt-11 sm:pt-12">
-                    {/* Header - centered */}
-                    <div className="text-center mb-4">
-                      <div className="flex items-center justify-center gap-2 mb-1">
+                  <div className="p-4 sm:p-5 pt-10 sm:pt-11">
+                    {/* Header - aligned left under logo */}
+                    <div className="mb-4">
+                      <div className="flex items-center gap-2 mb-1">
                         <h3 className="text-base sm:text-lg font-semibold text-foreground">Clean Auto Pro</h3>
                         <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Ouvert</span>
                       </div>
-                      <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-2">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                         <span>Lavage auto premium</span>
                         <span>•</span>
                         <div className="flex items-center gap-1">
@@ -139,19 +137,19 @@ export default function Index() {
                       </div>
                       {/* Description */}
                       <p className="text-[11px] text-muted-foreground leading-relaxed">
-                        Spécialiste du nettoyage automobile depuis 2018.
+                        Spécialiste du nettoyage automobile depuis 2018. Service de qualité premium.
                       </p>
                     </div>
 
-                    {/* Social Icons - centered, minimal */}
-                    <div className="flex items-center justify-center gap-3 mb-4">
-                      <div className="w-9 h-9 bg-secondary/80 rounded-full flex items-center justify-center hover:bg-secondary transition-colors">
+                    {/* Social Icons - aligned left, minimal */}
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
                         <Instagram className="w-4 h-4 text-foreground" />
                       </div>
-                      <div className="w-9 h-9 bg-secondary/80 rounded-full flex items-center justify-center hover:bg-secondary transition-colors">
+                      <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
                         <Globe className="w-4 h-4 text-foreground" />
                       </div>
-                      <div className="w-9 h-9 bg-secondary/80 rounded-full flex items-center justify-center hover:bg-secondary transition-colors">
+                      <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
                         <MessageCircle className="w-4 h-4 text-foreground" />
                       </div>
                     </div>
