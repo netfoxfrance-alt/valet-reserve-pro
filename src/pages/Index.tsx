@@ -13,7 +13,7 @@ import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 
 export default function Index() {
   const [dashboardTab, setDashboardTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings'>('reservations');
-  const [mobileTab, setMobileTab] = useState<'reservations' | 'formules' | 'stats' | 'settings'>('reservations');
+  const [mobileTab, setMobileTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings'>('reservations');
 
   return (
     <div className="min-h-screen bg-background">
@@ -728,6 +728,47 @@ export default function Index() {
                   </>
                 )}
 
+                {mobileTab === 'mypage' && (
+                  <>
+                    <p className="text-xs font-semibold text-foreground mb-3">Ma Page</p>
+                    <div className="bg-secondary/30 rounded-xl p-3 mb-3">
+                      <p className="text-[10px] text-muted-foreground mb-2">Aperçu</p>
+                      <div className="bg-card rounded-lg p-2 border border-border/40">
+                        <div className="h-8 bg-gradient-to-r from-primary to-primary/60 rounded-t-md" />
+                        <div className="p-2 -mt-2">
+                          <div className="w-5 h-5 bg-primary rounded mx-auto flex items-center justify-center mb-1 border-2 border-card">
+                            <Car className="w-2.5 h-2.5 text-primary-foreground" />
+                          </div>
+                          <p className="text-[7px] font-semibold text-center text-foreground">Clean Auto</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="bg-secondary/30 rounded-xl p-3">
+                        <p className="text-[10px] text-muted-foreground mb-1.5">Couleur principale</p>
+                        <div className="flex gap-1.5">
+                          {['#3b82f6', '#22c55e', '#ef4444', '#f59e0b'].map((c) => (
+                            <div key={c} className={`w-6 h-6 rounded-full border-2 ${c === '#3b82f6' ? 'border-foreground' : 'border-transparent'}`} style={{ backgroundColor: c }} />
+                          ))}
+                        </div>
+                      </div>
+                      <div className="bg-secondary/30 rounded-xl p-3">
+                        <p className="text-[10px] text-muted-foreground mb-1.5">Affichage</p>
+                        <div className="space-y-1.5">
+                          {['Horaires', 'Adresse', 'Téléphone'].map((opt) => (
+                            <div key={opt} className="flex items-center justify-between">
+                              <p className="text-[10px] text-foreground">{opt}</p>
+                              <div className="w-7 h-4 bg-primary rounded-full relative">
+                                <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-card rounded-full" />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 {mobileTab === 'settings' && (
                   <>
                     <p className="text-xs font-semibold text-foreground mb-3">Paramètres</p>
@@ -755,21 +796,27 @@ export default function Index() {
                 )}
               </div>
               
-              {/* Bottom navigation */}
-              <div className="absolute bottom-0 left-0 right-0 bg-card border-t border-border/40 px-6 py-3">
+              {/* Bottom navigation with hint */}
+              <div className="absolute bottom-0 left-0 right-0 bg-card border-t border-border/40 px-4 py-2">
+                {/* Hint text */}
+                <p className="text-[8px] text-center text-muted-foreground mb-1.5 animate-pulse">
+                  ↓ Cliquez pour explorer ↓
+                </p>
                 <div className="flex justify-around">
                   {[
-                    { icon: Calendar, tab: 'reservations' as const },
-                    { icon: Droplets, tab: 'formules' as const },
-                    { icon: BarChart3, tab: 'stats' as const },
-                    { icon: Settings, tab: 'settings' as const },
+                    { icon: Calendar, tab: 'reservations' as const, label: 'RDV' },
+                    { icon: Globe, tab: 'mypage' as const, label: 'Page' },
+                    { icon: Droplets, tab: 'formules' as const, label: 'Packs' },
+                    { icon: BarChart3, tab: 'stats' as const, label: 'Stats' },
+                    { icon: Settings, tab: 'settings' as const, label: 'Config' },
                   ].map((item) => (
                     <button 
                       key={item.tab}
                       onClick={() => setMobileTab(item.tab)}
-                      className={`p-2 rounded-xl transition-colors ${mobileTab === item.tab ? 'bg-primary/10' : ''}`}
+                      className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl transition-all ${mobileTab === item.tab ? 'bg-primary/10 scale-110' : 'hover:bg-secondary/50'}`}
                     >
-                      <item.icon className={`w-5 h-5 ${mobileTab === item.tab ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <item.icon className={`w-4 h-4 ${mobileTab === item.tab ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <span className={`text-[7px] ${mobileTab === item.tab ? 'text-primary font-medium' : 'text-muted-foreground'}`}>{item.label}</span>
                     </button>
                   ))}
                 </div>
