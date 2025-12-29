@@ -308,58 +308,73 @@ export default function Index() {
           </div>
 
           {/* Interactive Dashboard Mockup */}
-          <div className="hidden sm:block bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60">
-            {/* Browser Bar */}
-            <div className="bg-secondary/50 px-4 py-3 flex items-center gap-3 border-b border-border/40">
-              <div className="flex gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-muted-foreground/30" />
-                <div className="w-3 h-3 rounded-full bg-muted-foreground/30" />
-                <div className="w-3 h-3 rounded-full bg-muted-foreground/30" />
-              </div>
-              <div className="flex-1 bg-background rounded-md px-3 py-1 text-xs text-muted-foreground">
-                cleaningpage.com/dashboard
+          <div className="hidden sm:flex items-start gap-4">
+            {/* Hint on the left */}
+            <div className="flex flex-col items-center justify-center pt-32">
+              <p className="text-xs text-muted-foreground animate-pulse mb-2 whitespace-nowrap [writing-mode:vertical-lr] rotate-180">
+                Cliquez pour explorer
+              </p>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-sm text-muted-foreground">→</span>
+                <span className="text-sm text-muted-foreground">→</span>
+                <span className="text-sm text-muted-foreground">→</span>
+                <span className="text-sm text-muted-foreground">→</span>
+                <span className="text-sm text-muted-foreground">→</span>
               </div>
             </div>
 
-            {/* Dashboard Layout */}
-            <div className="flex min-h-[400px]">
-              {/* Sidebar */}
-              <div className="w-48 bg-secondary/30 border-r border-border/40 p-4 flex-shrink-0">
-                <div className="flex items-center gap-2 mb-2">
-                  <Logo size="md" />
+            <div className="flex-1 bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60">
+              {/* Browser Bar */}
+              <div className="bg-secondary/50 px-4 py-3 flex items-center gap-3 border-b border-border/40">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-muted-foreground/30" />
+                  <div className="w-3 h-3 rounded-full bg-muted-foreground/30" />
+                  <div className="w-3 h-3 rounded-full bg-muted-foreground/30" />
                 </div>
-                <p className="text-xs text-muted-foreground mb-6 truncate">/clean-auto-pro</p>
-
-                <nav className="space-y-1">
-                  {[
-                    { icon: Calendar, label: 'Réservations', active: dashboardTab === 'reservations', tab: 'reservations' as const },
-                    { icon: Globe, label: 'Ma Page', active: dashboardTab === 'mypage', tab: 'mypage' as const },
-                    { icon: Droplets, label: 'Formules', active: dashboardTab === 'formules', tab: 'formules' as const },
-                    { icon: BarChart3, label: 'Statistiques', active: dashboardTab === 'stats', tab: 'stats' as const },
-                    { icon: Settings, label: 'Paramètres', active: dashboardTab === 'settings', tab: 'settings' as const },
-                  ].map((item) => (
-                    <button
-                      key={item.label}
-                      onClick={() => setDashboardTab(item.tab)}
-                      className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-colors ${
-                        item.active 
-                          ? 'bg-card text-foreground shadow-sm' 
-                          : 'text-muted-foreground hover:bg-card/50'
-                      }`}
-                    >
-                      <item.icon className="w-4 h-4" />
-                      {item.label}
-                    </button>
-                  ))}
-                </nav>
-
-                <div className="mt-auto pt-6">
-                  <button className="w-full flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                    <LogOut className="w-4 h-4" />
-                    Déconnexion
-                  </button>
+                <div className="flex-1 bg-background rounded-md px-3 py-1 text-xs text-muted-foreground">
+                  cleaningpage.com/dashboard
                 </div>
               </div>
+
+              {/* Dashboard Layout */}
+              <div className="flex min-h-[400px]">
+                {/* Sidebar */}
+                <div className="w-48 bg-secondary/30 border-r border-border/40 p-4 flex-shrink-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Logo size="md" />
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-6 truncate">/clean-auto-pro</p>
+
+                  <nav className="space-y-1">
+                    {[
+                      { icon: Calendar, label: 'Réservations', active: dashboardTab === 'reservations', tab: 'reservations' as const },
+                      { icon: Globe, label: 'Ma Page', active: dashboardTab === 'mypage', tab: 'mypage' as const },
+                      { icon: Droplets, label: 'Formules', active: dashboardTab === 'formules', tab: 'formules' as const },
+                      { icon: BarChart3, label: 'Statistiques', active: dashboardTab === 'stats', tab: 'stats' as const },
+                      { icon: Settings, label: 'Paramètres', active: dashboardTab === 'settings', tab: 'settings' as const },
+                    ].map((item) => (
+                      <button
+                        key={item.label}
+                        onClick={() => setDashboardTab(item.tab)}
+                        className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all ${
+                          item.active 
+                            ? 'bg-card text-foreground shadow-sm scale-105' 
+                            : 'text-muted-foreground hover:bg-card/50'
+                        }`}
+                      >
+                        <item.icon className="w-4 h-4" />
+                        {item.label}
+                      </button>
+                    ))}
+                  </nav>
+
+                  <div className="mt-auto pt-6">
+                    <button className="w-full flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                      <LogOut className="w-4 h-4" />
+                      Déconnexion
+                    </button>
+                  </div>
+                </div>
 
               {/* Main Content */}
               <div className="flex-1 p-6">
@@ -601,6 +616,7 @@ export default function Index() {
               </div>
             </div>
           </div>
+        </div>
 
           {/* Mobile Dashboard Preview */}
           <div className="sm:hidden mx-auto max-w-[280px]">
