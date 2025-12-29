@@ -307,23 +307,17 @@ export default function Index() {
             ))}
           </div>
 
-          {/* Interactive Dashboard Mockup */}
-          <div className="hidden sm:flex items-start gap-4">
-            {/* Hint on the left */}
-            <div className="flex flex-col items-center justify-center pt-32">
-              <p className="text-xs text-muted-foreground animate-pulse mb-2 whitespace-nowrap [writing-mode:vertical-lr] rotate-180">
-                Cliquez pour explorer
-              </p>
-              <div className="flex flex-col gap-0.5">
-                <span className="text-sm text-muted-foreground">→</span>
-                <span className="text-sm text-muted-foreground">→</span>
-                <span className="text-sm text-muted-foreground">→</span>
-                <span className="text-sm text-muted-foreground">→</span>
-                <span className="text-sm text-muted-foreground">→</span>
-              </div>
+          {/* Interactive hint badge */}
+          <div className="hidden sm:flex justify-center mb-4">
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium animate-bounce">
+              <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+              Cliquez sur le menu pour explorer le dashboard
             </div>
+          </div>
 
-            <div className="flex-1 bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60">
+          {/* Interactive Dashboard Mockup */}
+          <div className="hidden sm:block">
+            <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60">
               {/* Browser Bar */}
               <div className="bg-secondary/50 px-4 py-3 flex items-center gap-3 border-b border-border/40">
                 <div className="flex gap-1.5">
@@ -899,19 +893,13 @@ export default function Index() {
               </div>
             </div>
             
-            {/* Hint below the phone */}
-            <div className="mt-3 flex items-center justify-center gap-1">
-              <div className="flex items-center gap-0.5">
-                <span className="text-[10px] text-muted-foreground">↑</span>
-                <span className="text-[10px] text-muted-foreground">↑</span>
-                <span className="text-[10px] text-muted-foreground">↑</span>
-                <span className="text-[10px] text-muted-foreground">↑</span>
-                <span className="text-[10px] text-muted-foreground">↑</span>
+            {/* Hint badge below the phone */}
+            <div className="mt-4 flex justify-center">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-xs font-medium animate-bounce">
+                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
+                Touchez le menu en bas
               </div>
             </div>
-            <p className="text-[10px] text-center text-muted-foreground animate-pulse">
-              Cliquez sur les icônes pour explorer
-            </p>
           </div>
         </div>
       </section>
