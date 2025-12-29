@@ -830,7 +830,7 @@ export default function Index() {
       {/* Footer */}
       <footer className="py-12 sm:py-16 px-4 sm:px-6 border-t border-border/50">
         <div className="max-w-5xl mx-auto flex flex-col items-center gap-6">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-secondary/50 flex items-center justify-center shadow-sm">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-secondary/50 flex items-center justify-center shadow-lg shadow-black/5">
             <Logo size="lg" className="opacity-80" />
           </div>
           <p className="text-sm text-muted-foreground">
