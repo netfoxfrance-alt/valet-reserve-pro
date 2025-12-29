@@ -15,6 +15,7 @@ import DashboardSettings from "./pages/DashboardSettings";
 import DashboardRequests from "./pages/DashboardRequests";
 import DashboardStats from "./pages/DashboardStats";
 import DashboardMyPage from "./pages/DashboardMyPage";
+import Upgrade from "./pages/Upgrade";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -32,24 +33,33 @@ const App = () => (
             <Route path="/booking" element={<Booking />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/c/:slug" element={<CenterBooking />} />
+            
+            {/* Pro-only routes */}
             <Route path="/dashboard" element={
-              <ProtectedRoute>
+              <ProtectedRoute requirePro>
                 <Dashboard />
               </ProtectedRoute>
             } />
-            <Route path="/dashboard/requests" element={
-              <ProtectedRoute>
-                <DashboardRequests />
-              </ProtectedRoute>
-            } />
             <Route path="/dashboard/availability" element={
-              <ProtectedRoute>
+              <ProtectedRoute requirePro>
                 <DashboardAvailability />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/packs" element={
-              <ProtectedRoute>
+              <ProtectedRoute requirePro>
                 <DashboardPacks />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/stats" element={
+              <ProtectedRoute requirePro>
+                <DashboardStats />
+              </ProtectedRoute>
+            } />
+            
+            {/* Free routes */}
+            <Route path="/dashboard/requests" element={
+              <ProtectedRoute>
+                <DashboardRequests />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/settings" element={
@@ -57,16 +67,17 @@ const App = () => (
                 <DashboardSettings />
               </ProtectedRoute>
             } />
-            <Route path="/dashboard/stats" element={
-              <ProtectedRoute>
-                <DashboardStats />
-              </ProtectedRoute>
-            } />
             <Route path="/dashboard/my-page" element={
               <ProtectedRoute>
                 <DashboardMyPage />
               </ProtectedRoute>
             } />
+            <Route path="/dashboard/upgrade" element={
+              <ProtectedRoute>
+                <Upgrade />
+              </ProtectedRoute>
+            } />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
