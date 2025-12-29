@@ -112,10 +112,10 @@ export default function Index() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
                     
-                    {/* Logo - positioned left with border */}
-                    <div className="absolute -bottom-5 left-4 sm:left-5">
-                      <div className="w-11 h-11 sm:w-12 sm:h-12 bg-white rounded-xl shadow-lg flex items-center justify-center border border-border/80">
-                        <span className="text-base sm:text-lg font-bold text-foreground">CA</span>
+                    {/* Logo - positioned left with nice styling */}
+                    <div className="absolute -bottom-6 left-4 sm:left-5">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-2xl shadow-xl flex items-center justify-center ring-4 ring-white">
+                        <span className="text-xl sm:text-2xl font-bold text-foreground">CA</span>
                       </div>
                     </div>
                   </div>
