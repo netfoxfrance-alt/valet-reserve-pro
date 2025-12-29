@@ -730,39 +730,103 @@ export default function Index() {
 
                 {mobileTab === 'mypage' && (
                   <>
-                    <p className="text-xs font-semibold text-foreground mb-3">Ma Page</p>
-                    <div className="bg-secondary/30 rounded-xl p-3 mb-3">
-                      <p className="text-[10px] text-muted-foreground mb-2">Aperçu</p>
-                      <div className="bg-card rounded-lg p-2 border border-border/40">
-                        <div className="h-8 bg-gradient-to-r from-primary to-primary/60 rounded-t-md" />
-                        <div className="p-2 -mt-2">
-                          <div className="w-5 h-5 bg-primary rounded mx-auto flex items-center justify-center mb-1 border-2 border-card">
-                            <Car className="w-2.5 h-2.5 text-primary-foreground" />
-                          </div>
-                          <p className="text-[7px] font-semibold text-center text-foreground">Clean Auto</p>
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-xs font-semibold text-foreground">Ma Page</p>
+                      <button className="text-[9px] bg-primary text-primary-foreground px-2 py-1 rounded-md">
+                        Enregistrer
+                      </button>
+                    </div>
+                    
+                    {/* Customization tabs */}
+                    <div className="flex gap-1 mb-2 bg-secondary/50 p-0.5 rounded-lg">
+                      {[
+                        { icon: Palette, label: 'Couleurs', active: true },
+                        { icon: MapPin, label: 'Textes', active: false },
+                        { icon: Eye, label: 'Affichage', active: false },
+                      ].map((tab) => (
+                        <div 
+                          key={tab.label}
+                          className={`flex-1 flex items-center justify-center gap-1 py-1 rounded text-[8px] ${
+                            tab.active ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground'
+                          }`}
+                        >
+                          <tab.icon className="w-2.5 h-2.5" />
+                          <span>{tab.label}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Customization options */}
+                    <div className="space-y-1.5 mb-2">
+                      <div className="bg-secondary/30 rounded-lg p-2">
+                        <p className="text-[9px] text-muted-foreground mb-1">Thèmes</p>
+                        <div className="flex gap-1">
+                          {[
+                            { name: 'Bleu', colors: ['#3b82f6', '#1e293b'] },
+                            { name: 'Vert', colors: ['#22c55e', '#14532d'] },
+                            { name: 'Rouge', colors: ['#ef4444', '#1c1917'] },
+                          ].map((theme) => (
+                            <div 
+                              key={theme.name}
+                              className={`flex-1 p-1 rounded border ${theme.name === 'Bleu' ? 'border-primary ring-1 ring-primary/20' : 'border-border/50'}`}
+                            >
+                              <div className="flex gap-0.5 mb-0.5">
+                                {theme.colors.map((c, i) => (
+                                  <div key={i} className="w-2 h-2 rounded-full" style={{ backgroundColor: c }} />
+                                ))}
+                              </div>
+                              <p className="text-[7px] text-muted-foreground text-center">{theme.name}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="bg-secondary/30 rounded-lg p-2">
+                        <p className="text-[9px] text-muted-foreground mb-1">Affichage</p>
+                        <div className="grid grid-cols-3 gap-1">
+                          {['Horaires', 'Adresse', 'Tel'].map((opt) => (
+                            <div key={opt} className="flex items-center gap-1">
+                              <div className="w-5 h-2.5 bg-primary rounded-full relative">
+                                <div className="absolute right-0.5 top-0.5 w-1.5 h-1.5 bg-card rounded-full" />
+                              </div>
+                              <p className="text-[7px] text-foreground">{opt}</p>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <div className="bg-secondary/30 rounded-xl p-3">
-                        <p className="text-[10px] text-muted-foreground mb-1.5">Couleur principale</p>
-                        <div className="flex gap-1.5">
-                          {['#3b82f6', '#22c55e', '#ef4444', '#f59e0b'].map((c) => (
-                            <div key={c} className={`w-6 h-6 rounded-full border-2 ${c === '#3b82f6' ? 'border-foreground' : 'border-transparent'}`} style={{ backgroundColor: c }} />
-                          ))}
-                        </div>
-                      </div>
-                      <div className="bg-secondary/30 rounded-xl p-3">
-                        <p className="text-[10px] text-muted-foreground mb-1.5">Affichage</p>
-                        <div className="space-y-1.5">
-                          {['Horaires', 'Adresse', 'Téléphone'].map((opt) => (
-                            <div key={opt} className="flex items-center justify-between">
-                              <p className="text-[10px] text-foreground">{opt}</p>
-                              <div className="w-7 h-4 bg-primary rounded-full relative">
-                                <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-card rounded-full" />
-                              </div>
+
+                    {/* Preview below */}
+                    <div className="bg-secondary/30 rounded-lg p-2">
+                      <p className="text-[9px] text-muted-foreground mb-1.5">Aperçu en direct</p>
+                      <div className="bg-card rounded-lg overflow-hidden border border-border/40">
+                        <div className="h-10 bg-gradient-to-r from-primary to-primary/60 relative">
+                          <div className="absolute -bottom-2 left-2">
+                            <div className="w-5 h-5 bg-primary rounded-md flex items-center justify-center border-2 border-card shadow">
+                              <Car className="w-2.5 h-2.5 text-primary-foreground" />
                             </div>
-                          ))}
+                          </div>
+                        </div>
+                        <div className="p-2 pt-3">
+                          <p className="text-[8px] font-semibold text-foreground">Clean Auto Pro</p>
+                          <p className="text-[6px] text-muted-foreground mb-1.5">Lavage premium • ⭐ 4.8</p>
+                          <div className="flex gap-1 mb-1.5">
+                            {[MapPin, Clock, Phone].map((Icon, i) => (
+                              <div key={i} className="flex-1 bg-secondary/50 rounded p-1 flex items-center justify-center">
+                                <Icon className="w-2 h-2 text-muted-foreground" />
+                              </div>
+                            ))}
+                          </div>
+                          <div className="space-y-0.5">
+                            {['Simple', 'Complet'].map((name) => (
+                              <div key={name} className="flex justify-between bg-secondary/40 rounded px-1.5 py-1">
+                                <span className="text-[6px] text-foreground">{name}</span>
+                                <span className="text-[6px] font-semibold text-primary">{name === 'Simple' ? '15€' : '65€'}</span>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="mt-1.5 bg-foreground text-background text-[7px] text-center py-1 rounded font-medium">
+                            Réserver
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -796,12 +860,8 @@ export default function Index() {
                 )}
               </div>
               
-              {/* Bottom navigation with hint */}
-              <div className="absolute bottom-0 left-0 right-0 bg-card border-t border-border/40 px-4 py-2">
-                {/* Hint text */}
-                <p className="text-[8px] text-center text-muted-foreground mb-1.5 animate-pulse">
-                  ↓ Cliquez pour explorer ↓
-                </p>
+              {/* Bottom navigation */}
+              <div className="absolute bottom-0 left-0 right-0 bg-card border-t border-border/40 px-3 pb-2 pt-1">
                 <div className="flex justify-around">
                   {[
                     { icon: Calendar, tab: 'reservations' as const, label: 'RDV' },
@@ -822,6 +882,20 @@ export default function Index() {
                 </div>
               </div>
             </div>
+            
+            {/* Hint below the phone */}
+            <div className="mt-3 flex items-center justify-center gap-1">
+              <div className="flex items-center gap-0.5">
+                <span className="text-[10px] text-muted-foreground">↑</span>
+                <span className="text-[10px] text-muted-foreground">↑</span>
+                <span className="text-[10px] text-muted-foreground">↑</span>
+                <span className="text-[10px] text-muted-foreground">↑</span>
+                <span className="text-[10px] text-muted-foreground">↑</span>
+              </div>
+            </div>
+            <p className="text-[10px] text-center text-muted-foreground animate-pulse">
+              Cliquez sur les icônes pour explorer
+            </p>
           </div>
         </div>
       </section>
