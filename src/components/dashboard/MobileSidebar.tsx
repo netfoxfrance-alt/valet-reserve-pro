@@ -59,11 +59,9 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="left" className="w-[280px] p-0 bg-surface-subtle">
-        <SheetHeader className="px-4 h-16 border-b border-border flex flex-row items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Logo size="lg" />
-            <SheetTitle className="sr-only">CleaningPage</SheetTitle>
-          </div>
+        <SheetHeader className="px-4 h-16 border-b border-border flex flex-row items-center">
+          <Logo size="lg" />
+          <SheetTitle className="sr-only">CleaningPage</SheetTitle>
         </SheetHeader>
         
         {/* Booking link card */}

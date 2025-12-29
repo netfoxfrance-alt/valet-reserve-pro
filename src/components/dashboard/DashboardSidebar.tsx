@@ -47,8 +47,8 @@ export function DashboardSidebar() {
   
   return (
     <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-surface-subtle border-r border-border">
-      <div className="flex items-center gap-2 px-6 h-16 border-b border-border">
-        <Link to="/" className="flex items-center gap-2">
+      <div className="flex items-center px-6 h-16 border-b border-border">
+        <Link to="/" className="flex items-center">
           <Logo size="lg" />
         </Link>
       </div>
