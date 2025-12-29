@@ -112,15 +112,15 @@ export default function Index() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
                     
-                    {/* Logo - positioned left with nice styling */}
-                    <div className="absolute -bottom-5 left-4 sm:left-5">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl shadow-xl flex items-center justify-center ring-2 ring-white overflow-hidden">
-                        <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
+                    {/* Logo - positioned inside banner, fully visible */}
+                    <div className="absolute bottom-3 left-4 sm:left-5">
+                      <div className="w-11 h-11 sm:w-12 sm:h-12 bg-white rounded-xl shadow-lg flex items-center justify-center">
+                        <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 sm:p-5 pt-10 sm:pt-11">
+                  <div className="p-4 sm:p-5 pt-4 sm:pt-5">
                     {/* Header - aligned left under logo */}
                     <div className="mb-4">
                       <div className="flex items-center gap-2 mb-1">
