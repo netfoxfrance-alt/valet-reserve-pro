@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, Settings, Package, Clock, LogOut, Share2, Copy, Check, MessageSquare, BarChart3, Globe } from 'lucide-react';
+import { Calendar, Settings, Package, Clock, LogOut, Share2, Copy, Check, MessageSquare, BarChart3, Globe, Crown } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,14 +9,15 @@ import { useToast } from '@/hooks/use-toast';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useState } from 'react';
 
-const navigation = [
-  { name: 'Réservations', href: '/dashboard', icon: Calendar },
-  { name: 'Demandes', href: '/dashboard/requests', icon: MessageSquare },
-  { name: 'Ma Page', href: '/dashboard/my-page', icon: Globe },
-  { name: 'Formules', href: '/dashboard/packs', icon: Package },
-  { name: 'Statistiques', href: '/dashboard/stats', icon: BarChart3 },
-  { name: 'Disponibilités', href: '/dashboard/availability', icon: Clock },
-  { name: 'Paramètres', href: '/dashboard/settings', icon: Settings },
+// Define navigation with pro-only flags
+const getNavigation = (isPro: boolean) => [
+  { name: 'Réservations', href: '/dashboard', icon: Calendar, proOnly: true },
+  { name: 'Demandes', href: '/dashboard/requests', icon: MessageSquare, proOnly: false },
+  { name: 'Ma Page', href: '/dashboard/my-page', icon: Globe, proOnly: false },
+  { name: 'Formules', href: '/dashboard/packs', icon: Package, proOnly: true },
+  { name: 'Statistiques', href: '/dashboard/stats', icon: BarChart3, proOnly: true },
+  { name: 'Disponibilités', href: '/dashboard/availability', icon: Clock, proOnly: true },
+  { name: 'Paramètres', href: '/dashboard/settings', icon: Settings, proOnly: false },
 ];
 
 interface MobileSidebarProps {
@@ -32,6 +33,8 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
   
+  const isPro = center?.subscription_plan === 'pro';
+  const navigation = getNavigation(isPro);
   const bookingUrl = center ? `${window.location.origin}/c/${center.slug}` : '';
   
   const handleCopyLink = () => {
@@ -52,7 +55,10 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
     navigate('/');
   };
 
-  const handleNavClick = () => {
+  const handleNavClick = (item: typeof navigation[0]) => {
+    if (item.proOnly && !isPro) {
+      navigate('/dashboard/upgrade');
+    }
     onOpenChange(false);
   };
   
@@ -63,6 +69,25 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
           <Logo size="lg" />
           <SheetTitle className="sr-only">CleaningPage</SheetTitle>
         </SheetHeader>
+        
+        {/* Plan badge */}
+        {center && (
+          <div className="px-4 pt-4">
+            {isPro ? (
+              <div className="bg-primary/10 text-primary px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-2">
+                <Crown className="w-4 h-4" />
+                Plan Pro
+              </div>
+            ) : (
+              <Link to="/dashboard/upgrade" onClick={() => onOpenChange(false)}>
+                <div className="bg-secondary hover:bg-secondary/80 transition-colors px-3 py-2 rounded-xl text-xs font-medium flex items-center justify-between cursor-pointer">
+                  <span className="text-muted-foreground">Plan Gratuit</span>
+                  <span className="text-primary font-semibold">Upgrade →</span>
+                </div>
+              </Link>
+            )}
+          </div>
+        )}
         
         {/* Booking link card */}
         {center && (
@@ -93,21 +118,31 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
           {navigation.map((item) => {
             const isActive = location.pathname === item.href || 
               (item.href !== '/dashboard' && location.pathname.startsWith(item.href));
+            const isLocked = item.proOnly && !isPro;
             
             return (
               <Link
                 key={item.name}
-                to={item.href}
-                onClick={handleNavClick}
+                to={isLocked ? '/dashboard/upgrade' : item.href}
+                onClick={() => handleNavClick(item)}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                  isActive
+                  "flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
+                  isActive && !isLocked
                     ? "bg-primary text-primary-foreground"
+                    : isLocked
+                    ? "text-muted-foreground/50 hover:bg-secondary/50"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                 )}
               >
-                <item.icon className="w-5 h-5" />
-                {item.name}
+                <div className="flex items-center gap-3">
+                  <item.icon className="w-5 h-5" />
+                  {item.name}
+                </div>
+                {isLocked && (
+                  <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-medium">
+                    PRO
+                  </span>
+                )}
               </Link>
             );
           })}
