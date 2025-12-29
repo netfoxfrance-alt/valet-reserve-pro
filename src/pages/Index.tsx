@@ -18,9 +18,9 @@ export default function Index() {
       {/* Header */}
       <header className="w-full py-4 px-4 sm:px-6 border-b border-border/50 sticky top-0 bg-background/95 backdrop-blur-sm z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center">
             <Logo size="xl" />
-          </div>
+          </Link>
           <div className="flex items-center gap-2 sm:gap-3">
             <Link to="/auth">
               <Button variant="ghost" size="sm" className="text-xs sm:text-sm px-2 sm:px-4">
@@ -828,12 +828,12 @@ export default function Index() {
       </section>
       
       {/* Footer */}
-      <footer className="py-6 sm:py-8 px-4 sm:px-6 border-t border-border/50">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
-          <div className="flex items-center gap-2">
-            <Logo size="md" />
+      <footer className="py-12 sm:py-16 px-4 sm:px-6 border-t border-border/50">
+        <div className="max-w-5xl mx-auto flex flex-col items-center gap-6">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-secondary/50 flex items-center justify-center shadow-sm">
+            <Logo size="lg" className="opacity-80" />
           </div>
-          <p className="text-xs sm:text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             © 2024 CleaningPage. Tous droits réservés.
           </p>
         </div>
