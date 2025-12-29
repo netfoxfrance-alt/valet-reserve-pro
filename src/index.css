@@ -240,3 +240,22 @@
 .transition-smooth {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Floating animation for mockups */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Shadow glow for mockups */
+.shadow-mockup {
+  box-shadow: 0 25px 50px -12px hsl(0 0% 0% / 0.15), 0 0 0 1px hsl(0 0% 0% / 0.05);
+}
