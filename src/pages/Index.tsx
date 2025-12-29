@@ -372,13 +372,26 @@ export default function Index() {
               <div className="flex-1 p-6">
                 {dashboardTab === 'reservations' && (
                   <>
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold text-foreground">Réservations</h3>
-                      <div className="bg-secondary px-3 py-1 rounded-full text-xs">
-                        <span className="font-semibold text-primary">8</span>
-                        <span className="text-muted-foreground">/12 aujourd'hui</span>
+                      <div className="text-xs text-muted-foreground">Aujourd'hui</div>
+                    </div>
+
+                    {/* Stats cards */}
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      <div className="bg-secondary/50 rounded-xl p-3">
+                        <p className="text-xs text-muted-foreground mb-1">RDV du jour</p>
+                        <p className="text-2xl font-bold text-foreground">8</p>
+                        <p className="text-xs text-green-600">+2 nouveaux</p>
+                      </div>
+                      <div className="bg-secondary/50 rounded-xl p-3">
+                        <p className="text-xs text-muted-foreground mb-1">CA du jour</p>
+                        <p className="text-2xl font-bold text-foreground">340€</p>
+                        <p className="text-xs text-green-600">+15%</p>
                       </div>
                     </div>
+
+                    <p className="text-xs font-medium text-muted-foreground mb-2">Prochains RDV</p>
 
                     <div className="space-y-2">
                       {[
