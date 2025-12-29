@@ -343,7 +343,7 @@ export default function Index() {
                       { icon: Globe, label: 'Ma Page', active: dashboardTab === 'mypage', tab: 'mypage' as const },
                       { icon: Droplets, label: 'Formules', active: dashboardTab === 'formules', tab: 'formules' as const },
                       { icon: BarChart3, label: 'Statistiques', active: dashboardTab === 'stats', tab: 'stats' as const },
-                      { icon: Settings, label: 'Paramètres', active: dashboardTab === 'settings', tab: 'settings' as const },
+                      { icon: Clock, label: 'Disponibilités', active: dashboardTab === 'settings', tab: 'settings' as const },
                     ].map((item) => (
                       <button
                         key={item.label}
@@ -557,38 +557,81 @@ export default function Index() {
 
                 {dashboardTab === 'stats' && (
                   <>
-                    <h3 className="text-lg font-semibold text-foreground mb-6">Statistiques</h3>
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="bg-secondary/30 rounded-lg p-4">
-                        <p className="text-xs text-muted-foreground mb-1">Ce mois</p>
-                        <p className="text-2xl font-semibold text-foreground">127</p>
-                        <p className="text-xs text-green-600">+12% vs mois dernier</p>
+                    <h3 className="text-lg font-semibold text-foreground mb-4">Statistiques</h3>
+                    
+                    {/* Stats cards with icons like real dashboard */}
+                    <div className="grid grid-cols-4 gap-3 mb-4">
+                      {[
+                        { icon: Calendar, value: '127', label: 'Réservations ce mois', color: 'bg-secondary' },
+                        { icon: () => <span className="text-sm font-bold">€</span>, value: '4 850€', label: "Chiffre d'affaires", color: 'bg-green-100' },
+                        { icon: Users, value: '89', label: 'Clients uniques', color: 'bg-blue-100' },
+                        { icon: BarChart3, value: '54€', label: 'Panier moyen', color: 'bg-purple-100' },
+                      ].map((stat, i) => (
+                        <div key={i} className="bg-card border border-border/40 rounded-xl p-3">
+                          <div className={`w-8 h-8 ${stat.color} rounded-lg flex items-center justify-center mb-2`}>
+                            <stat.icon className="w-4 h-4 text-foreground" />
+                          </div>
+                          <p className="text-lg font-bold text-foreground">{stat.value}</p>
+                          <p className="text-[10px] text-muted-foreground">{stat.label}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Tabs */}
+                    <div className="flex gap-1 mb-4 bg-secondary/50 p-1 rounded-lg w-fit">
+                      {['Évolution', 'Formules', 'Clients'].map((tab, i) => (
+                        <div key={tab} className={`px-3 py-1 rounded text-xs ${i === 0 ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground'}`}>
+                          {tab}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Charts */}
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      {/* Area chart mockup */}
+                      <div className="bg-card border border-border/40 rounded-xl p-3">
+                        <p className="text-xs font-medium text-foreground mb-3">Réservations par semaine</p>
+                        <div className="h-24 flex items-end gap-1">
+                          {[10, 15, 8, 25, 45, 80, 95, 70, 40].map((h, i) => (
+                            <div key={i} className="flex-1 bg-gradient-to-t from-primary/20 to-primary/5 rounded-t" style={{ height: `${h}%` }}>
+                              <div className="w-full h-0.5 bg-primary rounded-full" />
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex justify-between mt-1">
+                          <span className="text-[8px] text-muted-foreground">10 nov.</span>
+                          <span className="text-[8px] text-muted-foreground">29 déc.</span>
+                        </div>
                       </div>
-                      <div className="bg-secondary/30 rounded-lg p-4">
-                        <p className="text-xs text-muted-foreground mb-1">Chiffre d'affaires</p>
-                        <p className="text-2xl font-semibold text-foreground">4 850€</p>
-                        <p className="text-xs text-green-600">+8% vs mois dernier</p>
+
+                      {/* Bar chart mockup */}
+                      <div className="bg-card border border-border/40 rounded-xl p-3">
+                        <p className="text-xs font-medium text-foreground mb-3">CA par mois</p>
+                        <div className="h-24 flex items-end gap-2">
+                          {[15, 25, 35, 20, 45, 90].map((h, i) => (
+                            <div key={i} className="flex-1 bg-foreground rounded-t transition-all hover:bg-primary" style={{ height: `${h}%` }} />
+                          ))}
+                        </div>
+                        <div className="flex justify-between mt-1">
+                          <span className="text-[8px] text-muted-foreground">juil.</span>
+                          <span className="text-[8px] text-muted-foreground">déc.</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="bg-secondary/30 rounded-lg p-4">
-                      <p className="text-xs text-muted-foreground mb-3">Répartition des formules</p>
-                      <div className="space-y-2">
+
+                    {/* Summary row */}
+                    <div className="bg-card border border-border/40 rounded-xl p-3">
+                      <p className="text-xs font-medium text-foreground mb-2">Récapitulatif global</p>
+                      <div className="grid grid-cols-4 gap-2 text-center">
                         {[
-                          { name: 'Formule complète', pct: 45 },
-                          { name: 'Nettoyage intérieur', pct: 30 },
-                          { name: 'Lavage simple', pct: 25 },
+                          { value: '127', label: 'Total réservations' },
+                          { value: '4 850€', label: 'CA total' },
+                          { value: '98', label: 'Terminées' },
+                          { value: '1.4', label: 'Visites/client' },
                         ].map((item, i) => (
                           <div key={i}>
-                            <div className="flex justify-between text-xs mb-1">
-                              <span className="text-foreground">{item.name}</span>
-                              <span className="text-muted-foreground">{item.pct}%</span>
-                            </div>
-                            <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-primary rounded-full transition-all"
-                                style={{ width: `${item.pct}%` }}
-                              />
-                            </div>
+                            <p className="text-sm font-bold text-foreground">{item.value}</p>
+                            <p className="text-[9px] text-muted-foreground">{item.label}</p>
                           </div>
                         ))}
                       </div>
@@ -598,23 +641,29 @@ export default function Index() {
 
                 {dashboardTab === 'settings' && (
                   <>
-                    <h3 className="text-lg font-semibold text-foreground mb-6">Paramètres</h3>
-                    <div className="space-y-4">
-                      <div className="bg-secondary/30 rounded-lg p-4">
-                        <p className="text-xs text-muted-foreground mb-2">Logo du centre</p>
-                        <div className="w-16 h-16 bg-card rounded-lg border border-border/40 flex items-center justify-center">
-                          <Car className="w-8 h-8 text-muted-foreground" />
+                    <h3 className="text-lg font-semibold text-foreground mb-4">Disponibilités</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Définissez vos créneaux de disponibilité</p>
+                    
+                    <div className="space-y-2">
+                      {[
+                        { day: 'Lundi', hours: '9:00 - 19:00', enabled: true },
+                        { day: 'Mardi', hours: '9:00 - 19:00', enabled: true },
+                        { day: 'Mercredi', hours: '9:00 - 19:00', enabled: true },
+                        { day: 'Jeudi', hours: '9:00 - 19:00', enabled: true },
+                        { day: 'Vendredi', hours: '9:00 - 19:00', enabled: true },
+                        { day: 'Samedi', hours: '9:00 - 17:00', enabled: true },
+                        { day: 'Dimanche', hours: 'Fermé', enabled: false },
+                      ].map((day) => (
+                        <div key={day.day} className="flex items-center justify-between bg-secondary/30 rounded-lg px-3 py-2">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-6 h-3 rounded-full relative ${day.enabled ? 'bg-primary' : 'bg-muted-foreground/30'}`}>
+                              <div className={`absolute top-0.5 w-2 h-2 bg-card rounded-full ${day.enabled ? 'right-0.5' : 'left-0.5'}`} />
+                            </div>
+                            <span className="text-xs font-medium text-foreground">{day.day}</span>
+                          </div>
+                          <span className={`text-xs ${day.enabled ? 'text-foreground' : 'text-muted-foreground'}`}>{day.hours}</span>
                         </div>
-                      </div>
-                      <div className="bg-secondary/30 rounded-lg p-4">
-                        <p className="text-xs text-muted-foreground mb-2">Informations</p>
-                        <p className="text-sm font-medium text-foreground">Clean Auto Pro</p>
-                        <p className="text-xs text-muted-foreground">12 rue du Lavage, 75001 Paris</p>
-                      </div>
-                      <div className="bg-secondary/30 rounded-lg p-4">
-                        <p className="text-xs text-muted-foreground mb-2">Horaires</p>
-                        <p className="text-sm text-foreground">Lun - Sam : 9h - 19h</p>
-                      </div>
+                      ))}
                     </div>
                   </>
                 )}
