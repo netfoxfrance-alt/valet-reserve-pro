@@ -101,64 +101,97 @@ export default function Index() {
             {/* Right: Floating Page Mockup */}
             <div className="order-1 lg:order-2 flex justify-center">
               <div className="animate-float">
-                <div className="bg-card rounded-2xl sm:rounded-3xl shadow-mockup overflow-hidden border border-border/60 w-[280px] sm:w-[320px]">
-                  {/* Cover & Logo */}
-                  <div className="h-20 sm:h-24 bg-gradient-to-r from-primary/20 to-primary/5 relative">
-                    <div className="absolute -bottom-5 sm:-bottom-6 left-4 sm:left-5 w-12 h-12 sm:w-14 sm:h-14 bg-card rounded-xl shadow-lg flex items-center justify-center border border-border/40">
-                      <Car className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
+                <div className="bg-card rounded-2xl sm:rounded-3xl shadow-mockup overflow-hidden border border-border/60 w-[300px] sm:w-[340px]">
+                  {/* Cover with gradient */}
+                  <div className="h-24 sm:h-28 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 relative">
+                    {/* Decorative pattern */}
+                    <div className="absolute inset-0 opacity-20">
+                      <div className="absolute top-2 right-4 w-16 h-16 bg-white/20 rounded-full blur-xl" />
+                      <div className="absolute bottom-4 left-8 w-12 h-12 bg-white/10 rounded-full blur-lg" />
+                    </div>
+                    {/* Logo */}
+                    <div className="absolute -bottom-6 left-4 sm:left-5 w-14 h-14 sm:w-16 sm:h-16 bg-card rounded-2xl shadow-lg flex items-center justify-center border-4 border-card">
+                      <Car className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600" />
                     </div>
                   </div>
 
-                  <div className="p-4 sm:p-5 pt-8 sm:pt-10">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-sm sm:text-base font-semibold text-foreground">Clean Auto Pro</h3>
-                      <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full">Ouvert</span>
+                  <div className="p-4 sm:p-5 pt-10 sm:pt-12">
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-base sm:text-lg font-bold text-foreground">Clean Auto Pro</h3>
+                        <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">Ouvert</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
-                      <span>Lavage auto</span>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                      <span>Lavage auto premium</span>
                       <span>•</span>
                       <div className="flex items-center gap-1">
-                        <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                        <span>4.8</span>
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        <span className="font-medium text-foreground">4.8</span>
+                        <span className="text-muted-foreground">(127)</span>
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+                      Spécialiste du nettoyage automobile depuis 2018. Service de qualité premium pour votre véhicule.
+                    </p>
+
+                    {/* Social Icons */}
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-orange-400 rounded-lg flex items-center justify-center">
+                        <Instagram className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <Globe className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                        <MessageCircle className="w-4 h-4 text-white" />
                       </div>
                     </div>
 
                     {/* Info Grid */}
                     <div className="grid grid-cols-3 gap-2 mb-4">
-                      <div className="bg-secondary/50 rounded-lg p-2 text-center">
-                        <MapPin className="w-3 h-3 mx-auto mb-1 text-muted-foreground" />
-                        <p className="text-[9px] sm:text-[10px] text-muted-foreground truncate">12 rue du Lavage</p>
+                      <div className="bg-blue-50 rounded-xl p-2.5 text-center">
+                        <MapPin className="w-4 h-4 mx-auto mb-1 text-blue-600" />
+                        <p className="text-[9px] sm:text-[10px] text-foreground font-medium truncate">Paris 15e</p>
                       </div>
-                      <div className="bg-secondary/50 rounded-lg p-2 text-center">
-                        <Clock className="w-3 h-3 mx-auto mb-1 text-muted-foreground" />
-                        <p className="text-[9px] sm:text-[10px] text-muted-foreground">9h - 19h</p>
+                      <div className="bg-emerald-50 rounded-xl p-2.5 text-center">
+                        <Clock className="w-4 h-4 mx-auto mb-1 text-emerald-600" />
+                        <p className="text-[9px] sm:text-[10px] text-foreground font-medium">9h - 19h</p>
                       </div>
-                      <div className="bg-secondary/50 rounded-lg p-2 text-center">
-                        <Phone className="w-3 h-3 mx-auto mb-1 text-muted-foreground" />
-                        <p className="text-[9px] sm:text-[10px] text-muted-foreground">06 12 34 56</p>
+                      <div className="bg-violet-50 rounded-xl p-2.5 text-center">
+                        <Phone className="w-4 h-4 mx-auto mb-1 text-violet-600" />
+                        <p className="text-[9px] sm:text-[10px] text-foreground font-medium">Appeler</p>
                       </div>
                     </div>
 
                     {/* Formules */}
                     <div className="mb-4">
-                      <h4 className="text-xs font-semibold text-foreground mb-2">Nos formules</h4>
-                      <div className="grid grid-cols-2 gap-1.5">
+                      <h4 className="text-xs font-bold text-foreground mb-2">Nos formules</h4>
+                      <div className="grid grid-cols-2 gap-2">
                         {[
-                          { name: 'Lavage simple', price: '15€' },
-                          { name: 'Nettoyage intérieur', price: '35€' },
-                          { name: 'Formule complète', price: '65€' },
-                          { name: 'Premium', price: '120€' },
+                          { name: 'Lavage simple', price: '15€', color: 'bg-slate-50' },
+                          { name: 'Nettoyage intérieur', price: '35€', color: 'bg-blue-50' },
+                          { name: 'Formule complète', price: '65€', color: 'bg-emerald-50', popular: true },
+                          { name: 'Premium', price: '120€', color: 'bg-amber-50' },
                         ].map((item) => (
-                          <div key={item.name} className="bg-secondary/30 rounded-lg p-2 text-center">
-                            <p className="text-[9px] sm:text-[10px] font-medium text-foreground mb-0.5 truncate">{item.name}</p>
-                            <p className="text-xs font-semibold text-primary">{item.price}</p>
+                          <div key={item.name} className={`${item.color} rounded-xl p-2.5 text-center relative ${item.popular ? 'ring-2 ring-blue-500' : ''}`}>
+                            {item.popular && (
+                              <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] bg-blue-500 text-white px-1.5 py-0.5 rounded-full font-medium">
+                                Populaire
+                              </span>
+                            )}
+                            <p className="text-[10px] font-medium text-foreground mb-0.5 truncate">{item.name}</p>
+                            <p className="text-sm font-bold text-blue-600">{item.price}</p>
                           </div>
                         ))}
                       </div>
                     </div>
 
                     {/* Booking Button */}
-                    <div className="bg-primary text-primary-foreground rounded-xl py-2.5 text-center text-xs sm:text-sm font-medium">
+                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl py-3 text-center text-sm font-semibold shadow-lg shadow-blue-500/25">
                       Réserver un créneau
                     </div>
                   </div>
