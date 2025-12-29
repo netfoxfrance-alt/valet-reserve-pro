@@ -13,7 +13,7 @@ import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 
 export default function Index() {
   const [dashboardTab, setDashboardTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings'>('reservations');
-  const [mobileTab, setMobileTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings'>('reservations');
+  const [mobileTab, setMobileTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings' | 'dispo'>('reservations');
 
   return (
     <div className="min-h-screen bg-background">
@@ -763,36 +763,113 @@ export default function Index() {
                 {mobileTab === 'stats' && (
                   <>
                     <p className="text-xs font-semibold text-foreground mb-3">Statistiques</p>
-                    <div className="grid grid-cols-2 gap-2 mb-3">
-                      <div className="bg-secondary/50 rounded-xl p-3">
-                        <p className="text-[10px] text-muted-foreground">Ce mois</p>
-                        <p className="text-lg font-bold text-foreground">127</p>
-                        <p className="text-[10px] text-green-600">+12%</p>
+                    
+                    {/* Global summary */}
+                    <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-3 mb-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] text-muted-foreground">Chiffre d'affaires total</span>
+                        <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-medium">+23%</span>
                       </div>
-                      <div className="bg-secondary/50 rounded-xl p-3">
-                        <p className="text-[10px] text-muted-foreground">CA</p>
-                        <p className="text-lg font-bold text-foreground">4 850€</p>
-                        <p className="text-[10px] text-green-600">+8%</p>
+                      <p className="text-xl font-bold text-foreground">12 480 €</p>
+                      <p className="text-[9px] text-muted-foreground">287 prestations réalisées</p>
+                    </div>
+                    
+                    {/* Stats grid */}
+                    <div className="grid grid-cols-2 gap-2 mb-3">
+                      <div className="bg-secondary/50 rounded-xl p-2.5">
+                        <p className="text-[9px] text-muted-foreground">Ce mois</p>
+                        <p className="text-base font-bold text-foreground">127</p>
+                        <p className="text-[9px] text-green-600">+12% vs M-1</p>
+                      </div>
+                      <div className="bg-secondary/50 rounded-xl p-2.5">
+                        <p className="text-[9px] text-muted-foreground">Panier moyen</p>
+                        <p className="text-base font-bold text-foreground">43,50€</p>
+                        <p className="text-[9px] text-green-600">+5%</p>
+                      </div>
+                      <div className="bg-secondary/50 rounded-xl p-2.5">
+                        <p className="text-[9px] text-muted-foreground">Nouveaux clients</p>
+                        <p className="text-base font-bold text-foreground">34</p>
+                        <p className="text-[9px] text-muted-foreground">ce mois</p>
+                      </div>
+                      <div className="bg-secondary/50 rounded-xl p-2.5">
+                        <p className="text-[9px] text-muted-foreground">Taux conversion</p>
+                        <p className="text-base font-bold text-foreground">78%</p>
+                        <p className="text-[9px] text-green-600">+3%</p>
                       </div>
                     </div>
+                    
+                    {/* Mini graph */}
+                    <div className="bg-secondary/30 rounded-xl p-3 mb-3">
+                      <p className="text-[10px] text-muted-foreground mb-2">Évolution CA (6 mois)</p>
+                      <div className="flex items-end justify-between gap-1 h-12">
+                        {[35, 48, 42, 55, 68, 85].map((h, i) => (
+                          <div 
+                            key={i} 
+                            className="flex-1 bg-primary/70 rounded-t transition-all hover:bg-primary"
+                            style={{ height: `${h}%` }}
+                          />
+                        ))}
+                      </div>
+                      <div className="flex justify-between mt-1">
+                        {['Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'].map((m) => (
+                          <span key={m} className="text-[7px] text-muted-foreground">{m}</span>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Répartition */}
                     <div className="bg-secondary/30 rounded-xl p-3">
-                      <p className="text-[10px] text-muted-foreground mb-2">Répartition</p>
-                      <div className="space-y-2">
+                      <p className="text-[10px] text-muted-foreground mb-2">Répartition formules</p>
+                      <div className="space-y-1.5">
                         {[
-                          { name: 'Complet', pct: 45 },
-                          { name: 'Intérieur', pct: 30 },
-                          { name: 'Simple', pct: 25 },
+                          { name: 'Complet', pct: 45, color: 'bg-primary' },
+                          { name: 'Intérieur', pct: 30, color: 'bg-blue-500' },
+                          { name: 'Simple', pct: 25, color: 'bg-green-500' },
                         ].map((item, i) => (
                           <div key={i}>
-                            <div className="flex justify-between text-[10px] mb-0.5">
+                            <div className="flex justify-between text-[9px] mb-0.5">
                               <span className="text-foreground">{item.name}</span>
                               <span className="text-muted-foreground">{item.pct}%</span>
                             </div>
                             <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                              <div className="h-full bg-primary rounded-full" style={{ width: `${item.pct}%` }} />
+                              <div className={`h-full ${item.color} rounded-full`} style={{ width: `${item.pct}%` }} />
                             </div>
                           </div>
                         ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {mobileTab === 'dispo' && (
+                  <>
+                    <p className="text-xs font-semibold text-foreground mb-3">Disponibilités</p>
+                    <div className="space-y-1.5">
+                      {[
+                        { day: 'Lundi', hours: '9:00 - 19:00', enabled: true },
+                        { day: 'Mardi', hours: '9:00 - 19:00', enabled: true },
+                        { day: 'Mercredi', hours: '9:00 - 19:00', enabled: true },
+                        { day: 'Jeudi', hours: '9:00 - 19:00', enabled: true },
+                        { day: 'Vendredi', hours: '9:00 - 19:00', enabled: true },
+                        { day: 'Samedi', hours: '9:00 - 17:00', enabled: true },
+                        { day: 'Dimanche', hours: 'Fermé', enabled: false },
+                      ].map((day) => (
+                        <div key={day.day} className="flex items-center justify-between bg-secondary/30 rounded-lg px-3 py-2">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-5 h-2.5 rounded-full relative ${day.enabled ? 'bg-primary' : 'bg-muted-foreground/30'}`}>
+                              <div className={`absolute top-0.5 w-1.5 h-1.5 bg-card rounded-full ${day.enabled ? 'right-0.5' : 'left-0.5'}`} />
+                            </div>
+                            <span className="text-[10px] font-medium text-foreground">{day.day}</span>
+                          </div>
+                          <span className={`text-[10px] ${day.enabled ? 'text-foreground' : 'text-muted-foreground'}`}>{day.hours}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 bg-secondary/30 rounded-xl p-3">
+                      <p className="text-[10px] text-muted-foreground mb-2">Créneaux par jour</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg font-bold text-foreground">8</span>
+                        <span className="text-[10px] text-muted-foreground">créneaux disponibles</span>
                       </div>
                     </div>
                   </>
@@ -912,10 +989,6 @@ export default function Index() {
                         <p className="text-xs font-medium text-foreground">Clean Auto Pro</p>
                         <p className="text-[10px] text-muted-foreground">12 rue du Lavage, Paris</p>
                       </div>
-                      <div className="bg-secondary/30 rounded-xl p-3">
-                        <p className="text-[10px] text-muted-foreground mb-1">Horaires</p>
-                        <p className="text-xs text-foreground">Lun - Sam : 9h - 19h</p>
-                      </div>
                       <div className="bg-secondary/30 rounded-xl p-3 flex items-center gap-3">
                         <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                           <Car className="w-5 h-5 text-primary" />
@@ -931,22 +1004,23 @@ export default function Index() {
               </div>
               
               {/* Bottom navigation */}
-              <div className="absolute bottom-0 left-0 right-0 bg-card border-t border-border/40 px-3 pb-2 pt-1">
+              <div className="absolute bottom-0 left-0 right-0 bg-card border-t border-border/40 px-2 pb-2 pt-1">
                 <div className="flex justify-around">
                   {[
                     { icon: Calendar, tab: 'reservations' as const, label: 'RDV' },
                     { icon: Globe, tab: 'mypage' as const, label: 'Page' },
                     { icon: Droplets, tab: 'formules' as const, label: 'Packs' },
                     { icon: BarChart3, tab: 'stats' as const, label: 'Stats' },
+                    { icon: Clock, tab: 'dispo' as const, label: 'Dispo' },
                     { icon: Settings, tab: 'settings' as const, label: 'Config' },
                   ].map((item) => (
                     <button 
                       key={item.tab}
                       onClick={() => setMobileTab(item.tab)}
-                      className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl transition-all ${mobileTab === item.tab ? 'bg-primary/10 scale-110' : 'hover:bg-secondary/50'}`}
+                      className={`flex flex-col items-center gap-0.5 p-1 rounded-xl transition-all ${mobileTab === item.tab ? 'bg-primary/10 scale-110' : 'hover:bg-secondary/50'}`}
                     >
-                      <item.icon className={`w-4 h-4 ${mobileTab === item.tab ? 'text-primary' : 'text-muted-foreground'}`} />
-                      <span className={`text-[7px] ${mobileTab === item.tab ? 'text-primary font-medium' : 'text-muted-foreground'}`}>{item.label}</span>
+                      <item.icon className={`w-3.5 h-3.5 ${mobileTab === item.tab ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <span className={`text-[6px] ${mobileTab === item.tab ? 'text-primary font-medium' : 'text-muted-foreground'}`}>{item.label}</span>
                     </button>
                   ))}
                 </div>
