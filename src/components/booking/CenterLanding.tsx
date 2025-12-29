@@ -157,18 +157,18 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
           </div>
 
           {/* Info Cards Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3 mb-6 sm:mb-8">
             {customization.layout.show_address && center.address && (
               <Card 
-                className="p-4 text-center"
+                className="p-3 sm:p-4 flex items-center gap-3 sm:block sm:text-center"
                 style={{
                   backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : undefined,
                   borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : undefined,
                 }}
               >
-                <MapPin className="w-5 h-5 mx-auto mb-2" style={{ color: customization.colors.primary }} />
+                <MapPin className="w-5 h-5 flex-shrink-0 sm:mx-auto sm:mb-2" style={{ color: customization.colors.primary }} />
                 <p 
-                  className="text-sm truncate"
+                  className="text-sm truncate flex-1"
                   style={{ color: customization.layout.dark_mode ? 'white' : undefined }}
                 >
                   {center.address}
@@ -177,13 +177,13 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
             )}
             {customization.layout.show_hours && (
               <Card 
-                className="p-4 text-center"
+                className="p-3 sm:p-4 flex items-center gap-3 sm:block sm:text-center"
                 style={{
                   backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : undefined,
                   borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : undefined,
                 }}
               >
-                <Clock className="w-5 h-5 mx-auto mb-2" style={{ color: customization.colors.primary }} />
+                <Clock className="w-5 h-5 flex-shrink-0 sm:mx-auto sm:mb-2" style={{ color: customization.colors.primary }} />
                 <p 
                   className="text-sm"
                   style={{ color: customization.layout.dark_mode ? 'white' : undefined }}
@@ -194,16 +194,16 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
             )}
             {customization.layout.show_phone && center.phone && (
               <Card 
-                className="p-4 text-center"
+                className="p-3 sm:p-4 flex items-center gap-3 sm:block sm:text-center"
                 style={{
                   backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : undefined,
                   borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : undefined,
                 }}
               >
-                <Phone className="w-5 h-5 mx-auto mb-2" style={{ color: customization.colors.primary }} />
+                <Phone className="w-5 h-5 flex-shrink-0 sm:mx-auto sm:mb-2" style={{ color: customization.colors.primary }} />
                 <a 
                   href={`tel:${center.phone}`}
-                  className="text-sm transition-colors"
+                  className="text-sm transition-colors flex-1"
                   style={{ color: customization.layout.dark_mode ? 'white' : undefined }}
                 >
                   {center.phone}

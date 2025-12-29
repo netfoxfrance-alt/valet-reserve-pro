@@ -113,13 +113,13 @@ export default function DashboardMyPage() {
             {/* Left: Preview */}
             <div className="order-2 xl:order-1">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-foreground">Aperçu</h2>
-                <div className="flex items-center gap-2">
+                <h2 className="text-base sm:text-lg font-semibold text-foreground">Aperçu</h2>
+                <div className="flex items-center gap-1 sm:gap-2">
                   <div className="flex bg-secondary rounded-lg p-1">
                     <button
                       onClick={() => setPreviewMode('mobile')}
                       className={cn(
-                        "p-2 rounded-md transition-colors",
+                        "p-1.5 sm:p-2 rounded-md transition-colors",
                         previewMode === 'mobile' ? "bg-background shadow-sm" : "hover:bg-background/50"
                       )}
                     >
@@ -128,7 +128,7 @@ export default function DashboardMyPage() {
                     <button
                       onClick={() => setPreviewMode('desktop')}
                       className={cn(
-                        "p-2 rounded-md transition-colors",
+                        "p-1.5 sm:p-2 rounded-md transition-colors hidden sm:flex",
                         previewMode === 'desktop' ? "bg-background shadow-sm" : "hover:bg-background/50"
                       )}
                     >
@@ -139,6 +139,7 @@ export default function DashboardMyPage() {
                     variant="ghost"
                     size="sm"
                     onClick={handleRefreshPreview}
+                    className="p-1.5 sm:p-2 h-auto"
                   >
                     <RefreshCw className="w-4 h-4" />
                   </Button>
@@ -148,20 +149,22 @@ export default function DashboardMyPage() {
               {/* Preview Container */}
               <div 
                 className={cn(
-                  "bg-secondary/30 rounded-2xl p-4 flex justify-center overflow-hidden",
-                  previewMode === 'desktop' ? "min-h-[700px]" : "min-h-[600px]"
+                  "bg-secondary/30 rounded-xl sm:rounded-2xl p-2 sm:p-4 flex justify-center overflow-hidden",
+                  previewMode === 'desktop' ? "min-h-[500px] sm:min-h-[700px]" : "min-h-[450px] sm:min-h-[600px]"
                 )}
               >
                 <div 
                   key={previewKey}
                   className={cn(
-                    "bg-background rounded-xl shadow-xl overflow-hidden transition-all duration-300",
+                    "bg-background rounded-lg sm:rounded-xl shadow-xl overflow-hidden transition-all duration-300",
                     previewMode === 'mobile' 
-                      ? "w-[375px] max-w-full" 
+                      ? "w-full max-w-[320px] sm:max-w-[375px]" 
                       : "w-full max-w-[800px]"
                   )}
                   style={{
-                    height: previewMode === 'mobile' ? '667px' : '600px',
+                    height: previewMode === 'mobile' ? 'calc(100vh - 350px)' : '600px',
+                    maxHeight: previewMode === 'mobile' ? '580px' : '600px',
+                    minHeight: previewMode === 'mobile' ? '400px' : '500px',
                   }}
                 >
                   <div className="h-full overflow-y-auto">
