@@ -113,9 +113,9 @@ export default function Index() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
                     
                     {/* Logo - positioned left with nice styling */}
-                    <div className="absolute -bottom-6 left-4 sm:left-5">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-2xl shadow-xl flex items-center justify-center ring-4 ring-white">
-                        <span className="text-xl sm:text-2xl font-bold text-foreground">CA</span>
+                    <div className="absolute -bottom-5 left-4 sm:left-5">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl shadow-xl flex items-center justify-center ring-2 ring-white overflow-hidden">
+                        <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
                       </div>
                     </div>
                   </div>
