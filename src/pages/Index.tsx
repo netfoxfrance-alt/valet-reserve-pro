@@ -984,12 +984,14 @@ export default function Index() {
               
               <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
                 {[
-                  'Personnalisation complète',
-                  'Questionnaire intelligent',
-                  'Agenda avec créneaux',
-                  'Prise de RDV qualifiés',
-                  'Tableau de bord',
-                  'Base de données client',
+                  'Tableau de bord complet',
+                  'Réservation automatique 24h/24',
+                  'Agenda intégré avec créneaux',
+                  'Gestion du planning',
+                  'Base de données clients',
+                  'Statistiques détaillées',
+                  'Offres illimitées et personnalisables',
+                  'Qualification client avancée',
                 ].map((feature) => (
                   <li key={feature} className="flex items-start gap-2.5 sm:gap-3">
                     <div className="w-4 h-4 sm:w-5 sm:h-5 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
