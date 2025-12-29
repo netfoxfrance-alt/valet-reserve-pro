@@ -13,6 +13,7 @@ import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 
 export default function Index() {
   const [dashboardTab, setDashboardTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings'>('reservations');
+  const [mobileTab, setMobileTab] = useState<'reservations' | 'formules' | 'stats' | 'settings'>('reservations');
 
   return (
     <div className="min-h-screen bg-background">
@@ -623,55 +624,153 @@ export default function Index() {
                   </div>
                 </div>
                 
-                {/* Stats cards */}
-                <div className="grid grid-cols-2 gap-2 mb-4">
-                  <div className="bg-secondary/50 rounded-xl p-3">
-                    <p className="text-[10px] text-muted-foreground">RDV du jour</p>
-                    <p className="text-xl font-bold text-foreground">8</p>
-                    <p className="text-[10px] text-green-600">+2 nouveaux</p>
-                  </div>
-                  <div className="bg-secondary/50 rounded-xl p-3">
-                    <p className="text-[10px] text-muted-foreground">CA du jour</p>
-                    <p className="text-xl font-bold text-foreground">340€</p>
-                    <p className="text-[10px] text-green-600">+15%</p>
-                  </div>
-                </div>
-                
-                {/* Upcoming bookings */}
-                <p className="text-xs font-semibold text-foreground mb-2">Prochains RDV</p>
-                <div className="space-y-2">
-                  {[
-                    { name: 'Jean M.', time: '10:00', pack: 'Complet', color: 'green' },
-                    { name: 'Marie D.', time: '11:30', pack: 'Intérieur', color: 'yellow' },
-                    { name: 'Pierre B.', time: '14:00', pack: 'Simple', color: 'blue' },
-                  ].map((booking, i) => (
-                    <div key={i} className="flex items-center gap-3 bg-secondary/30 rounded-xl p-3">
-                      <div className={`w-1 h-10 rounded-full ${
-                        booking.color === 'green' ? 'bg-green-500' :
-                        booking.color === 'yellow' ? 'bg-yellow-500' : 'bg-blue-500'
-                      }`} />
-                      <div className="flex-1">
-                        <p className="text-xs font-medium text-foreground">{booking.name}</p>
-                        <p className="text-[10px] text-muted-foreground">{booking.pack}</p>
+                {/* Tab Content */}
+                {mobileTab === 'reservations' && (
+                  <>
+                    {/* Stats cards */}
+                    <div className="grid grid-cols-2 gap-2 mb-4">
+                      <div className="bg-secondary/50 rounded-xl p-3">
+                        <p className="text-[10px] text-muted-foreground">RDV du jour</p>
+                        <p className="text-xl font-bold text-foreground">8</p>
+                        <p className="text-[10px] text-green-600">+2 nouveaux</p>
                       </div>
-                      <p className="text-xs font-semibold text-foreground">{booking.time}</p>
+                      <div className="bg-secondary/50 rounded-xl p-3">
+                        <p className="text-[10px] text-muted-foreground">CA du jour</p>
+                        <p className="text-xl font-bold text-foreground">340€</p>
+                        <p className="text-[10px] text-green-600">+15%</p>
+                      </div>
                     </div>
-                  ))}
-                </div>
+                    
+                    {/* Upcoming bookings */}
+                    <p className="text-xs font-semibold text-foreground mb-2">Prochains RDV</p>
+                    <div className="space-y-2">
+                      {[
+                        { name: 'Jean M.', time: '10:00', pack: 'Complet', color: 'green' },
+                        { name: 'Marie D.', time: '11:30', pack: 'Intérieur', color: 'yellow' },
+                        { name: 'Pierre B.', time: '14:00', pack: 'Simple', color: 'blue' },
+                      ].map((booking, i) => (
+                        <div key={i} className="flex items-center gap-3 bg-secondary/30 rounded-xl p-3">
+                          <div className={`w-1 h-10 rounded-full ${
+                            booking.color === 'green' ? 'bg-green-500' :
+                            booking.color === 'yellow' ? 'bg-yellow-500' : 'bg-blue-500'
+                          }`} />
+                          <div className="flex-1">
+                            <p className="text-xs font-medium text-foreground">{booking.name}</p>
+                            <p className="text-[10px] text-muted-foreground">{booking.pack}</p>
+                          </div>
+                          <p className="text-xs font-semibold text-foreground">{booking.time}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {mobileTab === 'formules' && (
+                  <>
+                    <p className="text-xs font-semibold text-foreground mb-3">Vos formules</p>
+                    <div className="space-y-2">
+                      {[
+                        { name: 'Lavage simple', price: '15€', desc: 'Extérieur' },
+                        { name: 'Intérieur', price: '35€', desc: 'Aspiration' },
+                        { name: 'Complet', price: '65€', desc: 'Int. + Ext.' },
+                        { name: 'Premium', price: '120€', desc: 'Tout inclus' },
+                      ].map((pack, i) => (
+                        <div key={i} className="flex items-center gap-3 bg-secondary/30 rounded-xl p-3">
+                          <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <Droplets className="w-4 h-4 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-xs font-medium text-foreground">{pack.name}</p>
+                            <p className="text-[10px] text-muted-foreground">{pack.desc}</p>
+                          </div>
+                          <p className="text-xs font-semibold text-primary">{pack.price}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {mobileTab === 'stats' && (
+                  <>
+                    <p className="text-xs font-semibold text-foreground mb-3">Statistiques</p>
+                    <div className="grid grid-cols-2 gap-2 mb-3">
+                      <div className="bg-secondary/50 rounded-xl p-3">
+                        <p className="text-[10px] text-muted-foreground">Ce mois</p>
+                        <p className="text-lg font-bold text-foreground">127</p>
+                        <p className="text-[10px] text-green-600">+12%</p>
+                      </div>
+                      <div className="bg-secondary/50 rounded-xl p-3">
+                        <p className="text-[10px] text-muted-foreground">CA</p>
+                        <p className="text-lg font-bold text-foreground">4 850€</p>
+                        <p className="text-[10px] text-green-600">+8%</p>
+                      </div>
+                    </div>
+                    <div className="bg-secondary/30 rounded-xl p-3">
+                      <p className="text-[10px] text-muted-foreground mb-2">Répartition</p>
+                      <div className="space-y-2">
+                        {[
+                          { name: 'Complet', pct: 45 },
+                          { name: 'Intérieur', pct: 30 },
+                          { name: 'Simple', pct: 25 },
+                        ].map((item, i) => (
+                          <div key={i}>
+                            <div className="flex justify-between text-[10px] mb-0.5">
+                              <span className="text-foreground">{item.name}</span>
+                              <span className="text-muted-foreground">{item.pct}%</span>
+                            </div>
+                            <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+                              <div className="h-full bg-primary rounded-full" style={{ width: `${item.pct}%` }} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {mobileTab === 'settings' && (
+                  <>
+                    <p className="text-xs font-semibold text-foreground mb-3">Paramètres</p>
+                    <div className="space-y-2">
+                      <div className="bg-secondary/30 rounded-xl p-3">
+                        <p className="text-[10px] text-muted-foreground mb-1">Centre</p>
+                        <p className="text-xs font-medium text-foreground">Clean Auto Pro</p>
+                        <p className="text-[10px] text-muted-foreground">12 rue du Lavage, Paris</p>
+                      </div>
+                      <div className="bg-secondary/30 rounded-xl p-3">
+                        <p className="text-[10px] text-muted-foreground mb-1">Horaires</p>
+                        <p className="text-xs text-foreground">Lun - Sam : 9h - 19h</p>
+                      </div>
+                      <div className="bg-secondary/30 rounded-xl p-3 flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                          <Car className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-muted-foreground">Logo</p>
+                          <p className="text-xs text-foreground">Modifier</p>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
               
               {/* Bottom navigation */}
               <div className="absolute bottom-0 left-0 right-0 bg-card border-t border-border/40 px-6 py-3">
                 <div className="flex justify-around">
                   {[
-                    { icon: Calendar, active: true },
-                    { icon: Droplets, active: false },
-                    { icon: BarChart3, active: false },
-                    { icon: Settings, active: false },
-                  ].map((item, i) => (
-                    <div key={i} className={`p-2 rounded-xl ${item.active ? 'bg-primary/10' : ''}`}>
-                      <item.icon className={`w-5 h-5 ${item.active ? 'text-primary' : 'text-muted-foreground'}`} />
-                    </div>
+                    { icon: Calendar, tab: 'reservations' as const },
+                    { icon: Droplets, tab: 'formules' as const },
+                    { icon: BarChart3, tab: 'stats' as const },
+                    { icon: Settings, tab: 'settings' as const },
+                  ].map((item) => (
+                    <button 
+                      key={item.tab}
+                      onClick={() => setMobileTab(item.tab)}
+                      className={`p-2 rounded-xl transition-colors ${mobileTab === item.tab ? 'bg-primary/10' : ''}`}
+                    >
+                      <item.icon className={`w-5 h-5 ${mobileTab === item.tab ? 'text-primary' : 'text-muted-foreground'}`} />
+                    </button>
                   ))}
                 </div>
               </div>
