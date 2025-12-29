@@ -19,10 +19,7 @@ export default function Index() {
       <header className="w-full py-4 px-4 sm:px-6 border-b border-border/50 sticky top-0 bg-background/95 backdrop-blur-sm z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-foreground rounded-xl flex items-center justify-center">
-              <Logo size="sm" variant="light" />
-            </div>
-            <span className="font-semibold text-lg sm:text-xl text-foreground tracking-tight">CleaningPage</span>
+            <Logo size="lg" />
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <Link to="/auth">
@@ -274,10 +271,8 @@ export default function Index() {
                     <div className="pt-8 pb-16 px-4 min-h-[400px] bg-background">
                       {/* Header */}
                       <div className="flex items-center justify-between mb-5">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center">
-                            <Logo size="sm" variant="light" />
-                          </div>
+                      <div className="flex items-center gap-2">
+                          <Logo size="md" />
                           <div>
                             <p className="text-xs font-semibold text-foreground">Clean Auto Pro</p>
                             <p className="text-[10px] text-muted-foreground">Aujourd'hui</p>
@@ -362,10 +357,7 @@ export default function Index() {
                     {/* Sidebar */}
                     <div className="w-48 bg-secondary/30 border-r border-border/40 p-4 flex-shrink-0">
                       <div className="flex items-center gap-2 mb-2">
-                        <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center">
-                          <Logo size="sm" variant="light" />
-                        </div>
-                        <span className="text-sm font-semibold text-foreground">CleaningPage</span>
+                        <Logo size="md" />
                       </div>
                       <p className="text-xs text-muted-foreground mb-6 truncate">/clean-auto-pro</p>
 
@@ -839,10 +831,7 @@ export default function Index() {
       <footer className="py-6 sm:py-8 px-4 sm:px-6 border-t border-border/50">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-foreground rounded-lg flex items-center justify-center">
-              <Logo size="sm" variant="light" />
-            </div>
-            <span className="font-semibold text-sm sm:text-base text-foreground">CleaningPage</span>
+            <Logo size="md" />
           </div>
           <p className="text-xs sm:text-sm text-muted-foreground">
             © 2024 CleaningPage. Tous droits réservés.
