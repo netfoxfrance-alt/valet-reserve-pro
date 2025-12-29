@@ -288,20 +288,20 @@ export default function Index() {
             </p>
           </div>
 
-          {/* Features Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
+          {/* Features Grid - Compact on mobile */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-12 sm:mb-16">
             {[
-              { icon: Calendar, title: 'Réservations', desc: 'Visualisez tous vos RDV, confirmez ou annulez en un clic' },
-              { icon: BarChart3, title: 'Statistiques', desc: 'Suivez votre chiffre d\'affaires et votre croissance' },
-              { icon: Users, title: 'Base clients', desc: 'Retrouvez l\'historique de chaque client' },
-              { icon: Palette, title: 'Personnalisation', desc: 'Modifiez votre page en temps réel' },
+              { icon: Calendar, title: 'Réservations', desc: 'Gérez vos RDV en un clic' },
+              { icon: BarChart3, title: 'Statistiques', desc: 'Suivez votre CA' },
+              { icon: Users, title: 'Clients', desc: 'Historique complet' },
+              { icon: Palette, title: 'Ma page', desc: 'Personnalisez tout' },
             ].map((item) => (
-              <Card key={item.title} variant="elevated" className="p-5 sm:p-6 rounded-xl sm:rounded-2xl hover:shadow-xl transition-shadow duration-300">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-secondary rounded-xl sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-4">
-                  <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-foreground" />
+              <Card key={item.title} variant="elevated" className="p-3 sm:p-6 rounded-xl sm:rounded-2xl hover:shadow-xl transition-shadow duration-300">
+                <div className="w-8 h-8 sm:w-12 sm:h-12 bg-secondary rounded-lg sm:rounded-2xl flex items-center justify-center mb-2 sm:mb-4">
+                  <item.icon className="w-4 h-4 sm:w-6 sm:h-6 text-foreground" />
                 </div>
-                <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1 sm:mb-2">{item.title}</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                <h3 className="text-sm sm:text-lg font-semibold text-foreground mb-0.5 sm:mb-2">{item.title}</h3>
+                <p className="text-[10px] sm:text-sm text-muted-foreground leading-snug">{item.desc}</p>
               </Card>
             ))}
           </div>
