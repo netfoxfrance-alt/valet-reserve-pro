@@ -307,14 +307,6 @@ export default function Index() {
             ))}
           </div>
 
-          {/* Interactive hint badge */}
-          <div className="hidden sm:flex justify-center mb-4">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium animate-bounce">
-              <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-              Cliquez sur le menu pour explorer le dashboard
-            </div>
-          </div>
-
           {/* Interactive Dashboard Mockup */}
           <div className="hidden sm:block">
             <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60">
@@ -332,12 +324,18 @@ export default function Index() {
 
               {/* Dashboard Layout */}
               <div className="flex min-h-[400px]">
-                {/* Sidebar */}
-                <div className="w-48 bg-secondary/30 border-r border-border/40 p-4 flex-shrink-0">
+                {/* Sidebar with hint */}
+                <div className="w-48 bg-secondary/30 border-r border-border/40 p-4 flex-shrink-0 relative">
                   <div className="flex items-center gap-2 mb-2">
                     <Logo size="md" />
                   </div>
-                  <p className="text-xs text-muted-foreground mb-6 truncate">/clean-auto-pro</p>
+                  <p className="text-xs text-muted-foreground mb-4 truncate">/clean-auto-pro</p>
+
+                  {/* Hint badge inside sidebar */}
+                  <div className="mb-3 bg-primary text-primary-foreground px-2 py-1.5 rounded-lg text-[10px] font-medium flex items-center gap-1.5 animate-pulse">
+                    <span className="w-1.5 h-1.5 bg-primary-foreground rounded-full" />
+                    Cliquez pour explorer ↓
+                  </div>
 
                   <nav className="space-y-1">
                     {[
@@ -353,7 +351,7 @@ export default function Index() {
                         className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all ${
                           item.active 
                             ? 'bg-card text-foreground shadow-sm scale-105' 
-                            : 'text-muted-foreground hover:bg-card/50'
+                            : 'text-muted-foreground hover:bg-card/50 hover:scale-102'
                         }`}
                       >
                         <item.icon className="w-4 h-4" />
