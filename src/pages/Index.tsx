@@ -104,7 +104,7 @@ export default function Index() {
               <div className="animate-float">
                 <div className="bg-card rounded-2xl sm:rounded-3xl shadow-mockup overflow-hidden border border-border/50 w-[300px] sm:w-[340px]">
                   {/* Banner Image */}
-                  <div className="h-32 sm:h-36 relative overflow-hidden">
+                  <div className="h-32 sm:h-36 relative">
                     <img 
                       src={mockupBanner} 
                       alt="Car wash" 
