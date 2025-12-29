@@ -60,10 +60,9 @@ export default function Auth() {
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8 sm:p-4">
       <div className="w-full max-w-md animate-fade-in-up">
         <div className="text-center mb-6 sm:mb-8">
-          <Link to="/" className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-primary rounded-2xl mb-4 sm:mb-6">
-            <Logo size="lg" variant="light" />
+          <Link to="/" className="inline-block mb-4 sm:mb-6">
+            <Logo size="xl" />
           </Link>
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">CleaningPage</h1>
           <p className="text-sm sm:text-base text-muted-foreground px-2">
             {isSignUp ? 'Créez votre compte professionnel' : 'Connectez-vous à votre espace professionnel'}
           </p>

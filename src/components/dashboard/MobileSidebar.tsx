@@ -61,10 +61,8 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
       <SheetContent side="left" className="w-[280px] p-0 bg-surface-subtle">
         <SheetHeader className="px-4 h-16 border-b border-border flex flex-row items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Logo size="sm" variant="light" />
-            </div>
-            <SheetTitle className="font-semibold text-foreground">CleaningPage</SheetTitle>
+            <Logo size="lg" />
+            <SheetTitle className="sr-only">CleaningPage</SheetTitle>
           </div>
         </SheetHeader>
         

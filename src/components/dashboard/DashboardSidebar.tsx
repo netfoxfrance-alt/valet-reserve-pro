@@ -49,10 +49,7 @@ export function DashboardSidebar() {
     <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-surface-subtle border-r border-border">
       <div className="flex items-center gap-2 px-6 h-16 border-b border-border">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <Logo size="sm" variant="light" />
-          </div>
-          <span className="font-semibold text-foreground">CleaningPage</span>
+          <Logo size="lg" />
         </Link>
       </div>
       
