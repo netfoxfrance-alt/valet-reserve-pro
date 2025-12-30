@@ -17,6 +17,9 @@ export default function Upgrade() {
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
 
+  // Determine where to go back based on subscription
+  const backUrl = subscription.subscribed ? '/dashboard' : '/dashboard/my-page';
+
   // Check for payment status in URL
   useEffect(() => {
     const paymentStatus = searchParams.get('payment');
@@ -83,9 +86,9 @@ export default function Upgrade() {
       {/* Header */}
       <header className="border-b border-border bg-background/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link to="/dashboard" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+          <Link to={backUrl} className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Retour au dashboard</span>
+            <span className="text-sm">Retour</span>
           </Link>
           <Logo size="md" />
         </div>
