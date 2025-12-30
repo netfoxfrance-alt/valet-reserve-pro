@@ -80,9 +80,14 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
               </div>
             ) : (
               <Link to="/dashboard/upgrade" onClick={() => onOpenChange(false)}>
-                <div className="bg-emerald-500/10 hover:bg-emerald-500/15 transition-colors px-3 py-2 rounded-xl text-xs font-medium flex items-center justify-between cursor-pointer">
-                  <span className="text-emerald-600">15 jours gratuits</span>
-                  <span className="text-emerald-700 font-semibold">Essayer →</span>
+                <div className="bg-secondary hover:bg-secondary/80 transition-colors px-3 py-2.5 rounded-xl cursor-pointer">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-muted-foreground">Compte gratuit</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-foreground">Essayer Pro</span>
+                    <span className="text-xs text-primary font-medium">15 jours gratuits →</span>
+                  </div>
                 </div>
               </Link>
             )}
