@@ -157,7 +157,7 @@ const QualificationMockup = () => (
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <div className="text-[9px] text-foreground">Type de véhicule</div>
+        <div className="text-[9px] text-foreground">Type de prestation</div>
       </div>
       <div className="flex items-center gap-2">
         <div className="w-3 h-3 rounded border-2 border-primary bg-primary flex items-center justify-center">
@@ -165,11 +165,11 @@ const QualificationMockup = () => (
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <div className="text-[9px] text-foreground">État intérieur</div>
+        <div className="text-[9px] text-foreground">Surface / taille</div>
       </div>
       <div className="flex items-center gap-2">
         <div className="w-3 h-3 rounded border-2 border-muted-foreground/30" />
-        <div className="text-[9px] text-muted-foreground">Animaux ?</div>
+        <div className="text-[9px] text-muted-foreground">Urgence ?</div>
       </div>
     </div>
     {/* Sparkle */}
@@ -185,37 +185,37 @@ const features = [
   {
     title: 'Réservation automatique',
     subtitle: '24h/24, 7j/7',
-    description: 'Vos clients réservent en ligne à tout moment, même quand vous dormez.',
+    description: 'Vos clients réservent seuls, même la nuit. Vous gagnez du temps, eux aussi.',
     Mockup: BookingMockup,
   },
   {
     title: 'Agenda intégré',
-    subtitle: 'Créneaux en temps réel',
-    description: 'Gérez vos disponibilités et synchronisez automatiquement votre planning.',
+    subtitle: 'Synchronisation temps réel',
+    description: 'Vos créneaux se mettent à jour automatiquement. Fini les doubles réservations.',
     Mockup: AgendaMockup,
   },
   {
     title: 'Offres personnalisables',
     subtitle: 'Formules & variantes',
-    description: 'Créez vos packs avec différentes options et tarifs selon le véhicule.',
+    description: 'Créez vos packs avec des options et tarifs adaptés à chaque prestation.',
     Mockup: PacksMockup,
   },
   {
     title: 'Statistiques détaillées',
     subtitle: 'Tableau de bord complet',
-    description: 'Suivez votre chiffre d\'affaires, vos réservations et votre croissance.',
+    description: 'Visualisez votre chiffre d\'affaires, vos rendez-vous et votre croissance.',
     Mockup: StatsMockup,
   },
   {
     title: 'Base clients',
-    subtitle: 'Historique complet',
-    description: 'Retrouvez l\'historique de tous vos clients et leurs préférences.',
+    subtitle: 'Tout centralisé',
+    description: 'Retrouvez chaque client, son historique et ses préférences en un clic.',
     Mockup: ClientsMockup,
   },
   {
     title: 'Qualification avancée',
-    subtitle: 'Questionnaire intelligent',
-    description: 'Qualifiez automatiquement vos prospects avec des questions ciblées.',
+    subtitle: 'Questions intelligentes',
+    description: 'Collectez les bonnes infos avant le RDV. Arrivez préparé, gagnez en efficacité.',
     Mockup: QualificationMockup,
   },
 ];
