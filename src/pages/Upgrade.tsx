@@ -52,7 +52,7 @@ export default function Upgrade() {
           <div className="text-center mb-6">
             <h2 className="text-xl font-semibold text-foreground mb-2">CleaningPage Pro</h2>
             <div className="flex items-baseline justify-center gap-1">
-              <span className="text-4xl font-bold text-foreground">49€</span>
+              <span className="text-4xl font-bold text-foreground">39€</span>
               <span className="text-muted-foreground">/ mois</span>
             </div>
             <p className="text-sm text-muted-foreground mt-2">Sans engagement · Annulez à tout moment</p>
