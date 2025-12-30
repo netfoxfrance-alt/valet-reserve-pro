@@ -21,7 +21,7 @@ export function DashboardHeader({ title, subtitle, onMenuClick }: DashboardHeade
           <Menu className="w-5 h-5" />
         </Button>
         <div className="lg:hidden">
-          <Logo size="sm" />
+          <Logo size="sm" variant="dark" />
         </div>
         <div className="hidden lg:block">
           <h1 className="text-lg font-semibold text-foreground">{title}</h1>
