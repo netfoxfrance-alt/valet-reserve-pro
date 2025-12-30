@@ -160,64 +160,59 @@ export default function Upgrade() {
         {/* Features Showcase with Mockups */}
         <FeatureShowcase />
 
-        {/* Value proposition */}
-        <div className="mt-24 mb-20 max-w-3xl mx-auto text-center space-y-12">
-          <div>
-            <p className="text-sm uppercase tracking-widest text-muted-foreground mb-6">
-              CleaningPage Pro vous apporte
+        {/* Value proposition - Apple style */}
+        <div className="mt-32 mb-24 max-w-3xl mx-auto text-center">
+          {/* Overline */}
+          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground/60 mb-10">
+            CleaningPage Pro vous apporte
+          </p>
+          
+          {/* Main value props */}
+          <div className="space-y-0 mb-16">
+            <p className="text-3xl sm:text-4xl md:text-5xl font-semibold text-foreground tracking-tight leading-tight">
+              Un gain de temps.
             </p>
-            <div className="space-y-1">
-              <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
-                Un gain de temps.
-              </p>
-              <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
-                Une meilleure conversion.
-              </p>
-              <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
-                Une activité plus organisée.
-              </p>
-            </div>
+            <p className="text-3xl sm:text-4xl md:text-5xl font-semibold text-foreground tracking-tight leading-tight">
+              Une meilleure conversion.
+            </p>
+            <p className="text-3xl sm:text-4xl md:text-5xl font-semibold text-foreground tracking-tight leading-tight">
+              Une activité plus organisée.
+            </p>
           </div>
           
-          <div className="space-y-2">
-            <p className="text-lg text-muted-foreground">
+          {/* Subtle divider */}
+          <div className="w-12 h-px bg-border mx-auto mb-12" />
+          
+          {/* Trial CTA */}
+          <div className="space-y-6">
+            <p className="text-xl sm:text-2xl text-muted-foreground font-light">
               Essayez gratuitement pendant 15 jours,
-            </p>
-            <p className="text-lg text-muted-foreground">
+              <br />
               et jugez par vous-même.
             </p>
-            <p className="text-sm text-muted-foreground/70 mt-4">
-              Sans aucun engagement.
+            
+            <Button 
+              size="lg" 
+              className="rounded-full bg-emerald-500 hover:bg-emerald-600 text-white px-12 h-14 text-lg font-medium shadow-lg shadow-emerald-500/20 hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-300"
+              onClick={handleUpgrade}
+              disabled={isLoading || subscription.subscribed}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Redirection...
+                </>
+              ) : subscription.subscribed ? (
+                'Déjà abonné Pro'
+              ) : (
+                'Tester Gratuitement'
+              )}
+            </Button>
+            
+            <p className="text-sm text-muted-foreground/50">
+              Sans engagement · Annulez à tout moment
             </p>
           </div>
-
-          <Button 
-            size="lg" 
-            className="rounded-full bg-emerald-500 hover:bg-emerald-600 text-white px-10 h-12 text-base"
-            onClick={handleUpgrade}
-            disabled={isLoading || subscription.subscribed}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Redirection...
-              </>
-            ) : subscription.subscribed ? (
-              'Déjà abonné Pro'
-            ) : (
-              'Tester Gratuitement'
-            )}
-          </Button>
-        </div>
-
-        {/* FAQ or reassurance */}
-        <div className="text-center">
-          <p className="text-muted-foreground">
-            Des questions ? Contactez-nous à{' '}
-            <a href="mailto:contact@cleaningpage.com" className="text-primary hover:underline">
-              contact@cleaningpage.com
-            </a>
-          </p>
         </div>
       </main>
     </div>
