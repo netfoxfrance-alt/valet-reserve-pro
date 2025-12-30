@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,16 +8,28 @@ import { Mail, Lock, AlertCircle } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useMyCenter } from '@/hooks/useCenter';
 
 export default function Auth() {
   const navigate = useNavigate();
-  const { signIn, signUp } = useAuth();
+  const { user, signIn, signUp } = useAuth();
+  const { center, loading: centerLoading } = useMyCenter();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Redirect authenticated users based on their plan
+  useEffect(() => {
+    if (user && !centerLoading && center) {
+      const destination = center.subscription_plan === 'pro' 
+        ? '/dashboard' 
+        : '/dashboard/my-page';
+      navigate(destination, { replace: true });
+    }
+  }, [user, center, centerLoading, navigate]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,10 +62,11 @@ export default function Auth() {
       title: isSignUp ? 'Compte créé !' : 'Connexion réussie',
       description: isSignUp 
         ? 'Votre espace a été créé automatiquement.' 
-        : 'Bienvenue dans votre espace pro.',
+        : 'Bienvenue dans votre espace.',
     });
     
-    navigate('/dashboard');
+    // Navigation will be handled by useEffect once center data is loaded
+    setIsLoading(false);
   };
   
   return (
