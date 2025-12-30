@@ -1,5 +1,6 @@
-import { Menu, Bell, Sparkles } from 'lucide-react';
+import { Menu, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Logo } from '@/components/ui/Logo';
 
 interface DashboardHeaderProps {
   title: string;
@@ -19,10 +20,8 @@ export function DashboardHeader({ title, subtitle, onMenuClick }: DashboardHeade
         >
           <Menu className="w-5 h-5" />
         </Button>
-        <div className="flex items-center gap-2 lg:hidden">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-primary-foreground" />
-          </div>
+        <div className="lg:hidden">
+          <Logo size="sm" />
         </div>
         <div className="hidden lg:block">
           <h1 className="text-lg font-semibold text-foreground">{title}</h1>
