@@ -76,6 +76,25 @@ export default function Index() {
                 <div className="absolute -top-10 -right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
                 <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-secondary rounded-full blur-2xl" />
                 
+                {/* Floating time slots card */}
+                <div className="absolute -right-4 sm:-right-12 top-1/3 bg-card rounded-xl sm:rounded-2xl shadow-xl border border-border/50 p-2.5 sm:p-3 z-10 animate-pulse-subtle">
+                  <p className="text-[9px] sm:text-[10px] font-medium text-foreground mb-1.5 sm:mb-2">Créneaux disponibles</p>
+                  <div className="space-y-1">
+                    <div className="bg-secondary/60 rounded-md sm:rounded-lg px-2 sm:px-2.5 py-1 sm:py-1.5 text-[8px] sm:text-[9px] text-muted-foreground">
+                      <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-1" />
+                      10:00
+                    </div>
+                    <div className="bg-primary text-primary-foreground rounded-md sm:rounded-lg px-2 sm:px-2.5 py-1 sm:py-1.5 text-[8px] sm:text-[9px] font-medium">
+                      <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-1" />
+                      14:30 ✓
+                    </div>
+                    <div className="bg-secondary/60 rounded-md sm:rounded-lg px-2 sm:px-2.5 py-1 sm:py-1.5 text-[8px] sm:text-[9px] text-muted-foreground">
+                      <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-1" />
+                      16:00
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="relative bg-card rounded-2xl sm:rounded-3xl shadow-mockup overflow-hidden border border-border/50 w-[280px] sm:w-[340px]">
                   {/* Banner Image */}
                   <div className="h-28 sm:h-36 relative">
@@ -164,7 +183,8 @@ export default function Index() {
                     </div>
 
                     {/* Booking Button */}
-                    <div className="bg-foreground text-background rounded-lg sm:rounded-xl py-2.5 sm:py-3 text-center text-xs sm:text-sm font-medium shadow-lg">
+                    <div className="bg-foreground text-background rounded-lg sm:rounded-xl py-2.5 sm:py-3 text-center text-xs sm:text-sm font-medium shadow-lg flex items-center justify-center gap-2">
+                      <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       Réserver un créneau
                     </div>
                   </div>
