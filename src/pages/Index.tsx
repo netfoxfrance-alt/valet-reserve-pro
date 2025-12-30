@@ -1087,15 +1087,13 @@ export default function Index() {
             </Card>
 
             {/* Pro Plan */}
-            <Card variant="elevated" className="p-5 sm:p-8 rounded-xl sm:rounded-2xl ring-2 ring-foreground relative hover:shadow-xl transition-shadow duration-300">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-foreground text-primary-foreground px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap">
-                Recommandé
-              </div>
-              <div className="absolute top-3 sm:top-4 right-3 sm:right-4 bg-primary/10 text-primary px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium">
-                Sans engagement
+            <Card variant="elevated" className="p-5 sm:p-8 rounded-xl sm:rounded-2xl ring-2 ring-foreground relative hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+              {/* Premium trial banner */}
+              <div className="absolute top-0 left-0 right-0 bg-foreground text-primary-foreground py-2 sm:py-2.5 px-4 text-center">
+                <p className="text-xs sm:text-sm font-medium">15 jours d'essai gratuit</p>
               </div>
               
-              <div className="mb-4 sm:mb-6 mt-2 sm:mt-0">
+              <div className="mb-4 sm:mb-6 mt-8 sm:mt-10">
                 <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-1">CleaningPage Pro</h3>
                 <p className="text-muted-foreground text-xs sm:text-sm">Automatisation complète</p>
               </div>
@@ -1103,6 +1101,7 @@ export default function Index() {
               <div className="mb-4 sm:mb-6">
                 <span className="text-3xl sm:text-4xl font-semibold text-foreground">39€</span>
                 <span className="text-muted-foreground text-sm sm:text-base ml-2">/ mois</span>
+                <p className="text-xs text-muted-foreground mt-1">après l'essai gratuit</p>
               </div>
               
               <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
@@ -1127,10 +1126,12 @@ export default function Index() {
               
               <Link to="/auth">
                 <Button size="lg" className="w-full rounded-full text-sm">
-                  Essayer Pro
+                  Commencer l'essai gratuit
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
+              
+              <p className="text-center text-xs text-muted-foreground mt-3">Sans engagement · Annulez à tout moment</p>
             </Card>
           </div>
         </div>
