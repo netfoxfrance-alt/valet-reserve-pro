@@ -135,7 +135,7 @@ export default function Upgrade() {
 
           <Button 
             size="lg" 
-            className="w-full rounded-full"
+            className="w-full rounded-full bg-emerald-500 hover:bg-emerald-600 text-white"
             onClick={handleUpgrade}
             disabled={isLoading || subscription.subscribed}
           >
@@ -147,7 +147,7 @@ export default function Upgrade() {
             ) : subscription.subscribed ? (
               'Déjà abonné Pro'
             ) : (
-              'Essayer gratuitement 15 jours'
+              'Commencer l\'essai gratuit'
             )}
           </Button>
           
