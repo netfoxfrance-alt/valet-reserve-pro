@@ -76,20 +76,21 @@ export default function Index() {
                 <div className="absolute -top-10 -right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
                 <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-secondary rounded-full blur-2xl" />
                 
-                {/* Floating time slots card */}
-                <div className="absolute -right-4 sm:-right-12 top-1/3 bg-card rounded-xl sm:rounded-2xl shadow-xl border border-border/50 p-2.5 sm:p-3 z-10 animate-pulse-subtle">
-                  <p className="text-[9px] sm:text-[10px] font-medium text-foreground mb-1.5 sm:mb-2">Créneaux disponibles</p>
-                  <div className="space-y-1">
-                    <div className="bg-secondary/60 rounded-md sm:rounded-lg px-2 sm:px-2.5 py-1 sm:py-1.5 text-[8px] sm:text-[9px] text-muted-foreground">
-                      <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-1" />
+                {/* Floating booking card - Calendly style */}
+                <div className="absolute -right-2 sm:-right-8 top-16 sm:top-20 bg-card rounded-xl sm:rounded-2xl shadow-xl border border-border/50 p-3 sm:p-4 z-10 w-[140px] sm:w-[180px]">
+                  <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                    <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
+                    <p className="text-[10px] sm:text-xs font-semibold text-foreground">Lun. 6 Janvier</p>
+                  </div>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <div className="bg-secondary/50 rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 text-[9px] sm:text-[11px] text-muted-foreground text-center">
                       10:00
                     </div>
-                    <div className="bg-primary text-primary-foreground rounded-md sm:rounded-lg px-2 sm:px-2.5 py-1 sm:py-1.5 text-[8px] sm:text-[9px] font-medium">
-                      <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-1" />
-                      14:30 ✓
+                    <div className="bg-primary text-primary-foreground rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 text-[9px] sm:text-[11px] font-medium text-center flex items-center justify-center gap-1">
+                      <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                      14:30
                     </div>
-                    <div className="bg-secondary/60 rounded-md sm:rounded-lg px-2 sm:px-2.5 py-1 sm:py-1.5 text-[8px] sm:text-[9px] text-muted-foreground">
-                      <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-1" />
+                    <div className="bg-secondary/50 rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 text-[9px] sm:text-[11px] text-muted-foreground text-center">
                       16:00
                     </div>
                   </div>
