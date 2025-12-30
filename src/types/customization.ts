@@ -15,6 +15,12 @@ export interface CenterCustomization {
     show_contact_form: boolean;
     dark_mode: boolean;
   };
+  social: {
+    instagram: string;
+    tiktok: string;
+    facebook: string;
+    email: string;
+  };
   cover_url: string | null;
 }
 
@@ -26,14 +32,20 @@ export const defaultCustomization: CenterCustomization = {
   },
   texts: {
     tagline: '',
-    cta_button: 'Réserver maintenant',
+    cta_button: 'Nous contacter',
   },
   layout: {
     show_hours: true,
     show_address: true,
     show_phone: true,
-    show_contact_form: false,
+    show_contact_form: true,
     dark_mode: false,
+  },
+  social: {
+    instagram: '',
+    tiktok: '',
+    facebook: '',
+    email: '',
   },
   cover_url: null,
 };
