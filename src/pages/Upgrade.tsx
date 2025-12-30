@@ -161,25 +161,44 @@ export default function Upgrade() {
         <FeatureShowcase />
 
         {/* Value proposition */}
-        <div className="mt-16 mb-12 max-w-2xl mx-auto text-center">
-          <div className="bg-secondary/50 rounded-2xl p-8">
-            <h3 className="text-xl font-semibold text-foreground mb-4">
-              La vraie valeur de CleaningPage Pro
-            </h3>
-            <p className="text-muted-foreground leading-relaxed mb-4">
-              Faire développer un site vitrine avec système de réservation et espace de gestion ? 
-              Comptez <span className="text-foreground font-semibold">minimum 5 000€</span> chez n'importe quel développeur, 
-              plus des frais de maintenance mensuels.
-            </p>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              Avec CleaningPage Pro, vous avez tout ça pour <span className="text-foreground font-semibold">39€/mois</span>. 
-              Une page professionnelle, un espace de gestion complet, des mises à jour automatiques. 
-              Gagnez des clients et du temps sans vous ruiner.
-            </p>
-            <p className="text-lg text-foreground font-medium">
-              Testez 15 jours gratuitement et jugez par vous-même.
-            </p>
-          </div>
+        <div className="mt-20 mb-16 max-w-2xl mx-auto text-center">
+          <p className="text-xl sm:text-2xl text-foreground font-medium leading-relaxed mb-2">
+            Un gain de temps.
+          </p>
+          <p className="text-xl sm:text-2xl text-foreground font-medium leading-relaxed mb-2">
+            Une meilleure conversion.
+          </p>
+          <p className="text-xl sm:text-2xl text-foreground font-medium leading-relaxed mb-8">
+            Une activité plus organisée et plus visible.
+          </p>
+          
+          <p className="text-muted-foreground leading-relaxed mb-1">
+            Essayez gratuitement pendant 15 jours,
+          </p>
+          <p className="text-muted-foreground leading-relaxed mb-1">
+            et jugez par vous-même.
+          </p>
+          <p className="text-muted-foreground leading-relaxed mb-8">
+            Sans aucun engagement.
+          </p>
+
+          <Button 
+            size="lg" 
+            className="rounded-full bg-emerald-500 hover:bg-emerald-600 text-white px-8"
+            onClick={handleUpgrade}
+            disabled={isLoading || subscription.subscribed}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Redirection...
+              </>
+            ) : subscription.subscribed ? (
+              'Déjà abonné Pro'
+            ) : (
+              'Tester Gratuitement'
+            )}
+          </Button>
         </div>
 
         {/* FAQ or reassurance */}
