@@ -164,14 +164,20 @@ export default function Upgrade() {
         <div className="mt-16 mb-12 max-w-2xl mx-auto text-center">
           <div className="bg-secondary/50 rounded-2xl p-8">
             <h3 className="text-xl font-semibold text-foreground mb-4">
-              Tout ça pour 39€/mois
+              La vraie valeur de CleaningPage Pro
             </h3>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              Une page professionnelle prête à l'emploi, un espace de gestion complet pour piloter votre activité. 
-              Gagnez des clients et du temps, à un prix introuvable ailleurs pour l'équivalent.
+            <p className="text-muted-foreground leading-relaxed mb-4">
+              Faire développer un site vitrine avec système de réservation et espace de gestion ? 
+              Comptez <span className="text-foreground font-semibold">minimum 5 000€</span> chez n'importe quel développeur, 
+              plus des frais de maintenance mensuels.
             </p>
-            <p className="text-foreground font-medium">
-              Testez gratuitement et voyez par vous-même.
+            <p className="text-muted-foreground leading-relaxed mb-6">
+              Avec CleaningPage Pro, vous avez tout ça pour <span className="text-foreground font-semibold">39€/mois</span>. 
+              Une page professionnelle, un espace de gestion complet, des mises à jour automatiques. 
+              Gagnez des clients et du temps sans vous ruiner.
+            </p>
+            <p className="text-lg text-foreground font-medium">
+              Testez 15 jours gratuitement et jugez par vous-même.
             </p>
           </div>
         </div>
