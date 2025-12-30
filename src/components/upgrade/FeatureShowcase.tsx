@@ -190,8 +190,8 @@ const features = [
   },
   {
     title: 'Agenda intégré',
-    subtitle: 'Synchronisation temps réel',
-    description: 'Vos créneaux se mettent à jour automatiquement. Fini les doubles réservations.',
+    subtitle: 'Vue complète',
+    description: 'Toutes vos réservations sur une seule page. Planning clair, semaine par semaine.',
     Mockup: AgendaMockup,
   },
   {
