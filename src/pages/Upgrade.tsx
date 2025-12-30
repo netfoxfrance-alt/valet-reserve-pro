@@ -3,13 +3,11 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Logo } from '@/components/ui/Logo';
-import { 
-  Check, ArrowLeft, Calendar, BarChart3, Package, Clock, 
-  Users, Sparkles, Shield, Loader2
-} from 'lucide-react';
+import { Check, ArrowLeft, Sparkles, Shield, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { FeatureShowcase } from '@/components/upgrade/FeatureShowcase';
 
 export default function Upgrade() {
   const [isLoading, setIsLoading] = useState(false);
@@ -72,14 +70,6 @@ export default function Upgrade() {
     }
   };
 
-  const proFeatures = [
-    { icon: Calendar, title: 'Réservation automatique 24h/24', desc: 'Vos clients réservent en ligne, même quand vous dormez' },
-    { icon: Clock, title: 'Agenda intégré avec créneaux', desc: 'Gérez vos disponibilités en temps réel' },
-    { icon: Package, title: 'Offres illimitées', desc: 'Présentez toutes vos formules avec variantes de prix' },
-    { icon: BarChart3, title: 'Statistiques détaillées', desc: 'Suivez votre CA, vos réservations et votre croissance' },
-    { icon: Users, title: 'Base de données clients', desc: 'Historique complet de tous vos clients' },
-    { icon: Sparkles, title: 'Qualification avancée', desc: 'Qualifiez automatiquement vos prospects' },
-  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -166,18 +156,8 @@ export default function Upgrade() {
           </div>
         </Card>
 
-        {/* Features Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {proFeatures.map((feature) => (
-            <div key={feature.title} className="bg-secondary/30 rounded-xl p-5">
-              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-3">
-                <feature.icon className="w-5 h-5 text-primary" />
-              </div>
-              <h3 className="font-medium text-foreground mb-1">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground">{feature.desc}</p>
-            </div>
-          ))}
-        </div>
+        {/* Features Showcase with Mockups */}
+        <FeatureShowcase />
 
         {/* FAQ or reassurance */}
         <div className="mt-12 text-center">
