@@ -160,8 +160,24 @@ export default function Upgrade() {
         {/* Features Showcase with Mockups */}
         <FeatureShowcase />
 
+        {/* Value proposition */}
+        <div className="mt-16 mb-12 max-w-2xl mx-auto text-center">
+          <div className="bg-secondary/50 rounded-2xl p-8">
+            <h3 className="text-xl font-semibold text-foreground mb-4">
+              Tout ça pour 39€/mois
+            </h3>
+            <p className="text-muted-foreground leading-relaxed mb-6">
+              Une page professionnelle prête à l'emploi, un espace de gestion complet pour piloter votre activité. 
+              Gagnez des clients et du temps, à un prix introuvable ailleurs pour l'équivalent.
+            </p>
+            <p className="text-foreground font-medium">
+              Testez gratuitement et voyez par vous-même.
+            </p>
+          </div>
+        </div>
+
         {/* FAQ or reassurance */}
-        <div className="mt-12 text-center">
+        <div className="text-center">
           <p className="text-muted-foreground">
             Des questions ? Contactez-nous à{' '}
             <a href="mailto:contact@cleaningpage.com" className="text-primary hover:underline">
