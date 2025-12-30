@@ -63,6 +63,9 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
+      subscription_data: {
+        trial_period_days: 15,
+      },
       success_url: `${origin}/dashboard?payment=success`,
       cancel_url: `${origin}/upgrade?payment=cancelled`,
     });
