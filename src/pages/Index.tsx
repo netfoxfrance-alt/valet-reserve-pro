@@ -38,32 +38,114 @@ export default function Index() {
         </div>
       </header>
       
-      {/* Hero */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="opacity-0 animate-fade-in-up inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8">
-            <Check className="w-3 h-3 sm:w-4 sm:h-4" />
-            Simple et gratuit
+      {/* Hero - Calendly style split layout */}
+      <section className="relative min-h-[calc(100vh-73px)] flex items-center overflow-hidden">
+        {/* Background gradient shapes */}
+        <div className="absolute top-0 right-0 w-1/2 h-full hidden lg:block">
+          <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-primary/20 via-primary/10 to-transparent rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-20 w-[400px] h-[400px] bg-gradient-to-tl from-pink-500/15 via-purple-500/10 to-transparent rounded-full blur-3xl" />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-12 lg:py-0">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+            {/* Left: Text content */}
+            <div className="max-w-xl">
+              <h1 className="opacity-0 animate-fade-in-up text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-semibold text-foreground tracking-tight leading-[1.1] mb-6">
+                Réservation<br />
+                <span className="text-muted-foreground">facile</span>
+              </h1>
+              <p className="opacity-0 animate-fade-in-up stagger-1 text-lg sm:text-xl text-muted-foreground leading-relaxed mb-8 max-w-md">
+                Rejoignez les professionnels du nettoyage qui simplifient leur business avec l'outil de réservation n°1.
+              </p>
+              
+              <div className="opacity-0 animate-fade-in-up stagger-2 space-y-3 mb-8">
+                <Link to="/auth" className="block">
+                  <Button size="lg" className="w-full sm:w-auto rounded-xl px-8 h-14 text-base font-medium">
+                    Créer ma page gratuitement
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+              
+              <p className="opacity-0 animate-fade-in-up stagger-3 text-sm text-muted-foreground">
+                Aucune carte bancaire requise
+              </p>
+            </div>
+
+            {/* Right: Product mockup */}
+            <div className="relative flex justify-center lg:justify-end">
+              <div className="opacity-0 animate-fade-in-up stagger-2 relative">
+                {/* Main mockup card */}
+                <div className="bg-card rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-border/50 w-[320px] sm:w-[400px] lg:w-[480px]">
+                  {/* Header */}
+                  <div className="p-5 sm:p-6 border-b border-border/50">
+                    <p className="text-base sm:text-lg font-medium text-foreground mb-1">Partagez votre page de réservation</p>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="p-5 sm:p-6">
+                    {/* Business info */}
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                        <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-foreground text-sm sm:text-base">Clean Auto Pro</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground">Lavage premium</p>
+                      </div>
+                    </div>
+
+                    {/* Calendar preview */}
+                    <div className="bg-secondary/30 rounded-xl p-4 mb-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <p className="text-xs sm:text-sm font-medium text-foreground">Sélectionnez une date</p>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <span>Janvier 2025</span>
+                          <ChevronRight className="w-3 h-3" />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-7 gap-1 text-center text-[10px] sm:text-xs">
+                        {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
+                          <div key={i} className="text-muted-foreground py-1">{d}</div>
+                        ))}
+                        {[...Array(31)].map((_, i) => (
+                          <div 
+                            key={i} 
+                            className={`py-1.5 rounded-md ${
+                              i === 14 ? 'bg-primary text-primary-foreground font-medium' : 
+                              [7, 8, 15, 16, 22, 23].includes(i) ? 'text-primary font-medium' : 
+                              'text-foreground'
+                            }`}
+                          >
+                            {i + 1}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Time slots */}
+                    <div className="flex flex-wrap gap-2">
+                      {['10:00', '11:00', '14:00', '15:30'].map((time, i) => (
+                        <div 
+                          key={time} 
+                          className={`px-3 py-2 rounded-lg text-xs sm:text-sm font-medium ${
+                            i === 1 ? 'bg-primary text-primary-foreground' : 'bg-secondary text-foreground'
+                          }`}
+                        >
+                          {time}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating confirmation button */}
+                <div className="absolute -bottom-4 -right-4 bg-emerald-500 text-white px-4 py-2 rounded-xl shadow-lg text-sm font-medium">
+                  Confirmer
+                </div>
+              </div>
+            </div>
           </div>
-          <h1 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-tight px-2">
-            Votre vitrine digitale
-            <br />
-            <span className="text-muted-foreground">prête en 5 minutes.</span>
-          </h1>
-          <p className="opacity-0 animate-fade-in-up stagger-2 text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed px-2">
-            Créez votre page professionnelle, partagez votre lien, recevez des réservations.
-          </p>
-          <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-            <Link to="/auth" className="w-full sm:w-auto">
-              <Button size="lg" className="rounded-full px-6 sm:px-8 w-full sm:w-auto text-sm sm:text-base">
-                Créer ma page gratuitement
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
-              </Button>
-            </Link>
-          </div>
-          <p className="opacity-0 animate-fade-in-up stagger-4 text-xs sm:text-sm text-muted-foreground mt-5 sm:mt-6">
-            Sans engagement · Aucune carte bancaire requise
-          </p>
         </div>
       </section>
 
