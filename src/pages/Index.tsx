@@ -179,8 +179,39 @@ export default function Index() {
       <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left: Link Sharing Visual */}
-            <div className="flex justify-center">
+            {/* Left: Text */}
+            <div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6">
+                Partagez votre lien,<br />
+                <span className="text-muted-foreground">convertissez.</span>
+              </h2>
+              <p className="text-muted-foreground mb-6 sm:mb-8 text-base sm:text-lg leading-relaxed">
+                Partagez votre lien partout où se trouve votre audience : réseaux sociaux, WhatsApp, carte de visite, Google...
+              </p>
+              
+              <div className="space-y-4 mb-8">
+                {[
+                  { icon: Eye, text: 'Vos visiteurs voient tout : infos, offres, disponibilités' },
+                  { icon: Calendar, text: 'Ils peuvent réserver directement, 24h/24' },
+                  { icon: ArrowRight, text: 'D\'un clic, ils passent de visiteur à client' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-secondary rounded-xl flex items-center justify-center flex-shrink-0">
+                      <item.icon className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />
+                    </div>
+                    <p className="text-foreground text-sm sm:text-base">{item.text}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
+                <Check className="w-4 h-4" />
+                100% gratuit
+              </div>
+            </div>
+
+            {/* Right: Link Sharing Visual */}
+            <div className="flex justify-center lg:justify-end">
               <div className="relative w-full max-w-[360px]">
                 {/* Central Link Card */}
                 <div className="bg-card rounded-2xl shadow-mockup border border-border/60 p-5 sm:p-6 text-center">
@@ -211,37 +242,6 @@ export default function Index() {
                 <div className="absolute -right-2 sm:-right-4 bottom-1/3 bg-card rounded-xl shadow-lg border border-border/40 p-2.5 sm:p-3">
                   <ExternalLink className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground" />
                 </div>
-              </div>
-            </div>
-
-            {/* Right: Text */}
-            <div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6">
-                Partagez votre lien,<br />
-                <span className="text-muted-foreground">convertissez.</span>
-              </h2>
-              <p className="text-muted-foreground mb-6 sm:mb-8 text-base sm:text-lg leading-relaxed">
-                Partagez votre lien partout où se trouve votre audience : réseaux sociaux, WhatsApp, carte de visite, Google...
-              </p>
-              
-              <div className="space-y-4 mb-8">
-                {[
-                  { icon: Eye, text: 'Vos visiteurs voient tout : infos, offres, disponibilités' },
-                  { icon: Calendar, text: 'Ils peuvent réserver directement, 24h/24' },
-                  { icon: ArrowRight, text: 'D\'un clic, ils passent de visiteur à client' },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-secondary rounded-xl flex items-center justify-center flex-shrink-0">
-                      <item.icon className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />
-                    </div>
-                    <p className="text-foreground text-sm sm:text-base">{item.text}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
-                <Check className="w-4 h-4" />
-                100% gratuit
               </div>
             </div>
           </div>
