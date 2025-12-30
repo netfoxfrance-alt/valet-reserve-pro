@@ -7,22 +7,23 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
 import { useMyCenter } from '@/hooks/useCenter';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
-import { Sparkles, Upload, Trash2, Loader2 } from 'lucide-react';
+import { Sparkles, Upload, Trash2, Loader2, CreditCard, Crown, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function DashboardSettings() {
   const { center, loading, updateCenter } = useMyCenter();
-  const { user } = useAuth();
+  const { user, session, subscription } = useAuth();
   const { toast } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [openingPortal, setOpeningPortal] = useState(false);
   const [settings, setSettings] = useState({
     name: '',
     address: '',
@@ -140,6 +141,46 @@ export default function DashboardSettings() {
       toast({ title: 'Erreur', description: 'Impossible de supprimer le logo.', variant: 'destructive' });
     } finally {
       setUploadingLogo(false);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    if (!session?.access_token) {
+      toast({
+        title: 'Erreur',
+        description: 'Vous devez être connecté.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setOpeningPortal(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      } else {
+        throw new Error('No portal URL returned');
+      }
+    } catch (error) {
+      console.error('Error opening customer portal:', error);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible d\'ouvrir le portail de gestion.',
+        variant: 'destructive',
+      });
+    } finally {
+      setOpeningPortal(false);
     }
   };
 
@@ -283,6 +324,69 @@ export default function DashboardSettings() {
                   onChange={(e) => setSettings({ ...settings, welcome_message: e.target.value })}
                   rows={3}
                 />
+              </div>
+            </Card>
+          </section>
+
+          {/* Subscription Section */}
+          <section className="mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Abonnement</h2>
+            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">Gérez votre abonnement CleaningPage.</p>
+            
+            <Card variant="elevated" className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className={cn(
+                    "w-10 h-10 rounded-xl flex items-center justify-center",
+                    subscription.subscribed ? "bg-primary/10" : "bg-secondary"
+                  )}>
+                    {subscription.subscribed ? (
+                      <Crown className="w-5 h-5 text-primary" />
+                    ) : (
+                      <CreditCard className="w-5 h-5 text-muted-foreground" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-medium text-foreground">
+                      {subscription.subscribed ? 'CleaningPage Pro' : 'CleaningPage Free'}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {subscription.subscribed 
+                        ? `Renouvellement le ${new Date(subscription.subscriptionEnd!).toLocaleDateString('fr-FR')}`
+                        : 'Accès limité aux fonctionnalités'
+                      }
+                    </p>
+                  </div>
+                </div>
+
+                {subscription.subscribed ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleManageSubscription}
+                    disabled={openingPortal}
+                    className="w-full sm:w-auto"
+                  >
+                    {openingPortal ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Ouverture...
+                      </>
+                    ) : (
+                      <>
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        Gérer l'abonnement
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  <Link to="/dashboard/upgrade" className="w-full sm:w-auto">
+                    <Button variant="premium" size="sm" className="w-full">
+                      <Crown className="w-4 h-4 mr-2" />
+                      Passer à Pro
+                    </Button>
+                  </Link>
+                )}
               </div>
             </Card>
           </section>
