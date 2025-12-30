@@ -43,7 +43,7 @@ export default function Index() {
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left: Text */}
-            <div className="order-2 lg:order-1">
+            <div>
               <div className="opacity-0 animate-fade-in-up inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8">
                 <Check className="w-3 h-3 sm:w-4 sm:h-4" />
                 Simple et gratuit
@@ -70,7 +70,7 @@ export default function Index() {
             </div>
 
             {/* Right: Floating Page Mockup */}
-            <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
+            <div className="flex justify-center lg:justify-end">
               <div className="animate-float relative">
                 {/* Background decorative shapes */}
                 <div className="absolute -top-10 -right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
