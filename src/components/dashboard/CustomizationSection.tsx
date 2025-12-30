@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CenterCustomization, defaultCustomization } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Type, Layout, Image, Upload, Trash2, Loader2 } from 'lucide-react';
+import { Palette, Type, Layout, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CustomizationSectionProps {
@@ -48,6 +48,10 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
 
   const updateLayout = (layout: Partial<CenterCustomization['layout']>) => {
     updateLocal({ layout: { ...local.layout, ...layout } });
+  };
+
+  const updateSocial = (social: Partial<CenterCustomization['social']>) => {
+    updateLocal({ social: { ...local.social, ...social } });
   };
 
   const applyPreset = (preset: typeof COLOR_PRESETS[0]) => {
@@ -121,7 +125,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     <section className="mb-6 sm:mb-8">
       <Card variant="elevated" className="p-4 sm:p-6">
         <Tabs defaultValue="colors" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6">
+          <TabsList className="grid w-full grid-cols-5 mb-6">
             <TabsTrigger value="colors" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Palette className="w-4 h-4" />
               <span className="hidden sm:inline">Couleurs</span>
@@ -129,6 +133,10 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             <TabsTrigger value="texts" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Type className="w-4 h-4" />
               <span className="hidden sm:inline">Textes</span>
+            </TabsTrigger>
+            <TabsTrigger value="social" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <Share2 className="w-4 h-4" />
+              <span className="hidden sm:inline">Réseaux</span>
             </TabsTrigger>
             <TabsTrigger value="layout" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Layout className="w-4 h-4" />
@@ -258,6 +266,70 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 placeholder="Réserver maintenant"
               />
             </div>
+          </TabsContent>
+
+          {/* Social Tab */}
+          <TabsContent value="social" className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="social-instagram">Instagram</Label>
+              <div className="flex gap-2 items-center">
+                <Instagram className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                <Input
+                  id="social-instagram"
+                  value={local.social.instagram}
+                  onChange={(e) => updateSocial({ instagram: e.target.value })}
+                  placeholder="votre_compte (sans @)"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="social-tiktok">TikTok</Label>
+              <div className="flex gap-2 items-center">
+                <svg className="w-5 h-5 text-muted-foreground flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                </svg>
+                <Input
+                  id="social-tiktok"
+                  value={local.social.tiktok}
+                  onChange={(e) => updateSocial({ tiktok: e.target.value })}
+                  placeholder="votre_compte (sans @)"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="social-facebook">Facebook</Label>
+              <div className="flex gap-2 items-center">
+                <svg className="w-5 h-5 text-muted-foreground flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                <Input
+                  id="social-facebook"
+                  value={local.social.facebook}
+                  onChange={(e) => updateSocial({ facebook: e.target.value })}
+                  placeholder="Nom de votre page Facebook"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="social-email">Email de contact</Label>
+              <div className="flex gap-2 items-center">
+                <Mail className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                <Input
+                  id="social-email"
+                  type="email"
+                  value={local.social.email}
+                  onChange={(e) => updateSocial({ email: e.target.value })}
+                  placeholder="contact@votreentreprise.com"
+                />
+              </div>
+            </div>
+            
+            <p className="text-xs text-muted-foreground pt-2">
+              Ces liens seront affichés sur votre page publique sous forme d'icônes.
+            </p>
           </TabsContent>
 
           {/* Layout Tab */}
