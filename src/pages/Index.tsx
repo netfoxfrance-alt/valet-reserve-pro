@@ -38,74 +38,47 @@ export default function Index() {
         </div>
       </header>
       
-      {/* Hero */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="opacity-0 animate-fade-in-up inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8">
-            <Check className="w-3 h-3 sm:w-4 sm:h-4" />
-            Simple et gratuit
-          </div>
-          <h1 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-tight px-2">
-            Votre vitrine digitale
-            <br />
-            <span className="text-muted-foreground">prête en 5 minutes.</span>
-          </h1>
-          <p className="opacity-0 animate-fade-in-up stagger-2 text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed px-2">
-            Créez votre page professionnelle, partagez votre lien, recevez des réservations.
-          </p>
-          <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-            <Link to="/auth" className="w-full sm:w-auto">
-              <Button size="lg" className="rounded-full px-6 sm:px-8 w-full sm:w-auto text-sm sm:text-base">
-                Créer ma page gratuitement
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
-              </Button>
-            </Link>
-          </div>
-          <p className="opacity-0 animate-fade-in-up stagger-4 text-xs sm:text-sm text-muted-foreground mt-5 sm:mt-6">
-            Sans engagement · Aucune carte bancaire requise
-          </p>
-        </div>
-      </section>
-
-      {/* Section 1: Créez votre page en quelques clics */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-secondary/30">
+      {/* Hero - Calendly style */}
+      <section className="py-12 sm:py-20 md:py-28 px-4 sm:px-6 overflow-hidden">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left: Text + Steps */}
+            {/* Left: Text */}
             <div className="order-2 lg:order-1">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6">
-                Créez votre page<br />
-                <span className="text-muted-foreground">en quelques clics</span>
-              </h2>
-              <p className="text-muted-foreground mb-8 sm:mb-10 text-base sm:text-lg leading-relaxed">
-                Personnalisez tout en quelques minutes : vos couleurs, vos infos, vos offres.
-              </p>
-              
-              <div className="space-y-5 sm:space-y-6">
-                {[
-                  { step: '1', title: 'Inscrivez-vous gratuitement', desc: 'Un email et un mot de passe, c\'est tout.' },
-                  { step: '2', title: 'Personnalisez votre page', desc: 'Couleurs, infos, formules... en temps réel.' },
-                  { step: '3', title: 'Obtenez votre lien unique', desc: 'cleaningpage.com/c/votre-nom' },
-                ].map((item) => (
-                  <div key={item.step} className="flex gap-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-foreground text-primary-foreground rounded-full flex items-center justify-center font-semibold text-lg sm:text-xl flex-shrink-0">
-                      {item.step}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground text-sm sm:text-base mb-0.5">{item.title}</h3>
-                      <p className="text-muted-foreground text-xs sm:text-sm">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
+              <div className="opacity-0 animate-fade-in-up inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8">
+                <Check className="w-3 h-3 sm:w-4 sm:h-4" />
+                Simple et gratuit
               </div>
+              <h1 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-tight">
+                Votre vitrine digitale
+                <br />
+                <span className="text-muted-foreground">prête en 5 minutes.</span>
+              </h1>
+              <p className="opacity-0 animate-fade-in-up stagger-2 text-base sm:text-lg md:text-xl text-muted-foreground max-w-lg mb-8 sm:mb-10 leading-relaxed">
+                Créez votre page professionnelle, partagez votre lien, recevez des réservations.
+              </p>
+              <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Link to="/auth" className="w-full sm:w-auto">
+                  <Button size="lg" className="rounded-full px-6 sm:px-8 w-full sm:w-auto text-sm sm:text-base">
+                    Créer ma page gratuitement
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+              <p className="opacity-0 animate-fade-in-up stagger-4 text-xs sm:text-sm text-muted-foreground mt-5 sm:mt-6">
+                Sans engagement · Aucune carte bancaire requise
+              </p>
             </div>
 
             {/* Right: Floating Page Mockup */}
-            <div className="order-1 lg:order-2 flex justify-center">
-              <div className="animate-float">
-                <div className="bg-card rounded-2xl sm:rounded-3xl shadow-mockup overflow-hidden border border-border/50 w-[300px] sm:w-[340px]">
+            <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
+              <div className="animate-float relative">
+                {/* Background decorative shapes */}
+                <div className="absolute -top-10 -right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
+                <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-secondary rounded-full blur-2xl" />
+                
+                <div className="relative bg-card rounded-2xl sm:rounded-3xl shadow-mockup overflow-hidden border border-border/50 w-[280px] sm:w-[340px]">
                   {/* Banner Image */}
-                  <div className="h-32 sm:h-36 relative">
+                  <div className="h-28 sm:h-36 relative">
                     <img 
                       src={mockupBanner} 
                       alt="Car wash" 
@@ -113,79 +86,77 @@ export default function Index() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
                     
-                    {/* Logo - Apple style with subtle border */}
+                    {/* Logo */}
                     <div className="absolute -bottom-4 left-4 sm:left-5">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center border border-border/20">
-                        <Droplets className="w-7 h-7 sm:w-8 sm:h-8 text-primary" />
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center border border-border/20">
+                        <Droplets className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 sm:p-5 pt-8 sm:pt-9">
-                    {/* Header - aligned left under logo */}
-                    <div className="mb-4">
+                  <div className="p-4 sm:p-5 pt-7 sm:pt-9">
+                    {/* Header */}
+                    <div className="mb-3 sm:mb-4">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-base sm:text-lg font-semibold text-foreground">Clean Auto Pro</h3>
-                        <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Ouvert</span>
+                        <h3 className="text-sm sm:text-lg font-semibold text-foreground">Clean Auto Pro</h3>
+                        <span className="text-[9px] sm:text-[10px] bg-green-100 text-green-700 px-1.5 sm:px-2 py-0.5 rounded-full font-medium">Ouvert</span>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                      <div className="flex items-center gap-2 text-[10px] sm:text-xs text-muted-foreground mb-1.5 sm:mb-2">
                         <span>Lavage auto premium</span>
                         <span>•</span>
                         <div className="flex items-center gap-1">
-                          <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                          <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-yellow-400 text-yellow-400" />
                           <span>4.8</span>
                         </div>
                       </div>
-                      {/* Description */}
-                      <p className="text-[11px] text-muted-foreground leading-relaxed">
-                        Spécialiste du nettoyage automobile depuis 2018. Service de qualité premium.
+                      <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-relaxed">
+                        Spécialiste du nettoyage automobile depuis 2018.
                       </p>
                     </div>
 
-                    {/* Social Icons - aligned left, minimal */}
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
-                        <Instagram className="w-4 h-4 text-foreground" />
+                    {/* Social Icons */}
+                    <div className="flex items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-secondary rounded-full flex items-center justify-center">
+                        <Instagram className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground" />
                       </div>
-                      <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
-                        <MessageCircle className="w-4 h-4 text-foreground" />
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-secondary rounded-full flex items-center justify-center">
+                        <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground" />
                       </div>
-                      <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
-                        <Mail className="w-4 h-4 text-foreground" />
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-secondary rounded-full flex items-center justify-center">
+                        <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground" />
                       </div>
                     </div>
 
                     {/* Info Grid */}
-                    <div className="grid grid-cols-3 gap-2 mb-4">
-                      <div className="bg-secondary/50 rounded-xl p-2.5 text-center">
-                        <MapPin className="w-3.5 h-3.5 mx-auto mb-1 text-muted-foreground" />
-                        <p className="text-[9px] sm:text-[10px] text-muted-foreground truncate">Paris 15e</p>
+                    <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+                      <div className="bg-secondary/50 rounded-lg sm:rounded-xl p-2 sm:p-2.5 text-center">
+                        <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 mx-auto mb-0.5 sm:mb-1 text-muted-foreground" />
+                        <p className="text-[8px] sm:text-[10px] text-muted-foreground truncate">Paris 15e</p>
                       </div>
-                      <div className="bg-secondary/50 rounded-xl p-2.5 text-center">
-                        <Clock className="w-3.5 h-3.5 mx-auto mb-1 text-muted-foreground" />
-                        <p className="text-[9px] sm:text-[10px] text-muted-foreground">9h - 19h</p>
+                      <div className="bg-secondary/50 rounded-lg sm:rounded-xl p-2 sm:p-2.5 text-center">
+                        <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 mx-auto mb-0.5 sm:mb-1 text-muted-foreground" />
+                        <p className="text-[8px] sm:text-[10px] text-muted-foreground">9h - 19h</p>
                       </div>
-                      <div className="bg-secondary/50 rounded-xl p-2.5 text-center">
-                        <Phone className="w-3.5 h-3.5 mx-auto mb-1 text-muted-foreground" />
-                        <p className="text-[9px] sm:text-[10px] text-muted-foreground">Appeler</p>
+                      <div className="bg-secondary/50 rounded-lg sm:rounded-xl p-2 sm:p-2.5 text-center">
+                        <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5 mx-auto mb-0.5 sm:mb-1 text-muted-foreground" />
+                        <p className="text-[8px] sm:text-[10px] text-muted-foreground">Appeler</p>
                       </div>
                     </div>
 
                     {/* Formules */}
-                    <div className="mb-4">
-                      <h4 className="text-xs font-semibold text-foreground mb-2">Nos formules</h4>
-                      <div className="space-y-1.5">
+                    <div className="mb-3 sm:mb-4">
+                      <h4 className="text-[10px] sm:text-xs font-semibold text-foreground mb-1.5 sm:mb-2">Nos formules</h4>
+                      <div className="space-y-1 sm:space-y-1.5">
                         {[
                           { name: 'Lavage simple', price: '15€' },
                           { name: 'Nettoyage intérieur', price: '35€' },
                           { name: 'Formule complète', price: '65€' },
-                          { name: 'Premium', price: '120€' },
                         ].map((item) => (
-                          <div key={item.name} className="flex items-center justify-between bg-secondary/40 rounded-xl px-3 py-2.5 hover:bg-secondary/60 transition-colors cursor-pointer">
-                            <p className="text-[11px] font-medium text-foreground">{item.name}</p>
-                            <div className="flex items-center gap-1.5">
-                              <p className="text-xs font-semibold text-foreground">{item.price}</p>
-                              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+                          <div key={item.name} className="flex items-center justify-between bg-secondary/40 rounded-lg sm:rounded-xl px-2.5 sm:px-3 py-2 sm:py-2.5">
+                            <p className="text-[10px] sm:text-[11px] font-medium text-foreground">{item.name}</p>
+                            <div className="flex items-center gap-1">
+                              <p className="text-[10px] sm:text-xs font-semibold text-foreground">{item.price}</p>
+                              <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-muted-foreground" />
                             </div>
                           </div>
                         ))}
@@ -193,7 +164,7 @@ export default function Index() {
                     </div>
 
                     {/* Booking Button */}
-                    <div className="bg-foreground text-background rounded-xl py-3 text-center text-sm font-medium shadow-lg">
+                    <div className="bg-foreground text-background rounded-lg sm:rounded-xl py-2.5 sm:py-3 text-center text-xs sm:text-sm font-medium shadow-lg">
                       Réserver un créneau
                     </div>
                   </div>
