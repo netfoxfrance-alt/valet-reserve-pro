@@ -163,9 +163,36 @@ export default function Index() {
                       </div>
                     </div>
 
-                    {/* Booking Button */}
-                    <div className="bg-foreground text-background rounded-lg sm:rounded-xl py-2.5 sm:py-3 text-center text-xs sm:text-sm font-medium shadow-lg">
-                      Réserver un créneau
+                    {/* Booking Button with Calendar Preview */}
+                    <div className="relative">
+                      <div className="bg-foreground text-background rounded-lg sm:rounded-xl py-2.5 sm:py-3 text-center text-xs sm:text-sm font-medium shadow-lg">
+                        Réserver un créneau
+                      </div>
+                      
+                      {/* Mini Calendar Tooltip */}
+                      <div className="absolute -bottom-16 sm:-bottom-20 left-1/2 -translate-x-1/2 bg-card rounded-lg shadow-xl border border-border/60 p-2 sm:p-2.5 w-[140px] sm:w-[160px] animate-pulse">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-[8px] sm:text-[9px] font-medium text-foreground">Janvier 2025</span>
+                          <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary" />
+                        </div>
+                        <div className="grid grid-cols-7 gap-0.5 text-[6px] sm:text-[7px] text-center text-muted-foreground mb-1">
+                          {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
+                            <span key={i}>{d}</span>
+                          ))}
+                        </div>
+                        <div className="grid grid-cols-7 gap-0.5 text-[7px] sm:text-[8px] text-center">
+                          {[...Array(31)].map((_, i) => (
+                            <span 
+                              key={i} 
+                              className={`py-0.5 rounded ${i === 14 ? 'bg-primary text-primary-foreground font-bold' : i === 7 || i === 21 ? 'bg-primary/20 text-primary' : 'text-foreground/70'}`}
+                            >
+                              {i + 1}
+                            </span>
+                          ))}
+                        </div>
+                        {/* Arrow pointing up */}
+                        <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-card border-l border-t border-border/60 rotate-45" />
+                      </div>
                     </div>
                   </div>
                 </div>
