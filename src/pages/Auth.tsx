@@ -59,13 +59,10 @@ export default function Auth() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8 sm:p-4">
       <div className="w-full max-w-md animate-fade-in-up">
-        <div className="text-center mb-6 sm:mb-8">
-          <Link to="/" className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-secondary/50 mb-4 sm:mb-6 shadow-lg shadow-black/5">
-            <Logo size="lg" />
-          </Link>
-          <p className="text-sm sm:text-base text-muted-foreground px-2">
-            {isSignUp ? 'Créez votre compte professionnel' : 'Connectez-vous à votre espace professionnel'}
-          </p>
+        <div className="text-center mb-8">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">
+            {isSignUp ? 'Créer un compte' : 'Connexion'}
+          </h1>
         </div>
         
         <Card variant="elevated" className="p-5 sm:p-8">
