@@ -73,9 +73,9 @@ export function DashboardSidebar() {
             </div>
           ) : (
             <Link to="/dashboard/upgrade">
-              <div className="bg-secondary hover:bg-secondary/80 transition-colors px-3 py-2 rounded-xl text-xs font-medium flex items-center justify-between cursor-pointer">
-                <span className="text-muted-foreground">Plan Gratuit</span>
-                <span className="text-primary font-semibold">Upgrade →</span>
+              <div className="bg-emerald-500/10 hover:bg-emerald-500/15 transition-colors px-3 py-2 rounded-xl text-xs font-medium flex items-center justify-between cursor-pointer">
+                <span className="text-emerald-600">15 jours gratuits</span>
+                <span className="text-emerald-700 font-semibold">Essayer →</span>
               </div>
             </Link>
           )}

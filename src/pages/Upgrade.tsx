@@ -87,9 +87,9 @@ export default function Upgrade() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
         {/* Hero */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-600 px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Sparkles className="w-4 h-4" />
-            Passez à la vitesse supérieure
+            15 jours d'essai gratuit
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-foreground tracking-tight mb-4">
             Débloquez tout le potentiel
@@ -97,19 +97,22 @@ export default function Upgrade() {
             <span className="text-muted-foreground">de CleaningPage Pro</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Automatisez vos réservations, gérez votre planning et développez votre activité avec des outils professionnels.
+            Testez gratuitement pendant 15 jours. Automatisez vos réservations, gérez votre planning et développez votre activité.
           </p>
         </div>
 
         {/* Pricing Card */}
         <Card className="max-w-lg mx-auto p-8 rounded-2xl ring-2 ring-primary mb-12">
           <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-600 px-3 py-1 rounded-full text-xs font-medium mb-4">
+              15 jours gratuits
+            </div>
             <h2 className="text-xl font-semibold text-foreground mb-2">CleaningPage Pro</h2>
             <div className="flex items-baseline justify-center gap-1">
               <span className="text-4xl font-bold text-foreground">39€</span>
               <span className="text-muted-foreground">/ mois</span>
             </div>
-            <p className="text-sm text-muted-foreground mt-2">Sans engagement · Annulez à tout moment</p>
+            <p className="text-sm text-muted-foreground mt-2">Essai gratuit · Sans engagement · Annulez à tout moment</p>
           </div>
 
           <ul className="space-y-3 mb-8">
@@ -146,7 +149,7 @@ export default function Upgrade() {
             ) : subscription.subscribed ? (
               'Déjà abonné Pro'
             ) : (
-              'Passer à Pro'
+              'Essayer gratuitement 15 jours'
             )}
           </Button>
           
