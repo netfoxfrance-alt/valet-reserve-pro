@@ -1,13 +1,74 @@
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Logo } from '@/components/ui/Logo';
 import { 
   Check, ArrowLeft, Calendar, BarChart3, Package, Clock, 
-  Users, Sparkles, Shield
+  Users, Sparkles, Shield, Loader2
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Upgrade() {
+  const [isLoading, setIsLoading] = useState(false);
+  const { session, subscription, checkSubscription } = useAuth();
+  const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+
+  // Check for payment status in URL
+  useEffect(() => {
+    const paymentStatus = searchParams.get('payment');
+    if (paymentStatus === 'cancelled') {
+      toast({
+        title: 'Paiement annulé',
+        description: 'Vous pouvez réessayer quand vous le souhaitez.',
+        variant: 'destructive',
+      });
+    }
+  }, [searchParams, toast]);
+
+  const handleUpgrade = async () => {
+    if (!session?.access_token) {
+      toast({
+        title: 'Erreur',
+        description: 'Vous devez être connecté pour passer à Pro.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de créer la session de paiement. Veuillez réessayer.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const proFeatures = [
     { icon: Calendar, title: 'Réservation automatique 24h/24', desc: 'Vos clients réservent en ligne, même quand vous dormez' },
     { icon: Clock, title: 'Agenda intégré avec créneaux', desc: 'Gérez vos disponibilités en temps réel' },
@@ -78,8 +139,22 @@ export default function Upgrade() {
             ))}
           </ul>
 
-          <Button size="lg" className="w-full rounded-full">
-            Passer à Pro
+          <Button 
+            size="lg" 
+            className="w-full rounded-full"
+            onClick={handleUpgrade}
+            disabled={isLoading || subscription.subscribed}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Redirection...
+              </>
+            ) : subscription.subscribed ? (
+              'Déjà abonné Pro'
+            ) : (
+              'Passer à Pro'
+            )}
           </Button>
           
           <div className="flex items-center justify-center gap-2 mt-4 text-xs text-muted-foreground">
