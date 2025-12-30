@@ -7,7 +7,7 @@ import {
   ArrowRight, Calendar, Users, BarChart3, Link2, 
   Shield, Clock, Check, Car, Droplets, MapPin, Phone, 
   Star, Settings, LogOut, ChevronRight, Globe, Palette, Eye,
-  Instagram, MessageCircle, Share2, ExternalLink, Sparkles
+  Instagram, MessageCircle, Share2, ExternalLink, Sparkles, Mail
 } from 'lucide-react';
 import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 
@@ -148,10 +148,10 @@ export default function Index() {
                         <Instagram className="w-4 h-4 text-foreground" />
                       </div>
                       <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
-                        <Globe className="w-4 h-4 text-foreground" />
+                        <MessageCircle className="w-4 h-4 text-foreground" />
                       </div>
                       <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
-                        <MessageCircle className="w-4 h-4 text-foreground" />
+                        <Mail className="w-4 h-4 text-foreground" />
                       </div>
                     </div>
 
