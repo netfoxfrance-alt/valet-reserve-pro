@@ -161,30 +161,39 @@ export default function Upgrade() {
         <FeatureShowcase />
 
         {/* Value proposition */}
-        <div className="mt-20 mb-16 max-w-2xl mx-auto text-center">
-          <p className="text-xl sm:text-2xl text-foreground font-medium leading-relaxed mb-2">
-            Un gain de temps.
-          </p>
-          <p className="text-xl sm:text-2xl text-foreground font-medium leading-relaxed mb-2">
-            Une meilleure conversion.
-          </p>
-          <p className="text-xl sm:text-2xl text-foreground font-medium leading-relaxed mb-8">
-            Une activité plus organisée et plus visible.
-          </p>
+        <div className="mt-24 mb-20 max-w-3xl mx-auto text-center space-y-12">
+          <div>
+            <p className="text-sm uppercase tracking-widest text-muted-foreground mb-6">
+              CleaningPage Pro vous apporte
+            </p>
+            <div className="space-y-1">
+              <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
+                Un gain de temps.
+              </p>
+              <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
+                Une meilleure conversion.
+              </p>
+              <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
+                Une activité plus organisée.
+              </p>
+            </div>
+          </div>
           
-          <p className="text-muted-foreground leading-relaxed mb-1">
-            Essayez gratuitement pendant 15 jours,
-          </p>
-          <p className="text-muted-foreground leading-relaxed mb-1">
-            et jugez par vous-même.
-          </p>
-          <p className="text-muted-foreground leading-relaxed mb-8">
-            Sans aucun engagement.
-          </p>
+          <div className="space-y-2">
+            <p className="text-lg text-muted-foreground">
+              Essayez gratuitement pendant 15 jours,
+            </p>
+            <p className="text-lg text-muted-foreground">
+              et jugez par vous-même.
+            </p>
+            <p className="text-sm text-muted-foreground/70 mt-4">
+              Sans aucun engagement.
+            </p>
+          </div>
 
           <Button 
             size="lg" 
-            className="rounded-full bg-emerald-500 hover:bg-emerald-600 text-white px-8"
+            className="rounded-full bg-emerald-500 hover:bg-emerald-600 text-white px-10 h-12 text-base"
             onClick={handleUpgrade}
             disabled={isLoading || subscription.subscribed}
           >
