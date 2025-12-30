@@ -148,9 +148,9 @@ export default function Index() {
                       <h4 className="text-[10px] sm:text-xs font-semibold text-foreground mb-1.5 sm:mb-2">Nos formules</h4>
                       <div className="space-y-1 sm:space-y-1.5">
                         {[
-                          { name: 'Lavage simple', price: '15€' },
-                          { name: 'Nettoyage intérieur', price: '35€' },
-                          { name: 'Formule complète', price: '65€' },
+                          { name: 'Lavage Express', price: '30€' },
+                          { name: 'Lavage Complet', price: '70€' },
+                          { name: 'Rénovation', price: '150€' },
                         ].map((item) => (
                           <div key={item.name} className="flex items-center justify-between bg-secondary/40 rounded-lg sm:rounded-xl px-2.5 sm:px-3 py-2 sm:py-2.5">
                             <p className="text-[10px] sm:text-[11px] font-medium text-foreground">{item.name}</p>
