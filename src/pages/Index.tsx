@@ -38,14 +38,115 @@ export default function Index() {
         </div>
       </header>
       
-      {/* Hero - Deux espaces, un seul outil */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto text-center mb-16 sm:mb-24">
-          <h1 className="opacity-0 animate-fade-in-up text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-tight">
+      {/* Hero Section */}
+      <section className="py-16 sm:py-20 md:py-28 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left: Text */}
+            <div className="text-center lg:text-left">
+              <h1 className="opacity-0 animate-fade-in-up text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-tight">
+                Votre page de réservation
+                <br />
+                <span className="text-muted-foreground">professionnelle.</span>
+              </h1>
+              <p className="opacity-0 animate-fade-in-up stagger-1 text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-8">
+                Tout votre service de nettoyage, dans un seul lien. Présentez vos prestations, recevez des demandes et gérez vos rendez-vous.
+              </p>
+              <div className="opacity-0 animate-fade-in-up stagger-2 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+                <Link to="/auth">
+                  <Button size="lg" className="w-full sm:w-auto text-base px-8">
+                    Commencer gratuitement
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link to="/clean-auto-pro">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-8">
+                    Voir un exemple
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right: Phone Mockup */}
+            <div className="flex justify-center lg:justify-end order-first lg:order-last">
+              <div className="animate-float relative">
+                {/* Phone Frame */}
+                <div className="relative bg-foreground rounded-[2.5rem] p-2 shadow-2xl">
+                  {/* Notch */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-foreground rounded-b-2xl z-10" />
+                  
+                  <div className="relative bg-card rounded-[2rem] overflow-hidden w-[260px] sm:w-[280px]">
+                    {/* Status Bar */}
+                    <div className="bg-card px-6 py-2 flex items-center justify-between">
+                      <span className="text-[10px] font-medium text-foreground">9:41</span>
+                      <div className="flex items-center gap-1">
+                        <div className="w-4 h-2 bg-foreground rounded-sm" />
+                      </div>
+                    </div>
+
+                    {/* Banner Image */}
+                    <div className="h-28 relative">
+                      <img 
+                        src={mockupBanner} 
+                        alt="Car wash" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                      
+                      {/* Logo */}
+                      <div className="absolute -bottom-5 left-4">
+                        <div className="w-12 h-12 bg-primary rounded-2xl shadow-lg flex items-center justify-center border-4 border-card">
+                          <span className="text-primary-foreground font-bold text-sm">CP</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-4 pt-7">
+                      {/* Header */}
+                      <div className="mb-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-sm font-semibold text-foreground">Clean Auto Pro</h3>
+                          <span className="text-[8px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-medium">Ouvert</span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground">Lavage auto • Paris 15e</p>
+                      </div>
+
+                      {/* Services */}
+                      <div className="space-y-1.5 mb-3">
+                        {[
+                          { name: 'Lavage Express', price: '30€' },
+                          { name: 'Lavage Complet', price: '70€' },
+                          { name: 'Rénovation', price: '150€' },
+                        ].map((item) => (
+                          <div key={item.name} className="flex items-center justify-between bg-secondary/40 rounded-lg px-3 py-2">
+                            <p className="text-[10px] font-medium text-foreground">{item.name}</p>
+                            <p className="text-[10px] font-semibold text-primary">{item.price}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Booking Button */}
+                      <div className="bg-primary text-primary-foreground rounded-xl py-2.5 text-center text-xs font-medium shadow-lg flex items-center justify-center gap-2">
+                        <Calendar className="w-3.5 h-3.5" />
+                        Réserver un créneau
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Deux espaces, un seul outil */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/30">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-tight">
             Deux espaces,
             <br />
             <span className="text-muted-foreground">un seul outil.</span>
-          </h1>
+          </h2>
           <p className="opacity-0 animate-fade-in-up stagger-1 text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
             Une <span className="text-foreground font-medium">page web publique</span> pour vos clients, un <span className="text-foreground font-medium">espace privé</span> pour tout gérer.
           </p>
