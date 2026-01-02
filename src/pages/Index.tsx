@@ -39,97 +39,187 @@ export default function Index() {
       </header>
       
       {/* Hero Section */}
-      <section className="py-16 sm:py-20 md:py-28 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Left: Text */}
             <div className="text-center lg:text-left">
-              <h1 className="opacity-0 animate-fade-in-up text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-tight">
-                Votre page de réservation
+              <div className="opacity-0 animate-fade-in-up inline-flex items-center gap-2 bg-secondary/60 rounded-full px-4 py-1.5 mb-6">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span className="text-sm text-foreground font-medium">Simple. Élégant. Efficace.</span>
+              </div>
+              
+              <h1 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-[1.1]">
+                Votre activité.
                 <br />
-                <span className="text-muted-foreground">professionnelle.</span>
+                <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">Un seul lien.</span>
               </h1>
-              <p className="opacity-0 animate-fade-in-up stagger-1 text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-8">
-                Tout votre service de nettoyage, dans un seul lien. Présentez vos prestations, recevez des demandes et gérez vos rendez-vous.
+              
+              <p className="opacity-0 animate-fade-in-up stagger-2 text-base sm:text-lg md:text-xl text-muted-foreground max-w-lg mx-auto lg:mx-0 mb-8 leading-relaxed">
+                Présentez vos prestations, recevez des demandes et gérez vos rendez-vous. Le tout dans une page professionnelle à votre image.
               </p>
-              <div className="opacity-0 animate-fade-in-up stagger-2 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+              
+              <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-8">
                 <Link to="/auth">
-                  <Button size="lg" className="w-full sm:w-auto text-base px-8">
-                    Commencer gratuitement
+                  <Button size="lg" className="w-full sm:w-auto text-base px-8 shadow-lg shadow-primary/25">
+                    Créer ma page gratuitement
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
                 <Link to="/clean-auto-pro">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-8">
+                    <Eye className="mr-2 h-4 w-4" />
                     Voir un exemple
                   </Button>
                 </Link>
               </div>
+
+              {/* Trust indicators */}
+              <div className="opacity-0 animate-fade-in-up stagger-4 flex items-center gap-6 justify-center lg:justify-start text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-500" />
+                  <span>Gratuit</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-500" />
+                  <span>Sans engagement</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-500" />
+                  <span>Prêt en 5 min</span>
+                </div>
+              </div>
             </div>
 
-            {/* Right: Phone Mockup */}
+            {/* Right: Premium Phone Mockup */}
             <div className="flex justify-center lg:justify-end order-first lg:order-last">
               <div className="animate-float relative">
+                {/* Glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-blue-500/20 to-purple-500/20 blur-3xl scale-150 opacity-50" />
+                
                 {/* Phone Frame */}
-                <div className="relative bg-foreground rounded-[2.5rem] p-2 shadow-2xl">
-                  {/* Notch */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-foreground rounded-b-2xl z-10" />
+                <div className="relative bg-gradient-to-b from-zinc-800 to-zinc-900 rounded-[3rem] p-3 shadow-2xl shadow-black/30">
+                  {/* Dynamic Island */}
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-full z-20 flex items-center justify-center">
+                    <div className="w-3 h-3 rounded-full bg-zinc-800 mr-4" />
+                  </div>
                   
-                  <div className="relative bg-card rounded-[2rem] overflow-hidden w-[260px] sm:w-[280px]">
+                  <div className="relative bg-card rounded-[2.5rem] overflow-hidden w-[280px] sm:w-[320px]">
                     {/* Status Bar */}
-                    <div className="bg-card px-6 py-2 flex items-center justify-between">
-                      <span className="text-[10px] font-medium text-foreground">9:41</span>
-                      <div className="flex items-center gap-1">
-                        <div className="w-4 h-2 bg-foreground rounded-sm" />
+                    <div className="bg-card px-8 py-3 flex items-center justify-between relative z-10">
+                      <span className="text-xs font-semibold text-foreground">9:41</span>
+                      <div className="flex items-center gap-1.5">
+                        <div className="flex gap-0.5">
+                          <div className="w-1 h-3 bg-foreground rounded-full" />
+                          <div className="w-1 h-2.5 bg-foreground rounded-full" />
+                          <div className="w-1 h-2 bg-foreground rounded-full" />
+                          <div className="w-1 h-1.5 bg-foreground/40 rounded-full" />
+                        </div>
+                        <div className="w-6 h-3 bg-foreground rounded-sm relative">
+                          <div className="absolute right-0 top-1/2 -translate-y-1/2 -right-0.5 w-0.5 h-1.5 bg-foreground rounded-r-full" />
+                        </div>
                       </div>
                     </div>
 
                     {/* Banner Image */}
-                    <div className="h-28 relative">
+                    <div className="h-36 relative -mt-2">
                       <img 
                         src={mockupBanner} 
-                        alt="Car wash" 
+                        alt="Service preview" 
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+                      
+                      {/* Social Icons - Top Right */}
+                      <div className="absolute top-3 right-3 flex gap-2">
+                        <div className="w-9 h-9 bg-card/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg">
+                          <Instagram className="w-4 h-4 text-foreground" />
+                        </div>
+                        <div className="w-9 h-9 bg-card/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg">
+                          <Mail className="w-4 h-4 text-foreground" />
+                        </div>
+                      </div>
                       
                       {/* Logo */}
-                      <div className="absolute -bottom-5 left-4">
-                        <div className="w-12 h-12 bg-primary rounded-2xl shadow-lg flex items-center justify-center border-4 border-card">
-                          <span className="text-primary-foreground font-bold text-sm">CP</span>
+                      <div className="absolute -bottom-6 left-5">
+                        <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl shadow-xl flex items-center justify-center border-4 border-card">
+                          <Droplets className="w-8 h-8 text-white" />
                         </div>
                       </div>
                     </div>
 
-                    <div className="p-4 pt-7">
+                    <div className="p-5 pt-9">
                       {/* Header */}
-                      <div className="mb-3">
+                      <div className="mb-4">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-sm font-semibold text-foreground">Clean Auto Pro</h3>
-                          <span className="text-[8px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-medium">Ouvert</span>
+                          <h3 className="text-lg font-bold text-foreground">EcoClean Services</h3>
+                          <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Ouvert</span>
                         </div>
-                        <p className="text-[10px] text-muted-foreground">Lavage auto • Paris 15e</p>
-                      </div>
-
-                      {/* Services */}
-                      <div className="space-y-1.5 mb-3">
-                        {[
-                          { name: 'Lavage Express', price: '30€' },
-                          { name: 'Lavage Complet', price: '70€' },
-                          { name: 'Rénovation', price: '150€' },
-                        ].map((item) => (
-                          <div key={item.name} className="flex items-center justify-between bg-secondary/40 rounded-lg px-3 py-2">
-                            <p className="text-[10px] font-medium text-foreground">{item.name}</p>
-                            <p className="text-[10px] font-semibold text-primary">{item.price}</p>
+                        <p className="text-xs text-muted-foreground mb-2">Nettoyage professionnel • Lyon 6e</p>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-1">
+                            <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                            <span className="text-sm font-semibold text-foreground">4.9</span>
+                            <span className="text-xs text-muted-foreground">(127)</span>
                           </div>
-                        ))}
+                          <span className="text-muted-foreground">•</span>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                            <Clock className="w-3 h-3" />
+                            <span>8h-20h</span>
+                          </div>
+                        </div>
                       </div>
 
-                      {/* Booking Button */}
-                      <div className="bg-primary text-primary-foreground rounded-xl py-2.5 text-center text-xs font-medium shadow-lg flex items-center justify-center gap-2">
-                        <Calendar className="w-3.5 h-3.5" />
-                        Réserver un créneau
+                      {/* Info Pills */}
+                      <div className="flex gap-2 mb-4">
+                        <div className="flex-1 bg-secondary/50 rounded-xl p-3">
+                          <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
+                            <MapPin className="w-3 h-3" />
+                            <span className="text-[10px] uppercase tracking-wide font-medium">Adresse</span>
+                          </div>
+                          <p className="text-xs font-medium text-foreground">12 Rue de la Paix</p>
+                        </div>
+                        <div className="flex-1 bg-secondary/50 rounded-xl p-3">
+                          <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
+                            <Clock className="w-3 h-3" />
+                            <span className="text-[10px] uppercase tracking-wide font-medium">Horaires</span>
+                          </div>
+                          <p className="text-xs font-medium text-foreground">7j/7</p>
+                        </div>
                       </div>
+
+                      {/* Services Grid */}
+                      <div className="mb-4">
+                        <p className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1">
+                          <Sparkles className="w-3 h-3 text-primary" />
+                          Nos formules
+                        </p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            { name: 'Ménage Express', price: '45€', duration: '2h' },
+                            { name: 'Grand Ménage', price: '90€', duration: '4h' },
+                            { name: 'Vitres & Surfaces', price: '35€', duration: '1h30' },
+                            { name: 'Nettoyage Complet', price: '150€', duration: '6h' },
+                          ].map((item) => (
+                            <div key={item.name} className="bg-secondary/40 rounded-xl p-3 hover:bg-secondary/60 transition-colors cursor-pointer group">
+                              <p className="text-[11px] font-semibold text-foreground mb-0.5 group-hover:text-primary transition-colors">{item.name}</p>
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] text-muted-foreground">{item.duration}</span>
+                                <span className="text-xs font-bold text-emerald-600">{item.price}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <button className="w-full text-center text-[10px] text-primary font-medium mt-2 hover:underline">
+                          Voir toutes les formules →
+                        </button>
+                      </div>
+
+                      {/* CTA Button */}
+                      <button className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-2xl py-3.5 text-sm font-semibold shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2 hover:shadow-xl hover:shadow-emerald-500/40 transition-all">
+                        <Calendar className="w-4 h-4" />
+                        Réserver un créneau
+                      </button>
                     </div>
                   </div>
                 </div>
