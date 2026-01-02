@@ -46,7 +46,7 @@ export default function Index() {
             {/* Left: Text - Hidden on mobile, shown on lg+ */}
             <div className="text-center lg:text-left hidden lg:block">
               <h1 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-[1.1]">
-                Votre activité.
+                Votre activité de nettoyage.
                 <br />
                 <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">Un seul lien.</span>
               </h1>
@@ -80,7 +80,7 @@ export default function Index() {
             {/* Mobile: Text above mockup */}
             <div className="text-center lg:hidden">
               <h1 className="opacity-0 animate-fade-in-up text-3xl sm:text-4xl font-semibold text-foreground tracking-tight mb-4 leading-[1.1]">
-                Votre activité.
+                Votre activité de nettoyage.
                 <br />
                 <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">Un seul lien.</span>
               </h1>
@@ -633,44 +633,93 @@ export default function Index() {
                           </div>
                         </div>
 
-                        {/* Live Preview */}
+                        {/* Live Preview - Dark Premium Theme */}
                         <div className="hidden md:flex flex-col">
                           <div className="flex items-center justify-between mb-3">
                             <span className="text-xs text-muted-foreground">Aperçu en direct</span>
                             <Eye className="w-4 h-4 text-muted-foreground" />
                           </div>
                           
-                          {/* Mini Phone Preview */}
+                          {/* Premium Dark Phone Preview */}
                           <div className="flex-1 flex items-center justify-center">
-                            <div className="relative bg-foreground rounded-[1.5rem] p-1.5 shadow-xl">
-                              <div className="bg-card rounded-[1.2rem] overflow-hidden w-[160px]">
-                                <div className="h-16 bg-gradient-to-br from-blue-500 to-blue-400 relative">
-                                  <div className="absolute -bottom-4 left-3">
-                                    <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center border-2 border-card shadow-lg">
-                                      <Droplets className="w-5 h-5 text-white" />
+                            <div className="relative bg-zinc-800 rounded-[1.5rem] p-1.5 shadow-2xl">
+                              <div className="bg-zinc-950 rounded-[1.2rem] overflow-hidden w-[180px]">
+                                {/* Banner with overlay */}
+                                <div className="h-20 relative">
+                                  <img 
+                                    src={sofaBanner} 
+                                    alt="Preview" 
+                                    className="w-full h-full object-cover opacity-80"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/50 to-transparent" />
+                                  <div className="absolute -bottom-3 left-3">
+                                    <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border-2 border-zinc-950 shadow-lg">
+                                      <span className="text-zinc-900 font-bold text-[8px]">SC</span>
+                                    </div>
+                                  </div>
+                                  <div className="absolute top-2 right-2 flex gap-1">
+                                    <div className="w-5 h-5 bg-zinc-800/80 rounded-full flex items-center justify-center">
+                                      <Instagram className="w-2.5 h-2.5 text-zinc-300" />
                                     </div>
                                   </div>
                                 </div>
-                                <div className="p-3 pt-6">
-                                  <p className="text-[9px] font-semibold text-foreground mb-0.5">Maison Propre</p>
-                                  <p className="text-[7px] text-muted-foreground mb-1">Nettoyage à domicile</p>
+                                
+                                <div className="p-3 pt-5">
+                                  {/* Header */}
+                                  <div className="flex items-center gap-1.5 mb-0.5">
+                                    <p className="text-[9px] font-bold text-white">SofaClean Pro</p>
+                                    <span className="text-[6px] bg-emerald-500/20 text-emerald-400 px-1 py-0.5 rounded-full">Ouvert</span>
+                                  </div>
                                   <div className="flex items-center gap-1 mb-2">
-                                    <span className="text-[7px] bg-green-100 text-green-700 px-1 rounded">Ouvert</span>
-                                    <Star className="w-2 h-2 fill-yellow-400 text-yellow-400" />
-                                    <span className="text-[7px] text-foreground">4.8</span>
+                                    <Star className="w-2 h-2 fill-amber-400 text-amber-400" />
+                                    <span className="text-[7px] text-white font-medium">4.9</span>
+                                    <span className="text-[7px] text-zinc-500">(127)</span>
                                   </div>
+                                  
+                                  {/* Action buttons */}
+                                  <div className="flex gap-1 mb-2">
+                                    <button className="flex-1 flex items-center justify-center gap-0.5 bg-white text-zinc-900 rounded-md py-1 text-[7px] font-medium">
+                                      <Phone className="w-2 h-2" />
+                                      Appeler
+                                    </button>
+                                    <button className="flex-1 flex items-center justify-center gap-0.5 bg-zinc-800 text-zinc-300 rounded-md py-1 text-[7px]">
+                                      <MapPin className="w-2 h-2" />
+                                      Y aller
+                                    </button>
+                                  </div>
+
+                                  {/* Gallery preview */}
+                                  <div className="mb-2">
+                                    <p className="text-[6px] text-zinc-500 uppercase tracking-wider mb-1">Galerie</p>
+                                    <div className="flex gap-0.5">
+                                      <div className="w-10 h-8 bg-zinc-800 rounded overflow-hidden">
+                                        <img src={sofaBanner} alt="" className="w-full h-full object-cover opacity-70" />
+                                      </div>
+                                      <div className="w-10 h-8 bg-zinc-800 rounded overflow-hidden">
+                                        <img src={mockupBanner} alt="" className="w-full h-full object-cover opacity-70" />
+                                      </div>
+                                      <div className="w-10 h-8 bg-zinc-800 rounded flex items-center justify-center">
+                                        <span className="text-[7px] text-zinc-500">+4</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Services */}
                                   <div className="space-y-1 mb-2">
-                                    <div className="flex justify-between text-[7px]">
-                                      <span className="text-muted-foreground">Ménage 2h</span>
-                                      <span className="font-medium text-foreground">60€</span>
+                                    <div className="flex justify-between items-center bg-zinc-900/50 rounded px-1.5 py-1">
+                                      <span className="text-[7px] text-zinc-300">Canapé 2 places</span>
+                                      <span className="text-[7px] font-bold text-white">49€</span>
                                     </div>
-                                    <div className="flex justify-between text-[7px]">
-                                      <span className="text-muted-foreground">Grand ménage</span>
-                                      <span className="font-medium text-foreground">120€</span>
+                                    <div className="flex justify-between items-center bg-zinc-900/50 rounded px-1.5 py-1">
+                                      <span className="text-[7px] text-zinc-300">Canapé 3 places</span>
+                                      <span className="text-[7px] font-bold text-white">69€</span>
                                     </div>
                                   </div>
-                                  <button className="w-full bg-blue-500 text-white py-1.5 rounded-lg text-[8px] font-medium">
-                                    Réserver
+                                  
+                                  {/* CTA */}
+                                  <button className="w-full bg-white text-zinc-900 py-1.5 rounded-lg text-[8px] font-semibold flex items-center justify-center gap-1">
+                                    <Calendar className="w-2.5 h-2.5" />
+                                    Prendre rendez-vous
                                   </button>
                                 </div>
                               </div>
