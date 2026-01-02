@@ -307,13 +307,11 @@ export default function Index() {
                     </div>
 
                     {/* Banner Image */}
-                    <div className="h-32 relative">
-                      <img 
-                        src={mockupBanner} 
-                        alt="Car wash" 
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                    <div className="h-32 relative bg-gradient-to-br from-amber-100 to-orange-50">
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-6xl opacity-30">🛋️</div>
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                       
                       {/* Instagram Icon */}
                       <div className="absolute top-3 right-3 w-8 h-8 bg-card/90 rounded-full flex items-center justify-center backdrop-blur-sm">
@@ -322,8 +320,8 @@ export default function Index() {
                       
                       {/* Logo */}
                       <div className="absolute -bottom-5 left-4">
-                        <div className="w-14 h-14 bg-primary rounded-2xl shadow-lg flex items-center justify-center border-4 border-card">
-                          <span className="text-primary-foreground font-bold text-lg">CP</span>
+                        <div className="w-14 h-14 bg-amber-500 rounded-2xl shadow-lg flex items-center justify-center border-4 border-card">
+                          <span className="text-white font-bold text-lg">SC</span>
                         </div>
                       </div>
                     </div>
@@ -332,14 +330,14 @@ export default function Index() {
                       {/* Header */}
                       <div className="mb-3">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-base font-semibold text-foreground">Clean Auto Pro</h3>
+                          <h3 className="text-base font-semibold text-foreground">SofaClean</h3>
                           <span className="text-[9px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Ouvert</span>
                         </div>
-                        <p className="text-[11px] text-muted-foreground mb-1">Lavage auto • Paris 15e</p>
+                        <p className="text-[11px] text-muted-foreground mb-1">Nettoyage canapés • Lyon 3e</p>
                         <div className="flex items-center gap-1 text-[11px]">
                           <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                          <span className="font-medium text-foreground">4.9</span>
-                          <span className="text-muted-foreground">(312 avis)</span>
+                          <span className="font-medium text-foreground">4.8</span>
+                          <span className="text-muted-foreground">(187 avis)</span>
                         </div>
                       </div>
 
@@ -365,37 +363,37 @@ export default function Index() {
                             <Clock className="w-3 h-3" />
                             <span className="text-[9px] uppercase tracking-wide">Horaires</span>
                           </div>
-                          <p className="text-[11px] font-medium text-foreground">9h - 19h</p>
-                          <p className="text-[9px] text-muted-foreground">7j/7</p>
+                          <p className="text-[11px] font-medium text-foreground">8h - 18h</p>
+                          <p className="text-[9px] text-muted-foreground">Lun - Sam</p>
                         </div>
                         <div className="flex-1 bg-secondary/60 rounded-xl p-2.5">
                           <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
                             <MapPin className="w-3 h-3" />
-                            <span className="text-[9px] uppercase tracking-wide">Adresse</span>
+                            <span className="text-[9px] uppercase tracking-wide">Zone</span>
                           </div>
-                          <p className="text-[11px] font-medium text-foreground">45 Rue du Fg</p>
-                          <p className="text-[9px] text-muted-foreground">Paris 15e</p>
+                          <p className="text-[11px] font-medium text-foreground">Lyon & environs</p>
+                          <p className="text-[9px] text-muted-foreground">Déplacement inclus</p>
                         </div>
                       </div>
 
                       {/* Services */}
                       <div className="space-y-1.5">
                         {[
-                          { name: 'Lavage Express', price: '30€' },
-                          { name: 'Lavage Complet', price: '70€' },
-                          { name: 'Rénovation', price: '150€' },
+                          { name: 'Canapé 2 places', price: '45€' },
+                          { name: 'Canapé 3 places', price: '65€' },
+                          { name: 'Canapé d\'angle', price: '90€' },
                         ].map((item) => (
                           <div key={item.name} className="flex items-center justify-between bg-secondary/40 rounded-xl px-3 py-2.5">
                             <p className="text-[11px] font-medium text-foreground">{item.name}</p>
-                            <p className="text-xs font-semibold text-primary">{item.price}</p>
+                            <p className="text-xs font-semibold text-amber-500">{item.price}</p>
                           </div>
                         ))}
                       </div>
 
                       {/* Booking Button */}
-                      <div className="mt-4 bg-primary text-primary-foreground rounded-xl py-3 text-center text-sm font-medium shadow-lg flex items-center justify-center gap-2">
+                      <div className="mt-4 bg-amber-500 text-white rounded-xl py-3 text-center text-sm font-medium shadow-lg flex items-center justify-center gap-2">
                         <Calendar className="w-4 h-4" />
-                        Réserver un créneau
+                        Prendre rendez-vous
                       </div>
                     </div>
                   </div>
@@ -409,7 +407,7 @@ export default function Index() {
                 Votre vitrine en ligne
               </h2>
               <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-base sm:text-lg mb-8 leading-relaxed">
-                Ce que vos clients voient quand ils cherchent votre centre de nettoyage.
+                Ce que vos clients voient quand ils cherchent vos services de nettoyage.
               </p>
 
               {/* Link Card */}
