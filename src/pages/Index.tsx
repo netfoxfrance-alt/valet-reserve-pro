@@ -342,31 +342,32 @@ export default function Index() {
             Simple et complet pour gérer réservations, formules, et personnaliser votre page.
           </p>
 
-          {/* Dashboard Tabs Preview */}
+          {/* Dashboard Tabs Preview - Interactive */}
           <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-wrap gap-2 sm:gap-3 mb-10 justify-center">
             {[
-              { icon: Globe, label: 'Ma Page', active: true, badge: null },
-              { icon: Calendar, label: 'Réservations', active: false, badge: '3' },
-              { icon: BarChart3, label: 'Statistiques', active: false, badge: null },
-              { icon: Droplets, label: 'Formules', active: false, badge: null },
-              { icon: Settings, label: 'Paramètres', active: false, badge: null },
-            ].map((tab) => (
-              <div 
-                key={tab.label}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
-                  tab.active 
+              { icon: Globe, label: 'Ma Page', tab: 'mypage' as const, badge: null },
+              { icon: Calendar, label: 'Réservations', tab: 'reservations' as const, badge: '3' },
+              { icon: BarChart3, label: 'Statistiques', tab: 'stats' as const, badge: null },
+              { icon: Droplets, label: 'Formules', tab: 'formules' as const, badge: null },
+              { icon: Settings, label: 'Paramètres', tab: 'settings' as const, badge: null },
+            ].map((item) => (
+              <button 
+                key={item.label}
+                onClick={() => setDashboardTab(item.tab)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer ${
+                  dashboardTab === item.tab 
                     ? 'bg-foreground text-background shadow-lg' 
                     : 'bg-card border border-border/60 text-foreground hover:bg-secondary/50'
                 }`}
               >
-                <tab.icon className="w-4 h-4" />
-                {tab.label}
-                {tab.badge && (
+                <item.icon className="w-4 h-4" />
+                {item.label}
+                {item.badge && (
                   <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
-                    {tab.badge}
+                    {item.badge}
                   </span>
                 )}
-              </div>
+              </button>
             ))}
           </div>
 
@@ -399,16 +400,17 @@ export default function Index() {
 
                   <nav className="space-y-1">
                     {[
-                      { icon: Globe, label: 'Ma Page', active: true },
-                      { icon: Calendar, label: 'Réservations', active: false, badge: '3' },
-                      { icon: BarChart3, label: 'Statistiques', active: false },
-                      { icon: Droplets, label: 'Formules', active: false },
-                      { icon: Settings, label: 'Paramètres', active: false },
+                      { icon: Globe, label: 'Ma Page', tab: 'mypage' as const },
+                      { icon: Calendar, label: 'Réservations', tab: 'reservations' as const, badge: '3' },
+                      { icon: BarChart3, label: 'Statistiques', tab: 'stats' as const },
+                      { icon: Droplets, label: 'Formules', tab: 'formules' as const },
+                      { icon: Settings, label: 'Paramètres', tab: 'settings' as const },
                     ].map((item) => (
-                      <div
+                      <button
                         key={item.label}
-                        className={`flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm ${
-                          item.active 
+                        onClick={() => setDashboardTab(item.tab)}
+                        className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm transition-all ${
+                          dashboardTab === item.tab 
                             ? 'bg-foreground text-background font-medium' 
                             : 'text-muted-foreground hover:bg-card/50'
                         }`}
@@ -422,7 +424,7 @@ export default function Index() {
                             {item.badge}
                           </span>
                         )}
-                      </div>
+                      </button>
                     ))}
                   </nav>
 
@@ -438,157 +440,294 @@ export default function Index() {
 
                 {/* Main Content Area */}
                 <div className="flex-1 p-6">
-                  {/* Tabs */}
-                  <div className="flex items-center gap-4 mb-6 text-sm border-b border-border/40 pb-3">
-                    <span className="text-muted-foreground">Infos</span>
-                    <span className="text-foreground font-medium border-b-2 border-foreground pb-3 -mb-3">Style</span>
-                    <span className="text-muted-foreground">Sections</span>
-                    <span className="text-muted-foreground">Images</span>
-                    <div className="ml-auto flex items-center gap-2">
-                      <span className="text-green-500 text-xs flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                        Sync
-                      </span>
-                      <button className="bg-foreground text-background px-4 py-1.5 rounded-lg text-xs font-medium">
-                        Publier
-                      </button>
-                    </div>
-                  </div>
+                  {/* Ma Page Tab */}
+                  {dashboardTab === 'mypage' && (
+                    <>
+                      {/* Tabs */}
+                      <div className="flex items-center gap-4 mb-6 text-sm border-b border-border/40 pb-3">
+                        <span className="text-muted-foreground">Infos</span>
+                        <span className="text-foreground font-medium border-b-2 border-foreground pb-3 -mb-3">Style</span>
+                        <span className="text-muted-foreground">Sections</span>
+                        <span className="text-muted-foreground">Images</span>
+                        <div className="ml-auto flex items-center gap-2">
+                          <span className="text-green-500 text-xs flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                            Sync
+                          </span>
+                          <button className="bg-foreground text-background px-4 py-1.5 rounded-lg text-xs font-medium">
+                            Publier
+                          </button>
+                        </div>
+                      </div>
 
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {/* Customization Options */}
-                    <div className="space-y-4">
-                      {/* Color Picker */}
-                      <div className="bg-secondary/40 rounded-xl p-4">
-                        <p className="text-sm font-medium text-foreground mb-3">Couleur principale</p>
-                        <div className="flex gap-2">
-                          {[
-                            { color: 'bg-foreground', active: true },
-                            { color: 'bg-red-500', active: false },
-                            { color: 'bg-orange-500', active: false },
-                            { color: 'bg-green-500', active: false },
-                            { color: 'bg-blue-500', active: false },
-                          ].map((c, i) => (
+                      <div className="grid md:grid-cols-2 gap-6">
+                        {/* Customization Options */}
+                        <div className="space-y-4">
+                          {/* Color Picker */}
+                          <div className="bg-secondary/40 rounded-xl p-4">
+                            <p className="text-sm font-medium text-foreground mb-3">Couleur principale</p>
+                            <div className="flex gap-2">
+                              {[
+                                { color: 'bg-foreground', active: true },
+                                { color: 'bg-red-500', active: false },
+                                { color: 'bg-orange-500', active: false },
+                                { color: 'bg-green-500', active: false },
+                                { color: 'bg-blue-500', active: false },
+                              ].map((c, i) => (
+                                <div 
+                                  key={i}
+                                  className={`w-8 h-8 ${c.color} rounded-full cursor-pointer ${c.active ? 'ring-2 ring-offset-2 ring-foreground' : ''}`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Theme Toggle */}
+                          <div className="bg-secondary/40 rounded-xl p-4">
+                            <p className="text-sm font-medium text-foreground mb-3">Thème</p>
+                            <div className="flex gap-2">
+                              <button className="flex-1 bg-card text-foreground px-4 py-2 rounded-lg text-sm font-medium shadow-sm">
+                                Clair
+                              </button>
+                              <button className="flex-1 bg-secondary/60 text-muted-foreground px-4 py-2 rounded-lg text-sm">
+                                Sombre
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Button Style */}
+                          <div className="bg-secondary/40 rounded-xl p-4">
+                            <p className="text-sm font-medium text-foreground mb-3">Bouton d'action</p>
+                            <button className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-medium">
+                              Réserver un créneau
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Live Preview */}
+                        <div className="hidden md:flex flex-col">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-xs text-muted-foreground">Aperçu en direct</span>
+                            <Phone className="w-4 h-4 text-muted-foreground" />
+                          </div>
+                          
+                          {/* Mini Phone Preview */}
+                          <div className="flex-1 flex items-center justify-center">
+                            <div className="relative bg-foreground rounded-[1.5rem] p-1.5 shadow-xl">
+                              <div className="bg-card rounded-[1.2rem] overflow-hidden w-[160px]">
+                                <div className="h-16 bg-gradient-to-br from-primary to-primary/60 relative">
+                                  <div className="absolute -bottom-4 left-3">
+                                    <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center border-2 border-card shadow-lg">
+                                      <span className="text-primary-foreground font-bold text-[10px]">CP</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="p-3 pt-6">
+                                  <p className="text-[9px] font-semibold text-foreground mb-0.5">Clean Auto Pro</p>
+                                  <div className="flex items-center gap-1 mb-2">
+                                    <span className="text-[7px] bg-green-100 text-green-700 px-1 rounded">Ouvert</span>
+                                    <Star className="w-2 h-2 fill-yellow-400 text-yellow-400" />
+                                    <span className="text-[7px] text-foreground">4.9</span>
+                                  </div>
+                                  <button className="w-full bg-primary text-primary-foreground py-1.5 rounded-lg text-[8px] font-medium">
+                                    Réserver
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Réservations Tab */}
+                  {dashboardTab === 'reservations' && (
+                    <>
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-lg font-semibold text-foreground">Réservations</h3>
+                        <div className="text-xs text-muted-foreground">Aujourd'hui</div>
+                      </div>
+
+                      {/* Stats cards */}
+                      <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="bg-secondary/50 rounded-xl p-4">
+                          <p className="text-xs text-muted-foreground mb-1">RDV du jour</p>
+                          <p className="text-3xl font-bold text-foreground">8</p>
+                          <p className="text-xs text-green-600">+2 nouveaux</p>
+                        </div>
+                        <div className="bg-secondary/50 rounded-xl p-4">
+                          <p className="text-xs text-muted-foreground mb-1">CA du jour</p>
+                          <p className="text-3xl font-bold text-foreground">340€</p>
+                          <p className="text-xs text-green-600">+15%</p>
+                        </div>
+                      </div>
+
+                      <p className="text-sm font-medium text-muted-foreground mb-3">Prochains RDV</p>
+
+                      <div className="space-y-2">
+                        {[
+                          { name: 'Jean Martin', vehicle: 'Audi A4', time: '10:00', status: 'Confirmé', color: 'green' },
+                          { name: 'Marie Dupont', vehicle: 'BMW X3', time: '11:30', status: 'En attente', color: 'yellow' },
+                          { name: 'Pierre Bernard', vehicle: 'Renault Clio', time: '14:00', status: 'Arrivé', color: 'blue' },
+                        ].map((booking, i) => (
+                          <div key={i} className="flex items-center gap-3 bg-secondary/30 rounded-xl p-4">
+                            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-sm font-semibold text-primary">
+                              {booking.name.split(' ').map(n => n[0]).join('')}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate">{booking.name}</p>
+                              <p className="text-xs text-muted-foreground">{booking.vehicle} • {booking.time}</p>
+                            </div>
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              booking.color === 'green' ? 'bg-green-100 text-green-700' :
+                              booking.color === 'yellow' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-blue-100 text-blue-700'
+                            }`}>
+                              {booking.status}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Statistiques Tab */}
+                  {dashboardTab === 'stats' && (
+                    <>
+                      <h3 className="text-lg font-semibold text-foreground mb-6">Statistiques</h3>
+                      
+                      <div className="grid grid-cols-4 gap-3 mb-6">
+                        {[
+                          { value: '127', label: 'Réservations', sub: 'ce mois' },
+                          { value: '4 850€', label: "CA", sub: 'ce mois' },
+                          { value: '89', label: 'Clients', sub: 'uniques' },
+                          { value: '54€', label: 'Panier', sub: 'moyen' },
+                        ].map((stat, i) => (
+                          <div key={i} className="bg-secondary/40 rounded-xl p-4 text-center">
+                            <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                            <p className="text-xs text-muted-foreground">{stat.label}</p>
+                            <p className="text-[10px] text-muted-foreground/70">{stat.sub}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Chart mockup */}
+                      <div className="bg-secondary/30 rounded-xl p-4">
+                        <p className="text-sm font-medium text-foreground mb-4">Évolution CA (6 mois)</p>
+                        <div className="flex items-end justify-between gap-2 h-32">
+                          {[35, 48, 42, 55, 68, 85].map((h, i) => (
                             <div 
-                              key={i}
-                              className={`w-8 h-8 ${c.color} rounded-full cursor-pointer ${c.active ? 'ring-2 ring-offset-2 ring-foreground' : ''}`}
+                              key={i} 
+                              className="flex-1 bg-primary/70 rounded-t transition-all hover:bg-primary"
+                              style={{ height: `${h}%` }}
                             />
                           ))}
                         </div>
-                      </div>
-
-                      {/* Theme Toggle */}
-                      <div className="bg-secondary/40 rounded-xl p-4">
-                        <p className="text-sm font-medium text-foreground mb-3">Thème</p>
-                        <div className="flex gap-2">
-                          <button className="flex-1 bg-card text-foreground px-4 py-2 rounded-lg text-sm font-medium shadow-sm">
-                            Clair
-                          </button>
-                          <button className="flex-1 bg-secondary/60 text-muted-foreground px-4 py-2 rounded-lg text-sm">
-                            Sombre
-                          </button>
+                        <div className="flex justify-between mt-2">
+                          {['Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'].map((m) => (
+                            <span key={m} className="text-[10px] text-muted-foreground flex-1 text-center">{m}</span>
+                          ))}
                         </div>
                       </div>
+                    </>
+                  )}
 
-                      {/* Button Style */}
-                      <div className="bg-secondary/40 rounded-xl p-4">
-                        <p className="text-sm font-medium text-foreground mb-3">Bouton d'action</p>
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-xs text-muted-foreground">Arrondi</span>
-                          <div className="flex gap-1">
-                            {['S', 'M', 'L'].map((size, i) => (
-                              <span 
-                                key={size}
-                                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs ${i === 1 ? 'bg-foreground text-background' : 'bg-secondary text-muted-foreground'}`}
-                              >
-                                {size}
-                              </span>
+                  {/* Formules Tab */}
+                  {dashboardTab === 'formules' && (
+                    <>
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-lg font-semibold text-foreground">Vos formules</h3>
+                        <button className="bg-foreground text-background px-4 py-1.5 rounded-lg text-xs font-medium">
+                          + Ajouter
+                        </button>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        {[
+                          { name: 'Lavage simple', desc: 'Extérieur uniquement', price: '15€', active: true },
+                          { name: 'Nettoyage intérieur', desc: 'Aspiration et nettoyage', price: '35€', active: true },
+                          { name: 'Formule complète', desc: 'Intérieur + extérieur', price: '65€', active: true },
+                          { name: 'Rénovation premium', desc: 'Polish + céramique', price: '150€', active: false },
+                        ].map((pack, i) => (
+                          <div key={i} className="flex items-center gap-4 bg-secondary/30 rounded-xl p-4">
+                            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                              <Droplets className="w-6 h-6 text-primary" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <p className="text-sm font-medium text-foreground">{pack.name}</p>
+                                {!pack.active && (
+                                  <span className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded">Inactif</span>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground">{pack.desc}</p>
+                            </div>
+                            <p className="text-sm font-semibold text-primary">{pack.price}</p>
+                            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Paramètres Tab */}
+                  {dashboardTab === 'settings' && (
+                    <>
+                      <h3 className="text-lg font-semibold text-foreground mb-6">Paramètres</h3>
+                      
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                          <div className="bg-secondary/40 rounded-xl p-4">
+                            <p className="text-sm font-medium text-foreground mb-3">Informations</p>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Nom</span>
+                                <span className="text-foreground">Clean Auto Pro</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Email</span>
+                                <span className="text-foreground">contact@cleanautopro.fr</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Téléphone</span>
+                                <span className="text-foreground">01 23 45 67 89</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="bg-secondary/40 rounded-xl p-4">
+                            <p className="text-sm font-medium text-foreground mb-3">Abonnement</p>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-foreground font-medium">CleaningPage Pro</p>
+                                <p className="text-xs text-muted-foreground">Renouvellement le 15 Jan</p>
+                              </div>
+                              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Actif</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-secondary/40 rounded-xl p-4">
+                          <p className="text-sm font-medium text-foreground mb-3">Disponibilités</p>
+                          <div className="space-y-2">
+                            {[
+                              { day: 'Lundi - Vendredi', hours: '9:00 - 19:00', enabled: true },
+                              { day: 'Samedi', hours: '9:00 - 17:00', enabled: true },
+                              { day: 'Dimanche', hours: 'Fermé', enabled: false },
+                            ].map((day) => (
+                              <div key={day.day} className="flex items-center justify-between">
+                                <span className="text-sm text-foreground">{day.day}</span>
+                                <span className={`text-sm ${day.enabled ? 'text-foreground' : 'text-muted-foreground'}`}>
+                                  {day.hours}
+                                </span>
+                              </div>
                             ))}
                           </div>
                         </div>
-                        <button className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-medium">
-                          Réserver un créneau
-                        </button>
                       </div>
-
-                      {/* Typography */}
-                      <div className="bg-secondary/40 rounded-xl p-4">
-                        <p className="text-sm font-medium text-foreground mb-3">Typographie</p>
-                        <div className="space-y-2 text-xs">
-                          <div className="flex items-center justify-between">
-                            <span className="text-muted-foreground">Titres</span>
-                            <span className="text-foreground font-medium">SF Pro</span>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-muted-foreground">Corps</span>
-                            <span className="text-foreground">Inter</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Live Preview */}
-                    <div className="hidden md:flex flex-col">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-xs text-muted-foreground">Aperçu en direct</span>
-                        <div className="flex items-center gap-2">
-                          <Phone className="w-4 h-4 text-muted-foreground" />
-                          <Settings className="w-4 h-4 text-muted-foreground" />
-                        </div>
-                      </div>
-                      
-                      {/* Mini Phone Preview */}
-                      <div className="flex-1 flex items-center justify-center">
-                        <div className="relative bg-foreground rounded-[1.5rem] p-1.5 shadow-xl">
-                          <div className="bg-card rounded-[1.2rem] overflow-hidden w-[160px]">
-                            <div className="h-16 bg-gradient-to-br from-primary to-primary/60 relative">
-                              <div className="absolute -bottom-4 left-3">
-                                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center border-2 border-card shadow-lg">
-                                  <span className="text-primary-foreground font-bold text-[10px]">CP</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="p-3 pt-6">
-                              <p className="text-[9px] font-semibold text-foreground mb-0.5">Clean Auto Pro</p>
-                              <div className="flex items-center gap-1 mb-2">
-                                <span className="text-[7px] bg-green-100 text-green-700 px-1 rounded">Ouvert</span>
-                                <div className="flex items-center gap-0.5">
-                                  <Star className="w-2 h-2 fill-yellow-400 text-yellow-400" />
-                                  <span className="text-[7px] text-foreground">4.9</span>
-                                  <span className="text-[6px] text-muted-foreground">(312)</span>
-                                </div>
-                              </div>
-                              <button className="w-full bg-primary text-primary-foreground py-1.5 rounded-lg text-[8px] font-medium flex items-center justify-center gap-1 mb-2">
-                                <Calendar className="w-2 h-2" />
-                                Réserver
-                              </button>
-                              <div className="flex gap-1 mb-2">
-                                <div className="flex-1 bg-secondary/60 rounded-lg p-1.5 text-center">
-                                  <Clock className="w-2 h-2 mx-auto text-muted-foreground mb-0.5" />
-                                  <p className="text-[6px] text-foreground">9h-19h</p>
-                                </div>
-                                <div className="flex-1 bg-secondary/60 rounded-lg p-1.5 text-center">
-                                  <MapPin className="w-2 h-2 mx-auto text-muted-foreground mb-0.5" />
-                                  <p className="text-[6px] text-foreground">Paris 15</p>
-                                </div>
-                              </div>
-                              <div className="space-y-1">
-                                {[
-                                  { name: 'Lavage Express', price: '30€' },
-                                  { name: 'Lavage Complet', price: '70€' },
-                                ].map((item) => (
-                                  <div key={item.name} className="flex items-center justify-between bg-secondary/40 rounded-lg px-2 py-1.5">
-                                    <p className="text-[7px] text-foreground">{item.name}</p>
-                                    <p className="text-[8px] font-semibold text-primary">{item.price}</p>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
