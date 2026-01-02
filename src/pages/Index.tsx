@@ -38,137 +38,186 @@ export default function Index() {
         </div>
       </header>
       
-      {/* Hero - Calendly style */}
-      <section className="py-12 sm:py-20 md:py-28 px-4 sm:px-6 overflow-hidden">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left: Text */}
-            <div>
-              <div className="opacity-0 animate-fade-in-up inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8">
-                <Check className="w-3 h-3 sm:w-4 sm:h-4" />
-                Simple et gratuit
-              </div>
-              <h1 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-tight">
-                Votre vitrine digitale
-                <br />
-                <span className="text-muted-foreground">prête en 5 minutes.</span>
-              </h1>
-              <p className="opacity-0 animate-fade-in-up stagger-2 text-base sm:text-lg md:text-xl text-muted-foreground max-w-lg mb-8 sm:mb-10 leading-relaxed">
-                Créez votre page professionnelle, partagez votre lien, recevez des réservations.
-              </p>
-              <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-col sm:flex-row gap-3 sm:gap-4">
-                <Link to="/auth" className="w-full sm:w-auto">
-                  <Button size="lg" className="rounded-full px-6 sm:px-8 w-full sm:w-auto text-sm sm:text-base">
-                    Créer ma page gratuitement
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
-                  </Button>
-                </Link>
-              </div>
-              <p className="opacity-0 animate-fade-in-up stagger-4 text-xs sm:text-sm text-muted-foreground mt-5 sm:mt-6">
-                Sans engagement · Aucune carte bancaire requise
-              </p>
-            </div>
+      {/* Hero - Deux espaces, un seul outil */}
+      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto text-center mb-16 sm:mb-24">
+          <h1 className="opacity-0 animate-fade-in-up text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-tight">
+            Deux espaces,
+            <br />
+            <span className="text-muted-foreground">un seul outil.</span>
+          </h1>
+          <p className="opacity-0 animate-fade-in-up stagger-1 text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+            Une <span className="text-foreground font-medium">page web publique</span> pour vos clients, un <span className="text-foreground font-medium">espace privé</span> pour tout gérer.
+          </p>
+        </div>
+      </section>
 
-            {/* Right: Floating Page Mockup */}
-            <div className="flex justify-center lg:justify-end">
+      {/* Section: Page Publique */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto">
+          {/* Section Label */}
+          <div className="flex items-center gap-2 text-muted-foreground mb-4 opacity-0 animate-fade-in-up">
+            <Globe className="w-4 h-4" />
+            <span className="text-xs font-medium uppercase tracking-wider">Page publique</span>
+          </div>
+          
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            {/* Left: Phone Mockup */}
+            <div className="flex justify-center lg:justify-start order-2 lg:order-1">
               <div className="animate-float relative">
-                {/* Background decorative shapes */}
-                <div className="absolute -top-10 -right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
-                <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-secondary rounded-full blur-2xl" />
-                
-                <div className="relative bg-card rounded-2xl sm:rounded-3xl shadow-mockup overflow-hidden border border-border/50 w-[280px] sm:w-[340px]">
-                  {/* Banner Image */}
-                  <div className="h-28 sm:h-36 relative">
-                    <img 
-                      src={mockupBanner} 
-                      alt="Car wash" 
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-                    
-                    {/* Logo */}
-                    <div className="absolute -bottom-4 left-4 sm:left-5">
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center border border-border/20">
-                        <Droplets className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+                {/* Phone Frame */}
+                <div className="relative bg-foreground rounded-[2.5rem] p-2 shadow-2xl">
+                  {/* Notch */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-foreground rounded-b-2xl z-10" />
+                  
+                  <div className="relative bg-card rounded-[2rem] overflow-hidden w-[280px] sm:w-[300px]">
+                    {/* Status Bar */}
+                    <div className="bg-card px-6 py-2 flex items-center justify-between">
+                      <span className="text-[10px] font-medium text-foreground">9:41</span>
+                      <div className="flex items-center gap-1">
+                        <div className="w-4 h-2 bg-foreground rounded-sm" />
                       </div>
                     </div>
-                  </div>
 
-                  <div className="p-4 sm:p-5 pt-7 sm:pt-9">
-                    {/* Header */}
-                    <div className="mb-3 sm:mb-4">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-sm sm:text-lg font-semibold text-foreground">Clean Auto Pro</h3>
-                        <span className="text-[9px] sm:text-[10px] bg-green-100 text-green-700 px-1.5 sm:px-2 py-0.5 rounded-full font-medium">Ouvert</span>
+                    {/* Banner Image */}
+                    <div className="h-32 relative">
+                      <img 
+                        src={mockupBanner} 
+                        alt="Car wash" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                      
+                      {/* Instagram Icon */}
+                      <div className="absolute top-3 right-3 w-8 h-8 bg-card/90 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <Instagram className="w-4 h-4 text-foreground" />
                       </div>
-                      <div className="flex items-center gap-2 text-[10px] sm:text-xs text-muted-foreground mb-1.5 sm:mb-2">
-                        <span>Lavage auto premium</span>
-                        <span>•</span>
-                        <div className="flex items-center gap-1">
-                          <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-yellow-400 text-yellow-400" />
-                          <span>4.8</span>
+                      
+                      {/* Logo */}
+                      <div className="absolute -bottom-5 left-4">
+                        <div className="w-14 h-14 bg-primary rounded-2xl shadow-lg flex items-center justify-center border-4 border-card">
+                          <span className="text-primary-foreground font-bold text-lg">CP</span>
                         </div>
                       </div>
-                      <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-relaxed">
-                        Spécialiste du nettoyage automobile depuis 2018.
-                      </p>
                     </div>
 
-                    {/* Social Icons */}
-                    <div className="flex items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-secondary rounded-full flex items-center justify-center">
-                        <Instagram className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground" />
+                    <div className="p-4 pt-8">
+                      {/* Header */}
+                      <div className="mb-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-base font-semibold text-foreground">Clean Auto Pro</h3>
+                          <span className="text-[9px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Ouvert</span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground mb-1">Lavage auto • Paris 15e</p>
+                        <div className="flex items-center gap-1 text-[11px]">
+                          <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                          <span className="font-medium text-foreground">4.9</span>
+                          <span className="text-muted-foreground">(312 avis)</span>
+                        </div>
                       </div>
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-secondary rounded-full flex items-center justify-center">
-                        <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground" />
-                      </div>
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-secondary rounded-full flex items-center justify-center">
-                        <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground" />
-                      </div>
-                    </div>
 
-                    {/* Info Grid */}
-                    <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                      <div className="bg-secondary/50 rounded-lg sm:rounded-xl p-2 sm:p-2.5 text-center">
-                        <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 mx-auto mb-0.5 sm:mb-1 text-muted-foreground" />
-                        <p className="text-[8px] sm:text-[10px] text-muted-foreground truncate">Paris 15e</p>
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-2 mb-4">
+                        <button className="flex-1 bg-foreground text-background rounded-full py-2.5 text-xs font-medium flex items-center justify-center gap-1.5">
+                          <Phone className="w-3.5 h-3.5" />
+                          Appeler
+                        </button>
+                        <button className="flex-1 bg-secondary text-foreground rounded-full py-2.5 text-xs font-medium flex items-center justify-center gap-1.5">
+                          <MapPin className="w-3.5 h-3.5" />
+                          Y aller
+                        </button>
+                        <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+                          <Instagram className="w-4 h-4 text-foreground" />
+                        </div>
                       </div>
-                      <div className="bg-secondary/50 rounded-lg sm:rounded-xl p-2 sm:p-2.5 text-center">
-                        <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 mx-auto mb-0.5 sm:mb-1 text-muted-foreground" />
-                        <p className="text-[8px] sm:text-[10px] text-muted-foreground">9h - 19h</p>
-                      </div>
-                      <div className="bg-secondary/50 rounded-lg sm:rounded-xl p-2 sm:p-2.5 text-center">
-                        <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5 mx-auto mb-0.5 sm:mb-1 text-muted-foreground" />
-                        <p className="text-[8px] sm:text-[10px] text-muted-foreground">Appeler</p>
-                      </div>
-                    </div>
 
-                    {/* Formules */}
-                    <div className="mb-3 sm:mb-4">
-                      <h4 className="text-[10px] sm:text-xs font-semibold text-foreground mb-1.5 sm:mb-2">Nos formules</h4>
-                      <div className="space-y-1 sm:space-y-1.5">
+                      {/* Info Cards */}
+                      <div className="flex gap-2 mb-4">
+                        <div className="flex-1 bg-secondary/60 rounded-xl p-2.5">
+                          <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
+                            <Clock className="w-3 h-3" />
+                            <span className="text-[9px] uppercase tracking-wide">Horaires</span>
+                          </div>
+                          <p className="text-[11px] font-medium text-foreground">9h - 19h</p>
+                          <p className="text-[9px] text-muted-foreground">7j/7</p>
+                        </div>
+                        <div className="flex-1 bg-secondary/60 rounded-xl p-2.5">
+                          <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
+                            <MapPin className="w-3 h-3" />
+                            <span className="text-[9px] uppercase tracking-wide">Adresse</span>
+                          </div>
+                          <p className="text-[11px] font-medium text-foreground">45 Rue du Fg</p>
+                          <p className="text-[9px] text-muted-foreground">Paris 15e</p>
+                        </div>
+                      </div>
+
+                      {/* Services */}
+                      <div className="space-y-1.5">
                         {[
                           { name: 'Lavage Express', price: '30€' },
                           { name: 'Lavage Complet', price: '70€' },
                           { name: 'Rénovation', price: '150€' },
                         ].map((item) => (
-                          <div key={item.name} className="flex items-center justify-between bg-secondary/40 rounded-lg sm:rounded-xl px-2.5 sm:px-3 py-2 sm:py-2.5">
-                            <p className="text-[10px] sm:text-[11px] font-medium text-foreground">{item.name}</p>
-                            <div className="flex items-center gap-1">
-                              <p className="text-[10px] sm:text-xs font-semibold text-foreground">{item.price}</p>
-                              <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-muted-foreground" />
-                            </div>
+                          <div key={item.name} className="flex items-center justify-between bg-secondary/40 rounded-xl px-3 py-2.5">
+                            <p className="text-[11px] font-medium text-foreground">{item.name}</p>
+                            <p className="text-xs font-semibold text-primary">{item.price}</p>
                           </div>
                         ))}
                       </div>
-                    </div>
 
-                    {/* Booking Button */}
-                    <div className="bg-foreground text-background rounded-lg sm:rounded-xl py-2.5 sm:py-3 text-center text-xs sm:text-sm font-medium shadow-lg flex items-center justify-center gap-2">
-                      <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      Réserver un créneau
+                      {/* Booking Button */}
+                      <div className="mt-4 bg-primary text-primary-foreground rounded-xl py-3 text-center text-sm font-medium shadow-lg flex items-center justify-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        Réserver un créneau
+                      </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Text + Features */}
+            <div className="order-1 lg:order-2">
+              <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6">
+                Votre vitrine en ligne
+              </h2>
+              <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-base sm:text-lg mb-8 leading-relaxed">
+                Ce que vos clients voient quand ils cherchent votre centre de nettoyage.
+              </p>
+
+              {/* Link Card */}
+              <div className="opacity-0 animate-fade-in-up stagger-2 bg-secondary/40 rounded-2xl p-5 sm:p-6 mb-6">
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-3">
+                  Un vrai site web pour votre activité
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4">Votre lien unique :</p>
+                <div className="flex items-center gap-2 bg-background rounded-xl px-4 py-3 border border-border/60 mb-4">
+                  <Globe className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">cleaningpage.com/</span>
+                  <span className="text-sm text-primary font-semibold">votre-centre</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Partagez-le partout : réseaux sociaux, carte de visite, QR code...
+                </p>
+              </div>
+
+              {/* Features Pills */}
+              <div className="opacity-0 animate-fade-in-up stagger-3">
+                <p className="text-sm text-muted-foreground mb-3">Dedans, vos clients trouvent tout ce dont ils ont besoin :</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { icon: Car, label: 'Vos formules' },
+                    { icon: Calendar, label: 'Réservations' },
+                    { icon: Star, label: 'Avis clients' },
+                    { icon: MapPin, label: 'Localisation' },
+                    { icon: Phone, label: 'Contact direct' },
+                    { icon: Clock, label: 'Horaires' },
+                  ].map((item) => (
+                    <div key={item.label} className="flex items-center gap-2 bg-background border border-border/60 rounded-full px-4 py-2">
+                      <item.icon className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm text-foreground">{item.label}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -176,72 +225,269 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Section 2: Partagez votre lien, convertissez */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6">
+      {/* Section: Espace Privé */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 bg-secondary/30">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left: Text */}
-            <div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6">
-                Partagez votre lien,<br />
-                <span className="text-muted-foreground">convertissez.</span>
-              </h2>
-              <p className="text-muted-foreground mb-6 sm:mb-8 text-base sm:text-lg leading-relaxed">
-                Partagez votre lien partout où se trouve votre audience : réseaux sociaux, WhatsApp, carte de visite, Google...
-              </p>
-              
-              <div className="space-y-4 mb-8">
-                {[
-                  { icon: Eye, text: 'Vos visiteurs voient tout : infos, offres, disponibilités' },
-                  { icon: Calendar, text: 'Ils peuvent réserver directement, 24h/24' },
-                  { icon: ArrowRight, text: 'D\'un clic, ils passent de visiteur à client' },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-secondary rounded-xl flex items-center justify-center flex-shrink-0">
-                      <item.icon className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />
+          {/* Section Label */}
+          <div className="flex items-center gap-2 text-muted-foreground mb-4 opacity-0 animate-fade-in-up">
+            <Shield className="w-4 h-4" />
+            <span className="text-xs font-medium uppercase tracking-wider">Espace privé</span>
+          </div>
+          
+          <h2 className="opacity-0 animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+            Votre outil de gestion
+          </h2>
+          <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-base sm:text-lg mb-8 max-w-2xl leading-relaxed">
+            Simple et complet pour gérer réservations, formules, et personnaliser votre page.
+          </p>
+
+          {/* Dashboard Tabs Preview */}
+          <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-wrap gap-2 sm:gap-3 mb-10 justify-center">
+            {[
+              { icon: Globe, label: 'Ma Page', active: true, badge: null },
+              { icon: Calendar, label: 'Réservations', active: false, badge: '3' },
+              { icon: BarChart3, label: 'Statistiques', active: false, badge: null },
+              { icon: Droplets, label: 'Formules', active: false, badge: null },
+              { icon: Settings, label: 'Paramètres', active: false, badge: null },
+            ].map((tab) => (
+              <div 
+                key={tab.label}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+                  tab.active 
+                    ? 'bg-foreground text-background shadow-lg' 
+                    : 'bg-card border border-border/60 text-foreground hover:bg-secondary/50'
+                }`}
+              >
+                <tab.icon className="w-4 h-4" />
+                {tab.label}
+                {tab.badge && (
+                  <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                    {tab.badge}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Dashboard Browser Mockup */}
+          <div className="opacity-0 animate-fade-in-up stagger-4">
+            <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60 max-w-4xl mx-auto">
+              {/* Browser Bar */}
+              <div className="bg-secondary/50 px-4 py-3 flex items-center gap-3 border-b border-border/40">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-400" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                  <div className="w-3 h-3 rounded-full bg-green-400" />
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <div className="flex items-center gap-2 bg-background rounded-full px-4 py-1.5 text-xs text-muted-foreground">
+                    <Shield className="w-3 h-3" />
+                    cleaningpage.com/<span className="text-foreground font-medium">dashboard</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dashboard Content */}
+              <div className="flex min-h-[420px]">
+                {/* Sidebar */}
+                <div className="w-56 bg-secondary/30 border-r border-border/40 p-4 flex-shrink-0 hidden md:block">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Logo size="md" />
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-6 truncate">clean-auto-pro</p>
+
+                  <nav className="space-y-1">
+                    {[
+                      { icon: Globe, label: 'Ma Page', active: true },
+                      { icon: Calendar, label: 'Réservations', active: false, badge: '3' },
+                      { icon: BarChart3, label: 'Statistiques', active: false },
+                      { icon: Droplets, label: 'Formules', active: false },
+                      { icon: Settings, label: 'Paramètres', active: false },
+                    ].map((item) => (
+                      <div
+                        key={item.label}
+                        className={`flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm ${
+                          item.active 
+                            ? 'bg-foreground text-background font-medium' 
+                            : 'text-muted-foreground hover:bg-card/50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <item.icon className="w-4 h-4" />
+                          {item.label}
+                        </div>
+                        {item.badge && (
+                          <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </nav>
+
+                  {/* Link at bottom */}
+                  <div className="mt-8 pt-4 border-t border-border/40">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Link2 className="w-4 h-4" />
+                      <span className="text-xs">Votre lien</span>
                     </div>
-                    <p className="text-foreground text-sm sm:text-base">{item.text}</p>
+                    <p className="text-[10px] text-muted-foreground mt-1 truncate">cleaningpage.com/clean-auto...</p>
                   </div>
-                ))}
-              </div>
-
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
-                <Check className="w-4 h-4" />
-                100% gratuit
-              </div>
-            </div>
-
-            {/* Right: Link Sharing Visual */}
-            <div className="flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-[360px]">
-                {/* Central Link Card */}
-                <div className="bg-card rounded-2xl shadow-mockup border border-border/60 p-5 sm:p-6 text-center">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <Link2 className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
-                  </div>
-                  <p className="text-xs sm:text-sm text-muted-foreground mb-2">Votre lien unique</p>
-                  <div className="inline-flex items-center gap-1 bg-secondary/60 px-3 py-2 rounded-full font-mono text-xs sm:text-sm mb-4">
-                    <span className="text-muted-foreground">cleaningpage.com/c/</span>
-                    <span className="text-primary font-semibold">votre-nom</span>
-                  </div>
-                  <Button size="sm" className="w-full rounded-full text-xs">
-                    <Share2 className="w-3 h-3 mr-2" />
-                    Copier le lien
-                  </Button>
                 </div>
 
-                {/* Floating Platform Icons */}
-                <div className="absolute -left-3 sm:-left-6 top-1/4 bg-card rounded-xl shadow-lg border border-border/40 p-2.5 sm:p-3">
-                  <Instagram className="w-5 h-5 sm:w-6 sm:h-6 text-pink-500" />
-                </div>
-                <div className="absolute -right-3 sm:-right-6 top-1/3 bg-card rounded-xl shadow-lg border border-border/40 p-2.5 sm:p-3">
-                  <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" />
-                </div>
-                <div className="absolute -left-2 sm:-left-4 bottom-1/4 bg-card rounded-xl shadow-lg border border-border/40 p-2.5 sm:p-3">
-                  <Globe className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
-                </div>
-                <div className="absolute -right-2 sm:-right-4 bottom-1/3 bg-card rounded-xl shadow-lg border border-border/40 p-2.5 sm:p-3">
-                  <ExternalLink className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground" />
+                {/* Main Content Area */}
+                <div className="flex-1 p-6">
+                  {/* Tabs */}
+                  <div className="flex items-center gap-4 mb-6 text-sm border-b border-border/40 pb-3">
+                    <span className="text-muted-foreground">Infos</span>
+                    <span className="text-foreground font-medium border-b-2 border-foreground pb-3 -mb-3">Style</span>
+                    <span className="text-muted-foreground">Sections</span>
+                    <span className="text-muted-foreground">Images</span>
+                    <div className="ml-auto flex items-center gap-2">
+                      <span className="text-green-500 text-xs flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                        Sync
+                      </span>
+                      <button className="bg-foreground text-background px-4 py-1.5 rounded-lg text-xs font-medium">
+                        Publier
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Customization Options */}
+                    <div className="space-y-4">
+                      {/* Color Picker */}
+                      <div className="bg-secondary/40 rounded-xl p-4">
+                        <p className="text-sm font-medium text-foreground mb-3">Couleur principale</p>
+                        <div className="flex gap-2">
+                          {[
+                            { color: 'bg-foreground', active: true },
+                            { color: 'bg-red-500', active: false },
+                            { color: 'bg-orange-500', active: false },
+                            { color: 'bg-green-500', active: false },
+                            { color: 'bg-blue-500', active: false },
+                          ].map((c, i) => (
+                            <div 
+                              key={i}
+                              className={`w-8 h-8 ${c.color} rounded-full cursor-pointer ${c.active ? 'ring-2 ring-offset-2 ring-foreground' : ''}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Theme Toggle */}
+                      <div className="bg-secondary/40 rounded-xl p-4">
+                        <p className="text-sm font-medium text-foreground mb-3">Thème</p>
+                        <div className="flex gap-2">
+                          <button className="flex-1 bg-card text-foreground px-4 py-2 rounded-lg text-sm font-medium shadow-sm">
+                            Clair
+                          </button>
+                          <button className="flex-1 bg-secondary/60 text-muted-foreground px-4 py-2 rounded-lg text-sm">
+                            Sombre
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Button Style */}
+                      <div className="bg-secondary/40 rounded-xl p-4">
+                        <p className="text-sm font-medium text-foreground mb-3">Bouton d'action</p>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-xs text-muted-foreground">Arrondi</span>
+                          <div className="flex gap-1">
+                            {['S', 'M', 'L'].map((size, i) => (
+                              <span 
+                                key={size}
+                                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs ${i === 1 ? 'bg-foreground text-background' : 'bg-secondary text-muted-foreground'}`}
+                              >
+                                {size}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <button className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-medium">
+                          Réserver un créneau
+                        </button>
+                      </div>
+
+                      {/* Typography */}
+                      <div className="bg-secondary/40 rounded-xl p-4">
+                        <p className="text-sm font-medium text-foreground mb-3">Typographie</p>
+                        <div className="space-y-2 text-xs">
+                          <div className="flex items-center justify-between">
+                            <span className="text-muted-foreground">Titres</span>
+                            <span className="text-foreground font-medium">SF Pro</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-muted-foreground">Corps</span>
+                            <span className="text-foreground">Inter</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Live Preview */}
+                    <div className="hidden md:flex flex-col">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs text-muted-foreground">Aperçu en direct</span>
+                        <div className="flex items-center gap-2">
+                          <Phone className="w-4 h-4 text-muted-foreground" />
+                          <Settings className="w-4 h-4 text-muted-foreground" />
+                        </div>
+                      </div>
+                      
+                      {/* Mini Phone Preview */}
+                      <div className="flex-1 flex items-center justify-center">
+                        <div className="relative bg-foreground rounded-[1.5rem] p-1.5 shadow-xl">
+                          <div className="bg-card rounded-[1.2rem] overflow-hidden w-[160px]">
+                            <div className="h-16 bg-gradient-to-br from-primary to-primary/60 relative">
+                              <div className="absolute -bottom-4 left-3">
+                                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center border-2 border-card shadow-lg">
+                                  <span className="text-primary-foreground font-bold text-[10px]">CP</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="p-3 pt-6">
+                              <p className="text-[9px] font-semibold text-foreground mb-0.5">Clean Auto Pro</p>
+                              <div className="flex items-center gap-1 mb-2">
+                                <span className="text-[7px] bg-green-100 text-green-700 px-1 rounded">Ouvert</span>
+                                <div className="flex items-center gap-0.5">
+                                  <Star className="w-2 h-2 fill-yellow-400 text-yellow-400" />
+                                  <span className="text-[7px] text-foreground">4.9</span>
+                                  <span className="text-[6px] text-muted-foreground">(312)</span>
+                                </div>
+                              </div>
+                              <button className="w-full bg-primary text-primary-foreground py-1.5 rounded-lg text-[8px] font-medium flex items-center justify-center gap-1 mb-2">
+                                <Calendar className="w-2 h-2" />
+                                Réserver
+                              </button>
+                              <div className="flex gap-1 mb-2">
+                                <div className="flex-1 bg-secondary/60 rounded-lg p-1.5 text-center">
+                                  <Clock className="w-2 h-2 mx-auto text-muted-foreground mb-0.5" />
+                                  <p className="text-[6px] text-foreground">9h-19h</p>
+                                </div>
+                                <div className="flex-1 bg-secondary/60 rounded-lg p-1.5 text-center">
+                                  <MapPin className="w-2 h-2 mx-auto text-muted-foreground mb-0.5" />
+                                  <p className="text-[6px] text-foreground">Paris 15</p>
+                                </div>
+                              </div>
+                              <div className="space-y-1">
+                                {[
+                                  { name: 'Lavage Express', price: '30€' },
+                                  { name: 'Lavage Complet', price: '70€' },
+                                ].map((item) => (
+                                  <div key={item.name} className="flex items-center justify-between bg-secondary/40 rounded-lg px-2 py-1.5">
+                                    <p className="text-[7px] text-foreground">{item.name}</p>
+                                    <p className="text-[8px] font-semibold text-primary">{item.price}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
