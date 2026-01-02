@@ -86,7 +86,7 @@ export default function Index() {
               </h1>
               
               <p className="opacity-0 animate-fade-in-up stagger-1 text-base text-muted-foreground max-w-sm mx-auto mb-6 leading-relaxed">
-                Présentez vos prestations, recevez des demandes et gérez vos rendez-vous.
+                Présentez votre activité, recevez des demandes et gérez vos rendez-vous.
               </p>
             </div>
 
