@@ -595,19 +595,23 @@ export default function Index() {
                           {/* Color Picker */}
                           <div className="bg-secondary/40 rounded-xl p-4">
                             <p className="text-sm font-medium text-foreground mb-3">Couleur principale</p>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 items-center">
                               {[
-                                { color: 'bg-foreground', active: true },
+                                { color: 'bg-zinc-900', active: false },
+                                { color: 'bg-white border border-zinc-200', active: true },
                                 { color: 'bg-red-500', active: false },
-                                { color: 'bg-orange-500', active: false },
-                                { color: 'bg-green-500', active: false },
+                                { color: 'bg-emerald-500', active: false },
                                 { color: 'bg-blue-500', active: false },
+                                { color: 'bg-violet-500', active: false },
                               ].map((c, i) => (
                                 <div 
                                   key={i}
-                                  className={`w-8 h-8 ${c.color} rounded-full cursor-pointer ${c.active ? 'ring-2 ring-offset-2 ring-foreground' : ''}`}
+                                  className={`w-7 h-7 ${c.color} rounded-full cursor-pointer ${c.active ? 'ring-2 ring-offset-2 ring-primary' : ''}`}
                                 />
                               ))}
+                              <div className="w-7 h-7 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 rounded-full cursor-pointer flex items-center justify-center">
+                                <span className="text-white text-xs font-bold">+</span>
+                              </div>
                             </div>
                           </div>
 
@@ -615,10 +619,10 @@ export default function Index() {
                           <div className="bg-secondary/40 rounded-xl p-4">
                             <p className="text-sm font-medium text-foreground mb-3">Thème</p>
                             <div className="flex gap-2">
-                              <button className="flex-1 bg-card text-foreground px-4 py-2 rounded-lg text-sm font-medium shadow-sm">
+                              <button className="flex-1 bg-secondary/60 text-muted-foreground px-4 py-2 rounded-lg text-sm">
                                 Clair
                               </button>
-                              <button className="flex-1 bg-secondary/60 text-muted-foreground px-4 py-2 rounded-lg text-sm">
+                              <button className="flex-1 bg-foreground text-background px-4 py-2 rounded-lg text-sm font-medium shadow-sm">
                                 Sombre
                               </button>
                             </div>
@@ -647,14 +651,14 @@ export default function Index() {
                                 {/* Banner with overlay */}
                                 <div className="h-20 relative">
                                   <img 
-                                    src={sofaBanner} 
+                                    src={mockupBanner} 
                                     alt="Preview" 
                                     className="w-full h-full object-cover opacity-80"
                                   />
                                   <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/50 to-transparent" />
                                   <div className="absolute -bottom-3 left-3">
                                     <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border-2 border-zinc-950 shadow-lg">
-                                      <span className="text-zinc-900 font-bold text-[8px]">SC</span>
+                                      <span className="text-zinc-900 font-bold text-[8px]">MP</span>
                                     </div>
                                   </div>
                                   <div className="absolute top-2 right-2 flex gap-1">
@@ -667,13 +671,13 @@ export default function Index() {
                                 <div className="p-3 pt-5">
                                   {/* Header */}
                                   <div className="flex items-center gap-1.5 mb-0.5">
-                                    <p className="text-[9px] font-bold text-white">SofaClean Pro</p>
+                                    <p className="text-[9px] font-bold text-white">Maison Propre</p>
                                     <span className="text-[6px] bg-emerald-500/20 text-emerald-400 px-1 py-0.5 rounded-full">Ouvert</span>
                                   </div>
                                   <div className="flex items-center gap-1 mb-2">
                                     <Star className="w-2 h-2 fill-amber-400 text-amber-400" />
-                                    <span className="text-[7px] text-white font-medium">4.9</span>
-                                    <span className="text-[7px] text-zinc-500">(127)</span>
+                                    <span className="text-[7px] text-white font-medium">4.8</span>
+                                    <span className="text-[7px] text-zinc-500">(89)</span>
                                   </div>
                                   
                                   {/* Action buttons */}
@@ -693,10 +697,10 @@ export default function Index() {
                                     <p className="text-[6px] text-zinc-500 uppercase tracking-wider mb-1">Galerie</p>
                                     <div className="flex gap-0.5">
                                       <div className="w-10 h-8 bg-zinc-800 rounded overflow-hidden">
-                                        <img src={sofaBanner} alt="" className="w-full h-full object-cover opacity-70" />
+                                        <img src={mockupBanner} alt="" className="w-full h-full object-cover opacity-70" />
                                       </div>
                                       <div className="w-10 h-8 bg-zinc-800 rounded overflow-hidden">
-                                        <img src={mockupBanner} alt="" className="w-full h-full object-cover opacity-70" />
+                                        <img src={sofaBanner} alt="" className="w-full h-full object-cover opacity-70" />
                                       </div>
                                       <div className="w-10 h-8 bg-zinc-800 rounded flex items-center justify-center">
                                         <span className="text-[7px] text-zinc-500">+4</span>
@@ -707,12 +711,12 @@ export default function Index() {
                                   {/* Services */}
                                   <div className="space-y-1 mb-2">
                                     <div className="flex justify-between items-center bg-zinc-900/50 rounded px-1.5 py-1">
-                                      <span className="text-[7px] text-zinc-300">Canapé 2 places</span>
-                                      <span className="text-[7px] font-bold text-white">49€</span>
+                                      <span className="text-[7px] text-zinc-300">Ménage 2h</span>
+                                      <span className="text-[7px] font-bold text-white">60€</span>
                                     </div>
                                     <div className="flex justify-between items-center bg-zinc-900/50 rounded px-1.5 py-1">
-                                      <span className="text-[7px] text-zinc-300">Canapé 3 places</span>
-                                      <span className="text-[7px] font-bold text-white">69€</span>
+                                      <span className="text-[7px] text-zinc-300">Grand ménage</span>
+                                      <span className="text-[7px] font-bold text-white">120€</span>
                                     </div>
                                   </div>
                                   
