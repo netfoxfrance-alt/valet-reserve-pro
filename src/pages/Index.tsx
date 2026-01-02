@@ -42,13 +42,8 @@ export default function Index() {
       <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            {/* Left: Text */}
-            <div className="text-center lg:text-left">
-              <div className="opacity-0 animate-fade-in-up inline-flex items-center gap-2 bg-secondary/60 rounded-full px-4 py-1.5 mb-6">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-sm text-foreground font-medium">Simple. Élégant. Efficace.</span>
-              </div>
-              
+            {/* Left: Text - Hidden on mobile, shown on lg+ */}
+            <div className="text-center lg:text-left hidden lg:block">
               <h1 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-[1.1]">
                 Votre activité.
                 <br />
@@ -66,12 +61,6 @@ export default function Index() {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
-                <Link to="/clean-auto-pro">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-8">
-                    <Eye className="mr-2 h-4 w-4" />
-                    Voir un exemple
-                  </Button>
-                </Link>
               </div>
 
               {/* Trust indicators */}
@@ -82,17 +71,26 @@ export default function Index() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-green-500" />
-                  <span>Sans engagement</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-500" />
                   <span>Prêt en 5 min</span>
                 </div>
               </div>
             </div>
 
+            {/* Mobile: Text above mockup */}
+            <div className="text-center lg:hidden">
+              <h1 className="opacity-0 animate-fade-in-up text-3xl sm:text-4xl font-semibold text-foreground tracking-tight mb-4 leading-[1.1]">
+                Votre activité.
+                <br />
+                <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">Un seul lien.</span>
+              </h1>
+              
+              <p className="opacity-0 animate-fade-in-up stagger-1 text-base text-muted-foreground max-w-sm mx-auto mb-6 leading-relaxed">
+                Présentez vos prestations, recevez des demandes et gérez vos rendez-vous.
+              </p>
+            </div>
+
             {/* Right: Premium Phone Mockup */}
-            <div className="flex justify-center lg:justify-end order-first lg:order-last">
+            <div className="flex justify-center lg:justify-end">
               <div className="animate-float relative">
                 {/* Subtle glow */}
                 <div className="absolute inset-0 bg-primary/8 blur-[80px] scale-125" />
@@ -239,6 +237,27 @@ export default function Index() {
                       </button>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile: CTA below mockup */}
+            <div className="lg:hidden text-center mt-8">
+              <Link to="/auth">
+                <Button size="lg" className="w-full text-base px-8 shadow-lg shadow-primary/25 mb-6">
+                  Créer ma page gratuitement
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              
+              <div className="flex items-center gap-4 justify-center text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-500" />
+                  <span>Gratuit</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-500" />
+                  <span>Prêt en 5 min</span>
                 </div>
               </div>
             </div>
