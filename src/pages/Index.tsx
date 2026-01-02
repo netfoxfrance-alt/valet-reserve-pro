@@ -94,129 +94,104 @@ export default function Index() {
             {/* Right: Premium Phone Mockup */}
             <div className="flex justify-center lg:justify-end order-first lg:order-last">
               <div className="animate-float relative">
-                {/* Glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-blue-500/20 to-purple-500/20 blur-3xl scale-150 opacity-50" />
+                {/* Subtle glow effect */}
+                <div className="absolute inset-0 bg-primary/10 blur-[100px] scale-150 opacity-60" />
                 
-                {/* Phone Frame */}
-                <div className="relative bg-gradient-to-b from-zinc-800 to-zinc-900 rounded-[3rem] p-3 shadow-2xl shadow-black/30">
+                {/* Phone Frame - iPhone style */}
+                <div className="relative bg-zinc-900 rounded-[2.8rem] p-2 shadow-2xl">
                   {/* Dynamic Island */}
-                  <div className="absolute top-3 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-full z-20 flex items-center justify-center">
-                    <div className="w-3 h-3 rounded-full bg-zinc-800 mr-4" />
-                  </div>
+                  <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-full z-20" />
                   
-                  <div className="relative bg-card rounded-[2.5rem] overflow-hidden w-[280px] sm:w-[320px]">
+                  <div className="relative bg-card rounded-[2.4rem] overflow-hidden w-[270px] sm:w-[300px]">
                     {/* Status Bar */}
-                    <div className="bg-card px-8 py-3 flex items-center justify-between relative z-10">
-                      <span className="text-xs font-semibold text-foreground">9:41</span>
-                      <div className="flex items-center gap-1.5">
-                        <div className="flex gap-0.5">
-                          <div className="w-1 h-3 bg-foreground rounded-full" />
-                          <div className="w-1 h-2.5 bg-foreground rounded-full" />
-                          <div className="w-1 h-2 bg-foreground rounded-full" />
-                          <div className="w-1 h-1.5 bg-foreground/40 rounded-full" />
+                    <div className="px-7 pt-3 pb-1 flex items-center justify-between relative z-10">
+                      <span className="text-[11px] font-semibold text-foreground">9:41</span>
+                      <div className="flex items-center gap-1">
+                        <div className="flex gap-[2px]">
+                          <div className="w-[3px] h-[10px] bg-foreground rounded-full" />
+                          <div className="w-[3px] h-[8px] bg-foreground rounded-full" />
+                          <div className="w-[3px] h-[6px] bg-foreground rounded-full" />
+                          <div className="w-[3px] h-[4px] bg-foreground/40 rounded-full" />
                         </div>
-                        <div className="w-6 h-3 bg-foreground rounded-sm relative">
-                          <div className="absolute right-0 top-1/2 -translate-y-1/2 -right-0.5 w-0.5 h-1.5 bg-foreground rounded-r-full" />
-                        </div>
+                        <div className="w-5 h-[10px] bg-foreground rounded-[2px] ml-1" />
                       </div>
                     </div>
 
                     {/* Banner Image */}
-                    <div className="h-36 relative -mt-2">
+                    <div className="h-28 relative">
                       <img 
                         src={mockupBanner} 
                         alt="Service preview" 
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
                       
-                      {/* Social Icons - Top Right */}
-                      <div className="absolute top-3 right-3 flex gap-2">
-                        <div className="w-9 h-9 bg-card/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg">
-                          <Instagram className="w-4 h-4 text-foreground" />
+                      {/* Social Icons */}
+                      <div className="absolute top-2.5 right-3 flex gap-1.5">
+                        <div className="w-7 h-7 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center">
+                          <Instagram className="w-3.5 h-3.5 text-zinc-800" />
                         </div>
-                        <div className="w-9 h-9 bg-card/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg">
-                          <Mail className="w-4 h-4 text-foreground" />
+                        <div className="w-7 h-7 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center">
+                          <Mail className="w-3.5 h-3.5 text-zinc-800" />
                         </div>
                       </div>
                       
                       {/* Logo */}
-                      <div className="absolute -bottom-6 left-5">
-                        <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl shadow-xl flex items-center justify-center border-4 border-card">
-                          <Droplets className="w-8 h-8 text-white" />
+                      <div className="absolute -bottom-5 left-4">
+                        <div className="w-14 h-14 bg-primary rounded-2xl shadow-lg flex items-center justify-center border-[3px] border-card">
+                          <Car className="w-7 h-7 text-primary-foreground" />
                         </div>
                       </div>
                     </div>
 
-                    <div className="p-5 pt-9">
+                    <div className="px-4 pb-5 pt-7">
                       {/* Header */}
-                      <div className="mb-4">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-lg font-bold text-foreground">EcoClean Services</h3>
-                          <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Ouvert</span>
+                      <div className="mb-3">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h3 className="text-base font-bold text-foreground">Clean Auto Pro</h3>
+                          <span className="text-[9px] bg-green-500/10 text-green-600 px-1.5 py-0.5 rounded-full font-semibold">Ouvert</span>
                         </div>
-                        <p className="text-xs text-muted-foreground mb-2">Nettoyage professionnel • Lyon 6e</p>
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-1">
-                            <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm font-semibold text-foreground">4.9</span>
-                            <span className="text-xs text-muted-foreground">(127)</span>
-                          </div>
-                          <span className="text-muted-foreground">•</span>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <Clock className="w-3 h-3" />
-                            <span>8h-20h</span>
-                          </div>
+                        <p className="text-[11px] text-muted-foreground">Lavage auto premium • Paris 15e</p>
+                      </div>
+
+                      {/* Rating + Hours inline */}
+                      <div className="flex items-center gap-2 mb-3 text-[11px]">
+                        <div className="flex items-center gap-1">
+                          <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                          <span className="font-semibold text-foreground">4.9</span>
+                          <span className="text-muted-foreground">(312)</span>
+                        </div>
+                        <span className="text-border">•</span>
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                          <Clock className="w-3 h-3" />
+                          <span>9h-19h</span>
+                        </div>
+                        <span className="text-border">•</span>
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                          <MapPin className="w-3 h-3" />
+                          <span>2.3 km</span>
                         </div>
                       </div>
 
-                      {/* Info Pills */}
-                      <div className="flex gap-2 mb-4">
-                        <div className="flex-1 bg-secondary/50 rounded-xl p-3">
-                          <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
-                            <MapPin className="w-3 h-3" />
-                            <span className="text-[10px] uppercase tracking-wide font-medium">Adresse</span>
+                      {/* Services - Clean list style */}
+                      <div className="space-y-2 mb-4">
+                        {[
+                          { name: 'Lavage Express', price: '30€' },
+                          { name: 'Lavage Complet', price: '70€' },
+                          { name: 'Rénovation', price: '150€' },
+                        ].map((item, i) => (
+                          <div 
+                            key={item.name} 
+                            className="flex items-center justify-between bg-secondary/50 rounded-xl px-3.5 py-2.5 group hover:bg-secondary transition-colors"
+                          >
+                            <span className="text-[12px] font-medium text-foreground">{item.name}</span>
+                            <span className="text-[12px] font-bold text-primary">{item.price}</span>
                           </div>
-                          <p className="text-xs font-medium text-foreground">12 Rue de la Paix</p>
-                        </div>
-                        <div className="flex-1 bg-secondary/50 rounded-xl p-3">
-                          <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
-                            <Clock className="w-3 h-3" />
-                            <span className="text-[10px] uppercase tracking-wide font-medium">Horaires</span>
-                          </div>
-                          <p className="text-xs font-medium text-foreground">7j/7</p>
-                        </div>
-                      </div>
-
-                      {/* Services Grid */}
-                      <div className="mb-4">
-                        <p className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1">
-                          <Sparkles className="w-3 h-3 text-primary" />
-                          Nos formules
-                        </p>
-                        <div className="grid grid-cols-2 gap-2">
-                          {[
-                            { name: 'Ménage Express', price: '45€', duration: '2h' },
-                            { name: 'Grand Ménage', price: '90€', duration: '4h' },
-                            { name: 'Vitres & Surfaces', price: '35€', duration: '1h30' },
-                            { name: 'Nettoyage Complet', price: '150€', duration: '6h' },
-                          ].map((item) => (
-                            <div key={item.name} className="bg-secondary/40 rounded-xl p-3 hover:bg-secondary/60 transition-colors cursor-pointer group">
-                              <p className="text-[11px] font-semibold text-foreground mb-0.5 group-hover:text-primary transition-colors">{item.name}</p>
-                              <div className="flex items-center justify-between">
-                                <span className="text-[10px] text-muted-foreground">{item.duration}</span>
-                                <span className="text-xs font-bold text-emerald-600">{item.price}</span>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                        <button className="w-full text-center text-[10px] text-primary font-medium mt-2 hover:underline">
-                          Voir toutes les formules →
-                        </button>
+                        ))}
                       </div>
 
                       {/* CTA Button */}
-                      <button className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-2xl py-3.5 text-sm font-semibold shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2 hover:shadow-xl hover:shadow-emerald-500/40 transition-all">
+                      <button className="w-full bg-primary text-primary-foreground rounded-xl py-3 text-[13px] font-semibold shadow-md flex items-center justify-center gap-2">
                         <Calendar className="w-4 h-4" />
                         Réserver un créneau
                       </button>
