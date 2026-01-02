@@ -12,8 +12,8 @@ import {
 import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 
 export default function Index() {
-  const [dashboardTab, setDashboardTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings'>('reservations');
-  const [mobileTab, setMobileTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings' | 'dispo'>('reservations');
+  const [dashboardTab, setDashboardTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings'>('mypage');
+  const [mobileTab, setMobileTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings' | 'dispo'>('mypage');
 
   return (
     <div className="min-h-screen bg-background">
@@ -508,28 +508,39 @@ export default function Index() {
                         <div className="hidden md:flex flex-col">
                           <div className="flex items-center justify-between mb-3">
                             <span className="text-xs text-muted-foreground">Aperçu en direct</span>
-                            <Phone className="w-4 h-4 text-muted-foreground" />
+                            <Eye className="w-4 h-4 text-muted-foreground" />
                           </div>
                           
                           {/* Mini Phone Preview */}
                           <div className="flex-1 flex items-center justify-center">
                             <div className="relative bg-foreground rounded-[1.5rem] p-1.5 shadow-xl">
                               <div className="bg-card rounded-[1.2rem] overflow-hidden w-[160px]">
-                                <div className="h-16 bg-gradient-to-br from-primary to-primary/60 relative">
+                                <div className="h-16 bg-gradient-to-br from-blue-500 to-blue-400 relative">
                                   <div className="absolute -bottom-4 left-3">
-                                    <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center border-2 border-card shadow-lg">
-                                      <span className="text-primary-foreground font-bold text-[10px]">CP</span>
+                                    <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center border-2 border-card shadow-lg">
+                                      <Droplets className="w-5 h-5 text-white" />
                                     </div>
                                   </div>
                                 </div>
                                 <div className="p-3 pt-6">
-                                  <p className="text-[9px] font-semibold text-foreground mb-0.5">Clean Auto Pro</p>
+                                  <p className="text-[9px] font-semibold text-foreground mb-0.5">Maison Propre</p>
+                                  <p className="text-[7px] text-muted-foreground mb-1">Nettoyage à domicile</p>
                                   <div className="flex items-center gap-1 mb-2">
                                     <span className="text-[7px] bg-green-100 text-green-700 px-1 rounded">Ouvert</span>
                                     <Star className="w-2 h-2 fill-yellow-400 text-yellow-400" />
-                                    <span className="text-[7px] text-foreground">4.9</span>
+                                    <span className="text-[7px] text-foreground">4.8</span>
                                   </div>
-                                  <button className="w-full bg-primary text-primary-foreground py-1.5 rounded-lg text-[8px] font-medium">
+                                  <div className="space-y-1 mb-2">
+                                    <div className="flex justify-between text-[7px]">
+                                      <span className="text-muted-foreground">Ménage 2h</span>
+                                      <span className="font-medium text-foreground">60€</span>
+                                    </div>
+                                    <div className="flex justify-between text-[7px]">
+                                      <span className="text-muted-foreground">Grand ménage</span>
+                                      <span className="font-medium text-foreground">120€</span>
+                                    </div>
+                                  </div>
+                                  <button className="w-full bg-blue-500 text-white py-1.5 rounded-lg text-[8px] font-medium">
                                     Réserver
                                   </button>
                                 </div>
