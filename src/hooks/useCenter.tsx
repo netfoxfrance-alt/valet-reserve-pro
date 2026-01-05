@@ -15,7 +15,7 @@ export interface Center {
   logo_url: string | null;
   welcome_message: string | null;
   ai_enabled: boolean;
-  subscription_plan: 'free' | 'pro';
+  subscription_plan: 'free' | 'pro' | 'trial' | 'expired' | 'past_due';
   customization: CenterCustomization;
   created_at: string;
   updated_at: string;
