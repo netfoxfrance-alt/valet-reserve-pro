@@ -13,8 +13,19 @@ import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
-import { Sparkles, Upload, Trash2, Loader2, CreditCard, Crown, ExternalLink } from 'lucide-react';
+import { Sparkles, Upload, Trash2, Loader2, CreditCard, Crown, ExternalLink, Link2, Check, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+// Generate a clean slug from text
+const generateSlug = (text: string): string => {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .substring(0, 30);
+};
 
 export default function DashboardSettings() {
   const { center, loading, updateCenter } = useMyCenter();
@@ -31,6 +42,14 @@ export default function DashboardSettings() {
     welcome_message: '',
   });
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  
+  // Slug editing state
+  const [slug, setSlug] = useState('');
+  const [slugInput, setSlugInput] = useState('');
+  const [isEditingSlug, setIsEditingSlug] = useState(false);
+  const [isCheckingSlug, setIsCheckingSlug] = useState(false);
+  const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
+  const [savingSlug, setSavingSlug] = useState(false);
 
   useEffect(() => {
     if (center) {
@@ -41,6 +60,8 @@ export default function DashboardSettings() {
         welcome_message: center.welcome_message || '',
       });
       setLogoUrl(center.logo_url);
+      setSlug(center.slug || '');
+      setSlugInput(center.slug || '');
     }
   }, [center]);
 
@@ -274,6 +295,147 @@ export default function DashboardSettings() {
                   </p>
                 </div>
               </div>
+            </Card>
+          </section>
+
+          {/* Slug Section */}
+          <section className="mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Lien de votre page</h2>
+            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">L'URL personnalisée de votre page publique.</p>
+            
+            <Card variant="elevated" className="p-4 sm:p-6">
+              {!isEditingSlug ? (
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <Link2 className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">cleaningpage.com/{slug}</p>
+                      <p className="text-sm text-muted-foreground">Votre lien public</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsEditingSlug(true)}
+                    className="w-full sm:w-auto"
+                  >
+                    Modifier
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="slug">Nouveau lien</Label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground whitespace-nowrap">cleaningpage.com/</span>
+                      <div className="relative flex-1">
+                        <Input
+                          id="slug"
+                          value={slugInput}
+                          onChange={(e) => {
+                            const cleaned = generateSlug(e.target.value);
+                            setSlugInput(cleaned);
+                            setSlugAvailable(null);
+                            
+                            // Check availability after a short delay
+                            if (cleaned.length >= 3 && cleaned !== slug) {
+                              setIsCheckingSlug(true);
+                              const timeoutId = setTimeout(async () => {
+                                try {
+                                  const { data } = await supabase
+                                    .from('centers')
+                                    .select('id')
+                                    .eq('slug', cleaned)
+                                    .maybeSingle();
+                                  setSlugAvailable(data === null);
+                                } catch {
+                                  setSlugAvailable(null);
+                                } finally {
+                                  setIsCheckingSlug(false);
+                                }
+                              }, 300);
+                              return () => clearTimeout(timeoutId);
+                            } else if (cleaned === slug) {
+                              setSlugAvailable(null);
+                            }
+                          }}
+                          placeholder="mon-entreprise"
+                          className="pr-10"
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          {isCheckingSlug ? (
+                            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                          ) : slugAvailable === true ? (
+                            <Check className="w-4 h-4 text-emerald-500" />
+                          ) : slugAvailable === false ? (
+                            <X className="w-4 h-4 text-destructive" />
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                    {slugAvailable === false && (
+                      <p className="text-xs text-destructive">Ce lien est déjà pris</p>
+                    )}
+                    {slugInput.length > 0 && slugInput.length < 3 && (
+                      <p className="text-xs text-muted-foreground">Minimum 3 caractères</p>
+                    )}
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setIsEditingSlug(false);
+                        setSlugInput(slug);
+                        setSlugAvailable(null);
+                      }}
+                    >
+                      Annuler
+                    </Button>
+                    <Button
+                      variant="premium"
+                      size="sm"
+                      disabled={
+                        savingSlug || 
+                        slugInput.length < 3 || 
+                        slugInput === slug || 
+                        slugAvailable === false ||
+                        isCheckingSlug
+                      }
+                      onClick={async () => {
+                        if (slugInput.length < 3 || slugAvailable === false) return;
+                        
+                        setSavingSlug(true);
+                        const { error } = await updateCenter({ slug: slugInput });
+                        setSavingSlug(false);
+                        
+                        if (error) {
+                          toast({ 
+                            title: 'Erreur', 
+                            description: error.includes('unique') ? 'Ce lien est déjà pris' : error, 
+                            variant: 'destructive' 
+                          });
+                        } else {
+                          setSlug(slugInput);
+                          setIsEditingSlug(false);
+                          toast({ title: 'Lien mis à jour', description: `Votre nouvelle URL est cleaningpage.com/${slugInput}` });
+                        }
+                      }}
+                    >
+                      {savingSlug ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Enregistrement...
+                        </>
+                      ) : (
+                        'Enregistrer'
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
             </Card>
           </section>
 
