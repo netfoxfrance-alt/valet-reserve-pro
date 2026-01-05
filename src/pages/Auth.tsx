@@ -5,15 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
-import { Logo } from '@/components/ui/Logo';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { useMyCenter } from '@/hooks/useCenter';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Auth() {
   const navigate = useNavigate();
-  const { user, signIn, signUp } = useAuth();
-  const { center, loading: centerLoading } = useMyCenter();
+  const { user, session, subscription, checkSubscription } = useAuth();
+  const { signIn, signUp } = useAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,15 +20,16 @@ export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Redirect authenticated users based on their plan
+  // Redirect authenticated users based on subscription status
   useEffect(() => {
-    if (user && !centerLoading && center) {
-      const destination = center.subscription_plan === 'pro' 
-        ? '/dashboard' 
-        : '/dashboard/my-page';
-      navigate(destination, { replace: true });
+    if (user && session) {
+      // If already subscribed, go to dashboard
+      if (subscription.subscribed) {
+        navigate('/dashboard', { replace: true });
+      }
+      // If not subscribed and just signed up, they'll be redirected to checkout in handleSubmit
     }
-  }, [user, center, centerLoading, navigate]);
+  }, [user, session, subscription.subscribed, navigate]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,15 +57,53 @@ export default function Auth() {
       setIsLoading(false);
       return;
     }
+
+    // After successful auth, check subscription status
+    await checkSubscription();
     
-    toast({
-      title: isSignUp ? 'Compte créé !' : 'Connexion réussie',
-      description: isSignUp 
-        ? 'Votre espace a été créé automatiquement.' 
-        : 'Bienvenue dans votre espace.',
-    });
+    // Get fresh session for the checkout call
+    const { data: sessionData } = await supabase.auth.getSession();
     
-    // Navigation will be handled by useEffect once center data is loaded
+    if (sessionData.session) {
+      // Check if user has active subscription
+      const { data: subData } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${sessionData.session.access_token}`,
+        },
+      });
+
+      if (subData?.subscribed) {
+        // Already subscribed, go to dashboard
+        toast({
+          title: 'Connexion réussie',
+          description: 'Bienvenue dans votre espace.',
+        });
+        navigate('/dashboard', { replace: true });
+      } else {
+        // Not subscribed, redirect to Stripe checkout
+        toast({
+          title: isSignUp ? 'Compte créé !' : 'Connexion réussie',
+          description: 'Activez votre essai gratuit de 30 jours.',
+        });
+        
+        const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
+          headers: {
+            Authorization: `Bearer ${sessionData.session.access_token}`,
+          },
+        });
+
+        if (checkoutError || !checkoutData?.url) {
+          setError('Erreur lors de la création du paiement. Réessayez.');
+          setIsLoading(false);
+          return;
+        }
+
+        // Redirect to Stripe checkout
+        window.location.href = checkoutData.url;
+        return;
+      }
+    }
+    
     setIsLoading(false);
   };
   

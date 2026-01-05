@@ -7,7 +7,7 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, loading } = useAuth();
+  const { user, loading, subscription } = useAuth();
 
   if (loading) {
     return (
@@ -23,6 +23,11 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (!user) {
     return <Navigate to="/auth" replace />;
+  }
+
+  // If user is not subscribed, redirect to upgrade page to start trial
+  if (!subscription.subscribed) {
+    return <Navigate to="/dashboard/upgrade" replace />;
   }
 
   return <>{children}</>;

@@ -67,7 +67,7 @@ serve(async (req) => {
         trial_period_days: 30,
       },
       success_url: `${origin}/dashboard?payment=success`,
-      cancel_url: `${origin}/upgrade?payment=cancelled`,
+      cancel_url: `${origin}/dashboard/upgrade?payment=cancelled`,
     });
 
     logStep("Checkout session created", { sessionId: session.id, url: session.url });
