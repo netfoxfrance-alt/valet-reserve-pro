@@ -788,27 +788,27 @@ export default function Index() {
                   {/* Statistiques Tab */}
                   {dashboardTab === 'stats' && (
                     <>
-                      <h3 className="text-lg font-semibold text-foreground mb-6">Statistiques</h3>
+                      <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4 sm:mb-6">Statistiques</h3>
                       
-                      <div className="grid grid-cols-4 gap-3 mb-6">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
                         {[
                           { value: '127', label: 'Réservations', sub: 'ce mois' },
                           { value: '4 850€', label: "CA", sub: 'ce mois' },
                           { value: '89', label: 'Clients', sub: 'uniques' },
                           { value: '54€', label: 'Panier', sub: 'moyen' },
                         ].map((stat, i) => (
-                          <div key={i} className="bg-secondary/40 rounded-xl p-4 text-center">
-                            <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                            <p className="text-xs text-muted-foreground">{stat.label}</p>
-                            <p className="text-[10px] text-muted-foreground/70">{stat.sub}</p>
+                          <div key={i} className="bg-secondary/40 rounded-xl p-2 sm:p-4 text-center">
+                            <p className="text-lg sm:text-2xl font-bold text-foreground">{stat.value}</p>
+                            <p className="text-[10px] sm:text-xs text-muted-foreground">{stat.label}</p>
+                            <p className="text-[8px] sm:text-[10px] text-muted-foreground/70">{stat.sub}</p>
                           </div>
                         ))}
                       </div>
 
                       {/* Chart mockup */}
-                      <div className="bg-secondary/30 rounded-xl p-4">
-                        <p className="text-sm font-medium text-foreground mb-4">Évolution CA (6 mois)</p>
-                        <div className="flex items-end justify-between gap-2 h-32">
+                      <div className="bg-secondary/30 rounded-xl p-3 sm:p-4">
+                        <p className="text-xs sm:text-sm font-medium text-foreground mb-3 sm:mb-4">Évolution CA (6 mois)</p>
+                        <div className="flex items-end justify-between gap-1 sm:gap-2 h-24 sm:h-32">
                           {[35, 48, 42, 55, 68, 85].map((h, i) => (
                             <div 
                               key={i} 
@@ -819,7 +819,7 @@ export default function Index() {
                         </div>
                         <div className="flex justify-between mt-2">
                           {['Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'].map((m) => (
-                            <span key={m} className="text-[10px] text-muted-foreground flex-1 text-center">{m}</span>
+                            <span key={m} className="text-[8px] sm:text-[10px] text-muted-foreground flex-1 text-center">{m}</span>
                           ))}
                         </div>
                       </div>
