@@ -70,11 +70,8 @@ const App = () => (
                 <DashboardMyPage />
               </ProtectedRoute>
             } />
-            <Route path="/dashboard/upgrade" element={
-              <ProtectedRoute>
-                <Upgrade />
-              </ProtectedRoute>
-            } />
+            {/* Upgrade page accessible without subscription check */}
+            <Route path="/dashboard/upgrade" element={<Upgrade />} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>
