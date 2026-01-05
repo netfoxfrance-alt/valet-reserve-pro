@@ -46,8 +46,6 @@ serve(async (req) => {
       },
       success_url: `${origin}/complete-signup?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?payment=cancelled`,
-      // Allow guest checkout - customer provides email on Stripe
-      customer_creation: "always",
       payment_method_collection: "always",
     });
 
