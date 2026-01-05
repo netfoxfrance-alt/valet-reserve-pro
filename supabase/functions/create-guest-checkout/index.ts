@@ -37,11 +37,11 @@ serve(async (req) => {
       mode: "subscription",
       subscription_data: {
         trial_period_days: 30,
-        description: "Essai gratuit 30 jours • Sans engagement • 39€/mois ensuite",
+        description: "Page vitrine personnalisable • Système de réservation intégré • Planning & statistiques • Gestion simplifiée",
       },
       custom_text: {
         submit: {
-          message: "Essai gratuit 30 jours. Sans engagement, annulez à tout moment. Vous ne serez débité que si vous continuez après l'essai.",
+          message: "Essayez 30 jours gratuitement, sans aucun engagement. Résiliez à tout moment si vous ne souhaitez pas poursuivre. Vous ne serez débité que si vous continuez après l'essai.",
         },
       },
       success_url: `${origin}/complete-signup?session_id={CHECKOUT_SESSION_ID}`,
