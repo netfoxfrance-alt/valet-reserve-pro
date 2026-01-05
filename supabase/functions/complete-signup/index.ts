@@ -12,6 +12,52 @@ const logStep = (step: string, details?: any) => {
   console.log(`[COMPLETE-SIGNUP] ${step}${detailsStr}`);
 };
 
+// Generate a clean slug from business name
+const generateSlug = (name: string): string => {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove accents
+    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric with hyphens
+    .replace(/^-+|-+$/g, '') // Trim hyphens from start/end
+    .substring(0, 30); // Limit length
+};
+
+// Find an available slug, adding suffix if needed
+const findAvailableSlug = async (
+  supabase: any, 
+  baseSlug: string
+): Promise<string> => {
+  // First try the base slug
+  const { data: existing } = await supabase
+    .from('centers')
+    .select('id')
+    .eq('slug', baseSlug)
+    .maybeSingle();
+  
+  if (!existing) {
+    return baseSlug;
+  }
+
+  // If taken, try with numeric suffix
+  for (let i = 2; i <= 99; i++) {
+    const slugWithSuffix = `${baseSlug}-${i}`;
+    const { data } = await supabase
+      .from('centers')
+      .select('id')
+      .eq('slug', slugWithSuffix)
+      .maybeSingle();
+    
+    if (!data) {
+      return slugWithSuffix;
+    }
+  }
+
+  // Fallback: add random chars
+  const randomSuffix = Math.random().toString(36).substring(2, 6);
+  return `${baseSlug}-${randomSuffix}`;
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -33,11 +79,11 @@ serve(async (req) => {
       auth: { persistSession: false }
     });
 
-    const { session_id, password } = await req.json();
+    const { session_id, password, business_name } = await req.json();
     if (!session_id || !password) {
       throw new Error("Missing session_id or password");
     }
-    logStep("Received request", { session_id });
+    logStep("Received request", { session_id, business_name });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
@@ -66,11 +112,17 @@ serve(async (req) => {
       });
     }
 
+    // Generate the clean slug from business name
+    const centerName = business_name?.trim() || 'Mon Centre';
+    const baseSlug = generateSlug(centerName);
+    const finalSlug = await findAvailableSlug(supabase, baseSlug || 'centre');
+    logStep("Generated slug", { baseSlug, finalSlug });
+
     // Create the user with the password they provided
     const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
       email: email!,
       password: password,
-      email_confirm: true, // Auto-confirm since they paid
+      email_confirm: true,
     });
 
     if (createError) {
@@ -80,11 +132,26 @@ serve(async (req) => {
 
     logStep("User created successfully", { userId: newUser.user?.id });
 
-    // The handle_new_user trigger will automatically create the center and role
+    // Update the center that was created by the trigger with the proper name and slug
+    const { error: updateError } = await supabase
+      .from('centers')
+      .update({ 
+        name: centerName,
+        slug: finalSlug 
+      })
+      .eq('owner_id', newUser.user!.id);
+
+    if (updateError) {
+      logStep("Error updating center", { error: updateError.message });
+      // Don't throw - the center was created, just with default values
+    } else {
+      logStep("Center updated with custom name and slug", { name: centerName, slug: finalSlug });
+    }
 
     return new Response(JSON.stringify({ 
       success: true,
       email,
+      slug: finalSlug,
       message: "Account created successfully"
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
