@@ -7,14 +7,43 @@ import {
   ArrowRight, Calendar, Users, BarChart3, Link2, 
   Shield, Clock, Check, Car, Droplets, MapPin, Phone, 
   Star, Settings, LogOut, ChevronRight, Globe, Palette, Eye,
-  Instagram, MessageCircle, Share2, ExternalLink, Sparkles, Mail
+  Instagram, MessageCircle, Share2, ExternalLink, Sparkles, Mail, Loader2
 } from 'lucide-react';
 import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 import sofaBanner from '@/assets/sofa-cleaning-banner.jpg';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Index() {
   const [dashboardTab, setDashboardTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings'>('mypage');
   const [mobileTab, setMobileTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings' | 'dispo'>('mypage');
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleStartTrial = async () => {
+    setIsCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-guest-checkout');
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (err) {
+      console.error('Error creating checkout:', err);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de démarrer l\'essai. Veuillez réessayer.',
+        variant: 'destructive',
+      });
+      setIsCheckoutLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -56,12 +85,24 @@ export default function Index() {
               </p>
               
               <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-8">
-                <Link to="/auth">
-                  <Button size="lg" className="w-full sm:w-auto text-base px-8 shadow-lg shadow-emerald-500/25 bg-emerald-500 hover:bg-emerald-600">
-                    Essayer gratuitement 30 jours
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
+                <Button 
+                  size="lg" 
+                  className="w-full sm:w-auto text-base px-8 shadow-lg shadow-emerald-500/25 bg-emerald-500 hover:bg-emerald-600"
+                  onClick={handleStartTrial}
+                  disabled={isCheckoutLoading}
+                >
+                  {isCheckoutLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Chargement...
+                    </>
+                  ) : (
+                    <>
+                      Essayer gratuitement 30 jours
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </>
+                  )}
+                </Button>
               </div>
 
               {/* Trust indicators */}
@@ -244,12 +285,24 @@ export default function Index() {
 
             {/* Mobile: CTA below mockup */}
             <div className="lg:hidden text-center mt-8">
-              <Link to="/auth">
-                <Button size="lg" className="w-full text-base px-8 shadow-lg shadow-emerald-500/25 bg-emerald-500 hover:bg-emerald-600 mb-6">
-                  Essayer gratuitement 30 jours
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
+              <Button 
+                size="lg" 
+                className="w-full text-base px-8 shadow-lg shadow-emerald-500/25 bg-emerald-500 hover:bg-emerald-600 mb-6"
+                onClick={handleStartTrial}
+                disabled={isCheckoutLoading}
+              >
+                {isCheckoutLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Chargement...
+                  </>
+                ) : (
+                  <>
+                    Essayer gratuitement 30 jours
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </>
+                )}
+              </Button>
               
               <div className="flex items-center gap-4 justify-center text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
@@ -982,12 +1035,24 @@ export default function Index() {
                 ))}
               </ul>
               
-              <Link to="/auth">
-                <Button size="lg" className="w-full rounded-full text-sm bg-emerald-500 hover:bg-emerald-600">
-                  Essayer gratuitement 30 jours
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
+              <Button 
+                size="lg" 
+                className="w-full rounded-full text-sm bg-emerald-500 hover:bg-emerald-600"
+                onClick={handleStartTrial}
+                disabled={isCheckoutLoading}
+              >
+                {isCheckoutLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Chargement...
+                  </>
+                ) : (
+                  <>
+                    Essayer gratuitement 30 jours
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
+              </Button>
               
               <p className="text-center text-xs text-muted-foreground mt-3">Sans engagement · Annulez à tout moment</p>
             </Card>
@@ -1005,12 +1070,24 @@ export default function Index() {
           <p className="text-base sm:text-lg text-muted-foreground mb-8 sm:mb-10 leading-relaxed px-2">
             Essayez gratuitement pendant 30 jours, sans engagement.
           </p>
-          <Link to="/auth">
-            <Button size="lg" className="rounded-full px-6 sm:px-8 text-sm sm:text-base bg-emerald-500 hover:bg-emerald-600">
-              Essayer gratuitement 30 jours
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
-            </Button>
-          </Link>
+          <Button 
+            size="lg" 
+            className="rounded-full px-6 sm:px-8 text-sm sm:text-base bg-emerald-500 hover:bg-emerald-600"
+            onClick={handleStartTrial}
+            disabled={isCheckoutLoading}
+          >
+            {isCheckoutLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Chargement...
+              </>
+            ) : (
+              <>
+                Essayer gratuitement 30 jours
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
+              </>
+            )}
+          </Button>
         </div>
       </section>
       

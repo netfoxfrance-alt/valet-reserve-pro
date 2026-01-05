@@ -1,1 +1,7 @@
 project_id = "obkafavlsimcqiohyigs"
+
+[functions.create-guest-checkout]
+verify_jwt = false
+
+[functions.complete-signup]
+verify_jwt = false

@@ -16,6 +16,7 @@ import DashboardRequests from "./pages/DashboardRequests";
 import DashboardStats from "./pages/DashboardStats";
 import DashboardMyPage from "./pages/DashboardMyPage";
 import Upgrade from "./pages/Upgrade";
+import CompleteSignup from "./pages/CompleteSignup";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/booking" element={<Booking />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/complete-signup" element={<CompleteSignup />} />
             <Route path="/c/:slug" element={<CenterBooking />} />
             
             {/* All dashboard routes - Trial model (no restrictions) */}
