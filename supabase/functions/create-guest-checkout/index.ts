@@ -37,7 +37,7 @@ serve(async (req) => {
       mode: "subscription",
       subscription_data: {
         trial_period_days: 30,
-        description: "Page vitrine personnalisable • Système de réservation intégré • Planning & statistiques • Gestion simplifiée",
+        description: "Page vitrine personnalisable, réservation automatique, agenda intégré, statistiques et gestion complète",
       },
       custom_text: {
         submit: {
