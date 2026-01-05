@@ -185,7 +185,7 @@ export default function CenterBooking() {
     );
   }
 
-  // Error state
+  // Error state - center not found
   if (error || !center) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -196,6 +196,26 @@ export default function CenterBooking() {
           <h1 className="text-xl font-semibold text-foreground mb-2">Centre non trouvé</h1>
           <p className="text-muted-foreground mb-6">
             Ce lien n'existe pas ou a été désactivé.
+          </p>
+          <Link to="/">
+            <Button variant="outline">Retour à l'accueil</Button>
+          </Link>
+        </Card>
+      </div>
+    );
+  }
+
+  // Subscription expired - page inaccessible
+  if (!isPro) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card variant="elevated" className="p-8 max-w-md text-center">
+          <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h1 className="text-xl font-semibold text-foreground mb-2">Page temporairement indisponible</h1>
+          <p className="text-muted-foreground mb-6">
+            Cette page n'est plus accessible pour le moment.
           </p>
           <Link to="/">
             <Button variant="outline">Retour à l'accueil</Button>
