@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, AlertCircle } from 'lucide-react';
+import { Mail, Lock, AlertCircle, Chrome } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,8 +17,26 @@ export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleGoogleLogin = async () => {
+    setIsGoogleLoading(true);
+    setError(null);
+    
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+
+    if (error) {
+      setError('Erreur lors de la connexion avec Google. Réessayez.');
+      setIsGoogleLoading(false);
+    }
+  };
 
   // Redirect authenticated users based on subscription status
   useEffect(() => {
@@ -166,12 +184,33 @@ export default function Auth() {
               variant="premium" 
               size="lg" 
               className="w-full"
-              disabled={isLoading}
+              disabled={isLoading || isGoogleLoading}
             >
               {isLoading 
                 ? (isSignUp ? 'Création...' : 'Connexion...') 
                 : (isSignUp ? 'Créer mon compte' : 'Se connecter')
               }
+            </Button>
+
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border"></div>
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-2 text-muted-foreground">ou</span>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="w-full gap-3"
+              onClick={handleGoogleLogin}
+              disabled={isLoading || isGoogleLoading}
+            >
+              <Chrome className="w-5 h-5" />
+              {isGoogleLoading ? 'Connexion...' : 'Continuer avec Google'}
             </Button>
           </form>
           
