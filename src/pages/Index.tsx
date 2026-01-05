@@ -118,7 +118,7 @@ export default function Index() {
               </div>
             </div>
 
-            {/* Mobile: Text above mockup */}
+            {/* Mobile: Text + CTA above mockup */}
             <div className="text-center lg:hidden">
               <h1 className="opacity-0 animate-fade-in-up text-3xl sm:text-4xl font-semibold text-foreground tracking-tight mb-4 leading-[1.1]">
                 Votre activité de nettoyage.
@@ -129,6 +129,36 @@ export default function Index() {
               <p className="opacity-0 animate-fade-in-up stagger-1 text-base text-muted-foreground max-w-sm mx-auto mb-6 leading-relaxed">
                 Présentez votre activité, recevez des demandes et gérez vos rendez-vous.
               </p>
+
+              <Button 
+                size="lg" 
+                className="w-full text-base px-8 shadow-lg shadow-emerald-500/25 bg-emerald-500 hover:bg-emerald-600 mb-4"
+                onClick={handleStartTrial}
+                disabled={isCheckoutLoading}
+              >
+                {isCheckoutLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Chargement...
+                  </>
+                ) : (
+                  <>
+                    Essayer gratuitement 30 jours
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </>
+                )}
+              </Button>
+              
+              <div className="flex items-center gap-4 justify-center text-sm text-muted-foreground mb-8">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span>30 jours gratuits</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span>Sans engagement</span>
+                </div>
+              </div>
             </div>
 
             {/* Right: Premium Phone Mockup */}
@@ -283,38 +313,6 @@ export default function Index() {
               </div>
             </div>
 
-            {/* Mobile: CTA below mockup */}
-            <div className="lg:hidden text-center mt-8">
-              <Button 
-                size="lg" 
-                className="w-full text-base px-8 shadow-lg shadow-emerald-500/25 bg-emerald-500 hover:bg-emerald-600 mb-6"
-                onClick={handleStartTrial}
-                disabled={isCheckoutLoading}
-              >
-                {isCheckoutLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Chargement...
-                  </>
-                ) : (
-                  <>
-                    Essayer gratuitement 30 jours
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </>
-                )}
-              </Button>
-              
-              <div className="flex items-center gap-4 justify-center text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-500" />
-                  <span>30 jours gratuits</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-500" />
-                  <span>Sans engagement</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
