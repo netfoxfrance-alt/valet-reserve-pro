@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Lock, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { Lock, AlertCircle, CheckCircle, Loader2, Building2, Check, X } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -14,11 +14,15 @@ export default function CompleteSignup() {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
   
+  const [businessName, setBusinessName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [slugPreview, setSlugPreview] = useState('');
+  const [isCheckingSlug, setIsCheckingSlug] = useState(false);
+  const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
 
   useEffect(() => {
     const sid = searchParams.get('session_id');
@@ -29,9 +33,58 @@ export default function CompleteSignup() {
     }
   }, [searchParams]);
 
+  // Generate slug from business name
+  const generateSlug = (name: string): string => {
+    return name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Remove accents
+      .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric with hyphens
+      .replace(/^-+|-+$/g, '') // Trim hyphens from start/end
+      .substring(0, 30); // Limit length
+  };
+
+  // Check slug availability when business name changes
+  useEffect(() => {
+    const slug = generateSlug(businessName);
+    setSlugPreview(slug);
+    
+    if (slug.length < 3) {
+      setSlugAvailable(null);
+      return;
+    }
+
+    const checkSlug = async () => {
+      setIsCheckingSlug(true);
+      try {
+        const { data, error } = await supabase
+          .from('centers')
+          .select('id')
+          .eq('slug', slug)
+          .maybeSingle();
+        
+        if (error) throw error;
+        setSlugAvailable(data === null);
+      } catch (err) {
+        console.error('Error checking slug:', err);
+        setSlugAvailable(null);
+      } finally {
+        setIsCheckingSlug(false);
+      }
+    };
+
+    const timeoutId = setTimeout(checkSlug, 300);
+    return () => clearTimeout(timeoutId);
+  }, [businessName]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (businessName.trim().length < 2) {
+      setError('Le nom de votre entreprise doit contenir au moins 2 caractères');
+      return;
+    }
 
     if (password.length < 6) {
       setError('Le mot de passe doit contenir au moins 6 caractères');
@@ -51,9 +104,13 @@ export default function CompleteSignup() {
     setIsLoading(true);
 
     try {
-      // Call edge function to complete signup
+      // Call edge function to complete signup with business name
       const { data, error: fnError } = await supabase.functions.invoke('complete-signup', {
-        body: { session_id: sessionId, password },
+        body: { 
+          session_id: sessionId, 
+          password,
+          business_name: businessName.trim()
+        },
       });
 
       if (fnError) {
@@ -76,14 +133,12 @@ export default function CompleteSignup() {
       });
 
       if (signInError) {
-        // If sign in fails, redirect to auth page
         toast({
           title: 'Compte créé',
           description: 'Connectez-vous avec vos identifiants.',
         });
         navigate('/auth');
       } else {
-        // Redirect to dashboard
         navigate('/dashboard');
       }
     } catch (err) {
@@ -107,7 +162,7 @@ export default function CompleteSignup() {
             Finalisez votre inscription
           </h1>
           <p className="text-muted-foreground mt-2">
-            Créez votre mot de passe pour accéder à votre espace
+            Créez votre espace personnalisé
           </p>
         </div>
 
@@ -119,6 +174,43 @@ export default function CompleteSignup() {
                 <p>{error}</p>
               </div>
             )}
+
+            <div className="space-y-2">
+              <Label htmlFor="businessName">Nom de votre entreprise</Label>
+              <div className="relative">
+                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input
+                  id="businessName"
+                  type="text"
+                  placeholder="Ex: CliniPro"
+                  value={businessName}
+                  onChange={(e) => setBusinessName(e.target.value)}
+                  className="pl-12 h-12 rounded-xl"
+                  required
+                  minLength={2}
+                />
+              </div>
+              {slugPreview && slugPreview.length >= 3 && (
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-muted-foreground">Votre lien :</span>
+                  <code className="px-2 py-1 bg-muted rounded text-foreground">
+                    cleaningpage.com/{slugPreview}
+                  </code>
+                  {isCheckingSlug ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                  ) : slugAvailable === true ? (
+                    <Check className="w-4 h-4 text-emerald-500" />
+                  ) : slugAvailable === false ? (
+                    <X className="w-4 h-4 text-destructive" />
+                  ) : null}
+                </div>
+              )}
+              {slugAvailable === false && (
+                <p className="text-xs text-destructive">
+                  Ce nom est déjà pris, un suffixe sera ajouté automatiquement
+                </p>
+              )}
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="password">Mot de passe</Label>
