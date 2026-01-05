@@ -15,6 +15,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { useSEO } from '@/hooks/useSEO';
+import { LocalBusinessSchema } from '@/components/seo/LocalBusinessSchema';
 
 type BookingStep = 
   | 'landing'
@@ -28,7 +30,7 @@ type BookingStep =
 
 export default function CenterBooking() {
   const { slug } = useParams<{ slug: string }>();
-  const { center, packs, loading, error } = useCenterBySlug(slug || '');
+  const { center, packs, availability, loading, error } = useCenterBySlug(slug || '');
   const { createAppointment, loading: submitting } = useCreateAppointment();
   const { createContactRequest, loading: submittingContact } = useCreateContactRequest();
   const { toast } = useToast();
@@ -44,6 +46,21 @@ export default function CenterBooking() {
   // Determine if center is Pro (has subscription_plan === 'pro')
   const isPro = center?.subscription_plan === 'pro';
   
+  // SEO: Dynamic meta tags based on center data
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const seoTitle = center 
+    ? `${center.name} - Nettoyage professionnel${center.address ? ` à ${center.address.split(',')[0]}` : ''}`
+    : 'CleaningPage';
+  const seoDescription = center
+    ? `Réservez votre prestation de nettoyage chez ${center.name}${center.address ? ` situé ${center.address}` : ''}. Service professionnel de qualité.`
+    : 'Service de nettoyage professionnel';
+  
+  useSEO({
+    title: seoTitle,
+    description: seoDescription,
+    canonical: pageUrl,
+    ogImage: center?.logo_url || undefined,
+  });
   const goToPrevStep = () => {
     switch (currentStep) {
       case 'contact-form':
@@ -225,17 +242,36 @@ export default function CenterBooking() {
     );
   }
 
+  // Prepare opening hours for schema
+  const openingHours = availability?.map(a => ({
+    dayOfWeek: a.day_of_week,
+    opens: a.start_time,
+    closes: a.end_time,
+  })) || [];
+
   // Landing page
   if (currentStep === 'landing') {
     return (
-      <CenterLanding 
-        center={center}
-        packs={packs}
-        onStartBooking={handleStartBooking}
-        onSelectPack={handleSelectPack}
-        hasPacks={packs.length > 0}
-        isPro={isPro}
-      />
+      <>
+        <LocalBusinessSchema
+          name={center.name}
+          description={`Service de nettoyage professionnel${center.address ? ` à ${center.address.split(',')[0]}` : ''}`}
+          address={center.address || undefined}
+          phone={center.phone || undefined}
+          email={center.email || undefined}
+          url={pageUrl}
+          image={center.logo_url || undefined}
+          openingHours={openingHours}
+        />
+        <CenterLanding 
+          center={center}
+          packs={packs}
+          onStartBooking={handleStartBooking}
+          onSelectPack={handleSelectPack}
+          hasPacks={packs.length > 0}
+          isPro={isPro}
+        />
+      </>
     );
   }
 
