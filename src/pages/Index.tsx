@@ -568,34 +568,34 @@ export default function Index() {
                 </div>
 
                 {/* Main Content Area */}
-                <div className="flex-1 p-6">
+                <div className="flex-1 p-3 sm:p-6">
                   {/* Ma Page Tab */}
                   {dashboardTab === 'mypage' && (
                     <>
                       {/* Tabs */}
-                      <div className="flex items-center gap-4 mb-6 text-sm border-b border-border/40 pb-3">
-                        <span className="text-muted-foreground">Infos</span>
-                        <span className="text-foreground font-medium border-b-2 border-foreground pb-3 -mb-3">Style</span>
-                        <span className="text-muted-foreground">Sections</span>
-                        <span className="text-muted-foreground">Images</span>
-                        <div className="ml-auto flex items-center gap-2">
-                          <span className="text-green-500 text-xs flex items-center gap-1">
+                      <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6 text-xs sm:text-sm border-b border-border/40 pb-3 overflow-x-auto">
+                        <span className="text-muted-foreground whitespace-nowrap">Infos</span>
+                        <span className="text-foreground font-medium border-b-2 border-foreground pb-3 -mb-3 whitespace-nowrap">Style</span>
+                        <span className="text-muted-foreground whitespace-nowrap">Sections</span>
+                        <span className="text-muted-foreground whitespace-nowrap hidden sm:block">Images</span>
+                        <div className="ml-auto flex items-center gap-2 flex-shrink-0">
+                          <span className="text-green-500 text-[10px] sm:text-xs flex items-center gap-1">
                             <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
                             Sync
                           </span>
-                          <button className="bg-foreground text-background px-4 py-1.5 rounded-lg text-xs font-medium">
+                          <button className="bg-foreground text-background px-2 sm:px-4 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-medium">
                             Publier
                           </button>
                         </div>
                       </div>
 
-                      <div className="grid md:grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                         {/* Customization Options */}
-                        <div className="space-y-4">
+                        <div className="space-y-3 sm:space-y-4">
                           {/* Color Picker */}
-                          <div className="bg-secondary/40 rounded-xl p-4">
-                            <p className="text-sm font-medium text-foreground mb-3">Couleur principale</p>
-                            <div className="flex gap-2 items-center">
+                          <div className="bg-secondary/40 rounded-xl p-3 sm:p-4">
+                            <p className="text-xs sm:text-sm font-medium text-foreground mb-2 sm:mb-3">Couleur principale</p>
+                            <div className="flex gap-1.5 sm:gap-2 items-center flex-wrap">
                               {[
                                 { color: 'bg-zinc-900', active: false },
                                 { color: 'bg-white border border-zinc-200', active: true },
@@ -606,32 +606,32 @@ export default function Index() {
                               ].map((c, i) => (
                                 <div 
                                   key={i}
-                                  className={`w-7 h-7 ${c.color} rounded-full cursor-pointer ${c.active ? 'ring-2 ring-offset-2 ring-primary' : ''}`}
+                                  className={`w-6 h-6 sm:w-7 sm:h-7 ${c.color} rounded-full cursor-pointer ${c.active ? 'ring-2 ring-offset-2 ring-primary' : ''}`}
                                 />
                               ))}
-                              <div className="w-7 h-7 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 rounded-full cursor-pointer flex items-center justify-center">
-                                <span className="text-white text-xs font-bold">+</span>
+                              <div className="w-6 h-6 sm:w-7 sm:h-7 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 rounded-full cursor-pointer flex items-center justify-center">
+                                <span className="text-white text-[10px] sm:text-xs font-bold">+</span>
                               </div>
                             </div>
                           </div>
 
                           {/* Theme Toggle */}
-                          <div className="bg-secondary/40 rounded-xl p-4">
-                            <p className="text-sm font-medium text-foreground mb-3">Thème</p>
+                          <div className="bg-secondary/40 rounded-xl p-3 sm:p-4">
+                            <p className="text-xs sm:text-sm font-medium text-foreground mb-2 sm:mb-3">Thème</p>
                             <div className="flex gap-2">
-                              <button className="flex-1 bg-secondary/60 text-muted-foreground px-4 py-2 rounded-lg text-sm">
+                              <button className="flex-1 bg-secondary/60 text-muted-foreground px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm">
                                 Clair
                               </button>
-                              <button className="flex-1 bg-foreground text-background px-4 py-2 rounded-lg text-sm font-medium shadow-sm">
+                              <button className="flex-1 bg-foreground text-background px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium shadow-sm">
                                 Sombre
                               </button>
                             </div>
                           </div>
 
                           {/* Button Style */}
-                          <div className="bg-secondary/40 rounded-xl p-4">
-                            <p className="text-sm font-medium text-foreground mb-3">Bouton d'action</p>
-                            <button className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-medium">
+                          <div className="bg-secondary/40 rounded-xl p-3 sm:p-4">
+                            <p className="text-xs sm:text-sm font-medium text-foreground mb-2 sm:mb-3">Bouton d'action</p>
+                            <button className="w-full bg-primary text-primary-foreground py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium">
                               Réserver un créneau
                             </button>
                           </div>
