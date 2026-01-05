@@ -57,8 +57,8 @@ export default function Index() {
               
               <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-8">
                 <Link to="/auth">
-                  <Button size="lg" className="w-full sm:w-auto text-base px-8 shadow-lg shadow-primary/25">
-                    Créer ma page gratuitement
+                  <Button size="lg" className="w-full sm:w-auto text-base px-8 shadow-lg shadow-emerald-500/25 bg-emerald-500 hover:bg-emerald-600">
+                    Essayer gratuitement 30 jours
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
@@ -67,12 +67,12 @@ export default function Index() {
               {/* Trust indicators */}
               <div className="opacity-0 animate-fade-in-up stagger-4 flex items-center gap-6 justify-center lg:justify-start text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Gratuit</span>
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span>30 jours gratuits</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Prêt en 5 min</span>
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span>Sans engagement</span>
                 </div>
               </div>
             </div>
@@ -245,20 +245,20 @@ export default function Index() {
             {/* Mobile: CTA below mockup */}
             <div className="lg:hidden text-center mt-8">
               <Link to="/auth">
-                <Button size="lg" className="w-full text-base px-8 shadow-lg shadow-primary/25 mb-6">
-                  Créer ma page gratuitement
+                <Button size="lg" className="w-full text-base px-8 shadow-lg shadow-emerald-500/25 bg-emerald-500 hover:bg-emerald-600 mb-6">
+                  Essayer gratuitement 30 jours
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               
               <div className="flex items-center gap-4 justify-center text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Gratuit</span>
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span>30 jours gratuits</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>Prêt en 5 min</span>
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span>Sans engagement</span>
                 </div>
               </div>
             </div>
@@ -934,69 +934,36 @@ export default function Index() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10 sm:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4 px-2">
-              Deux offres, un objectif
+              Un seul plan, tout inclus
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground px-2">
-              Développez votre clientèle, à votre rythme.
+              Essayez gratuitement pendant 30 jours, sans engagement.
             </p>
           </div>
           
-          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 max-w-4xl mx-auto">
-            {/* Free Plan */}
-            <Card variant="elevated" className="p-5 sm:p-8 rounded-xl sm:rounded-2xl hover:shadow-xl transition-shadow duration-300">
-              <div className="mb-4 sm:mb-6">
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-1">CleaningPage Free</h3>
-                <p className="text-muted-foreground text-xs sm:text-sm">Présence en ligne simplifiée</p>
-              </div>
-              
-              <div className="mb-4 sm:mb-6">
-                <span className="text-3xl sm:text-4xl font-semibold text-foreground">Gratuit</span>
-                <span className="text-muted-foreground text-sm sm:text-base ml-2">pour toujours</span>
-              </div>
-              
-              <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
-                {[
-                  'Page professionnelle personnalisée',
-                  'Formulaire de demande simple',
-                  'Notifications par email',
-                  'Lien unique partageable',
-                ].map((feature) => (
-                  <li key={feature} className="flex items-start gap-2.5 sm:gap-3">
-                    <div className="w-4 h-4 sm:w-5 sm:h-5 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary" />
-                    </div>
-                    <span className="text-foreground text-xs sm:text-sm">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              
-              <Link to="/auth">
-                <Button variant="outline" size="lg" className="w-full rounded-full text-sm">
-                  Commencer gratuitement
-                </Button>
-              </Link>
-            </Card>
-
-            {/* Pro Plan */}
+          <div className="max-w-lg mx-auto">
+            {/* Pro Plan - Single offer */}
             <Card variant="elevated" className="p-5 sm:p-8 rounded-xl sm:rounded-2xl ring-2 ring-foreground relative hover:shadow-xl transition-shadow duration-300 overflow-hidden">
               {/* Premium trial banner */}
               <div className="absolute top-0 left-0 right-0 bg-foreground text-primary-foreground py-2 sm:py-2.5 px-4 text-center">
-                <p className="text-xs sm:text-sm font-medium">15 jours d'essai gratuit</p>
+                <p className="text-xs sm:text-sm font-medium">30 jours d'essai gratuit</p>
               </div>
               
               <div className="mb-4 sm:mb-6 mt-8 sm:mt-10">
                 <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-1">CleaningPage Pro</h3>
-                <p className="text-muted-foreground text-xs sm:text-sm">Automatisation complète</p>
+                <p className="text-muted-foreground text-xs sm:text-sm">Tout ce qu'il faut pour développer votre activité</p>
               </div>
               
               <div className="mb-4 sm:mb-6">
                 <span className="text-3xl sm:text-4xl font-semibold text-foreground">39€</span>
                 <span className="text-muted-foreground text-sm sm:text-base ml-2">/ mois</span>
-                <p className="text-xs text-muted-foreground mt-1">après l'essai gratuit</p>
+                <p className="text-xs text-muted-foreground mt-1">après les 30 jours d'essai</p>
               </div>
               
               <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
                 {[
+                  'Page professionnelle personnalisée',
+                  'Lien unique partageable',
                   'Tableau de bord complet',
                   'Réservation automatique 24h/24',
                   'Agenda intégré avec créneaux',
@@ -1016,8 +983,8 @@ export default function Index() {
               </ul>
               
               <Link to="/auth">
-                <Button size="lg" className="w-full rounded-full text-sm">
-                  Commencer l'essai gratuit
+                <Button size="lg" className="w-full rounded-full text-sm bg-emerald-500 hover:bg-emerald-600">
+                  Essayer gratuitement 30 jours
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
@@ -1036,11 +1003,11 @@ export default function Index() {
             Prêt à développer votre activité ?
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground mb-8 sm:mb-10 leading-relaxed px-2">
-            Gagnez du temps et attirez plus de clients chaque jour.
+            Essayez gratuitement pendant 30 jours, sans engagement.
           </p>
           <Link to="/auth">
-            <Button size="lg" className="rounded-full px-6 sm:px-8 text-sm sm:text-base">
-              Créer ma page gratuitement
+            <Button size="lg" className="rounded-full px-6 sm:px-8 text-sm sm:text-base bg-emerald-500 hover:bg-emerald-600">
+              Essayer gratuitement 30 jours
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
             </Button>
           </Link>

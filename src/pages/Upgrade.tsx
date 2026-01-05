@@ -101,7 +101,7 @@ export default function Upgrade() {
         <Card className="max-w-lg mx-auto p-8 rounded-2xl ring-2 ring-foreground mb-12 relative overflow-hidden">
           {/* Premium trial banner */}
           <div className="absolute top-0 left-0 right-0 bg-foreground text-primary-foreground py-2.5 px-4 text-center">
-            <p className="text-sm font-medium">Essayez 15 jours gratuitement</p>
+            <p className="text-sm font-medium">Essayez 30 jours gratuitement</p>
           </div>
           
           <div className="text-center mb-6 pt-10">
@@ -185,8 +185,8 @@ export default function Upgrade() {
           
           {/* Trial CTA */}
           <div className="space-y-6">
-            <p className="text-xl sm:text-2xl text-muted-foreground font-light">
-              Essayez gratuitement pendant 15 jours,
+          <p className="text-xl sm:text-2xl text-muted-foreground font-light">
+              Essayez gratuitement pendant 30 jours,
               <br />
               et jugez par vous-même.
             </p>

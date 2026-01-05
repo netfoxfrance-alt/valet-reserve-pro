@@ -34,29 +34,27 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/c/:slug" element={<CenterBooking />} />
             
-            {/* Pro-only routes */}
+            {/* All dashboard routes - Trial model (no restrictions) */}
             <Route path="/dashboard" element={
-              <ProtectedRoute requirePro>
+              <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/availability" element={
-              <ProtectedRoute requirePro>
+              <ProtectedRoute>
                 <DashboardAvailability />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/packs" element={
-              <ProtectedRoute requirePro>
+              <ProtectedRoute>
                 <DashboardPacks />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/stats" element={
-              <ProtectedRoute requirePro>
+              <ProtectedRoute>
                 <DashboardStats />
               </ProtectedRoute>
             } />
-            
-            {/* Free routes */}
             <Route path="/dashboard/requests" element={
               <ProtectedRoute>
                 <DashboardRequests />
