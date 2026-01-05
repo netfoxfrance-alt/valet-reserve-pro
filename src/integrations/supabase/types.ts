@@ -65,6 +65,13 @@ export type Database = {
             foreignKeyName: "appointments_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
             referencedRelation: "centers"
             referencedColumns: ["id"]
           },
@@ -106,6 +113,13 @@ export type Database = {
           start_time?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "availability_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "availability_center_id_fkey"
             columns: ["center_id"]
@@ -199,6 +213,13 @@ export type Database = {
             foreignKeyName: "contact_requests_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_requests_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
             referencedRelation: "centers"
             referencedColumns: ["id"]
           },
@@ -252,6 +273,13 @@ export type Database = {
             foreignKeyName: "packs_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "packs_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
             referencedRelation: "centers"
             referencedColumns: ["id"]
           },
@@ -277,7 +305,57 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      admin_centers_view: {
+        Row: {
+          active_packs: number | null
+          address: string | null
+          business_name: string | null
+          id: string | null
+          last_update: string | null
+          phone: string | null
+          signup_date: string | null
+          slug: string | null
+          subscription_plan:
+            | Database["public"]["Enums"]["subscription_plan"]
+            | null
+          total_appointments: number | null
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          active_packs?: never
+          address?: string | null
+          business_name?: string | null
+          id?: string | null
+          last_update?: string | null
+          phone?: string | null
+          signup_date?: string | null
+          slug?: string | null
+          subscription_plan?:
+            | Database["public"]["Enums"]["subscription_plan"]
+            | null
+          total_appointments?: never
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          active_packs?: never
+          address?: string | null
+          business_name?: string | null
+          id?: string | null
+          last_update?: string | null
+          phone?: string | null
+          signup_date?: string | null
+          slug?: string | null
+          subscription_plan?:
+            | Database["public"]["Enums"]["subscription_plan"]
+            | null
+          total_appointments?: never
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
