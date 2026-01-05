@@ -142,6 +142,9 @@ export type Database = {
           owner_id: string
           phone: string | null
           slug: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_end_date: string | null
           subscription_plan: Database["public"]["Enums"]["subscription_plan"]
           updated_at: string | null
           welcome_message: string | null
@@ -158,6 +161,9 @@ export type Database = {
           owner_id: string
           phone?: string | null
           slug: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_end_date?: string | null
           subscription_plan?: Database["public"]["Enums"]["subscription_plan"]
           updated_at?: string | null
           welcome_message?: string | null
@@ -174,6 +180,9 @@ export type Database = {
           owner_id?: string
           phone?: string | null
           slug?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_end_date?: string | null
           subscription_plan?: Database["public"]["Enums"]["subscription_plan"]
           updated_at?: string | null
           welcome_message?: string | null
@@ -307,52 +316,43 @@ export type Database = {
     Views: {
       admin_centers_view: {
         Row: {
-          active_packs: number | null
-          address: string | null
-          business_name: string | null
+          Abo: Database["public"]["Enums"]["subscription_plan"] | null
+          Business: string | null
+          Email: string | null
+          "Fin Abo": string | null
           id: string | null
-          last_update: string | null
-          phone: string | null
-          signup_date: string | null
-          slug: string | null
-          subscription_plan:
-            | Database["public"]["Enums"]["subscription_plan"]
-            | null
-          total_appointments: number | null
-          user_email: string | null
-          user_id: string | null
+          Inscription: string | null
+          Lien: string | null
+          owner_id: string | null
+          RDV: number | null
+          "Stripe ID": string | null
+          Tel: string | null
         }
         Insert: {
-          active_packs?: never
-          address?: string | null
-          business_name?: string | null
+          Abo?: Database["public"]["Enums"]["subscription_plan"] | null
+          Business?: string | null
+          Email?: string | null
+          "Fin Abo"?: string | null
           id?: string | null
-          last_update?: string | null
-          phone?: string | null
-          signup_date?: string | null
-          slug?: string | null
-          subscription_plan?:
-            | Database["public"]["Enums"]["subscription_plan"]
-            | null
-          total_appointments?: never
-          user_email?: string | null
-          user_id?: string | null
+          Inscription?: string | null
+          Lien?: string | null
+          owner_id?: string | null
+          RDV?: never
+          "Stripe ID"?: string | null
+          Tel?: string | null
         }
         Update: {
-          active_packs?: never
-          address?: string | null
-          business_name?: string | null
+          Abo?: Database["public"]["Enums"]["subscription_plan"] | null
+          Business?: string | null
+          Email?: string | null
+          "Fin Abo"?: string | null
           id?: string | null
-          last_update?: string | null
-          phone?: string | null
-          signup_date?: string | null
-          slug?: string | null
-          subscription_plan?:
-            | Database["public"]["Enums"]["subscription_plan"]
-            | null
-          total_appointments?: never
-          user_email?: string | null
-          user_id?: string | null
+          Inscription?: string | null
+          Lien?: string | null
+          owner_id?: string | null
+          RDV?: never
+          "Stripe ID"?: string | null
+          Tel?: string | null
         }
         Relationships: []
       }
@@ -368,7 +368,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "owner"
-      subscription_plan: "free" | "pro"
+      subscription_plan: "free" | "pro" | "trial" | "expired" | "past_due"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -497,7 +497,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "owner"],
-      subscription_plan: ["free", "pro"],
+      subscription_plan: ["free", "pro", "trial", "expired", "past_due"],
     },
   },
 } as const
