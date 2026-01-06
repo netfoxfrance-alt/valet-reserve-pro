@@ -4,6 +4,7 @@ interface LocalBusinessSchemaProps {
   name: string;
   description?: string;
   address?: string;
+  city?: string;
   phone?: string;
   email?: string;
   url: string;
@@ -29,6 +30,7 @@ export function LocalBusinessSchema({
   name,
   description,
   address,
+  city,
   phone,
   email,
   url,
@@ -57,6 +59,16 @@ export function LocalBusinessSchema({
       structuredData.address = {
         '@type': 'PostalAddress',
         'streetAddress': address,
+        ...(city && { 'addressLocality': city }),
+        'addressCountry': 'FR',
+      };
+    }
+
+    // Add areaServed for local SEO
+    if (city) {
+      structuredData.areaServed = {
+        '@type': 'City',
+        'name': city,
       };
     }
 
@@ -102,7 +114,7 @@ export function LocalBusinessSchema({
         existingScript.remove();
       }
     };
-  }, [name, description, address, phone, email, url, image, openingHours]);
+  }, [name, description, address, city, phone, email, url, image, openingHours]);
 
   return null;
 }
