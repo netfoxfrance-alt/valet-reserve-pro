@@ -46,14 +46,33 @@ export default function CenterBooking() {
   // Determine if center is Pro (has subscription_plan === 'pro')
   const isPro = center?.subscription_plan === 'pro';
   
-  // SEO: Dynamic meta tags based on center data
+  // SEO: Extract city from address for local SEO
+  const extractCity = (address: string | null): string | null => {
+    if (!address) return null;
+    // Try to extract city from address (usually after last comma or before postal code)
+    const parts = address.split(',').map(p => p.trim());
+    if (parts.length >= 2) {
+      // Usually format is "Street, Postal City" or "Street, City, Country"
+      const cityPart = parts[parts.length - 1];
+      // Remove postal code if present (5 digits for France)
+      const cityWithoutPostal = cityPart.replace(/^\d{5}\s*/, '').trim();
+      return cityWithoutPostal || parts[parts.length - 2];
+    }
+    return parts[0];
+  };
+
+  const city = center ? extractCity(center.address) : null;
   const pageUrl = typeof window !== 'undefined' ? window.location.href : '';
+  
+  // Optimized SEO title: "Business Name - Nettoyage à City | CleaningPage"
   const seoTitle = center 
-    ? `${center.name} - Nettoyage professionnel${center.address ? ` à ${center.address.split(',')[0]}` : ''}`
-    : 'CleaningPage';
+    ? `${center.name}${city ? ` - Nettoyage à ${city}` : ' - Nettoyage professionnel'} | CleaningPage`
+    : 'CleaningPage - Service de nettoyage professionnel';
+  
+  // Optimized SEO description with keywords
   const seoDescription = center
-    ? `Réservez votre prestation de nettoyage chez ${center.name}${center.address ? ` situé ${center.address}` : ''}. Service professionnel de qualité.`
-    : 'Service de nettoyage professionnel';
+    ? `${center.name}${city ? ` à ${city}` : ''} : réservez votre nettoyage professionnel en ligne. Devis gratuit, prise de rendez-vous rapide. ${city ? `Nettoyage ${city} - ` : ''}Service de qualité.`
+    : 'CleaningPage - Réservez votre nettoyage professionnel en ligne. Devis gratuit et prise de rendez-vous rapide.';
   
   useSEO({
     title: seoTitle,
@@ -255,8 +274,9 @@ export default function CenterBooking() {
       <>
         <LocalBusinessSchema
           name={center.name}
-          description={`Service de nettoyage professionnel${center.address ? ` à ${center.address.split(',')[0]}` : ''}`}
+          description={`Service de nettoyage professionnel${city ? ` à ${city}` : ''}`}
           address={center.address || undefined}
+          city={city || undefined}
           phone={center.phone || undefined}
           email={center.email || undefined}
           url={pageUrl}
