@@ -30,6 +30,7 @@ const parseCustomization = (data: unknown): CenterCustomization => {
     texts: { ...defaultCustomization.texts, ...(parsed.texts || {}) },
     layout: { ...defaultCustomization.layout, ...(parsed.layout || {}) },
     social: { ...defaultCustomization.social, ...(parsed.social || {}) },
+    seo: { ...defaultCustomization.seo, ...(parsed.seo || {}) },
     cover_url: parsed.cover_url ?? null,
   };
 };

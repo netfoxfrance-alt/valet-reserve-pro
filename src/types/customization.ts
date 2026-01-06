@@ -21,6 +21,12 @@ export interface CenterCustomization {
     facebook: string;
     email: string;
   };
+  seo: {
+    title: string;
+    description: string;
+    keywords: string;
+    city: string;
+  };
   cover_url: string | null;
 }
 
@@ -46,6 +52,12 @@ export const defaultCustomization: CenterCustomization = {
     tiktok: '',
     facebook: '',
     email: '',
+  },
+  seo: {
+    title: '',
+    description: '',
+    keywords: '',
+    city: '',
   },
   cover_url: null,
 };
