@@ -6,9 +6,10 @@ interface SEOProps {
   canonical?: string;
   ogImage?: string;
   noindex?: boolean;
+  keywords?: string;
 }
 
-export function useSEO({ title, description, canonical, ogImage, noindex }: SEOProps) {
+export function useSEO({ title, description, canonical, ogImage, noindex, keywords }: SEOProps) {
   useEffect(() => {
     // Update document title
     document.title = title;
@@ -28,6 +29,11 @@ export function useSEO({ title, description, canonical, ogImage, noindex }: SEOP
 
     // Basic meta tags
     setMetaTag('description', description);
+    
+    // Keywords (if provided)
+    if (keywords) {
+      setMetaTag('keywords', keywords);
+    }
     
     // Open Graph
     setMetaTag('og:title', title, true);
@@ -71,5 +77,5 @@ export function useSEO({ title, description, canonical, ogImage, noindex }: SEOP
     return () => {
       document.title = 'CleaningPage - Tout votre service de nettoyage, dans un seul lien.';
     };
-  }, [title, description, canonical, ogImage, noindex]);
+  }, [title, description, canonical, ogImage, noindex, keywords]);
 }
