@@ -61,24 +61,30 @@ export default function CenterBooking() {
     return parts[0];
   };
 
-  const city = center ? extractCity(center.address) : null;
+  const city = center?.customization?.seo?.city || (center ? extractCity(center.address) : null);
   const pageUrl = typeof window !== 'undefined' ? window.location.href : '';
   
-  // Optimized SEO title: "Business Name - Nettoyage à City | CleaningPage"
-  const seoTitle = center 
-    ? `${center.name}${city ? ` - Nettoyage à ${city}` : ' - Nettoyage professionnel'} | CleaningPage`
-    : 'CleaningPage - Service de nettoyage professionnel';
+  // Use custom SEO from center or fallback to generated
+  const customSeo = center?.customization?.seo;
   
-  // Optimized SEO description with keywords
-  const seoDescription = center
-    ? `${center.name}${city ? ` à ${city}` : ''} : réservez votre nettoyage professionnel en ligne. Devis gratuit, prise de rendez-vous rapide. ${city ? `Nettoyage ${city} - ` : ''}Service de qualité.`
-    : 'CleaningPage - Réservez votre nettoyage professionnel en ligne. Devis gratuit et prise de rendez-vous rapide.';
+  // SEO title: custom > generated
+  const seoTitle = customSeo?.title 
+    || (center 
+      ? `${center.name}${city ? ` - Nettoyage à ${city}` : ' - Nettoyage professionnel'} | CleaningPage`
+      : 'CleaningPage - Service de nettoyage professionnel');
+  
+  // SEO description: custom > generated
+  const seoDescription = customSeo?.description
+    || (center
+      ? `${center.name}${city ? ` à ${city}` : ''} : réservez votre nettoyage professionnel en ligne. Devis gratuit, prise de rendez-vous rapide. ${city ? `Nettoyage ${city} - ` : ''}Service de qualité.`
+      : 'CleaningPage - Réservez votre nettoyage professionnel en ligne. Devis gratuit et prise de rendez-vous rapide.');
   
   useSEO({
     title: seoTitle,
     description: seoDescription,
     canonical: pageUrl,
     ogImage: center?.logo_url || undefined,
+    keywords: customSeo?.keywords || undefined,
   });
   const goToPrevStep = () => {
     switch (currentStep) {

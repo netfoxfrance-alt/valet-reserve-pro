@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { SEOSection } from '@/components/dashboard/SEOSection';
 import { Card } from '@/components/ui/card';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +16,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { Sparkles, Upload, Trash2, Loader2, CreditCard, Crown, ExternalLink, Link2, Check, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { CenterCustomization } from '@/types/customization';
 
 // Generate a clean slug from text
 const generateSlug = (text: string): string => {
@@ -42,6 +44,14 @@ export default function DashboardSettings() {
     welcome_message: '',
   });
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [customization, setCustomization] = useState<CenterCustomization>({
+    colors: { primary: '', secondary: '', accent: '' },
+    texts: { tagline: '', cta_button: '' },
+    layout: { show_hours: true, show_address: true, show_phone: true, show_contact_form: false, dark_mode: false },
+    social: { instagram: '', tiktok: '', facebook: '', email: '' },
+    seo: { title: '', description: '', keywords: '', city: '' },
+    cover_url: null,
+  });
   
   // Slug editing state
   const [slug, setSlug] = useState('');
@@ -62,12 +72,18 @@ export default function DashboardSettings() {
       setLogoUrl(center.logo_url);
       setSlug(center.slug || '');
       setSlugInput(center.slug || '');
+      if (center.customization) {
+        setCustomization(center.customization);
+      }
     }
   }, [center]);
 
   const handleSave = async () => {
     setSaving(true);
-    const { error } = await updateCenter(settings);
+    const { error } = await updateCenter({ 
+      ...settings,
+      customization,
+    });
     setSaving(false);
     
     if (error) {
@@ -489,6 +505,13 @@ export default function DashboardSettings() {
               </div>
             </Card>
           </section>
+
+          {/* SEO Section */}
+          <SEOSection
+            customization={customization}
+            centerName={settings.name}
+            onChange={setCustomization}
+          />
 
           {/* Subscription Section */}
           <section className="mb-6 sm:mb-8">
