@@ -43,6 +43,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
       texts: { ...defaultCustomization.texts, ...(c.texts || {}) },
       layout: { ...defaultCustomization.layout, ...(c.layout || {}) },
       social: { ...defaultCustomization.social, ...(c.social || {}) },
+      seo: { ...defaultCustomization.seo, ...(c.seo || {}) },
       cover_url: c.cover_url ?? null,
     };
   }, [center.customization]);
