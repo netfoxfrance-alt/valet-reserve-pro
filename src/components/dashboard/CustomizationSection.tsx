@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CenterCustomization, defaultCustomization } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Type, Layout, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail } from 'lucide-react';
+import { Palette, Type, Layout, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail, ImagePlus, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CustomizationSectionProps {
@@ -30,6 +30,7 @@ const COLOR_PRESETS = [
 export function CustomizationSection({ centerId, userId, customization, onUpdate }: CustomizationSectionProps) {
   const { toast } = useToast();
   const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
   const [local, setLocal] = useState<CenterCustomization>(customization);
 
   const updateLocal = (updates: Partial<CenterCustomization>) => {
@@ -121,11 +122,76 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     }
   };
 
+  const handleGalleryUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    const currentImages = local.gallery_images || [];
+    if (currentImages.length + files.length > 8) {
+      toast({ title: 'Erreur', description: 'Maximum 8 images dans la galerie.', variant: 'destructive' });
+      return;
+    }
+
+    setUploadingGallery(true);
+    const newUrls: string[] = [];
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        if (!file.type.startsWith('image/')) continue;
+        if (file.size > 5 * 1024 * 1024) continue;
+
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${userId}/gallery/${Date.now()}-${i}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('center-gallery')
+          .upload(fileName, file);
+
+        if (!uploadError) {
+          const { data: { publicUrl } } = supabase.storage
+            .from('center-gallery')
+            .getPublicUrl(fileName);
+          newUrls.push(publicUrl);
+        }
+      }
+
+      if (newUrls.length > 0) {
+        updateLocal({ gallery_images: [...currentImages, ...newUrls] });
+        toast({ title: `${newUrls.length} image(s) ajoutée(s)` });
+      }
+    } catch (error) {
+      console.error('Gallery upload error:', error);
+      toast({ title: 'Erreur', description: 'Impossible de télécharger les images.', variant: 'destructive' });
+    } finally {
+      setUploadingGallery(false);
+      event.target.value = '';
+    }
+  };
+
+  const handleRemoveGalleryImage = async (urlToRemove: string) => {
+    try {
+      // Extract path from URL
+      const urlObj = new URL(urlToRemove);
+      const pathParts = urlObj.pathname.split('/center-gallery/');
+      if (pathParts.length > 1) {
+        await supabase.storage.from('center-gallery').remove([pathParts[1]]);
+      }
+      
+      const updatedImages = (local.gallery_images || []).filter(url => url !== urlToRemove);
+      updateLocal({ gallery_images: updatedImages });
+      toast({ title: 'Image supprimée' });
+    } catch (error) {
+      toast({ title: 'Erreur', description: 'Impossible de supprimer l\'image.', variant: 'destructive' });
+    }
+  };
+
   return (
     <section className="mb-6 sm:mb-8">
       <Card variant="elevated" className="p-4 sm:p-6">
         <Tabs defaultValue="colors" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-6">
+          <TabsList className="grid w-full grid-cols-6 mb-6">
             <TabsTrigger value="colors" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Palette className="w-4 h-4" />
               <span className="hidden sm:inline">Couleurs</span>
@@ -145,6 +211,10 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             <TabsTrigger value="cover" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Image className="w-4 h-4" />
               <span className="hidden sm:inline">Couverture</span>
+            </TabsTrigger>
+            <TabsTrigger value="gallery" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <ImagePlus className="w-4 h-4" />
+              <span className="hidden sm:inline">Galerie</span>
             </TabsTrigger>
           </TabsList>
 
@@ -474,6 +544,66 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                   </p>
                 </div>
               )}
+            </div>
+          </TabsContent>
+
+          {/* Gallery Tab */}
+          <TabsContent value="gallery" className="space-y-4">
+            <div>
+              <Label className="mb-3 block">Galerie de réalisations</Label>
+              <p className="text-sm text-muted-foreground mb-4">
+                Ajoutez jusqu'à 8 photos de vos réalisations pour montrer la qualité de votre travail.
+              </p>
+
+              {/* Gallery Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                {(local.gallery_images || []).map((url, index) => (
+                  <div key={index} className="relative group aspect-square">
+                    <img
+                      src={url}
+                      alt={`Réalisation ${index + 1}`}
+                      className="w-full h-full object-cover rounded-lg border border-border"
+                    />
+                    <button
+                      onClick={() => handleRemoveGalleryImage(url)}
+                      className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+
+                {/* Add Button */}
+                {(local.gallery_images || []).length < 8 && (
+                  <div className="aspect-square border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleGalleryUpload}
+                      className="sr-only"
+                      id="gallery-upload"
+                    />
+                    <Label
+                      htmlFor="gallery-upload"
+                      className="w-full h-full flex flex-col items-center justify-center cursor-pointer"
+                    >
+                      {uploadingGallery ? (
+                        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                      ) : (
+                        <>
+                          <ImagePlus className="w-6 h-6 text-muted-foreground mb-1" />
+                          <span className="text-xs text-muted-foreground">Ajouter</span>
+                        </>
+                      )}
+                    </Label>
+                  </div>
+                )}
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                {(local.gallery_images || []).length}/8 images. JPG, PNG ou WebP. Max 5 Mo par image.
+              </p>
             </div>
           </TabsContent>
         </Tabs>

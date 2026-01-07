@@ -32,6 +32,7 @@ const parseCustomization = (data: unknown): CenterCustomization => {
     social: { ...defaultCustomization.social, ...(parsed.social || {}) },
     seo: { ...defaultCustomization.seo, ...(parsed.seo || {}) },
     cover_url: parsed.cover_url ?? null,
+    gallery_images: parsed.gallery_images ?? [],
   };
 };
 
