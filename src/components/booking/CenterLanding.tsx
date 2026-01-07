@@ -58,6 +58,61 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     '--custom-accent': customization.colors.accent,
   } as React.CSSProperties), [customization.colors]);
 
+  // Custom Links component to render at different positions
+  const renderCustomLinks = () => {
+    if (!customization.custom_links || customization.custom_links.length === 0) return null;
+    
+    const validLinks = customization.custom_links.filter(link => link.title && link.url);
+    if (validLinks.length === 0) return null;
+
+    return (
+      <div className="grid grid-cols-1 gap-2 mb-6">
+        {validLinks.map((link) => {
+          const IconComponent = {
+            link: Link2,
+            shop: ShoppingBag,
+            book: BookOpen,
+            video: Video,
+            calendar: Calendar,
+            file: FileText,
+          }[link.icon || 'link'] || Link2;
+
+          const absoluteUrl = link.url.startsWith('http://') || link.url.startsWith('https://') 
+            ? link.url 
+            : `https://${link.url}`;
+
+          return (
+            <a
+              key={link.id}
+              href={absoluteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-4 rounded-xl border transition-all hover:scale-[1.02]"
+              style={{
+                backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
+                borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : undefined,
+              }}
+            >
+              <div 
+                className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: customization.colors.primary + '15' }}
+              >
+                <IconComponent className="w-5 h-5" style={{ color: customization.colors.primary }} />
+              </div>
+              <span 
+                className="font-medium flex-1"
+                style={{ color: customization.layout.dark_mode ? 'white' : undefined }}
+              >
+                {link.title}
+              </span>
+              <ExternalLink className="w-4 h-4 text-muted-foreground" />
+            </a>
+          );
+        })}
+      </div>
+    );
+  };
+
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!contactName.trim() || !contactPhone.trim()) return;
@@ -224,54 +279,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
             </div>
           )}
 
-          {/* Custom Links Section */}
-          {customization.custom_links && customization.custom_links.length > 0 && (
-            <div className="grid grid-cols-1 gap-2 mb-6">
-              {customization.custom_links.filter(link => link.title && link.url).map((link) => {
-                const IconComponent = {
-                  link: Link2,
-                  shop: ShoppingBag,
-                  book: BookOpen,
-                  video: Video,
-                  calendar: Calendar,
-                  file: FileText,
-                }[link.icon || 'link'] || Link2;
-
-                // Ensure URL is absolute
-                const absoluteUrl = link.url.startsWith('http://') || link.url.startsWith('https://') 
-                  ? link.url 
-                  : `https://${link.url}`;
-
-                return (
-                  <a
-                    key={link.id}
-                    href={absoluteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-4 rounded-xl border transition-all hover:scale-[1.02]"
-                    style={{
-                      backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
-                      borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : undefined,
-                    }}
-                  >
-                    <div 
-                      className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: customization.colors.primary + '15' }}
-                    >
-                      <IconComponent className="w-5 h-5" style={{ color: customization.colors.primary }} />
-                    </div>
-                    <span 
-                      className="font-medium flex-1"
-                      style={{ color: customization.layout.dark_mode ? 'white' : undefined }}
-                    >
-                      {link.title}
-                    </span>
-                    <ExternalLink className="w-4 h-4 text-muted-foreground" />
-                  </a>
-                );
-              })}
-            </div>
-          )}
+          {/* Custom Links - Position: top */}
+          {customization.layout.links_position === 'top' && renderCustomLinks()}
 
           {/* Info Cards Row */}
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3 mb-6 sm:mb-8">
@@ -394,6 +403,10 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
               </div>
             );
           })()}
+
+          {/* Custom Links - Position: after_formules */}
+          {customization.layout.links_position === 'after_formules' && renderCustomLinks()}
+
           {/* Gallery Section */}
           {customization.layout.show_gallery && customization.gallery_images && customization.gallery_images.length > 0 && (
             <div className="mb-8">
@@ -419,6 +432,9 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
               </div>
             </div>
           )}
+
+          {/* Custom Links - Position: after_gallery */}
+          {customization.layout.links_position === 'after_gallery' && renderCustomLinks()}
 
           {/* About Section */}
           {customization.texts.about && (
@@ -467,6 +483,9 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
               </p>
             </div>
           )}
+
+          {/* Custom Links - Position: bottom */}
+          {customization.layout.links_position === 'bottom' && renderCustomLinks()}
 
           {/* Contact Form Section */}
           {customization.layout.show_contact_form && (

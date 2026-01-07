@@ -542,6 +542,28 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                   ))}
                 </div>
               )}
+
+              {/* Position selector */}
+              {(local.custom_links?.length || 0) > 0 && (
+                <div className="pt-4 border-t space-y-2">
+                  <Label>Position sur la page</Label>
+                  <Select
+                    value={local.layout.links_position || 'top'}
+                    onValueChange={(value) => updateLayout({ links_position: value as 'top' | 'after_formules' | 'after_gallery' | 'bottom' })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="top">En haut (après réseaux sociaux)</SelectItem>
+                      <SelectItem value="after_formules">Après les formules</SelectItem>
+                      <SelectItem value="after_gallery">Après la galerie</SelectItem>
+                      <SelectItem value="bottom">En bas (avant formulaire contact)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">Choisissez où afficher vos liens sur votre page publique</p>
+                </div>
+              )}
             </div>
           </TabsContent>
 
