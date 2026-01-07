@@ -10,7 +10,12 @@ import { useToast } from '@/hooks/use-toast';
 import { CenterCustomization, defaultCustomization } from '@/types/customization';
 import { CustomizationSection } from '@/components/dashboard/CustomizationSection';
 import { CenterLanding } from '@/components/booking/CenterLanding';
-import { ExternalLink, Smartphone, Monitor, RefreshCw } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { supabase } from '@/integrations/supabase/client';
+import { ExternalLink, Smartphone, Monitor, RefreshCw, Sparkles, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function DashboardMyPage() {
@@ -23,6 +28,12 @@ export default function DashboardMyPage() {
   const [customization, setCustomization] = useState<CenterCustomization>(defaultCustomization);
   const [previewMode, setPreviewMode] = useState<'mobile' | 'desktop'>('mobile');
   const [previewKey, setPreviewKey] = useState(0);
+  
+  // Custom request dialog state
+  const [requestDialogOpen, setRequestDialogOpen] = useState(false);
+  const [requestType, setRequestType] = useState<'design' | 'functionality' | 'both'>('design');
+  const [requestMessage, setRequestMessage] = useState('');
+  const [submittingRequest, setSubmittingRequest] = useState(false);
 
   useEffect(() => {
     if (center) {
@@ -44,6 +55,33 @@ export default function DashboardMyPage() {
 
   const handleRefreshPreview = () => {
     setPreviewKey(prev => prev + 1);
+  };
+
+  const handleSubmitRequest = async () => {
+    if (!requestMessage.trim() || !center || !user) return;
+    
+    setSubmittingRequest(true);
+    try {
+      const { error } = await supabase.from('custom_requests').insert({
+        center_id: center.id,
+        center_name: center.name,
+        contact_email: user.email || '',
+        request_type: requestType,
+        message: requestMessage.trim(),
+      });
+      
+      if (error) throw error;
+      
+      toast({ title: 'Demande envoyée', description: 'Nous reviendrons vers vous rapidement.' });
+      setRequestDialogOpen(false);
+      setRequestMessage('');
+      setRequestType('design');
+    } catch (error) {
+      console.error('Error submitting request:', error);
+      toast({ title: 'Erreur', description: 'Impossible d\'envoyer la demande.', variant: 'destructive' });
+    } finally {
+      setSubmittingRequest(false);
+    }
   };
 
   // Create a preview center object with current customization
@@ -88,7 +126,17 @@ export default function DashboardMyPage() {
                 Personnalisez et prévisualisez votre page publique en temps réel.
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setRequestDialogOpen(true)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Demande personnalisée</span>
+                <span className="sm:hidden">Sur mesure</span>
+              </Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -96,7 +144,8 @@ export default function DashboardMyPage() {
                 disabled={!center}
               >
                 <ExternalLink className="w-4 h-4 mr-2" />
-                Voir en ligne
+                <span className="hidden sm:inline">Voir en ligne</span>
+                <span className="sm:hidden">Voir</span>
               </Button>
               <Button
                 variant="premium"
@@ -202,6 +251,68 @@ export default function DashboardMyPage() {
           </div>
         </main>
       </div>
+
+      {/* Custom Request Dialog */}
+      <Dialog open={requestDialogOpen} onOpenChange={setRequestDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Demande personnalisée</DialogTitle>
+            <DialogDescription>
+              Décrivez votre besoin et nous reviendrons vers vous rapidement.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-3">
+              <Label>Type de demande</Label>
+              <RadioGroup value={requestType} onValueChange={(v) => setRequestType(v as 'design' | 'functionality' | 'both')}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="design" id="design" />
+                  <Label htmlFor="design" className="font-normal cursor-pointer">Design (couleurs, style, mise en page)</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="functionality" id="functionality" />
+                  <Label htmlFor="functionality" className="font-normal cursor-pointer">Fonctionnalité (nouvelles options, intégrations)</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="both" id="both" />
+                  <Label htmlFor="both" className="font-normal cursor-pointer">Les deux</Label>
+                </div>
+              </RadioGroup>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="request-message">Votre demande</Label>
+              <Textarea
+                id="request-message"
+                placeholder="Décrivez ce que vous aimeriez modifier ou ajouter..."
+                value={requestMessage}
+                onChange={(e) => setRequestMessage(e.target.value)}
+                rows={4}
+              />
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setRequestDialogOpen(false)}>
+              Annuler
+            </Button>
+            <Button 
+              onClick={handleSubmitRequest} 
+              disabled={!requestMessage.trim() || submittingRequest}
+            >
+              {submittingRequest ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Envoi...
+                </>
+              ) : (
+                'Envoyer'
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
