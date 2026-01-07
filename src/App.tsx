@@ -18,6 +18,7 @@ import DashboardMyPage from "./pages/DashboardMyPage";
 
 import CompleteSignup from "./pages/CompleteSignup";
 import NotFound from "./pages/NotFound";
+import AdminRequests from "./pages/AdminRequests";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -72,6 +73,9 @@ const App = () => (
                 <DashboardMyPage />
               </ProtectedRoute>
             } />
+            
+            {/* Admin page (password protected, not auth protected) */}
+            <Route path="/admin/requests" element={<AdminRequests />} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>

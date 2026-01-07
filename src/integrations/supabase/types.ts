@@ -234,6 +234,54 @@ export type Database = {
           },
         ]
       }
+      custom_requests: {
+        Row: {
+          center_id: string | null
+          center_name: string
+          contact_email: string
+          created_at: string | null
+          id: string
+          message: string
+          request_type: string
+          status: string | null
+        }
+        Insert: {
+          center_id?: string | null
+          center_name: string
+          contact_email: string
+          created_at?: string | null
+          id?: string
+          message: string
+          request_type: string
+          status?: string | null
+        }
+        Update: {
+          center_id?: string | null
+          center_name?: string
+          contact_email?: string
+          created_at?: string | null
+          id?: string
+          message?: string
+          request_type?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_requests_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custom_requests_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       packs: {
         Row: {
           active: boolean | null
