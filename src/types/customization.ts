@@ -31,6 +31,7 @@ export interface CenterCustomization {
   };
   cover_url: string | null;
   gallery_images: string[];
+  visible_pack_ids: string[];
 }
 
 export const defaultCustomization: CenterCustomization = {
@@ -66,4 +67,5 @@ export const defaultCustomization: CenterCustomization = {
   },
   cover_url: null,
   gallery_images: [],
+  visible_pack_ids: [],
 };

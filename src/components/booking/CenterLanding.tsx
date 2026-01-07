@@ -46,6 +46,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
       seo: { ...defaultCustomization.seo, ...(c.seo || {}) },
       cover_url: c.cover_url ?? null,
       gallery_images: c.gallery_images ?? [],
+      visible_pack_ids: c.visible_pack_ids ?? [],
     };
   }, [center.customization]);
 
@@ -279,19 +280,27 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
           </div>
 
           {/* Formules Section - Only for Pro with packs */}
-          {isPro && packs.length > 0 && (
-            <div className="mb-8">
-              <h2 
-                className="text-lg font-semibold mb-4"
-                style={{ color: customization.layout.dark_mode ? 'white' : undefined }}
-              >
-                Nos formules
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {packs.slice(0, 6).map((pack) => {
-                  const hasVariants = pack.price_variants && pack.price_variants.length > 0;
-                  const minPrice = hasVariants 
-                    ? Math.min(...pack.price_variants.map(v => v.price))
+          {isPro && packs.length > 0 && (() => {
+            // Filter packs based on visible_pack_ids (if empty, show all)
+            const visiblePacks = customization.visible_pack_ids?.length > 0
+              ? packs.filter(p => customization.visible_pack_ids.includes(p.id))
+              : packs;
+            
+            if (visiblePacks.length === 0) return null;
+            
+            return (
+              <div className="mb-8">
+                <h2 
+                  className="text-lg font-semibold mb-4"
+                  style={{ color: customization.layout.dark_mode ? 'white' : undefined }}
+                >
+                  Nos formules
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {visiblePacks.slice(0, 6).map((pack) => {
+                    const hasVariants = pack.price_variants && pack.price_variants.length > 0;
+                    const minPrice = hasVariants 
+                      ? Math.min(...pack.price_variants.map(v => v.price))
                     : pack.price;
 
                   return (
@@ -376,10 +385,10 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
                     </Card>
                   );
                 })}
+                </div>
               </div>
-            </div>
-          )}
-
+            );
+          })()}
           {/* Gallery Section */}
           {customization.layout.show_gallery && customization.gallery_images && customization.gallery_images.length > 0 && (
             <div className="mb-8">

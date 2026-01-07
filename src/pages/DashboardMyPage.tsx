@@ -175,7 +175,7 @@ export default function DashboardMyPage() {
                         onStartBooking={() => {}}
                         onSelectPack={() => {}}
                         hasPacks={packs.length > 0}
-                        isPro={center?.subscription_plan === 'pro'}
+                        isPro={center?.subscription_plan === 'pro' || center?.subscription_plan === 'trial'}
                       />
                     )}
                   </div>
@@ -189,12 +189,13 @@ export default function DashboardMyPage() {
               
               {center && user && (
                 <div className="[&>section]:mb-0">
-                  <CustomizationSection
-                    centerId={center.id}
-                    userId={user.id}
-                    customization={customization}
-                    onUpdate={setCustomization}
-                  />
+                <CustomizationSection
+                  centerId={center.id}
+                  userId={user.id}
+                  customization={customization}
+                  onUpdate={setCustomization}
+                  packs={packs}
+                />
                 </div>
               )}
             </div>

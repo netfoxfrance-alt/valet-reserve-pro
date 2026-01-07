@@ -52,6 +52,7 @@ export default function DashboardSettings() {
     seo: { title: '', description: '', keywords: '', city: '' },
     cover_url: null,
     gallery_images: [],
+    visible_pack_ids: [],
   });
   
   // Slug editing state
