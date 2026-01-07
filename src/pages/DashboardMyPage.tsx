@@ -134,8 +134,7 @@ export default function DashboardMyPage() {
                 className="text-muted-foreground hover:text-foreground"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">Demande personnalisée</span>
-                <span className="sm:hidden">Sur mesure</span>
+                Personnalisation privée
               </Button>
               <Button
                 variant="outline"
