@@ -24,6 +24,7 @@ export interface CenterCustomization {
     show_contact_form: boolean;
     show_gallery: boolean;
     dark_mode: boolean;
+    links_position: 'top' | 'after_formules' | 'after_gallery' | 'bottom';
   };
   social: {
     instagram: string;
@@ -62,6 +63,7 @@ export const defaultCustomization: CenterCustomization = {
     show_contact_form: true,
     show_gallery: true,
     dark_mode: false,
+    links_position: 'top',
   },
   social: {
     instagram: '',
