@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { MapPin, Phone, Clock, ArrowRight, Star, Car, User, MessageSquare, Send, CheckCircle, Instagram, Mail, Link2, ShoppingBag, BookOpen, Video, Calendar, FileText, ExternalLink } from 'lucide-react';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { MapPin, Phone, Clock, ArrowRight, Star, Car, User, MessageSquare, Send, CheckCircle, Instagram, Mail, Link2, ShoppingBag, BookOpen, Video, Calendar, FileText, ExternalLink, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Center, Pack } from '@/hooks/useCenter';
 import { CenterCustomization, CustomLink, defaultCustomization } from '@/types/customization';
 import { useMemo } from 'react';
@@ -29,6 +30,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
   const [contactMessage, setContactMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [contactSent, setContactSent] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   // Check if center is currently open (simple check based on current hour)
   const now = new Date();
@@ -418,20 +421,72 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {customization.gallery_images.slice(0, 8).map((url, index) => (
-                  <div 
+                  <button 
                     key={index} 
-                    className="aspect-square rounded-lg overflow-hidden"
+                    className="aspect-square rounded-lg overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2"
+                    style={{ '--tw-ring-color': customization.colors.primary } as React.CSSProperties}
+                    onClick={() => {
+                      setLightboxIndex(index);
+                      setLightboxOpen(true);
+                    }}
                   >
                     <img
                       src={url}
                       alt={`Réalisation ${index + 1}`}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                     />
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
           )}
+
+          {/* Gallery Lightbox */}
+          <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+            <DialogContent className="max-w-4xl w-full p-0 bg-black/95 border-none">
+              <div className="relative flex items-center justify-center min-h-[50vh] max-h-[90vh]">
+                {/* Close button */}
+                <button 
+                  onClick={() => setLightboxOpen(false)}
+                  className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                >
+                  <X className="w-6 h-6 text-white" />
+                </button>
+                
+                {/* Navigation arrows */}
+                {customization.gallery_images && customization.gallery_images.length > 1 && (
+                  <>
+                    <button 
+                      onClick={() => setLightboxIndex((prev) => prev === 0 ? customization.gallery_images!.length - 1 : prev - 1)}
+                      className="absolute left-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                    >
+                      <ChevronLeft className="w-6 h-6 text-white" />
+                    </button>
+                    <button 
+                      onClick={() => setLightboxIndex((prev) => prev === customization.gallery_images!.length - 1 ? 0 : prev + 1)}
+                      className="absolute right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                    >
+                      <ChevronRight className="w-6 h-6 text-white" />
+                    </button>
+                  </>
+                )}
+                
+                {/* Image */}
+                <img
+                  src={customization.gallery_images?.[lightboxIndex] || ''}
+                  alt={`Réalisation ${lightboxIndex + 1}`}
+                  className="max-w-full max-h-[85vh] object-contain"
+                />
+                
+                {/* Image counter */}
+                {customization.gallery_images && customization.gallery_images.length > 1 && (
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm">
+                    {lightboxIndex + 1} / {customization.gallery_images.length}
+                  </div>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
 
           {/* Custom Links - Position: after_gallery */}
           {customization.layout.links_position === 'after_gallery' && renderCustomLinks()}
