@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Logo } from '@/components/ui/Logo';
@@ -11,16 +11,17 @@ import { FeatureShowcase } from '@/components/upgrade/FeatureShowcase';
 
 export default function Upgrade() {
   const [isLoading, setIsLoading] = useState(false);
-  const { session, subscription, user } = useAuth();
+  const { session, subscription } = useAuth();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   // If user is subscribed, redirect to dashboard
   useEffect(() => {
     if (subscription.subscribed) {
-      window.location.href = '/dashboard';
+      navigate('/dashboard', { replace: true });
     }
-  }, [subscription.subscribed]);
+  }, [subscription.subscribed, navigate]);
 
   // Check for payment status in URL
   useEffect(() => {
