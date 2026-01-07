@@ -41,12 +41,11 @@ export default function DashboardSettings() {
     name: '',
     address: '',
     phone: '',
-    welcome_message: '',
   });
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [customization, setCustomization] = useState<CenterCustomization>({
     colors: { primary: '', secondary: '', accent: '' },
-    texts: { tagline: '', cta_button: '', about: '' },
+    texts: { tagline: '', cta_button: '', about: '', welcome_message: '' },
     layout: { show_hours: true, show_address: true, show_phone: true, show_contact_form: false, show_gallery: true, dark_mode: false },
     social: { instagram: '', tiktok: '', facebook: '', email: '' },
     seo: { title: '', description: '', keywords: '', city: '' },
@@ -69,7 +68,6 @@ export default function DashboardSettings() {
         name: center.name || '',
         address: center.address || '',
         phone: center.phone || '',
-        welcome_message: center.welcome_message || '',
       });
       setLogoUrl(center.logo_url);
       setSlug(center.slug || '');
@@ -491,22 +489,6 @@ export default function DashboardSettings() {
             </Card>
           </section>
           
-          <section className="mb-6 sm:mb-8">
-            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Message d'accueil</h2>
-            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">Personnalisez l'accueil de vos clients.</p>
-            
-            <Card variant="elevated" className="p-4 sm:p-6 space-y-4 sm:space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="welcome_message">Message affiché aux visiteurs</Label>
-                <Textarea
-                  id="welcome_message"
-                  value={settings.welcome_message}
-                  onChange={(e) => setSettings({ ...settings, welcome_message: e.target.value })}
-                  rows={3}
-                />
-              </div>
-            </Card>
-          </section>
 
           {/* Subscription Section */}
           <section className="mb-6 sm:mb-8">

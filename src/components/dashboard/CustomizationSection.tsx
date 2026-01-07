@@ -347,6 +347,17 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
           {/* Texts Tab */}
           <TabsContent value="texts" className="space-y-4">
             <div className="space-y-2">
+              <Label htmlFor="welcome-message">Phrase d'accueil</Label>
+              <Input
+                id="welcome-message"
+                value={local.texts.welcome_message || ''}
+                onChange={(e) => updateTexts({ welcome_message: e.target.value })}
+                placeholder="Ex: Réservez votre rendez-vous en quelques clics"
+              />
+              <p className="text-xs text-muted-foreground">Affiché en haut de votre page de réservation</p>
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="tagline">Slogan / Sous-titre</Label>
               <Input
                 id="tagline"
@@ -375,7 +386,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 id="cta-button"
                 value={local.texts.cta_button}
                 onChange={(e) => updateTexts({ cta_button: e.target.value })}
-                placeholder="Réserver maintenant"
+                placeholder="Réserver"
               />
             </div>
           </TabsContent>
