@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { CenterCustomization, defaultCustomization } from '@/types/customization';
 import { CustomizationSection } from '@/components/dashboard/CustomizationSection';
+import { AdvancedCustomizationCard } from '@/components/dashboard/AdvancedCustomizationCard';
 import { CenterLanding } from '@/components/booking/CenterLanding';
 import { ExternalLink, Smartphone, Monitor, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -196,6 +197,15 @@ export default function DashboardMyPage() {
                   onUpdate={setCustomization}
                   packs={packs}
                 />
+                
+                {/* Advanced customization card */}
+                <div className="mt-6">
+                  <AdvancedCustomizationCard
+                    centerId={center.id}
+                    centerName={center.name}
+                    contactEmail={center.email || user.email || ''}
+                  />
+                </div>
                 </div>
               )}
             </div>
