@@ -78,30 +78,33 @@ serve(async (req) => {
 
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
-      status: "active",
-      limit: 1,
+      status: "all",
+      limit: 10,
     });
 
-    const hasActiveSub = subscriptions.data.length > 0;
+    const eligible = subscriptions.data.find((s: any) => s.status === "active" || s.status === "trialing");
+    const hasActiveSub = Boolean(eligible);
     let subscriptionEnd = null;
     let productId = null;
 
-    if (hasActiveSub) {
-      const subscription = subscriptions.data[0];
+    if (hasActiveSub && eligible) {
+      const subscription = eligible;
       subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
       productId = subscription.items.data[0].price.product;
-      logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd, productId });
+      logStep("Eligible subscription found", { status: subscription.status, subscriptionId: subscription.id, endDate: subscriptionEnd, productId });
 
-      // Update the center's subscription_plan to 'pro' if it's not already
+      const nextPlan = subscription.status === "trialing" ? "trial" : "pro";
+
+      // Update the center's subscription_plan accordingly
       const { error: updateError } = await supabaseClient
         .from('centers')
-        .update({ subscription_plan: 'pro' })
+        .update({ subscription_plan: nextPlan })
         .eq('owner_id', user.id);
 
       if (updateError) {
         logStep("Error updating subscription plan", { error: updateError.message });
       } else {
-        logStep("Updated center subscription plan to pro");
+        logStep(`Updated center subscription plan to ${nextPlan}`);
       }
     } else {
       logStep("No active subscription found");
