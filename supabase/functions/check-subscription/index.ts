@@ -81,6 +81,8 @@ serve(async (req) => {
       status: "all",
       limit: 10,
     });
+    
+    logStep("Subscriptions retrieved", { count: subscriptions.data.length });
 
     const eligible = subscriptions.data.find((s: any) => s.status === "active" || s.status === "trialing");
     const hasActiveSub = Boolean(eligible);
@@ -89,8 +91,18 @@ serve(async (req) => {
 
     if (hasActiveSub && eligible) {
       const subscription = eligible;
-      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-      productId = subscription.items.data[0].price.product;
+      
+      // Handle current_period_end - it can be a number (timestamp) or already a Date object
+      const periodEnd = subscription.current_period_end;
+      if (periodEnd) {
+        // If it's a number, multiply by 1000, otherwise try to use it directly
+        const timestamp = typeof periodEnd === 'number' ? periodEnd * 1000 : new Date(periodEnd).getTime();
+        if (!isNaN(timestamp)) {
+          subscriptionEnd = new Date(timestamp).toISOString();
+        }
+      }
+      
+      productId = subscription.items.data[0]?.price?.product || null;
       logStep("Eligible subscription found", { status: subscription.status, subscriptionId: subscription.id, endDate: subscriptionEnd, productId });
 
       const nextPlan = subscription.status === "trialing" ? "trial" : "pro";
