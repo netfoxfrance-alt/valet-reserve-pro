@@ -148,16 +148,15 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
             )}
           </div>
 
-          {/* Tagline or default subtitle */}
-          <div 
-            className="flex items-center gap-2 mb-4"
-            style={{ color: customization.layout.dark_mode ? '#9ca3af' : undefined }}
-          >
-            <span>{customization.texts.tagline || 'Lavage auto professionnel'}</span>
-            <span>•</span>
-            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-            <span>4.8</span>
-          </div>
+          {/* Tagline */}
+          {customization.texts.tagline && (
+            <p 
+              className="text-muted-foreground mb-4"
+              style={{ color: customization.layout.dark_mode ? '#9ca3af' : undefined }}
+            >
+              {customization.texts.tagline}
+            </p>
+          )}
 
           {/* Social Links */}
           {(customization.social.instagram || customization.social.tiktok || customization.social.facebook || customization.social.email) && (
@@ -407,8 +406,26 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
             </div>
           )}
 
+          {/* About Section */}
+          {customization.texts.about && (
+            <div className="mb-8">
+              <h2 
+                className="text-lg font-semibold mb-3"
+                style={{ color: customization.layout.dark_mode ? 'white' : undefined }}
+              >
+                À propos
+              </h2>
+              <p 
+                className="text-sm leading-relaxed whitespace-pre-line"
+                style={{ color: customization.layout.dark_mode ? '#d1d5db' : undefined }}
+              >
+                {customization.texts.about}
+              </p>
+            </div>
+          )}
+
           {/* Welcome message if available */}
-          {center.welcome_message && (
+          {center.welcome_message && !customization.texts.about && (
             <div 
               className="mb-8 p-4 rounded-xl"
               style={{ backgroundColor: customization.colors.primary + '10' }}
@@ -423,7 +440,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
           )}
 
           {/* Additional info if no address or phone */}
-          {!center.address && !center.phone && !center.welcome_message && (
+          {!center.address && !center.phone && !center.welcome_message && !customization.texts.about && (
             <div 
               className="mb-8 p-4 rounded-xl"
               style={{ backgroundColor: customization.colors.primary + '10' }}

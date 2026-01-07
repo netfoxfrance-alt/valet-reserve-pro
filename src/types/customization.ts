@@ -7,6 +7,7 @@ export interface CenterCustomization {
   texts: {
     tagline: string;
     cta_button: string;
+    about: string;
   };
   layout: {
     show_hours: boolean;
@@ -41,6 +42,7 @@ export const defaultCustomization: CenterCustomization = {
   texts: {
     tagline: '',
     cta_button: 'Nous contacter',
+    about: '',
   },
   layout: {
     show_hours: true,
