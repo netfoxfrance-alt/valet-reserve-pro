@@ -690,7 +690,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
 
       {/* Fixed CTA Button at bottom */}
       <div 
-        className="fixed bottom-0 left-0 right-0 p-4 backdrop-blur-sm border-t"
+        className="fixed bottom-0 left-0 right-0 p-4 backdrop-blur-sm border-t z-50"
         style={{ 
           backgroundColor: customization.layout.dark_mode ? 'rgba(17,24,39,0.95)' : 'rgba(255,255,255,0.95)',
           borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : undefined,
