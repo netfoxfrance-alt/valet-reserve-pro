@@ -237,10 +237,15 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
                   file: FileText,
                 }[link.icon || 'link'] || Link2;
 
+                // Ensure URL is absolute
+                const absoluteUrl = link.url.startsWith('http://') || link.url.startsWith('https://') 
+                  ? link.url 
+                  : `https://${link.url}`;
+
                 return (
                   <a
                     key={link.id}
-                    href={link.url}
+                    href={absoluteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 p-4 rounded-xl border transition-all hover:scale-[1.02]"
