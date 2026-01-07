@@ -296,95 +296,50 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
                 >
                   Nos formules
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   {visiblePacks.slice(0, 6).map((pack) => {
                     const hasVariants = pack.price_variants && pack.price_variants.length > 0;
                     const minPrice = hasVariants 
                       ? Math.min(...pack.price_variants.map(v => v.price))
-                    : pack.price;
+                      : pack.price;
 
-                  return (
-                    <Card 
-                      key={pack.id}
-                      className="p-4 sm:p-5 transition-all cursor-pointer group"
-                      style={{
-                        backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : undefined,
-                        borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : undefined,
-                      }}
-                      onClick={() => onSelectPack?.(pack)}
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
+                    return (
+                      <Card 
+                        key={pack.id}
+                        className="p-3 sm:p-4 transition-all cursor-pointer group"
+                        style={{
+                          backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : undefined,
+                          borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : undefined,
+                        }}
+                        onClick={() => onSelectPack?.(pack)}
+                      >
+                        <div className="flex flex-col gap-1">
                           <p 
-                            className="font-semibold transition-colors"
+                            className="font-semibold text-sm sm:text-base leading-tight"
                             style={{ color: customization.layout.dark_mode ? 'white' : undefined }}
                           >
                             {pack.name}
                           </p>
-                          {pack.description && (
-                            <p 
-                              className="text-xs line-clamp-1 mt-0.5"
-                              style={{ color: customization.layout.dark_mode ? '#9ca3af' : undefined }}
-                            >
-                              {pack.description}
-                            </p>
-                          )}
-                        </div>
-                        <div className="text-right">
                           <p 
-                            className="text-lg sm:text-xl font-bold"
+                            className="text-base sm:text-lg font-bold"
                             style={{ color: customization.colors.primary }}
                           >
                             {hasVariants ? `${minPrice}€` : `${pack.price}€`}
                           </p>
-                          {hasVariants && (
-                            <p 
-                              className="text-xs"
-                              style={{ color: customization.layout.dark_mode ? '#9ca3af' : undefined }}
-                            >
-                              à partir de
-                            </p>
-                          )}
                         </div>
-                      </div>
-                      
-                      {hasVariants && (
-                        <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border/50">
-                          {pack.price_variants.slice(0, 4).map((v, i) => (
-                            <span 
-                              key={i} 
-                              className="text-xs px-2 py-1 rounded"
-                              style={{ 
-                                backgroundColor: customization.colors.primary + '15',
-                                color: customization.layout.dark_mode ? 'white' : undefined,
-                              }}
-                            >
-                              {v.name}: {v.price}€
-                            </span>
-                          ))}
-                          {pack.price_variants.length > 4 && (
-                            <span 
-                              className="text-xs px-2 py-1"
-                              style={{ color: customization.layout.dark_mode ? '#9ca3af' : undefined }}
-                            >
-                              +{pack.price_variants.length - 4}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      
-                      {pack.duration && (
-                        <p 
-                          className="text-xs mt-2"
-                          style={{ color: customization.layout.dark_mode ? '#9ca3af' : undefined }}
-                        >
-                          <Clock className="w-3 h-3 inline mr-1" />
-                          {pack.duration}
-                        </p>
-                      )}
-                    </Card>
-                  );
-                })}
+                        
+                        {pack.duration && (
+                          <p 
+                            className="text-xs mt-2"
+                            style={{ color: customization.layout.dark_mode ? '#9ca3af' : undefined }}
+                          >
+                            <Clock className="w-3 h-3 inline mr-1" />
+                            {pack.duration}
+                          </p>
+                        )}
+                      </Card>
+                    );
+                  })}
                 </div>
               </div>
             );
@@ -624,7 +579,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
             className="w-full rounded-xl text-base py-6 text-white"
             style={{ backgroundColor: customization.colors.primary }}
           >
-            {customization.texts.cta_button || (isPro && hasPacks ? 'Réserver un créneau' : 'Demander un devis')}
+            {customization.texts.cta_button || 'Réserver'}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>

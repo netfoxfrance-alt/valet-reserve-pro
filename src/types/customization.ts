@@ -42,7 +42,7 @@ export const defaultCustomization: CenterCustomization = {
   },
   texts: {
     tagline: '',
-    cta_button: 'Nous contacter',
+    cta_button: 'Réserver',
     about: '',
   },
   layout: {
