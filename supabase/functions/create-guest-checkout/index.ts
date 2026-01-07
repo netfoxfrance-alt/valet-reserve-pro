@@ -27,6 +27,8 @@ serve(async (req) => {
     const origin = req.headers.get("origin") || "https://lovable.dev";
     
     // Create checkout session for guest (no auth required)
+    // customer_creation: "always" ensures a Stripe customer is created
+    // This allows us to retrieve the email from the session later
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
@@ -35,6 +37,7 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
+      customer_creation: "always",
       subscription_data: {
         trial_period_days: 30,
         description: "Page vitrine personnalisable, réservation automatique, agenda intégré, statistiques et gestion complète",
@@ -47,6 +50,8 @@ serve(async (req) => {
       success_url: `${origin}/complete-signup?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?payment=cancelled`,
       payment_method_collection: "always",
+      // Collect billing address to ensure we have customer details
+      billing_address_collection: "auto",
     });
 
     logStep("Guest checkout session created", { sessionId: session.id, url: session.url });
