@@ -149,6 +149,30 @@ export default function CompleteSignup() {
     }
   };
 
+  // Show error state if no session_id
+  if (!sessionId && !searchParams.get('session_id')) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md text-center">
+          <Logo size="lg" className="mx-auto mb-6" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-destructive/10 text-destructive rounded-full mb-4">
+            <AlertCircle className="w-4 h-4" />
+            <span className="text-sm font-medium">Session invalide</span>
+          </div>
+          <h1 className="text-2xl font-semibold text-foreground mb-2">
+            Lien expiré ou invalide
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            Veuillez recommencer le processus d'inscription.
+          </p>
+          <Button asChild>
+            <Link to="/">Retour à l'accueil</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md animate-fade-in-up">
@@ -162,7 +186,7 @@ export default function CompleteSignup() {
             Finalisez votre inscription
           </h1>
           <p className="text-muted-foreground mt-2">
-            Créez votre espace personnalisé
+            Plus qu'une étape pour accéder à votre espace
           </p>
         </div>
 
@@ -182,38 +206,43 @@ export default function CompleteSignup() {
                 <Input
                   id="businessName"
                   type="text"
-                  placeholder="Ex: CliniPro"
+                  placeholder="Ex: CleanPro Services"
                   value={businessName}
                   onChange={(e) => setBusinessName(e.target.value)}
                   className="pl-12 h-12 rounded-xl"
                   required
                   minLength={2}
+                  autoFocus
                 />
               </div>
               {slugPreview && slugPreview.length >= 3 && (
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="text-muted-foreground">Votre lien :</span>
-                  <code className="px-2 py-1 bg-muted rounded text-foreground">
-                    cleaningpage.com/{slugPreview}
+                <div className="flex items-center gap-2 text-sm mt-2 p-2 bg-muted/50 rounded-lg">
+                  <span className="text-muted-foreground">Votre page :</span>
+                  <code className="px-2 py-0.5 bg-background rounded text-foreground font-medium">
+                    cleaningpage.fr/{slugPreview}
                   </code>
                   {isCheckingSlug ? (
                     <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
                   ) : slugAvailable === true ? (
-                    <Check className="w-4 h-4 text-emerald-500" />
+                    <span className="flex items-center gap-1 text-emerald-600 text-xs">
+                      <Check className="w-3 h-3" /> Disponible
+                    </span>
                   ) : slugAvailable === false ? (
-                    <X className="w-4 h-4 text-destructive" />
+                    <span className="flex items-center gap-1 text-amber-600 text-xs">
+                      <AlertCircle className="w-3 h-3" /> Pris
+                    </span>
                   ) : null}
                 </div>
               )}
               {slugAvailable === false && (
-                <p className="text-xs text-destructive">
-                  Ce nom est déjà pris, un suffixe sera ajouté automatiquement
+                <p className="text-xs text-muted-foreground">
+                  Un suffixe sera ajouté automatiquement
                 </p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password">Créez un mot de passe</Label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
@@ -231,7 +260,7 @@ export default function CompleteSignup() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+              <Label htmlFor="confirmPassword">Confirmez le mot de passe</Label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
@@ -250,18 +279,22 @@ export default function CompleteSignup() {
             <Button
               type="submit"
               size="lg"
-              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white"
-              disabled={isLoading || !sessionId}
+              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white h-12"
+              disabled={isLoading || !sessionId || password.length < 6 || password !== confirmPassword}
             >
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Création...
+                  Création en cours...
                 </>
               ) : (
-                'Accéder à mon espace'
+                'Créer mon espace →'
               )}
             </Button>
+
+            <p className="text-xs text-center text-muted-foreground pt-2">
+              En créant votre compte, vous acceptez nos conditions d'utilisation
+            </p>
           </form>
         </Card>
 
