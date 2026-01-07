@@ -509,20 +509,6 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
             </div>
           )}
 
-          {/* Welcome message if available */}
-          {center.welcome_message && !customization.texts.about && (
-            <div 
-              className="mb-8 p-4 rounded-xl"
-              style={{ backgroundColor: customization.colors.primary + '10' }}
-            >
-              <p 
-                className="text-sm text-center"
-                style={{ color: customization.layout.dark_mode ? '#d1d5db' : undefined }}
-              >
-                {center.welcome_message}
-              </p>
-            </div>
-          )}
 
           {/* Additional info if no address or phone */}
           {!center.address && !center.phone && !center.welcome_message && !customization.texts.about && (
