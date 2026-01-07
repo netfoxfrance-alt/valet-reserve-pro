@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { SEOSection } from '@/components/dashboard/SEOSection';
+
 import { Card } from '@/components/ui/card';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,7 +46,7 @@ export default function DashboardSettings() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [customization, setCustomization] = useState<CenterCustomization>({
     colors: { primary: '', secondary: '', accent: '' },
-    texts: { tagline: '', cta_button: '' },
+    texts: { tagline: '', cta_button: '', about: '' },
     layout: { show_hours: true, show_address: true, show_phone: true, show_contact_form: false, show_gallery: true, dark_mode: false },
     social: { instagram: '', tiktok: '', facebook: '', email: '' },
     seo: { title: '', description: '', keywords: '', city: '' },
@@ -491,12 +491,12 @@ export default function DashboardSettings() {
           </section>
           
           <section className="mb-6 sm:mb-8">
-            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Page de réservation</h2>
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Message d'accueil</h2>
             <p className="text-sm text-muted-foreground mb-4 sm:mb-6">Personnalisez l'accueil de vos clients.</p>
             
             <Card variant="elevated" className="p-4 sm:p-6 space-y-4 sm:space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="welcome_message">Message d'accueil</Label>
+                <Label htmlFor="welcome_message">Message affiché aux visiteurs</Label>
                 <Textarea
                   id="welcome_message"
                   value={settings.welcome_message}
@@ -506,13 +506,6 @@ export default function DashboardSettings() {
               </div>
             </Card>
           </section>
-
-          {/* SEO Section */}
-          <SEOSection
-            customization={customization}
-            centerName={settings.name}
-            onChange={setCustomization}
-          />
 
           {/* Subscription Section */}
           <section className="mb-6 sm:mb-8">
