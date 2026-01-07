@@ -88,12 +88,47 @@ serve(async (req) => {
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
     // Get the checkout session to retrieve customer email
-    const checkoutSession = await stripe.checkout.sessions.retrieve(session_id);
-    if (!checkoutSession.customer_email && !checkoutSession.customer_details?.email) {
-      throw new Error("No email found in checkout session");
+    // Expand customer to get email if customer object was created
+    const checkoutSession = await stripe.checkout.sessions.retrieve(session_id, {
+      expand: ['customer']
+    });
+    
+    logStep("Checkout session retrieved", { 
+      status: checkoutSession.status,
+      payment_status: checkoutSession.payment_status,
+      customer: checkoutSession.customer,
+      customer_email: checkoutSession.customer_email,
+      customer_details: checkoutSession.customer_details
+    });
+
+    // Try multiple sources to find the email
+    let email: string | null = null;
+    
+    // 1. Direct customer_email field
+    if (checkoutSession.customer_email) {
+      email = checkoutSession.customer_email;
+    }
+    // 2. Customer details from checkout
+    else if (checkoutSession.customer_details?.email) {
+      email = checkoutSession.customer_details.email;
+    }
+    // 3. If customer object was expanded, get email from there
+    else if (typeof checkoutSession.customer === 'object' && checkoutSession.customer?.email) {
+      email = checkoutSession.customer.email;
+    }
+    // 4. If customer is just an ID, fetch the customer
+    else if (typeof checkoutSession.customer === 'string') {
+      const customer = await stripe.customers.retrieve(checkoutSession.customer);
+      if (customer && !customer.deleted && 'email' in customer && customer.email) {
+        email = customer.email;
+      }
+    }
+
+    if (!email) {
+      logStep("No email found in any source");
+      throw new Error("No email found in checkout session. Please contact support.");
     }
     
-    const email = checkoutSession.customer_email || checkoutSession.customer_details?.email;
     logStep("Retrieved email from Stripe session", { email });
 
     // Check if user already exists
