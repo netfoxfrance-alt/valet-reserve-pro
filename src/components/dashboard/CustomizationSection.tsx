@@ -247,44 +247,47 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     <section className="mb-6 sm:mb-8">
       <Card variant="elevated" className="p-4 sm:p-6">
         <Tabs defaultValue="colors" className="w-full">
-          <TabsList className="grid w-full grid-cols-9 mb-6">
-            <TabsTrigger value="colors" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Palette className="w-4 h-4" />
-              <span className="hidden sm:inline">Couleurs</span>
-            </TabsTrigger>
-            <TabsTrigger value="texts" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Type className="w-4 h-4" />
-              <span className="hidden sm:inline">Textes</span>
-            </TabsTrigger>
-            <TabsTrigger value="links" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Link2 className="w-4 h-4" />
-              <span className="hidden sm:inline">Liens</span>
-            </TabsTrigger>
-            <TabsTrigger value="social" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Share2 className="w-4 h-4" />
-              <span className="hidden sm:inline">Réseaux</span>
-            </TabsTrigger>
-            <TabsTrigger value="layout" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Layout className="w-4 h-4" />
-              <span className="hidden sm:inline">Affichage</span>
-            </TabsTrigger>
-            <TabsTrigger value="packs" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Package className="w-4 h-4" />
-              <span className="hidden sm:inline">Formules</span>
-            </TabsTrigger>
-            <TabsTrigger value="cover" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Image className="w-4 h-4" />
-              <span className="hidden sm:inline">Couverture</span>
-            </TabsTrigger>
-            <TabsTrigger value="gallery" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <ImagePlus className="w-4 h-4" />
-              <span className="hidden sm:inline">Galerie</span>
-            </TabsTrigger>
-            <TabsTrigger value="seo" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Search className="w-4 h-4" />
-              <span className="hidden sm:inline">SEO</span>
-            </TabsTrigger>
-          </TabsList>
+          {/* Mobile: horizontal scroll with labels */}
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 mb-6">
+            <TabsList className="inline-flex sm:grid sm:grid-cols-9 gap-1 sm:gap-0 w-max sm:w-full bg-muted/50 p-1 rounded-lg">
+              <TabsTrigger value="colors" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
+                <Palette className="w-4 h-4" />
+                <span>Couleurs</span>
+              </TabsTrigger>
+              <TabsTrigger value="texts" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
+                <Type className="w-4 h-4" />
+                <span>Textes</span>
+              </TabsTrigger>
+              <TabsTrigger value="links" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
+                <Link2 className="w-4 h-4" />
+                <span>Liens</span>
+              </TabsTrigger>
+              <TabsTrigger value="social" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
+                <Share2 className="w-4 h-4" />
+                <span>Réseaux</span>
+              </TabsTrigger>
+              <TabsTrigger value="layout" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
+                <Layout className="w-4 h-4" />
+                <span>Affichage</span>
+              </TabsTrigger>
+              <TabsTrigger value="packs" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
+                <Package className="w-4 h-4" />
+                <span>Formules</span>
+              </TabsTrigger>
+              <TabsTrigger value="cover" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
+                <Image className="w-4 h-4" />
+                <span>Image</span>
+              </TabsTrigger>
+              <TabsTrigger value="gallery" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
+                <ImagePlus className="w-4 h-4" />
+                <span>Galerie</span>
+              </TabsTrigger>
+              <TabsTrigger value="seo" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
+                <Search className="w-4 h-4" />
+                <span>SEO</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Colors Tab */}
           <TabsContent value="colors" className="space-y-6">
