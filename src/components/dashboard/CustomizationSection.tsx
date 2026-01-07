@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CenterCustomization, CustomLink, defaultCustomization } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Type, Layout, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail, ImagePlus, X, Search, Globe, MapPin, Tag, Package, Link2, Plus, ShoppingBag, BookOpen, Video, Calendar, FileText } from 'lucide-react';
+import { Palette, Type, Layout, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail, ImagePlus, X, Search, Globe, MapPin, Tag, Package, Link2, Plus, ShoppingBag, BookOpen, Video, Calendar, FileText, ChevronUp, ChevronDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
@@ -97,6 +97,18 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
 
   const removeCustomLink = (id: string) => {
     updateLocal({ custom_links: (local.custom_links || []).filter(link => link.id !== id) });
+  };
+
+  const moveCustomLink = (id: string, direction: 'up' | 'down') => {
+    const links = [...(local.custom_links || [])];
+    const index = links.findIndex(link => link.id === id);
+    if (index === -1) return;
+    
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= links.length) return;
+    
+    [links[index], links[newIndex]] = [links[newIndex], links[index]];
+    updateLocal({ custom_links: links });
   };
 
   const applyPreset = (preset: typeof COLOR_PRESETS[0]) => {
@@ -444,9 +456,29 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {(local.custom_links || []).map((link) => (
+                  {(local.custom_links || []).map((link, index) => (
                     <div key={link.id} className="p-3 border rounded-lg space-y-3">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => moveCustomLink(link.id, 'up')}
+                            disabled={index === 0}
+                            className="h-8 w-8 p-0"
+                          >
+                            <ChevronUp className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => moveCustomLink(link.id, 'down')}
+                            disabled={index === (local.custom_links?.length || 0) - 1}
+                            className="h-8 w-8 p-0"
+                          >
+                            <ChevronDown className="w-4 h-4" />
+                          </Button>
+                        </div>
                         <Select
                           value={link.icon || 'link'}
                           onValueChange={(value) => updateCustomLink(link.id, { icon: value as CustomLink['icon'] })}
