@@ -43,8 +43,8 @@ export default function CenterBooking() {
   const [clientData, setClientData] = useState<ClientData | null>(null);
   const [contactData, setContactData] = useState<ContactRequestData | null>(null);
   
-  // Determine if center is Pro (has subscription_plan === 'pro')
-  const isPro = center?.subscription_plan === 'pro';
+  // Determine if center is Pro or Trial (has active subscription)
+  const isPro = center?.subscription_plan === 'pro' || center?.subscription_plan === 'trial';
   
   // SEO: Extract city from address for local SEO
   const extractCity = (address: string | null): string | null => {

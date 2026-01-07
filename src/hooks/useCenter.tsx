@@ -33,6 +33,7 @@ const parseCustomization = (data: unknown): CenterCustomization => {
     seo: { ...defaultCustomization.seo, ...(parsed.seo || {}) },
     cover_url: parsed.cover_url ?? null,
     gallery_images: parsed.gallery_images ?? [],
+    visible_pack_ids: parsed.visible_pack_ids ?? [],
   };
 };
 

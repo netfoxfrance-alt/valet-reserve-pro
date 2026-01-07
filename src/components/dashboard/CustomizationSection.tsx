@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,14 +9,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CenterCustomization, defaultCustomization } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Type, Layout, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail, ImagePlus, X, Search, Globe, MapPin, Tag } from 'lucide-react';
+import { Palette, Type, Layout, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail, ImagePlus, X, Search, Globe, MapPin, Tag, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Pack } from '@/hooks/useCenter';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface CustomizationSectionProps {
   centerId: string;
   userId: string;
   customization: CenterCustomization;
   onUpdate: (customization: CenterCustomization) => void;
+  packs?: Pack[];
 }
 
 const COLOR_PRESETS = [
@@ -28,11 +31,16 @@ const COLOR_PRESETS = [
   { name: 'Rose', primary: '#ec4899', secondary: '#500724', accent: '#8b5cf6' },
 ];
 
-export function CustomizationSection({ centerId, userId, customization, onUpdate }: CustomizationSectionProps) {
+export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [] }: CustomizationSectionProps) {
   const { toast } = useToast();
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
   const [local, setLocal] = useState<CenterCustomization>(customization);
+
+  // Sync local state when prop changes from parent (e.g., from DB load)
+  useEffect(() => {
+    setLocal(customization);
+  }, [customization]);
 
   const updateLocal = (updates: Partial<CenterCustomization>) => {
     const newCustomization = { ...local, ...updates };
@@ -55,6 +63,19 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
   const updateSocial = (social: Partial<CenterCustomization['social']>) => {
     updateLocal({ social: { ...local.social, ...social } });
   };
+
+  const togglePackVisibility = (packId: string) => {
+    const currentIds = local.visible_pack_ids || [];
+    const newIds = currentIds.includes(packId)
+      ? currentIds.filter(id => id !== packId)
+      : [...currentIds, packId];
+    updateLocal({ visible_pack_ids: newIds });
+  };
+
+  // If no visible_pack_ids set yet, all packs are visible by default
+  const effectiveVisiblePacks = (local.visible_pack_ids?.length ?? 0) > 0 
+    ? local.visible_pack_ids 
+    : packs.map(p => p.id);
 
   const applyPreset = (preset: typeof COLOR_PRESETS[0]) => {
     updateLocal({
@@ -192,7 +213,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     <section className="mb-6 sm:mb-8">
       <Card variant="elevated" className="p-4 sm:p-6">
         <Tabs defaultValue="colors" className="w-full">
-          <TabsList className="grid w-full grid-cols-7 mb-6">
+          <TabsList className="grid w-full grid-cols-8 mb-6">
             <TabsTrigger value="colors" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Palette className="w-4 h-4" />
               <span className="hidden sm:inline">Couleurs</span>
@@ -208,6 +229,10 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             <TabsTrigger value="layout" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Layout className="w-4 h-4" />
               <span className="hidden sm:inline">Affichage</span>
+            </TabsTrigger>
+            <TabsTrigger value="packs" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <Package className="w-4 h-4" />
+              <span className="hidden sm:inline">Formules</span>
             </TabsTrigger>
             <TabsTrigger value="cover" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Image className="w-4 h-4" />
@@ -475,6 +500,52 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 onCheckedChange={(checked) => updateLayout({ dark_mode: checked })}
               />
             </div>
+          </TabsContent>
+
+          {/* Packs Tab */}
+          <TabsContent value="packs" className="space-y-4">
+            {packs.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p>Aucune formule créée</p>
+                <p className="text-sm">Créez des formules dans l'onglet "Formules" du tableau de bord.</p>
+              </div>
+            ) : (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  Sélectionnez les formules à afficher sur votre page publique.
+                </p>
+                <div className="space-y-3">
+                  {packs.map((pack) => {
+                    const isVisible = effectiveVisiblePacks.includes(pack.id);
+                    return (
+                      <div 
+                        key={pack.id}
+                        className={cn(
+                          "flex items-center justify-between p-4 rounded-lg border transition-colors cursor-pointer",
+                          isVisible ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground"
+                        )}
+                        onClick={() => togglePackVisibility(pack.id)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Checkbox
+                            checked={isVisible}
+                            onCheckedChange={() => togglePackVisibility(pack.id)}
+                          />
+                          <div>
+                            <p className="font-medium">{pack.name}</p>
+                            {pack.description && (
+                              <p className="text-sm text-muted-foreground line-clamp-1">{pack.description}</p>
+                            )}
+                          </div>
+                        </div>
+                        <p className="font-semibold text-primary">{pack.price}€</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </TabsContent>
 
           {/* Cover Tab */}
