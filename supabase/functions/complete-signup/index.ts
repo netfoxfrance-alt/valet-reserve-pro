@@ -167,12 +167,13 @@ serve(async (req) => {
 
     logStep("User created successfully", { userId: newUser.user?.id });
 
-    // Update the center that was created by the trigger with the proper name and slug
+    // Update the center that was created by the trigger with the proper name, slug, and subscription_plan
     const { error: updateError } = await supabase
       .from('centers')
       .update({ 
         name: centerName,
-        slug: finalSlug 
+        slug: finalSlug,
+        subscription_plan: 'trial' // User just paid, set to trial immediately
       })
       .eq('owner_id', newUser.user!.id);
 
@@ -180,7 +181,7 @@ serve(async (req) => {
       logStep("Error updating center", { error: updateError.message });
       // Don't throw - the center was created, just with default values
     } else {
-      logStep("Center updated with custom name and slug", { name: centerName, slug: finalSlug });
+      logStep("Center updated with custom name, slug and trial plan", { name: centerName, slug: finalSlug });
     }
 
     return new Response(JSON.stringify({ 
