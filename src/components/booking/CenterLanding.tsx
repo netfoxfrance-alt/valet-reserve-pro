@@ -6,9 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { MapPin, Phone, Clock, ArrowRight, Star, Car, User, MessageSquare, Send, CheckCircle, Instagram, Mail } from 'lucide-react';
+import { MapPin, Phone, Clock, ArrowRight, Star, Car, User, MessageSquare, Send, CheckCircle, Instagram, Mail, Link2, ShoppingBag, BookOpen, Video, Calendar, FileText, ExternalLink } from 'lucide-react';
 import { Center, Pack } from '@/hooks/useCenter';
-import { CenterCustomization, defaultCustomization } from '@/types/customization';
+import { CenterCustomization, CustomLink, defaultCustomization } from '@/types/customization';
 import { useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -47,6 +47,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
       cover_url: c.cover_url ?? null,
       gallery_images: c.gallery_images ?? [],
       visible_pack_ids: c.visible_pack_ids ?? [],
+      custom_links: c.custom_links ?? [],
     };
   }, [center.customization]);
 
@@ -220,6 +221,50 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
                   <Mail className="w-5 h-5" />
                 </a>
               )}
+            </div>
+          )}
+
+          {/* Custom Links Section */}
+          {customization.custom_links && customization.custom_links.length > 0 && (
+            <div className="grid grid-cols-1 gap-2 mb-6">
+              {customization.custom_links.filter(link => link.title && link.url).map((link) => {
+                const IconComponent = {
+                  link: Link2,
+                  shop: ShoppingBag,
+                  book: BookOpen,
+                  video: Video,
+                  calendar: Calendar,
+                  file: FileText,
+                }[link.icon || 'link'] || Link2;
+
+                return (
+                  <a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-4 rounded-xl border transition-all hover:scale-[1.02]"
+                    style={{
+                      backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
+                      borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : undefined,
+                    }}
+                  >
+                    <div 
+                      className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: customization.colors.primary + '15' }}
+                    >
+                      <IconComponent className="w-5 h-5" style={{ color: customization.colors.primary }} />
+                    </div>
+                    <span 
+                      className="font-medium flex-1"
+                      style={{ color: customization.layout.dark_mode ? 'white' : undefined }}
+                    >
+                      {link.title}
+                    </span>
+                    <ExternalLink className="w-4 h-4 text-muted-foreground" />
+                  </a>
+                );
+              })}
             </div>
           )}
 
