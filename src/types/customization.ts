@@ -8,6 +8,7 @@ export interface CenterCustomization {
     tagline: string;
     cta_button: string;
     about: string;
+    welcome_message: string;
   };
   layout: {
     show_hours: boolean;
@@ -44,6 +45,7 @@ export const defaultCustomization: CenterCustomization = {
     tagline: '',
     cta_button: 'Réserver',
     about: '',
+    welcome_message: '',
   },
   layout: {
     show_hours: true,
