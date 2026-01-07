@@ -13,6 +13,7 @@ export interface CenterCustomization {
     show_address: boolean;
     show_phone: boolean;
     show_contact_form: boolean;
+    show_gallery: boolean;
     dark_mode: boolean;
   };
   social: {
@@ -28,6 +29,7 @@ export interface CenterCustomization {
     city: string;
   };
   cover_url: string | null;
+  gallery_images: string[];
 }
 
 export const defaultCustomization: CenterCustomization = {
@@ -45,6 +47,7 @@ export const defaultCustomization: CenterCustomization = {
     show_address: true,
     show_phone: true,
     show_contact_form: true,
+    show_gallery: true,
     dark_mode: false,
   },
   social: {
@@ -60,4 +63,5 @@ export const defaultCustomization: CenterCustomization = {
     city: '',
   },
   cover_url: null,
+  gallery_images: [],
 };

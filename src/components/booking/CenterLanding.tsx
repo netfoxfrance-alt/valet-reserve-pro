@@ -45,6 +45,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
       social: { ...defaultCustomization.social, ...(c.social || {}) },
       seo: { ...defaultCustomization.seo, ...(c.seo || {}) },
       cover_url: c.cover_url ?? null,
+      gallery_images: c.gallery_images ?? [],
     };
   }, [center.customization]);
 
@@ -376,6 +377,32 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
                     </Card>
                   );
                 })}
+              </div>
+            </div>
+          )}
+
+          {/* Gallery Section */}
+          {customization.layout.show_gallery && customization.gallery_images && customization.gallery_images.length > 0 && (
+            <div className="mb-8">
+              <h2 
+                className="text-lg font-semibold mb-4"
+                style={{ color: customization.layout.dark_mode ? 'white' : undefined }}
+              >
+                Nos réalisations
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {customization.gallery_images.slice(0, 8).map((url, index) => (
+                  <div 
+                    key={index} 
+                    className="aspect-square rounded-lg overflow-hidden"
+                  >
+                    <img
+                      src={url}
+                      alt={`Réalisation ${index + 1}`}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           )}

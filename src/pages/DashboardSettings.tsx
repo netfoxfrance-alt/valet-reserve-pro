@@ -47,10 +47,11 @@ export default function DashboardSettings() {
   const [customization, setCustomization] = useState<CenterCustomization>({
     colors: { primary: '', secondary: '', accent: '' },
     texts: { tagline: '', cta_button: '' },
-    layout: { show_hours: true, show_address: true, show_phone: true, show_contact_form: false, dark_mode: false },
+    layout: { show_hours: true, show_address: true, show_phone: true, show_contact_form: false, show_gallery: true, dark_mode: false },
     social: { instagram: '', tiktok: '', facebook: '', email: '' },
     seo: { title: '', description: '', keywords: '', city: '' },
     cover_url: null,
+    gallery_images: [],
   });
   
   // Slug editing state
