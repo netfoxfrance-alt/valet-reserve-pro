@@ -1,3 +1,10 @@
+export interface CustomLink {
+  id: string;
+  title: string;
+  url: string;
+  icon?: 'link' | 'shop' | 'book' | 'video' | 'calendar' | 'file';
+}
+
 export interface CenterCustomization {
   colors: {
     primary: string;
@@ -33,6 +40,7 @@ export interface CenterCustomization {
   cover_url: string | null;
   gallery_images: string[];
   visible_pack_ids: string[];
+  custom_links: CustomLink[];
 }
 
 export const defaultCustomization: CenterCustomization = {
@@ -70,4 +78,5 @@ export const defaultCustomization: CenterCustomization = {
   cover_url: null,
   gallery_images: [],
   visible_pack_ids: [],
+  custom_links: [],
 };

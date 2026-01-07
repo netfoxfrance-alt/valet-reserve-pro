@@ -52,6 +52,7 @@ export default function DashboardSettings() {
     cover_url: null,
     gallery_images: [],
     visible_pack_ids: [],
+    custom_links: [],
   });
   
   // Slug editing state

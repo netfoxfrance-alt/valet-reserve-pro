@@ -6,10 +6,11 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CenterCustomization, defaultCustomization } from '@/types/customization';
+import { CenterCustomization, CustomLink, defaultCustomization } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Type, Layout, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail, ImagePlus, X, Search, Globe, MapPin, Tag, Package } from 'lucide-react';
+import { Palette, Type, Layout, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail, ImagePlus, X, Search, Globe, MapPin, Tag, Package, Link2, Plus, ShoppingBag, BookOpen, Video, Calendar, FileText } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -76,6 +77,27 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
   const effectiveVisiblePacks = (local.visible_pack_ids?.length ?? 0) > 0 
     ? local.visible_pack_ids 
     : packs.map(p => p.id);
+
+  const addCustomLink = () => {
+    const newLink: CustomLink = {
+      id: crypto.randomUUID(),
+      title: '',
+      url: '',
+      icon: 'link',
+    };
+    updateLocal({ custom_links: [...(local.custom_links || []), newLink] });
+  };
+
+  const updateCustomLink = (id: string, updates: Partial<CustomLink>) => {
+    const updatedLinks = (local.custom_links || []).map(link =>
+      link.id === id ? { ...link, ...updates } : link
+    );
+    updateLocal({ custom_links: updatedLinks });
+  };
+
+  const removeCustomLink = (id: string) => {
+    updateLocal({ custom_links: (local.custom_links || []).filter(link => link.id !== id) });
+  };
 
   const applyPreset = (preset: typeof COLOR_PRESETS[0]) => {
     updateLocal({
@@ -213,7 +235,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     <section className="mb-6 sm:mb-8">
       <Card variant="elevated" className="p-4 sm:p-6">
         <Tabs defaultValue="colors" className="w-full">
-          <TabsList className="grid w-full grid-cols-8 mb-6">
+          <TabsList className="grid w-full grid-cols-9 mb-6">
             <TabsTrigger value="colors" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Palette className="w-4 h-4" />
               <span className="hidden sm:inline">Couleurs</span>
@@ -221,6 +243,10 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             <TabsTrigger value="texts" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Type className="w-4 h-4" />
               <span className="hidden sm:inline">Textes</span>
+            </TabsTrigger>
+            <TabsTrigger value="links" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <Link2 className="w-4 h-4" />
+              <span className="hidden sm:inline">Liens</span>
             </TabsTrigger>
             <TabsTrigger value="social" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Share2 className="w-4 h-4" />
@@ -388,6 +414,102 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 onChange={(e) => updateTexts({ cta_button: e.target.value })}
                 placeholder="Réserver"
               />
+            </div>
+          </TabsContent>
+
+          {/* Custom Links Tab */}
+          <TabsContent value="links" className="space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Liens personnalisés</Label>
+                  <p className="text-xs text-muted-foreground">Ajoutez des liens vers votre boutique, ebook, vidéos, etc.</p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={addCustomLink}
+                  disabled={(local.custom_links?.length || 0) >= 6}
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Ajouter
+                </Button>
+              </div>
+
+              {(local.custom_links || []).length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
+                  <Link2 className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">Aucun lien personnalisé</p>
+                  <p className="text-xs">Cliquez sur "Ajouter" pour créer un lien</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {(local.custom_links || []).map((link) => (
+                    <div key={link.id} className="p-3 border rounded-lg space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Select
+                          value={link.icon || 'link'}
+                          onValueChange={(value) => updateCustomLink(link.id, { icon: value as CustomLink['icon'] })}
+                        >
+                          <SelectTrigger className="w-[120px]">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="link">
+                              <div className="flex items-center gap-2">
+                                <Link2 className="w-4 h-4" /> Lien
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="shop">
+                              <div className="flex items-center gap-2">
+                                <ShoppingBag className="w-4 h-4" /> Boutique
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="book">
+                              <div className="flex items-center gap-2">
+                                <BookOpen className="w-4 h-4" /> Ebook
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="video">
+                              <div className="flex items-center gap-2">
+                                <Video className="w-4 h-4" /> Vidéo
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="calendar">
+                              <div className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4" /> Calendrier
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="file">
+                              <div className="flex items-center gap-2">
+                                <FileText className="w-4 h-4" /> Document
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeCustomLink(link.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <Input
+                        value={link.title}
+                        onChange={(e) => updateCustomLink(link.id, { title: e.target.value })}
+                        placeholder="Titre du lien (ex: Notre boutique)"
+                      />
+                      <Input
+                        value={link.url}
+                        onChange={(e) => updateCustomLink(link.id, { url: e.target.value })}
+                        placeholder="https://..."
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </TabsContent>
 
