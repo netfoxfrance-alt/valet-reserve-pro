@@ -10,19 +10,19 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Calendar, Users, TrendingUp, Clock, User, Phone, Check, X, Plus, Mail, Car, Filter, Loader2 } from 'lucide-react';
+import { Calendar, Users, TrendingUp, Clock, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
-import { format, isToday, isTomorrow, parseISO, startOfDay, isBefore, isAfter, addDays } from 'date-fns';
+import { format, isToday, isTomorrow, parseISO, startOfDay, isBefore, addDays, addMonths, startOfMonth, endOfMonth, isSameMonth } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 
-const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-  pending: { label: 'En attente', variant: 'secondary' },
-  confirmed: { label: 'Confirmé', variant: 'default' },
-  completed: { label: 'Terminé', variant: 'outline' },
-  cancelled: { label: 'Annulé', variant: 'destructive' },
+const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; color: string }> = {
+  pending: { label: 'En attente', variant: 'secondary', color: 'bg-amber-100 text-amber-700 border-amber-200' },
+  confirmed: { label: 'Confirmé', variant: 'default', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
+  completed: { label: 'Terminé', variant: 'outline', color: 'bg-slate-100 text-slate-600 border-slate-200' },
+  cancelled: { label: 'Annulé', variant: 'destructive', color: 'bg-red-100 text-red-600 border-red-200' },
 };
 
 const vehicleLabels: Record<string, string> = {
@@ -30,6 +30,7 @@ const vehicleLabels: Record<string, string> = {
   berline: 'Berline',
   suv: 'SUV / 4x4',
   utilitaire: 'Utilitaire',
+  standard: 'Standard',
 };
 
 function AppointmentRow({ appointment, onUpdateStatus }: { 
@@ -44,57 +45,68 @@ function AppointmentRow({ appointment, onUpdateStatus }: {
   if (isTomorrow(date)) dateLabel = "Demain";
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 bg-card border border-border rounded-xl hover:shadow-sm transition-shadow">
-      {/* Client info */}
-      <div className="flex items-center gap-3 flex-1 min-w-0">
-        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-          <span className="text-sm font-semibold text-primary">
+    <div className="group flex flex-col sm:flex-row sm:items-center gap-4 p-5 bg-card border border-border/50 rounded-2xl hover:border-border hover:shadow-md transition-all duration-200">
+      {/* Left: Avatar + Client info */}
+      <div className="flex items-center gap-4 flex-1 min-w-0">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0 shadow-sm">
+          <span className="text-base font-bold text-primary">
             {appointment.client_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
           </span>
         </div>
-        <div className="min-w-0">
-          <p className="font-medium text-foreground truncate">{appointment.client_name}</p>
-          <p className="text-sm text-muted-foreground truncate">
-            {vehicleLabels[appointment.vehicle_type] || appointment.vehicle_type}
-            {appointment.pack && ` • ${appointment.pack.name}`}
-          </p>
+        <div className="min-w-0 flex-1">
+          <p className="font-semibold text-foreground truncate text-base">{appointment.client_name}</p>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+            {appointment.pack && (
+              <span className="font-medium text-foreground/80">{appointment.pack.name}</span>
+            )}
+            <span className="hidden sm:inline">•</span>
+            <span className="capitalize">{vehicleLabels[appointment.vehicle_type] || appointment.vehicle_type}</span>
+          </div>
         </div>
       </div>
       
-      {/* Date & time */}
-      <div className="flex items-center gap-4 sm:gap-6">
-        <div className="text-sm">
-          <p className="font-medium text-foreground">{dateLabel}</p>
-          <p className="text-muted-foreground">{appointment.appointment_time.slice(0, 5)}</p>
+      {/* Right: Date, price, status, actions */}
+      <div className="flex items-center gap-3 sm:gap-5 flex-wrap sm:flex-nowrap">
+        {/* Date & time pill */}
+        <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 rounded-xl">
+          <Calendar className="w-4 h-4 text-muted-foreground" />
+          <div className="text-sm">
+            <span className="font-medium text-foreground">{dateLabel}</span>
+            <span className="text-muted-foreground ml-2">{appointment.appointment_time.slice(0, 5)}</span>
+          </div>
         </div>
         
         {/* Price */}
         {appointment.pack && (
-          <div className="text-right hidden sm:block">
-            <p className="font-semibold text-foreground">{appointment.pack.price}€</p>
+          <div className="hidden sm:block text-right min-w-[60px]">
+            <p className="text-lg font-bold text-foreground">{appointment.pack.price}€</p>
           </div>
         )}
         
         {/* Status badge */}
-        <Badge variant={status.variant} className="flex-shrink-0">{status.label}</Badge>
+        <Badge className={`${status.color} border font-medium px-3 py-1`}>
+          {status.label}
+        </Badge>
         
         {/* Actions */}
-        <div className="flex gap-1">
+        <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
           {appointment.status === 'pending' && (
             <>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
+                className="h-9 w-9 rounded-xl text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
                 onClick={() => onUpdateStatus(appointment.id, 'confirmed')}
+                title="Confirmer"
               >
                 <Check className="w-4 h-4" />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-destructive hover:text-destructive"
+                className="h-9 w-9 rounded-xl text-red-500 hover:text-red-600 hover:bg-red-50"
                 onClick={() => onUpdateStatus(appointment.id, 'cancelled')}
+                title="Annuler"
               >
                 <X className="w-4 h-4" />
               </Button>
@@ -102,9 +114,9 @@ function AppointmentRow({ appointment, onUpdateStatus }: {
           )}
           {appointment.status === 'confirmed' && (
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              className="text-xs"
+              className="h-9 rounded-xl text-xs font-medium"
               onClick={() => onUpdateStatus(appointment.id, 'completed')}
             >
               Terminer
@@ -159,26 +171,28 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="rounded-xl shadow-sm">
           <Plus className="w-4 h-4 mr-2" />
           Nouvelle réservation
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg rounded-2xl">
         <DialogHeader>
-          <DialogTitle>Ajouter une réservation</DialogTitle>
+          <DialogTitle className="text-xl">Ajouter une réservation</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} className="space-y-5 mt-4">
+          <div className="space-y-2">
+            <Label htmlFor="client_name">Nom du client *</Label>
+            <Input
+              id="client_name"
+              value={form.client_name}
+              onChange={(e) => setForm({ ...form, client_name: e.target.value })}
+              placeholder="Jean Dupont"
+              className="h-11 rounded-xl"
+            />
+          </div>
+          
           <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2 space-y-2">
-              <Label htmlFor="client_name">Nom du client *</Label>
-              <Input
-                id="client_name"
-                value={form.client_name}
-                onChange={(e) => setForm({ ...form, client_name: e.target.value })}
-                placeholder="Jean Dupont"
-              />
-            </div>
             <div className="space-y-2">
               <Label htmlFor="client_phone">Téléphone *</Label>
               <Input
@@ -186,6 +200,7 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
                 value={form.client_phone}
                 onChange={(e) => setForm({ ...form, client_phone: e.target.value })}
                 placeholder="06 12 34 56 78"
+                className="h-11 rounded-xl"
               />
             </div>
             <div className="space-y-2">
@@ -196,23 +211,28 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
                 value={form.client_email}
                 onChange={(e) => setForm({ ...form, client_email: e.target.value })}
                 placeholder="jean@email.com"
+                className="h-11 rounded-xl"
               />
             </div>
-            <div className="space-y-2">
-              <Label>Formule</Label>
-              <Select value={form.pack_id} onValueChange={(v) => setForm({ ...form, pack_id: v })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner" />
-                </SelectTrigger>
-                <SelectContent>
-                  {packs.map((pack) => (
-                    <SelectItem key={pack.id} value={pack.id}>
-                      {pack.name} - {pack.price}€
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <Label>Formule</Label>
+            <Select value={form.pack_id} onValueChange={(v) => setForm({ ...form, pack_id: v })}>
+              <SelectTrigger className="h-11 rounded-xl">
+                <SelectValue placeholder="Sélectionner une formule" />
+              </SelectTrigger>
+              <SelectContent>
+                {packs.map((pack) => (
+                  <SelectItem key={pack.id} value={pack.id}>
+                    {pack.name} - {pack.price}€
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="appointment_date">Date *</Label>
               <Input
@@ -220,6 +240,7 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
                 type="date"
                 value={form.appointment_date}
                 onChange={(e) => setForm({ ...form, appointment_date: e.target.value })}
+                className="h-11 rounded-xl"
               />
             </div>
             <div className="space-y-2">
@@ -229,26 +250,29 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
                 type="time"
                 value={form.appointment_time}
                 onChange={(e) => setForm({ ...form, appointment_time: e.target.value })}
-              />
-            </div>
-            <div className="col-span-2 space-y-2">
-              <Label htmlFor="notes">Notes</Label>
-              <Textarea
-                id="notes"
-                value={form.notes}
-                onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                placeholder="Informations supplémentaires..."
-                rows={2}
+                className="h-11 rounded-xl"
               />
             </div>
           </div>
-          <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
+          
+          <div className="space-y-2">
+            <Label htmlFor="notes">Notes</Label>
+            <Textarea
+              id="notes"
+              value={form.notes}
+              onChange={(e) => setForm({ ...form, notes: e.target.value })}
+              placeholder="Informations supplémentaires..."
+              rows={2}
+              className="rounded-xl resize-none"
+            />
+          </div>
+          
+          <div className="flex justify-end gap-3 pt-2">
+            <Button type="button" variant="ghost" onClick={() => setOpen(false)} className="rounded-xl">
               Annuler
             </Button>
-            <Button type="submit" disabled={loading}>
-              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Ajouter
+            <Button type="submit" disabled={loading} className="rounded-xl min-w-[120px]">
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Ajouter'}
             </Button>
           </div>
         </form>
@@ -257,14 +281,19 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
   );
 }
 
+type FilterType = 'all' | 'today' | 'week' | 'month' | 'pending';
+
 export default function Dashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'today' | 'week' | 'pending'>('all');
+  const [filter, setFilter] = useState<FilterType>('all');
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const { appointments, loading, updateStatus, createAppointment } = useMyAppointments();
   const { center } = useMyCenter();
   
   const today = startOfDay(new Date());
   const weekEnd = addDays(today, 7);
+  const monthStart = startOfMonth(currentMonth);
+  const monthEnd = endOfMonth(currentMonth);
   
   const todayAppointments = appointments.filter(a => {
     const date = parseISO(a.appointment_date);
@@ -283,18 +312,37 @@ export default function Dashboard() {
     return isBefore(date, weekEnd);
   });
 
+  const monthAppointments = appointments.filter(a => {
+    const date = parseISO(a.appointment_date);
+    return isSameMonth(date, currentMonth) && a.status !== 'cancelled';
+  });
+
   const filteredAppointments = (() => {
     switch (filter) {
       case 'today':
         return todayAppointments;
       case 'week':
         return weekAppointments;
+      case 'month':
+        return monthAppointments;
       case 'pending':
         return pendingAppointments;
       default:
         return upcomingAppointments;
     }
   })();
+
+  // Group appointments by date for better visualization
+  const groupedAppointments = filteredAppointments.reduce((groups, appointment) => {
+    const date = appointment.appointment_date;
+    if (!groups[date]) {
+      groups[date] = [];
+    }
+    groups[date].push(appointment);
+    return groups;
+  }, {} as Record<string, Appointment[]>);
+
+  const sortedDates = Object.keys(groupedAppointments).sort();
 
   const handleUpdateStatus = async (id: string, status: Appointment['status']) => {
     const { error } = await updateStatus(id, status);
@@ -316,9 +364,17 @@ export default function Dashboard() {
 
   const stats = [
     { name: "Aujourd'hui", value: todayAppointments.length, icon: Calendar, color: 'bg-primary/10 text-primary' },
-    { name: 'En attente', value: pendingAppointments.length, icon: Clock, color: 'bg-yellow-100 text-yellow-700' },
-    { name: 'Cette semaine', value: weekAppointments.length, icon: TrendingUp, color: 'bg-green-100 text-green-700' },
-    { name: 'Total à venir', value: upcomingAppointments.length, icon: Users, color: 'bg-secondary text-secondary-foreground' },
+    { name: 'En attente', value: pendingAppointments.length, icon: Clock, color: 'bg-amber-100 text-amber-700' },
+    { name: 'Cette semaine', value: weekAppointments.length, icon: TrendingUp, color: 'bg-emerald-100 text-emerald-700' },
+    { name: 'Total à venir', value: upcomingAppointments.length, icon: Users, color: 'bg-slate-100 text-slate-700' },
+  ];
+
+  const filters: { key: FilterType; label: string }[] = [
+    { key: 'all', label: 'À venir' },
+    { key: 'today', label: "Aujourd'hui" },
+    { key: 'week', label: 'Semaine' },
+    { key: 'month', label: 'Mois' },
+    { key: 'pending', label: 'En attente' },
   ];
   
   return (
@@ -333,44 +389,45 @@ export default function Dashboard() {
           onMenuClick={() => setMobileMenuOpen(true)}
         />
         
-        <main className="p-4 lg:p-8">
+        <main className="p-4 lg:p-8 max-w-6xl">
           {/* Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
             {stats.map((stat) => (
-              <Card key={stat.name} variant="elevated" className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${stat.color}`}>
-                    <stat.icon className="w-5 h-5" />
+              <Card key={stat.name} variant="elevated" className="p-4 sm:p-5 rounded-2xl border-0 shadow-sm">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center ${stat.color}`}>
+                    <stat.icon className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground">{stat.name}</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-foreground">{stat.value}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground font-medium">{stat.name}</p>
                   </div>
                 </div>
               </Card>
             ))}
           </div>
 
-          {/* Header with filters and add button */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <h2 className="text-lg sm:text-xl font-semibold text-foreground">Planning</h2>
-              <p className="text-sm text-muted-foreground">
-                {filteredAppointments.length} réservation{filteredAppointments.length !== 1 ? 's' : ''}
-              </p>
+          {/* Header with filters */}
+          <div className="flex flex-col gap-4 mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground">Planning</h2>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {filteredAppointments.length} réservation{filteredAppointments.length !== 1 ? 's' : ''}
+                  {filter === 'month' && ` en ${format(currentMonth, 'MMMM yyyy', { locale: fr })}`}
+                </p>
+              </div>
+              <AddAppointmentDialog onAdd={handleAddAppointment} />
             </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="flex bg-secondary/50 rounded-lg p-1">
-                {[
-                  { key: 'all', label: 'Tout' },
-                  { key: 'today', label: "Aujourd'hui" },
-                  { key: 'week', label: 'Semaine' },
-                  { key: 'pending', label: 'En attente' },
-                ].map(({ key, label }) => (
+            
+            {/* Filter tabs */}
+            <div className="flex items-center gap-3 overflow-x-auto pb-1">
+              <div className="flex bg-muted/60 rounded-xl p-1 flex-shrink-0">
+                {filters.map(({ key, label }) => (
                   <button
                     key={key}
-                    onClick={() => setFilter(key as any)}
-                    className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                    onClick={() => setFilter(key)}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
                       filter === key 
                         ? 'bg-background text-foreground shadow-sm' 
                         : 'text-muted-foreground hover:text-foreground'
@@ -380,37 +437,79 @@ export default function Dashboard() {
                   </button>
                 ))}
               </div>
-              <AddAppointmentDialog onAdd={handleAddAppointment} />
+              
+              {/* Month navigation (visible when month filter is active) */}
+              {filter === 'month' && (
+                <div className="flex items-center gap-2 ml-auto">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-9 w-9 rounded-xl"
+                    onClick={() => setCurrentMonth(addMonths(currentMonth, -1))}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+                  <span className="text-sm font-medium min-w-[120px] text-center capitalize">
+                    {format(currentMonth, 'MMMM yyyy', { locale: fr })}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-9 w-9 rounded-xl"
+                    onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
           
-          {/* Appointments list */}
+          {/* Appointments list grouped by date */}
           {loading ? (
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-20 rounded-xl" />
+                <Skeleton key={i} className="h-24 rounded-2xl" />
               ))}
             </div>
           ) : filteredAppointments.length === 0 ? (
-            <Card variant="elevated" className="p-8 text-center">
-              <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="font-semibold text-foreground mb-2">Aucune réservation</h3>
-              <p className="text-sm text-muted-foreground mb-4">
+            <Card variant="elevated" className="p-10 text-center rounded-2xl border-0">
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-muted/60 flex items-center justify-center mb-4">
+                <Calendar className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <h3 className="font-semibold text-lg text-foreground mb-2">Aucune réservation</h3>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                 {filter === 'all' 
-                  ? "Ajoutez une réservation ou partagez votre lien client."
-                  : "Aucune réservation pour ce filtre."
+                  ? "Ajoutez une réservation manuellement ou partagez votre page pour recevoir des demandes."
+                  : "Aucune réservation pour cette période."
                 }
               </p>
             </Card>
           ) : (
-            <div className="space-y-2">
-              {filteredAppointments.map((appointment) => (
-                <AppointmentRow 
-                  key={appointment.id} 
-                  appointment={appointment} 
-                  onUpdateStatus={handleUpdateStatus}
-                />
-              ))}
+            <div className="space-y-6">
+              {sortedDates.map((dateStr) => {
+                const date = parseISO(dateStr);
+                let dateLabel = format(date, "EEEE d MMMM", { locale: fr });
+                if (isToday(date)) dateLabel = "Aujourd'hui";
+                if (isTomorrow(date)) dateLabel = "Demain";
+                
+                return (
+                  <div key={dateStr}>
+                    <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 px-1 capitalize">
+                      {dateLabel}
+                    </h3>
+                    <div className="space-y-2">
+                      {groupedAppointments[dateStr].map((appointment) => (
+                        <AppointmentRow 
+                          key={appointment.id} 
+                          appointment={appointment} 
+                          onUpdateStatus={handleUpdateStatus}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </main>
