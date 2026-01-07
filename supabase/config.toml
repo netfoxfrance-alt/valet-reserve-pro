@@ -5,6 +5,3 @@ verify_jwt = false
 
 [functions.complete-signup]
 verify_jwt = false
-
-[functions.admin-requests]
-verify_jwt = false
