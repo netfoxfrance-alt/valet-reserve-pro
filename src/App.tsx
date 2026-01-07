@@ -15,7 +15,7 @@ import DashboardSettings from "./pages/DashboardSettings";
 import DashboardRequests from "./pages/DashboardRequests";
 import DashboardStats from "./pages/DashboardStats";
 import DashboardMyPage from "./pages/DashboardMyPage";
-import Upgrade from "./pages/Upgrade";
+
 import CompleteSignup from "./pages/CompleteSignup";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -72,8 +72,6 @@ const App = () => (
                 <DashboardMyPage />
               </ProtectedRoute>
             } />
-            {/* Upgrade page - kept for re-subscription if needed */}
-            <Route path="/dashboard/upgrade" element={<Navigate to="/dashboard" replace />} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>
