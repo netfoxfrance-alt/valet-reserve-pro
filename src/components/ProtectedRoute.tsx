@@ -7,9 +7,9 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, loading, subscription, subscriptionLoading } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (loading || subscriptionLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="space-y-4 w-64">
@@ -23,11 +23,6 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (!user) {
     return <Navigate to="/auth" replace />;
-  }
-
-  // If user is not subscribed, redirect to upgrade page to start trial
-  if (!subscription.subscribed) {
-    return <Navigate to="/dashboard/upgrade" replace />;
   }
 
   return <>{children}</>;
