@@ -247,50 +247,46 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     <section className="mb-6 sm:mb-8">
       <Card variant="elevated" className="p-4 sm:p-6">
         <Tabs defaultValue="colors" className="w-full">
-          {/* Mobile: horizontal scroll with labels + fade indicator */}
-          <div className="relative mb-6">
-            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
-              <TabsList className="inline-flex sm:grid sm:grid-cols-9 gap-1 sm:gap-0 w-max sm:w-full bg-muted/50 p-1 rounded-lg">
-                <TabsTrigger value="colors" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
-                  <Palette className="w-4 h-4" />
-                  <span>Couleurs</span>
-                </TabsTrigger>
-                <TabsTrigger value="texts" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
-                  <Type className="w-4 h-4" />
-                  <span>Textes</span>
-                </TabsTrigger>
-                <TabsTrigger value="links" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
-                  <Link2 className="w-4 h-4" />
-                  <span>Liens</span>
-                </TabsTrigger>
-                <TabsTrigger value="social" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
-                  <Share2 className="w-4 h-4" />
-                  <span>Réseaux</span>
-                </TabsTrigger>
-                <TabsTrigger value="layout" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
-                  <Layout className="w-4 h-4" />
-                  <span>Affichage</span>
-                </TabsTrigger>
-                <TabsTrigger value="packs" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
-                  <Package className="w-4 h-4" />
-                  <span>Formules</span>
-                </TabsTrigger>
-                <TabsTrigger value="cover" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
-                  <Image className="w-4 h-4" />
-                  <span>Image</span>
-                </TabsTrigger>
-                <TabsTrigger value="gallery" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
-                  <ImagePlus className="w-4 h-4" />
-                  <span>Galerie</span>
-                </TabsTrigger>
-                <TabsTrigger value="seo" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-1.5 px-3 py-2 sm:py-1.5 text-xs whitespace-nowrap">
-                  <Search className="w-4 h-4" />
-                  <span>SEO</span>
-                </TabsTrigger>
-              </TabsList>
-            </div>
-            {/* Fade indicator to show scrollable content */}
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-card to-transparent pointer-events-none sm:hidden" />
+          {/* Mobile: 2-row grid, Desktop: single row */}
+          <div className="mb-6">
+            <TabsList className="grid grid-cols-5 sm:grid-cols-9 gap-1 w-full bg-muted/50 p-1.5 rounded-xl h-auto">
+              <TabsTrigger value="colors" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                <Palette className="w-4 h-4" />
+                <span>Couleurs</span>
+              </TabsTrigger>
+              <TabsTrigger value="texts" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                <Type className="w-4 h-4" />
+                <span>Textes</span>
+              </TabsTrigger>
+              <TabsTrigger value="links" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                <Link2 className="w-4 h-4" />
+                <span>Liens</span>
+              </TabsTrigger>
+              <TabsTrigger value="social" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                <Share2 className="w-4 h-4" />
+                <span>Réseaux</span>
+              </TabsTrigger>
+              <TabsTrigger value="layout" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                <Layout className="w-4 h-4" />
+                <span>Affichage</span>
+              </TabsTrigger>
+              <TabsTrigger value="packs" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                <Package className="w-4 h-4" />
+                <span>Formules</span>
+              </TabsTrigger>
+              <TabsTrigger value="cover" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                <Image className="w-4 h-4" />
+                <span>Image</span>
+              </TabsTrigger>
+              <TabsTrigger value="gallery" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                <ImagePlus className="w-4 h-4" />
+                <span>Galerie</span>
+              </TabsTrigger>
+              <TabsTrigger value="seo" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                <Search className="w-4 h-4" />
+                <span>SEO</span>
+              </TabsTrigger>
+            </TabsList>
           </div>
 
           {/* Colors Tab */}
