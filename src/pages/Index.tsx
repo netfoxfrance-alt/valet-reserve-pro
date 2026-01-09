@@ -622,34 +622,36 @@ export default function Index() {
                 <div className="flex-1 p-3 sm:p-6">
                   {/* Ma Page Tab */}
                   {dashboardTab === 'mypage' && (
-                    <>
-                      {/* Tabs */}
-                      <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6 text-xs sm:text-sm border-b border-border/40 pb-3 overflow-x-auto">
-                        <span className="text-muted-foreground whitespace-nowrap">Infos</span>
-                        <span className="text-foreground font-medium border-b-2 border-foreground pb-3 -mb-3 whitespace-nowrap">Style</span>
-                        <span className="text-muted-foreground whitespace-nowrap">Sections</span>
-                        <span className="text-muted-foreground whitespace-nowrap hidden sm:block">Images</span>
-                        <div className="ml-auto flex items-center gap-2 flex-shrink-0">
-                          <span className="text-green-500 text-[10px] sm:text-xs flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                    <div className="h-full flex flex-col">
+                      {/* Header with tabs and actions */}
+                      <div className="flex items-center justify-between mb-4 sm:mb-6 border-b border-border/40 pb-3">
+                        <div className="flex items-center gap-3 sm:gap-5 text-xs sm:text-sm overflow-x-auto">
+                          <span className="text-muted-foreground whitespace-nowrap cursor-pointer hover:text-foreground transition-colors">Infos</span>
+                          <span className="text-foreground font-medium border-b-2 border-foreground pb-3 -mb-3 whitespace-nowrap">Style</span>
+                          <span className="text-muted-foreground whitespace-nowrap cursor-pointer hover:text-foreground transition-colors">Sections</span>
+                        </div>
+                        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                          <span className="text-emerald-500 text-[10px] sm:text-xs flex items-center gap-1.5 font-medium">
+                            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                             Sync
                           </span>
-                          <button className="bg-foreground text-background px-2 sm:px-4 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-medium">
+                          <button className="bg-foreground text-background px-3 sm:px-5 py-1.5 sm:py-2 rounded-lg text-[10px] sm:text-xs font-medium shadow-sm hover:opacity-90 transition-opacity">
                             Publier
                           </button>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                        {/* Customization Options */}
-                        <div className="space-y-3 sm:space-y-4">
+                      {/* Main content grid */}
+                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6">
+                        {/* Left: Customization controls */}
+                        <div className="lg:col-span-2 space-y-3 sm:space-y-4">
                           {/* Color Picker */}
-                          <div className="bg-secondary/40 rounded-xl p-3 sm:p-4">
-                            <p className="text-xs sm:text-sm font-medium text-foreground mb-2 sm:mb-3">Couleur principale</p>
-                            <div className="flex gap-1.5 sm:gap-2 items-center flex-wrap">
+                          <div className="bg-secondary/50 rounded-xl p-3 sm:p-4 border border-border/30">
+                            <p className="text-xs sm:text-sm font-medium text-foreground mb-3">Couleur principale</p>
+                            <div className="flex gap-2 items-center flex-wrap">
                               {[
                                 { color: 'bg-zinc-900', active: false },
-                                { color: 'bg-white border border-zinc-200', active: true },
+                                { color: 'bg-white border-2 border-zinc-200', active: true },
                                 { color: 'bg-red-500', active: false },
                                 { color: 'bg-emerald-500', active: false },
                                 { color: 'bg-blue-500', active: false },
@@ -657,132 +659,146 @@ export default function Index() {
                               ].map((c, i) => (
                                 <div 
                                   key={i}
-                                  className={`w-6 h-6 sm:w-7 sm:h-7 ${c.color} rounded-full cursor-pointer ${c.active ? 'ring-2 ring-offset-2 ring-primary' : ''}`}
+                                  className={`w-8 h-8 sm:w-9 sm:h-9 ${c.color} rounded-full cursor-pointer transition-all hover:scale-110 ${c.active ? 'ring-2 ring-offset-2 ring-offset-background ring-foreground scale-110' : ''}`}
                                 />
                               ))}
-                              <div className="w-6 h-6 sm:w-7 sm:h-7 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 rounded-full cursor-pointer flex items-center justify-center">
-                                <span className="text-white text-[10px] sm:text-xs font-bold">+</span>
+                              <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 rounded-full cursor-pointer flex items-center justify-center hover:scale-110 transition-all">
+                                <span className="text-white text-xs font-bold">+</span>
                               </div>
                             </div>
                           </div>
 
                           {/* Theme Toggle */}
-                          <div className="bg-secondary/40 rounded-xl p-3 sm:p-4">
-                            <p className="text-xs sm:text-sm font-medium text-foreground mb-2 sm:mb-3">Thème</p>
-                            <div className="flex gap-2">
-                              <button className="flex-1 bg-secondary/60 text-muted-foreground px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm">
+                          <div className="bg-secondary/50 rounded-xl p-3 sm:p-4 border border-border/30">
+                            <p className="text-xs sm:text-sm font-medium text-foreground mb-3">Thème</p>
+                            <div className="flex gap-2 bg-secondary/50 p-1 rounded-lg">
+                              <button className="flex-1 text-muted-foreground px-4 py-2 rounded-md text-xs sm:text-sm transition-all hover:text-foreground">
                                 Clair
                               </button>
-                              <button className="flex-1 bg-foreground text-background px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium shadow-sm">
+                              <button className="flex-1 bg-foreground text-background px-4 py-2 rounded-md text-xs sm:text-sm font-medium shadow-sm">
                                 Sombre
                               </button>
                             </div>
                           </div>
 
-                          {/* Button Style */}
-                          <div className="bg-secondary/40 rounded-xl p-3 sm:p-4">
-                            <p className="text-xs sm:text-sm font-medium text-foreground mb-2 sm:mb-3">Bouton d'action</p>
-                            <button className="w-full bg-primary text-primary-foreground py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium">
+                          {/* Action Button Preview */}
+                          <div className="bg-secondary/50 rounded-xl p-3 sm:p-4 border border-border/30">
+                            <p className="text-xs sm:text-sm font-medium text-foreground mb-3">Bouton d'action</p>
+                            <button className="w-full bg-foreground text-background py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-medium shadow-sm hover:opacity-90 transition-opacity">
                               Réserver un créneau
                             </button>
                           </div>
                         </div>
 
-                        {/* Live Preview - Dark Premium Theme */}
-                        <div className="hidden md:flex flex-col">
+                        {/* Right: Live Preview */}
+                        <div className="lg:col-span-3 flex flex-col min-h-[300px] sm:min-h-[360px]">
                           <div className="flex items-center justify-between mb-3">
-                            <span className="text-xs text-muted-foreground">Aperçu en direct</span>
-                            <Eye className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-xs sm:text-sm font-medium text-foreground">Aperçu en direct</span>
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 bg-secondary/60 rounded-md flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
+                                <Phone className="w-3 h-3 text-muted-foreground" />
+                              </div>
+                              <Eye className="w-4 h-4 text-muted-foreground" />
+                            </div>
                           </div>
                           
-                          {/* Premium Dark Phone Preview */}
-                          <div className="flex-1 flex items-center justify-center">
-                            <div className="relative bg-zinc-800 rounded-[1.5rem] p-1.5 shadow-2xl">
-                              <div className="bg-zinc-950 rounded-[1.2rem] overflow-hidden w-[180px]">
-                                {/* Banner with overlay */}
-                                <div className="h-20 relative">
-                                  <img 
-                                    src={mockupBanner} 
-                                    alt="Preview" 
-                                    className="w-full h-full object-cover opacity-80"
-                                  />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/50 to-transparent" />
-                                  <div className="absolute -bottom-3 left-3">
-                                    <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border-2 border-zinc-950 shadow-lg">
-                                      <span className="text-zinc-900 font-bold text-[8px]">MP</span>
-                                    </div>
-                                  </div>
-                                  <div className="absolute top-2 right-2 flex gap-1">
-                                    <div className="w-5 h-5 bg-zinc-800/80 rounded-full flex items-center justify-center">
-                                      <Instagram className="w-2.5 h-2.5 text-zinc-300" />
-                                    </div>
-                                  </div>
-                                </div>
+                          {/* Premium Phone Preview Container */}
+                          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-secondary/40 to-secondary/20 rounded-xl p-4 sm:p-6">
+                            <div className="relative">
+                              {/* Phone Frame */}
+                              <div className="relative bg-zinc-800 rounded-[2rem] p-2 shadow-2xl shadow-black/30">
+                                {/* Dynamic Island */}
+                                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-16 h-5 bg-black rounded-full z-10" />
                                 
-                                <div className="p-3 pt-5">
-                                  {/* Header */}
-                                  <div className="flex items-center gap-1.5 mb-0.5">
-                                    <p className="text-[9px] font-bold text-white">Maison Propre</p>
-                                    <span className="text-[6px] bg-emerald-500/20 text-emerald-400 px-1 py-0.5 rounded-full">Ouvert</span>
-                                  </div>
-                                  <div className="flex items-center gap-1 mb-2">
-                                    <Star className="w-2 h-2 fill-amber-400 text-amber-400" />
-                                    <span className="text-[7px] text-white font-medium">4.8</span>
-                                    <span className="text-[7px] text-zinc-500">(89)</span>
+                                <div className="bg-zinc-950 rounded-[1.5rem] overflow-hidden w-[200px] sm:w-[220px]">
+                                  {/* Banner with overlay */}
+                                  <div className="h-24 sm:h-28 relative">
+                                    <img 
+                                      src={mockupBanner} 
+                                      alt="Preview" 
+                                      className="w-full h-full object-cover opacity-90"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent" />
+                                    <div className="absolute -bottom-4 left-4">
+                                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl flex items-center justify-center border-4 border-zinc-950 shadow-lg">
+                                        <span className="text-zinc-900 font-bold text-[10px] sm:text-xs">MP</span>
+                                      </div>
+                                    </div>
+                                    <div className="absolute top-3 right-3 flex gap-1.5">
+                                      <div className="w-6 h-6 bg-zinc-800/80 backdrop-blur-sm rounded-full flex items-center justify-center">
+                                        <Instagram className="w-3 h-3 text-zinc-300" />
+                                      </div>
+                                    </div>
                                   </div>
                                   
-                                  {/* Action buttons */}
-                                  <div className="flex gap-1 mb-2">
-                                    <button className="flex-1 flex items-center justify-center gap-0.5 bg-white text-zinc-900 rounded-md py-1 text-[7px] font-medium">
-                                      <Phone className="w-2 h-2" />
-                                      Appeler
-                                    </button>
-                                    <button className="flex-1 flex items-center justify-center gap-0.5 bg-zinc-800 text-zinc-300 rounded-md py-1 text-[7px]">
-                                      <MapPin className="w-2 h-2" />
-                                      Y aller
-                                    </button>
-                                  </div>
+                                  <div className="p-4 pt-6">
+                                    {/* Header */}
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <p className="text-[11px] sm:text-xs font-bold text-white">Maison Propre</p>
+                                      <span className="text-[7px] sm:text-[8px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full font-medium">Ouvert</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 mb-3">
+                                      <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                                      <span className="text-[9px] sm:text-[10px] text-white font-medium">4.8</span>
+                                      <span className="text-[8px] sm:text-[9px] text-zinc-500">(89 avis)</span>
+                                    </div>
+                                    
+                                    {/* Action buttons */}
+                                    <div className="flex gap-2 mb-3">
+                                      <button className="flex-1 flex items-center justify-center gap-1 bg-white text-zinc-900 rounded-lg py-1.5 text-[8px] sm:text-[9px] font-medium">
+                                        <Phone className="w-2.5 h-2.5" />
+                                        Appeler
+                                      </button>
+                                      <button className="flex-1 flex items-center justify-center gap-1 bg-zinc-800 text-zinc-300 rounded-lg py-1.5 text-[8px] sm:text-[9px]">
+                                        <MapPin className="w-2.5 h-2.5" />
+                                        Y aller
+                                      </button>
+                                    </div>
 
-                                  {/* Gallery preview */}
-                                  <div className="mb-2">
-                                    <p className="text-[6px] text-zinc-500 uppercase tracking-wider mb-1">Galerie</p>
-                                    <div className="flex gap-0.5">
-                                      <div className="w-10 h-8 bg-zinc-800 rounded overflow-hidden">
-                                        <img src={mockupBanner} alt="" className="w-full h-full object-cover opacity-70" />
-                                      </div>
-                                      <div className="w-10 h-8 bg-zinc-800 rounded overflow-hidden">
-                                        <img src={sofaBanner} alt="" className="w-full h-full object-cover opacity-70" />
-                                      </div>
-                                      <div className="w-10 h-8 bg-zinc-800 rounded flex items-center justify-center">
-                                        <span className="text-[7px] text-zinc-500">+4</span>
+                                    {/* Gallery preview */}
+                                    <div className="mb-3">
+                                      <p className="text-[7px] sm:text-[8px] text-zinc-500 uppercase tracking-wider mb-1.5 font-medium">Galerie</p>
+                                      <div className="flex gap-1">
+                                        <div className="w-12 h-10 bg-zinc-800 rounded-lg overflow-hidden">
+                                          <img src={mockupBanner} alt="" className="w-full h-full object-cover opacity-80" />
+                                        </div>
+                                        <div className="w-12 h-10 bg-zinc-800 rounded-lg overflow-hidden">
+                                          <img src={sofaBanner} alt="" className="w-full h-full object-cover opacity-80" />
+                                        </div>
+                                        <div className="w-12 h-10 bg-zinc-800 rounded-lg flex items-center justify-center">
+                                          <span className="text-[8px] sm:text-[9px] text-zinc-500 font-medium">+4</span>
+                                        </div>
                                       </div>
                                     </div>
+                                    
+                                    {/* Services */}
+                                    <div className="space-y-1.5 mb-3">
+                                      <div className="flex justify-between items-center bg-zinc-900/60 rounded-lg px-2.5 py-1.5">
+                                        <span className="text-[8px] sm:text-[9px] text-zinc-300">Ménage 2h</span>
+                                        <span className="text-[8px] sm:text-[9px] font-bold text-white">60€</span>
+                                      </div>
+                                      <div className="flex justify-between items-center bg-zinc-900/60 rounded-lg px-2.5 py-1.5">
+                                        <span className="text-[8px] sm:text-[9px] text-zinc-300">Grand ménage</span>
+                                        <span className="text-[8px] sm:text-[9px] font-bold text-white">120€</span>
+                                      </div>
+                                    </div>
+                                    
+                                    {/* CTA */}
+                                    <button className="w-full bg-white text-zinc-900 py-2 rounded-xl text-[9px] sm:text-[10px] font-semibold flex items-center justify-center gap-1.5 shadow-lg shadow-white/10">
+                                      <Calendar className="w-3 h-3" />
+                                      Prendre rendez-vous
+                                    </button>
                                   </div>
-                                  
-                                  {/* Services */}
-                                  <div className="space-y-1 mb-2">
-                                    <div className="flex justify-between items-center bg-zinc-900/50 rounded px-1.5 py-1">
-                                      <span className="text-[7px] text-zinc-300">Ménage 2h</span>
-                                      <span className="text-[7px] font-bold text-white">60€</span>
-                                    </div>
-                                    <div className="flex justify-between items-center bg-zinc-900/50 rounded px-1.5 py-1">
-                                      <span className="text-[7px] text-zinc-300">Grand ménage</span>
-                                      <span className="text-[7px] font-bold text-white">120€</span>
-                                    </div>
-                                  </div>
-                                  
-                                  {/* CTA */}
-                                  <button className="w-full bg-white text-zinc-900 py-1.5 rounded-lg text-[8px] font-semibold flex items-center justify-center gap-1">
-                                    <Calendar className="w-2.5 h-2.5" />
-                                    Prendre rendez-vous
-                                  </button>
                                 </div>
                               </div>
+                              
+                              {/* Decorative glow */}
+                              <div className="absolute -inset-8 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 rounded-full blur-2xl -z-10 opacity-60" />
                             </div>
                           </div>
                         </div>
                       </div>
-                    </>
+                    </div>
                   )}
 
                   {/* Réservations Tab */}
