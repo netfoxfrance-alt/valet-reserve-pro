@@ -224,9 +224,9 @@ export function BlocksEditor({
   ];
 
   const renderStyleSelector = (block: PageBlock) => (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
       <Label className="text-xs text-muted-foreground">Style :</Label>
-      <div className="flex gap-1.5">
+      <div className="flex gap-1.5 flex-wrap">
         {INFO_STYLES.map((style) => (
           <button
             key={style.value}
@@ -745,7 +745,7 @@ export function BlocksEditor({
 
       {/* Add Element Dialog */}
       <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-        <DialogContent className="max-w-md max-h-[85vh] flex flex-col">
+        <DialogContent className="max-w-md max-h-[85vh] flex flex-col" aria-describedby={undefined}>
           <DialogHeader className="flex-shrink-0">
             <DialogTitle>Ajouter un élément</DialogTitle>
           </DialogHeader>
