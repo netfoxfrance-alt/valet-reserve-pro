@@ -93,7 +93,17 @@ const INDIVIDUAL_LINK_OPTIONS = [
 // Categories for the add dialog
 const ELEMENT_CATEGORIES = [
   {
+    title: 'Informations',
+    description: 'Vos coordonnées essentielles',
+    items: [
+      { type: 'phone' as BlockType, label: 'Téléphone', description: 'Votre numéro', icon: Phone, multiple: false },
+      { type: 'address' as BlockType, label: 'Adresse', description: 'Votre localisation', icon: MapPin, multiple: false },
+      { type: 'hours' as BlockType, label: 'Horaires', description: "Vos horaires d'ouverture", icon: Clock, multiple: false },
+    ],
+  },
+  {
     title: 'Contenu',
+    description: 'Enrichissez votre page',
     items: [
       { type: 'gallery' as BlockType, label: 'Images', description: 'Galerie, réalisations, avant/après', icon: ImageIcon, multiple: true },
       { type: 'text_block' as BlockType, label: 'Texte', description: 'Bloc de texte personnalisé', icon: Type, multiple: true },
@@ -101,17 +111,16 @@ const ELEMENT_CATEGORIES = [
   },
   {
     title: 'Liens',
+    description: 'Vos réseaux et ressources',
     items: [
       { type: 'links' as BlockType, label: 'Ajouter des liens', description: 'Réseaux sociaux, boutique...', icon: Link2, multiple: false, hasSubmenu: true },
     ],
   },
   {
     title: 'Contact',
+    description: 'Facilitez les échanges',
     items: [
-      { type: 'contact' as BlockType, label: 'Formulaire', description: 'Pour être contacté', icon: Mail, multiple: false },
-      { type: 'phone' as BlockType, label: 'Téléphone', description: 'Votre numéro', icon: Phone, multiple: false },
-      { type: 'address' as BlockType, label: 'Adresse', description: 'Votre localisation', icon: MapPin, multiple: false },
-      { type: 'hours' as BlockType, label: 'Horaires', description: "Vos horaires d'ouverture", icon: Clock, multiple: false },
+      { type: 'contact' as BlockType, label: 'Formulaire de contact', description: 'Pour être contacté', icon: Mail, multiple: false },
     ],
   },
 ];
@@ -703,15 +712,21 @@ export function BlocksEditor({
             <DialogTitle>Ajouter un élément</DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-6 mt-4">
+          <div className="space-y-5 mt-4">
             {!linksSubmenuOpen ? (
               // Main menu
               <>
-                {ELEMENT_CATEGORIES.map((category) => (
+                {ELEMENT_CATEGORIES.map((category, idx) => (
                   <div key={category.title}>
-                    <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3 block">
-                      {category.title}
-                    </Label>
+                    {idx > 0 && <div className="border-t mb-4" />}
+                    <div className="mb-3">
+                      <Label className="text-sm font-semibold text-foreground">
+                        {category.title}
+                      </Label>
+                      {'description' in category && (
+                        <p className="text-xs text-muted-foreground mt-0.5">{category.description}</p>
+                      )}
+                    </div>
                     <div className="grid gap-2">
                       {category.items.map((item) => {
                         const available = isBlockAvailable(item.type, item.multiple);
@@ -733,11 +748,14 @@ export function BlocksEditor({
                               "flex items-center gap-3 p-3 rounded-xl border text-left transition-all",
                               available 
                                 ? "hover:border-primary hover:bg-primary/5 cursor-pointer" 
-                                : "opacity-50 cursor-not-allowed"
+                                : "opacity-50 cursor-not-allowed bg-muted/30"
                             )}
                           >
-                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                              <item.icon className="w-5 h-5 text-primary" />
+                            <div className={cn(
+                              "w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0",
+                              available ? "bg-primary/10" : "bg-muted"
+                            )}>
+                              <item.icon className={cn("w-5 h-5", available ? "text-primary" : "text-muted-foreground")} />
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="font-medium text-sm">{item.label}</p>
