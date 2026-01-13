@@ -654,14 +654,16 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
         {/* Header */}
         <div className={cn("text-center", customization.cover_url ? "-mt-16 relative z-10 mb-6" : "pt-8 mb-6")}>
           {center.logo_url && (
-            <div className="mx-auto mb-4 max-w-[160px] max-h-[80px] flex items-center justify-center">
+            <div 
+              className={cn(
+                "mx-auto mb-4 inline-flex items-center justify-center rounded-2xl overflow-hidden",
+                customization.cover_url && "bg-white p-2 shadow-xl ring-1 ring-black/5"
+              )}
+            >
               <img
                 src={center.logo_url}
                 alt={center.name}
-                className="max-w-full max-h-full w-auto h-auto object-contain rounded-xl shadow-lg"
-                style={{
-                  border: customization.cover_url ? '3px solid white' : undefined,
-                }}
+                className="max-w-[140px] max-h-[70px] w-auto h-auto object-contain"
               />
             </div>
           )}
