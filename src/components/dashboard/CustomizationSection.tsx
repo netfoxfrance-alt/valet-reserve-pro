@@ -383,21 +383,22 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 </div>
               </div>
             </div>
+
+            {/* Dark Mode Toggle */}
+            <div className="flex items-center justify-between py-3 px-4 rounded-lg border bg-secondary/30">
+              <div>
+                <p className="font-medium text-foreground">Mode sombre</p>
+                <p className="text-sm text-muted-foreground">Utilise un thème sombre pour la page</p>
+              </div>
+              <Switch
+                checked={local.layout.dark_mode}
+                onCheckedChange={(checked) => updateLayout({ dark_mode: checked })}
+              />
+            </div>
           </TabsContent>
 
           {/* Texts Tab */}
           <TabsContent value="texts" className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="welcome-message">Phrase d'accueil</Label>
-              <Input
-                id="welcome-message"
-                value={local.texts.welcome_message || ''}
-                onChange={(e) => updateTexts({ welcome_message: e.target.value })}
-                placeholder="Ex: Réservez votre rendez-vous en quelques clics"
-              />
-              <p className="text-xs text-muted-foreground">Affiché en haut de votre page de réservation</p>
-            </div>
-
             <div className="space-y-2">
               <Label htmlFor="tagline">Slogan / Sous-titre</Label>
               <Input
@@ -419,6 +420,17 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 rows={4}
               />
               <p className="text-xs text-muted-foreground">Texte affiché sur votre page publique pour présenter votre activité</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="welcome-message">Phrase page réservation</Label>
+              <Input
+                id="welcome-message"
+                value={local.texts.welcome_message || ''}
+                onChange={(e) => updateTexts({ welcome_message: e.target.value })}
+                placeholder="Ex: Réservez votre rendez-vous en quelques clics"
+              />
+              <p className="text-xs text-muted-foreground">Affiché en haut de la page de réservation (après sélection d'une formule)</p>
             </div>
 
             <div className="space-y-2">
@@ -680,16 +692,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               />
             </div>
 
-            <div className="flex items-center justify-between py-2 border-t pt-4">
-              <div>
-                <p className="font-medium text-foreground">Mode sombre</p>
-                <p className="text-sm text-muted-foreground">Utilise un thème sombre pour la page</p>
-              </div>
-              <Switch
-                checked={local.layout.dark_mode}
-                onCheckedChange={(checked) => updateLayout({ dark_mode: checked })}
-              />
-            </div>
           </TabsContent>
 
           {/* Packs Tab */}
