@@ -88,14 +88,10 @@ export function ConfirmationView({ pack, date, time, clientName, centerName = "C
         </div>
       </Card>
       
-      <p className="text-sm text-muted-foreground mb-6">
+      <p className="text-sm text-muted-foreground">
         Un email de confirmation vous a été envoyé.<br />
         Vous pouvez modifier ou annuler jusqu'à 24h avant.
       </p>
-      
-      <Button variant="secondary" size="lg">
-        Ajouter au calendrier
-      </Button>
     </div>
   );
 }
