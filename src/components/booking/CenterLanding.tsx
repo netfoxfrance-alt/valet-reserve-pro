@@ -1,16 +1,16 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { MapPin, Phone, Clock, ArrowRight, Car, User, MessageSquare, Send, CheckCircle, Instagram, Mail, Link2, ShoppingBag, BookOpen, Video, Calendar, FileText, ExternalLink, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MapPin, Phone, Clock, User, MessageSquare, Send, CheckCircle, Instagram, Mail, Link2, ShoppingBag, BookOpen, Video, Calendar, FileText, ExternalLink, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Center, Pack } from '@/hooks/useCenter';
-import { CenterCustomization, CustomLink, defaultCustomization, PageSection, defaultSections } from '@/types/customization';
+import { CenterCustomization, CustomLink, defaultCustomization, PageBlock, defaultBlocks, migrateToBlocks } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface CenterLandingProps {
   center: Center;
@@ -50,34 +50,16 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
       gallery_images: c.gallery_images ?? [],
       visible_pack_ids: c.visible_pack_ids ?? [],
       custom_links: c.custom_links ?? [],
-      sections: c.sections ?? defaultSections,
+      blocks: migrateToBlocks(c),
     };
   }, [center.customization]);
 
-  // Migrate legacy gallery_images to first gallery section if needed
-  const migratedSections = useMemo(() => {
-    const sections = [...customization.sections];
-    const legacyImages = customization.gallery_images || [];
-    
-    // Find the first gallery section
-    const gallerySection = sections.find(s => s.type === 'gallery');
-    
-    // If there are legacy images and the gallery section has no images, migrate
-    if (legacyImages.length > 0 && gallerySection && (!gallerySection.images || gallerySection.images.length === 0)) {
-      return sections.map(s => 
-        s.id === gallerySection.id ? { ...s, images: legacyImages } : s
-      );
-    }
-    
-    return sections;
-  }, [customization.sections, customization.gallery_images]);
-
-  // Get sorted, enabled sections
-  const activeSections = useMemo(() => {
-    return [...migratedSections]
-      .filter(s => s.enabled)
+  // Get sorted, enabled blocks
+  const activeBlocks = useMemo(() => {
+    return [...customization.blocks]
+      .filter(b => b.enabled)
       .sort((a, b) => a.order - b.order);
-  }, [migratedSections]);
+  }, [customization.blocks]);
 
   // Get text colors based on dark mode
   const textColors = useMemo(() => ({
@@ -149,8 +131,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     );
   };
 
-  // Formules section renderer
-  const renderFormules = (section: PageSection) => {
+  // Formules block renderer
+  const renderFormules = (block: PageBlock) => {
     if (!isPro || packs.length === 0) return null;
 
     const visiblePacks = customization.visible_pack_ids?.length > 0
@@ -160,12 +142,12 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     if (visiblePacks.length === 0) return null;
 
     return (
-      <div className="mb-10">
+      <div key={block.id} className="mb-10">
         <h2 
           className="text-xl font-semibold mb-5 tracking-tight"
           style={{ color: textColors.primary }}
         >
-          {section.title}
+          {block.title}
         </h2>
         <div className="grid grid-cols-2 gap-3">
           {visiblePacks.slice(0, 6).map((pack, index) => {
@@ -217,9 +199,9 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     );
   };
 
-  // Gallery section renderer - now uses section.images
-  const renderGallery = (section: PageSection) => {
-    const images = section.images || [];
+  // Gallery block renderer
+  const renderGallery = (block: PageBlock) => {
+    const images = block.images || [];
     if (images.length === 0) return null;
 
     const openLightbox = (index: number) => {
@@ -229,12 +211,12 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     };
 
     return (
-      <div className="mb-10">
+      <div key={block.id} className="mb-10">
         <h2 
           className="text-xl font-semibold mb-5 tracking-tight"
           style={{ color: textColors.primary }}
         >
-          {section.title}
+          {block.title}
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           {images.slice(0, 8).map((url, index) => (
@@ -249,7 +231,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
             >
               <img
                 src={url}
-                alt={`${section.title} ${index + 1}`}
+                alt={`${block.title} ${index + 1}`}
                 className="w-full h-full object-cover"
               />
             </button>
@@ -259,38 +241,52 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     );
   };
 
-  // About section renderer - now uses section.content
-  const renderAbout = (section: PageSection) => {
-    const content = section.content || '';
-    if (!content) return null;
+  // Text block renderer
+  const renderTextBlock = (block: PageBlock) => {
+    if (!block.content) return null;
 
     return (
-      <div className="mb-10">
+      <div key={block.id} className="mb-10">
         <h2 
           className="text-xl font-semibold mb-4 tracking-tight"
           style={{ color: textColors.primary }}
         >
-          {section.title}
+          {block.title}
         </h2>
         <p 
           className="text-sm sm:text-base leading-relaxed whitespace-pre-line"
           style={{ color: textColors.secondary }}
         >
-          {content}
+          {block.content}
         </p>
       </div>
     );
   };
 
-  // Contact section renderer
-  const renderContact = (section: PageSection) => {
+  // Links block renderer
+  const renderLinks = (block: PageBlock) => {
     return (
-      <div className="mb-10">
+      <div key={block.id} className="mb-10">
         <h2 
           className="text-xl font-semibold mb-5 tracking-tight"
           style={{ color: textColors.primary }}
         >
-          {section.title}
+          {block.title}
+        </h2>
+        {renderCustomLinks()}
+      </div>
+    );
+  };
+
+  // Contact block renderer
+  const renderContact = (block: PageBlock) => {
+    return (
+      <div key={block.id} className="mb-10">
+        <h2 
+          className="text-xl font-semibold mb-5 tracking-tight"
+          style={{ color: textColors.primary }}
+        >
+          {block.title}
         </h2>
         
         {contactSent ? (
@@ -407,24 +403,102 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     );
   };
 
-  // Text block section renderer
-  const renderTextBlock = (section: PageSection) => {
-    if (!section.content) return null;
-
+  // Hours block renderer
+  const renderHours = (block: PageBlock) => {
     return (
-      <div className="mb-10">
+      <div key={block.id} className="mb-10">
         <h2 
           className="text-xl font-semibold mb-4 tracking-tight"
           style={{ color: textColors.primary }}
         >
-          {section.title}
+          {block.title}
         </h2>
-        <p 
-          className="text-sm sm:text-base leading-relaxed whitespace-pre-line"
-          style={{ color: textColors.secondary }}
+        <Card 
+          className="p-4 rounded-2xl"
+          style={{
+            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
+            borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
+          }}
         >
-          {section.content}
-        </p>
+          <div className="flex items-center gap-3">
+            <div 
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: customization.colors.primary + '15' }}
+            >
+              <Clock className="w-5 h-5" style={{ color: customization.colors.primary }} />
+            </div>
+            <div>
+              <p className="font-medium" style={{ color: textColors.primary }}>Lun - Sam</p>
+              <p className="text-sm" style={{ color: textColors.secondary }}>9h00 - 19h00</p>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  };
+
+  // Address block renderer
+  const renderAddress = (block: PageBlock) => {
+    if (!center.address) return null;
+    
+    return (
+      <div key={block.id} className="mb-10">
+        <h2 
+          className="text-xl font-semibold mb-4 tracking-tight"
+          style={{ color: textColors.primary }}
+        >
+          {block.title}
+        </h2>
+        <Card 
+          className="p-4 rounded-2xl"
+          style={{
+            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
+            borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <div 
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: customization.colors.primary + '15' }}
+            >
+              <MapPin className="w-5 h-5" style={{ color: customization.colors.primary }} />
+            </div>
+            <p className="font-medium" style={{ color: textColors.primary }}>{center.address}</p>
+          </div>
+        </Card>
+      </div>
+    );
+  };
+
+  // Phone block renderer
+  const renderPhone = (block: PageBlock) => {
+    if (!center.phone) return null;
+    
+    return (
+      <div key={block.id} className="mb-10">
+        <h2 
+          className="text-xl font-semibold mb-4 tracking-tight"
+          style={{ color: textColors.primary }}
+        >
+          {block.title}
+        </h2>
+        <Card 
+          className="p-4 rounded-2xl"
+          style={{
+            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
+            borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
+          }}
+        >
+          <a href={`tel:${center.phone}`} className="flex items-center gap-3">
+            <div 
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: customization.colors.primary + '15' }}
+            >
+              <Phone className="w-5 h-5" style={{ color: customization.colors.primary }} />
+            </div>
+            <p className="font-medium" style={{ color: textColors.primary }}>{center.phone}</p>
+          </a>
+        </Card>
       </div>
     );
   };
@@ -456,325 +530,190 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     }
   };
 
-  // Render section by type
-  const renderSection = (section: PageSection, index: number) => {
-    const sectionContent = (() => {
-      switch (section.type) {
-        case 'formules':
-          return renderFormules(section);
-        case 'gallery':
-          return renderGallery(section);
-        case 'about':
-          return renderAbout(section);
-        case 'contact':
-          return renderContact(section);
-        case 'text_block':
-          return renderTextBlock(section);
-        default:
-          return null;
-      }
-    })();
-
-    if (!sectionContent) return null;
-
-    // Insert custom links at appropriate positions
-    const linksPosition = customization.layout.links_position;
-    const showLinksAfter = 
-      (linksPosition === 'after_formules' && section.type === 'formules') ||
-      (linksPosition === 'after_gallery' && section.type === 'gallery');
-
-    return (
-      <div key={section.id}>
-        {sectionContent}
-        {showLinksAfter && renderCustomLinks()}
-      </div>
-    );
+  // Render block by type
+  const renderBlock = (block: PageBlock) => {
+    switch (block.type) {
+      case 'formules':
+        return renderFormules(block);
+      case 'gallery':
+        return renderGallery(block);
+      case 'text_block':
+        return renderTextBlock(block);
+      case 'links':
+        return renderLinks(block);
+      case 'contact':
+        return renderContact(block);
+      case 'hours':
+        return renderHours(block);
+      case 'address':
+        return renderAddress(block);
+      case 'phone':
+        return renderPhone(block);
+      default:
+        return null;
+    }
   };
+
+  // Social icons
+  const socialLinks = [
+    { key: 'instagram', url: customization.social.instagram ? `https://instagram.com/${customization.social.instagram}` : null, icon: Instagram },
+    { key: 'tiktok', url: customization.social.tiktok ? `https://tiktok.com/@${customization.social.tiktok}` : null, icon: () => (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+      </svg>
+    )},
+    { key: 'facebook', url: customization.social.facebook ? `https://facebook.com/${customization.social.facebook}` : null, icon: () => (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+      </svg>
+    )},
+    { key: 'email', url: customization.social.email ? `mailto:${customization.social.email}` : null, icon: Mail },
+  ].filter(s => s.url);
 
   return (
     <div 
-      className={`min-h-screen flex flex-col ${customization.layout.dark_mode ? 'dark' : ''}`}
-      style={{
+      className="min-h-screen transition-colors duration-300"
+      style={{ 
         ...customStyles,
-        backgroundColor: customization.layout.dark_mode ? customization.colors.secondary : '#fafafa',
+        backgroundColor: customization.layout.dark_mode ? '#0f0f0f' : '#fafafa',
       }}
     >
-      {/* Cover Image with elegant gradient overlay */}
-      <div 
-        className="relative w-full h-44 sm:h-56"
-        style={{
-          background: customization.cover_url 
-            ? `url(${customization.cover_url}) center/cover no-repeat`
-            : `linear-gradient(135deg, ${customization.colors.primary}, ${customization.colors.secondary})`,
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20" />
-      </div>
+      <div className="max-w-lg mx-auto px-4 pb-8">
+        {/* Cover Image */}
+        {customization.cover_url && (
+          <div className="relative -mx-4 mb-6">
+            <img
+              src={customization.cover_url}
+              alt="Cover"
+              className="w-full h-48 sm:h-56 object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          </div>
+        )}
 
-      {/* Main Content */}
-      <main className={`flex-1 px-4 pb-28 ${customization.layout.dark_mode ? 'bg-gray-900' : 'bg-[#fafafa]'}`}>
-        <div className="max-w-2xl mx-auto">
-          {/* Logo overlapping cover */}
-          <div className="relative -mt-14 mb-5">
-            {center.logo_url ? (
-              <img 
-                src={center.logo_url} 
-                alt={center.name} 
-                className="max-h-24 sm:max-h-28 max-w-[180px] sm:max-w-[220px] w-auto h-auto rounded-2xl object-contain border-4 shadow-xl bg-white"
-                style={{ 
-                  borderColor: customization.layout.dark_mode ? customization.colors.secondary : 'white',
-                }}
+        {/* Header */}
+        <div className={cn("text-center", customization.cover_url ? "-mt-16 relative z-10 mb-6" : "pt-8 mb-6")}>
+          {center.logo_url && (
+            <div className="w-20 h-20 mx-auto mb-4 rounded-2xl overflow-hidden border-4 border-white shadow-xl">
+              <img
+                src={center.logo_url}
+                alt={center.name}
+                className="w-full h-full object-cover"
               />
-            ) : (
-              <div 
-                className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl flex items-center justify-center border-4 shadow-xl"
-                style={{ 
-                  backgroundColor: customization.colors.primary,
-                  borderColor: customization.layout.dark_mode ? customization.colors.secondary : 'white',
-                }}
-              >
-                <Car className="w-12 h-12 text-white" />
-              </div>
-            )}
-          </div>
-
-          {/* Center Name + Badge */}
-          <div className="flex flex-wrap items-center gap-3 mb-2">
-            <h1 
-              className="text-2xl sm:text-3xl font-bold tracking-tight"
-              style={{ color: textColors.primary }}
-            >
-              {center.name}
-            </h1>
-            {isOpen ? (
-              <Badge 
-                className="border-0 font-medium"
-                style={{ backgroundColor: customization.colors.accent + '20', color: customization.colors.accent }}
-              >
-                Ouvert
-              </Badge>
-            ) : (
-              <Badge variant="secondary" className="font-medium">Fermé</Badge>
-            )}
-          </div>
-
-          {/* Tagline */}
+            </div>
+          )}
+          
+          <h1 
+            className="text-2xl font-bold tracking-tight mb-1"
+            style={{ color: textColors.primary }}
+          >
+            {center.name}
+          </h1>
+          
           {customization.texts.tagline && (
             <p 
-              className="mb-5 text-sm sm:text-base"
+              className="text-sm mb-4"
               style={{ color: textColors.secondary }}
             >
               {customization.texts.tagline}
             </p>
           )}
 
-          {/* Social Links */}
-          {(customization.social.instagram || customization.social.tiktok || customization.social.facebook || customization.social.email) && (
-            <div className="flex items-center gap-2 mb-7">
-              {customization.social.instagram && (
-                <a
-                  href={`https://instagram.com/${customization.social.instagram}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl transition-all duration-300 hover:scale-110 hover:shadow-md"
-                  style={{ 
-                    backgroundColor: customization.colors.primary + '15',
-                    color: customization.layout.dark_mode ? 'white' : customization.colors.primary 
-                  }}
-                >
-                  <Instagram className="w-5 h-5" />
-                </a>
-              )}
-              {customization.social.tiktok && (
-                <a
-                  href={`https://tiktok.com/@${customization.social.tiktok}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl transition-all duration-300 hover:scale-110 hover:shadow-md"
-                  style={{ 
-                    backgroundColor: customization.colors.primary + '15',
-                    color: customization.layout.dark_mode ? 'white' : customization.colors.primary 
-                  }}
-                >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                  </svg>
-                </a>
-              )}
-              {customization.social.facebook && (
-                <a
-                  href={`https://facebook.com/${customization.social.facebook}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl transition-all duration-300 hover:scale-110 hover:shadow-md"
-                  style={{ 
-                    backgroundColor: customization.colors.primary + '15',
-                    color: customization.layout.dark_mode ? 'white' : customization.colors.primary 
-                  }}
-                >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                  </svg>
-                </a>
-              )}
-              {customization.social.email && (
-                <a
-                  href={`mailto:${customization.social.email}`}
-                  className="p-2.5 rounded-xl transition-all duration-300 hover:scale-110 hover:shadow-md"
-                  style={{ 
-                    backgroundColor: customization.colors.primary + '15',
-                    color: customization.layout.dark_mode ? 'white' : customization.colors.primary 
-                  }}
-                >
-                  <Mail className="w-5 h-5" />
-                </a>
-              )}
-            </div>
-          )}
-
-          {/* Custom Links - Position: top */}
-          {customization.layout.links_position === 'top' && renderCustomLinks()}
-
-          {/* Info Cards Row */}
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3 mb-8 sm:mb-10">
-            {customization.layout.show_address && center.address && (
-              <Card 
-                className="p-4 flex items-center gap-3 sm:block sm:text-center rounded-2xl transition-all duration-300 hover:shadow-md"
-                style={{
-                  backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
-                  borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
-                }}
-              >
-                <MapPin className="w-5 h-5 flex-shrink-0 sm:mx-auto sm:mb-2" style={{ color: customization.colors.primary }} />
-                <p 
-                  className="text-sm truncate flex-1"
-                  style={{ color: textColors.primary }}
-                >
-                  {center.address}
-                </p>
-              </Card>
+          {/* Open Status */}
+          <div 
+            className={cn(
+              "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium",
+              isOpen ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-500"
             )}
-            {customization.layout.show_hours && (
-              <Card 
-                className="p-4 flex items-center gap-3 sm:block sm:text-center rounded-2xl transition-all duration-300 hover:shadow-md"
-                style={{
-                  backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
-                  borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
-                }}
-              >
-                <Clock className="w-5 h-5 flex-shrink-0 sm:mx-auto sm:mb-2" style={{ color: customization.colors.primary }} />
-                <p 
-                  className="text-sm"
-                  style={{ color: textColors.primary }}
-                >
-                  9h - 19h
-                </p>
-              </Card>
-            )}
-            {customization.layout.show_phone && center.phone && (
-              <Card 
-                className="p-4 flex items-center gap-3 sm:block sm:text-center rounded-2xl transition-all duration-300 hover:shadow-md"
-                style={{
-                  backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
-                  borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
-                }}
-              >
-                <Phone className="w-5 h-5 flex-shrink-0 sm:mx-auto sm:mb-2" style={{ color: customization.colors.primary }} />
-                <a 
-                  href={`tel:${center.phone}`}
-                  className="text-sm transition-colors flex-1 hover:underline"
-                  style={{ color: textColors.primary }}
-                >
-                  {center.phone}
-                </a>
-              </Card>
-            )}
+          >
+            <span className={cn("w-2 h-2 rounded-full", isOpen ? "bg-green-500" : "bg-red-500")} />
+            {isOpen ? 'Ouvert' : 'Fermé'}
           </div>
-
-          {/* Dynamic Sections */}
-          {activeSections.map((section, index) => renderSection(section, index))}
-
-          {/* Custom Links - Position: bottom (before footer) */}
-          {customization.layout.links_position === 'bottom' && renderCustomLinks()}
         </div>
-      </main>
 
-      {/* Gallery Lightbox - now uses dynamic lightboxImages */}
-      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="max-w-4xl w-full p-0 bg-black/95 border-none">
-          <div className="relative flex items-center justify-center min-h-[50vh] max-h-[90vh]">
-            <button 
-              onClick={() => setLightboxOpen(false)}
-              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-            >
-              <X className="w-6 h-6 text-white" />
-            </button>
-            
-            {lightboxImages.length > 1 && (
-              <>
-                <button 
-                  onClick={() => setLightboxIndex((prev) => prev === 0 ? lightboxImages.length - 1 : prev - 1)}
-                  className="absolute left-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-                >
-                  <ChevronLeft className="w-6 h-6 text-white" />
-                </button>
-                <button 
-                  onClick={() => setLightboxIndex((prev) => prev === lightboxImages.length - 1 ? 0 : prev + 1)}
-                  className="absolute right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-                >
-                  <ChevronRight className="w-6 h-6 text-white" />
-                </button>
-              </>
-            )}
-            
-            <img
-              src={lightboxImages[lightboxIndex] || ''}
-              alt={`Image ${lightboxIndex + 1}`}
-              className="max-w-full max-h-[85vh] object-contain"
-            />
-            
-            {lightboxImages.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm font-medium">
-                {lightboxIndex + 1} / {lightboxImages.length}
-              </div>
-            )}
+        {/* Social Icons */}
+        {socialLinks.length > 0 && (
+          <div className="flex justify-center gap-3 mb-6">
+            {socialLinks.map(({ key, url, icon: Icon }) => (
+              <a
+                key={key}
+                href={url!}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+                style={{
+                  backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                  color: textColors.secondary,
+                }}
+              >
+                <Icon />
+              </a>
+            ))}
           </div>
-        </DialogContent>
-      </Dialog>
+        )}
 
-      {/* Fixed CTA Button */}
-      <div 
-        className="fixed bottom-0 left-0 right-0 p-4 backdrop-blur-md border-t z-50"
-        style={{ 
-          backgroundColor: customization.layout.dark_mode ? 'rgba(17,24,39,0.9)' : 'rgba(255,255,255,0.9)',
-          borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
-        }}
-      >
-        <div className="max-w-2xl mx-auto">
-          <Button 
-            size="lg" 
+        {/* Main CTA */}
+        {hasPacks && isPro && (
+          <Button
             onClick={onStartBooking}
-            className="w-full rounded-2xl text-base font-medium py-6 text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.01]"
+            className="w-full h-14 text-lg font-semibold rounded-2xl mb-8 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
             style={{ backgroundColor: customization.colors.primary }}
           >
             {customization.texts.cta_button || 'Réserver'}
-            <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
+        )}
+
+        {/* Dynamic Blocks */}
+        {activeBlocks.map(block => renderBlock(block))}
+
+        {/* Footer */}
+        <div className="text-center pt-8 border-t" style={{ borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)' }}>
+          <p className="text-xs" style={{ color: textColors.secondary }}>
+            Propulsé par <span className="font-medium">CleaningPage</span>
+          </p>
         </div>
       </div>
 
-      {/* Footer */}
-      <footer 
-        className="pb-28 pt-6 px-4 text-center"
-        style={{ backgroundColor: customization.layout.dark_mode ? '#111827' : '#fafafa' }}
-      >
-        <p 
-          className="text-xs"
-          style={{ color: textColors.secondary }}
-        >
-          Propulsé par <span className="font-medium">CleaningPage</span>
-        </p>
-      </footer>
+      {/* Lightbox */}
+      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <DialogContent className="max-w-4xl p-0 bg-black border-none">
+          <div className="relative">
+            <img
+              src={lightboxImages[lightboxIndex]}
+              alt={`Image ${lightboxIndex + 1}`}
+              className="w-full h-auto max-h-[80vh] object-contain"
+            />
+            
+            <button
+              onClick={() => setLightboxOpen(false)}
+              className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {lightboxImages.length > 1 && (
+              <>
+                <button
+                  onClick={() => setLightboxIndex((lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length)}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => setLightboxIndex((lightboxIndex + 1) % lightboxImages.length)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </>
+            )}
+
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-black/50 text-white text-sm">
+              {lightboxIndex + 1} / {lightboxImages.length}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

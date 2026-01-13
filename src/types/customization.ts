@@ -5,14 +5,27 @@ export interface CustomLink {
   icon?: 'link' | 'shop' | 'book' | 'video' | 'calendar' | 'file';
 }
 
-export interface PageSection {
+// All block types that can be added to a page
+export type BlockType = 
+  | 'formules'      // Pack/tarifs display
+  | 'gallery'       // Image gallery (multiple allowed)
+  | 'text_block'    // Free text block (multiple allowed)
+  | 'links'         // Custom links
+  | 'contact'       // Contact form
+  | 'hours'         // Business hours
+  | 'address'       // Address display
+  | 'phone';        // Phone display
+
+export interface PageBlock {
   id: string;
-  type: 'formules' | 'gallery' | 'about' | 'contact' | 'text_block';
+  type: BlockType;
   title: string;
   enabled: boolean;
   order: number;
-  content?: string; // For text_block and about sections
-  images?: string[]; // For gallery sections - each gallery has its own images
+  // Content varies by type
+  content?: string;           // For text_block
+  images?: string[];          // For gallery
+  galleryType?: 'gallery' | 'realizations' | 'before_after';  // Subtype for gallery
 }
 
 export interface CenterCustomization {
@@ -29,11 +42,7 @@ export interface CenterCustomization {
     welcome_message: string;
   };
   layout: {
-    show_hours: boolean;
-    show_address: boolean;
-    show_phone: boolean;
     dark_mode: boolean;
-    links_position: 'top' | 'after_formules' | 'after_gallery' | 'bottom';
   };
   social: {
     instagram: string;
@@ -48,18 +57,33 @@ export interface CenterCustomization {
     city: string;
   };
   cover_url: string | null;
-  gallery_images: string[]; // Legacy - kept for backward compatibility, migrated to sections
+  gallery_images: string[]; // Legacy - kept for backward compatibility
   visible_pack_ids: string[];
   custom_links: CustomLink[];
-  sections: PageSection[];
+  blocks: PageBlock[];
 }
 
-// Default sections for new centers
+// For backward compatibility - convert old sections to blocks
+export interface PageSection {
+  id: string;
+  type: 'formules' | 'gallery' | 'about' | 'contact' | 'text_block';
+  title: string;
+  enabled: boolean;
+  order: number;
+  content?: string;
+  images?: string[];
+}
+
 export const defaultSections: PageSection[] = [
   { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
   { id: 'gallery', type: 'gallery', title: 'Nos réalisations', enabled: true, order: 2, images: [] },
   { id: 'about', type: 'about', title: 'À propos', enabled: true, order: 3, content: '' },
   { id: 'contact', type: 'contact', title: 'Nous contacter', enabled: true, order: 4 },
+];
+
+// Default blocks for new centers - start with formules only (minimal page)
+export const defaultBlocks: PageBlock[] = [
+  { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
 ];
 
 export const defaultCustomization: CenterCustomization = {
@@ -76,11 +100,7 @@ export const defaultCustomization: CenterCustomization = {
     welcome_message: '',
   },
   layout: {
-    show_hours: true,
-    show_address: true,
-    show_phone: true,
     dark_mode: false,
-    links_position: 'top',
   },
   social: {
     instagram: '',
@@ -98,5 +118,34 @@ export const defaultCustomization: CenterCustomization = {
   gallery_images: [],
   visible_pack_ids: [],
   custom_links: [],
-  sections: defaultSections,
+  blocks: defaultBlocks,
 };
+
+// Helper to migrate old sections to new blocks format
+export function migrateToBlocks(customization: any): PageBlock[] {
+  // If already has blocks, return them
+  if (customization.blocks && customization.blocks.length > 0) {
+    return customization.blocks;
+  }
+  
+  // If has old sections, migrate them
+  if (customization.sections && customization.sections.length > 0) {
+    return customization.sections.map((section: PageSection) => {
+      const block: PageBlock = {
+        id: section.id,
+        type: section.type === 'about' ? 'text_block' : section.type as BlockType,
+        title: section.title,
+        enabled: section.enabled,
+        order: section.order,
+      };
+      
+      if (section.content) block.content = section.content;
+      if (section.images) block.images = section.images;
+      
+      return block;
+    });
+  }
+  
+  // Otherwise, return defaults
+  return defaultBlocks;
+}

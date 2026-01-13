@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
-import { CenterCustomization, defaultCustomization } from '@/types/customization';
+import { CenterCustomization, defaultCustomization, migrateToBlocks } from '@/types/customization';
 
 export interface Center {
   id: string;
@@ -35,7 +35,7 @@ const parseCustomization = (data: unknown): CenterCustomization => {
     gallery_images: parsed.gallery_images ?? [],
     visible_pack_ids: parsed.visible_pack_ids ?? [],
     custom_links: parsed.custom_links ?? [],
-    sections: parsed.sections ?? defaultCustomization.sections,
+    blocks: migrateToBlocks(parsed),
   };
 };
 
