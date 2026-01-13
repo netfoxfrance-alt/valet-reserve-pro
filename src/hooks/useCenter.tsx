@@ -11,7 +11,7 @@ export interface Center {
   name: string;
   address: string | null;
   phone: string | null;
-  email: string | null;
+  email?: string | null; // Optional - not returned in public queries for security
   logo_url: string | null;
   welcome_message: string | null;
   ai_enabled: boolean;
@@ -142,10 +142,10 @@ export function useCenterBySlug(slug: string) {
       setLoading(true);
       setError(null);
 
-      // Fetch center
+      // Fetch center - only select public-safe columns (excludes email, stripe_customer_id, stripe_subscription_id)
       const { data: centerData, error: centerError } = await supabase
         .from('centers')
-        .select('*')
+        .select('id, owner_id, slug, name, address, phone, logo_url, customization, welcome_message, ai_enabled, subscription_plan, created_at, updated_at')
         .eq('slug', slug)
         .maybeSingle();
 

@@ -65,14 +65,14 @@ export type Database = {
             foreignKeyName: "appointments_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
-            referencedRelation: "admin_centers_view"
+            referencedRelation: "centers"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "appointments_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
-            referencedRelation: "centers"
+            referencedRelation: "public_centers_view"
             referencedColumns: ["id"]
           },
           {
@@ -117,14 +117,14 @@ export type Database = {
             foreignKeyName: "availability_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
-            referencedRelation: "admin_centers_view"
+            referencedRelation: "centers"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "availability_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
-            referencedRelation: "centers"
+            referencedRelation: "public_centers_view"
             referencedColumns: ["id"]
           },
         ]
@@ -222,14 +222,14 @@ export type Database = {
             foreignKeyName: "contact_requests_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
-            referencedRelation: "admin_centers_view"
+            referencedRelation: "centers"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "contact_requests_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
-            referencedRelation: "centers"
+            referencedRelation: "public_centers_view"
             referencedColumns: ["id"]
           },
         ]
@@ -270,14 +270,14 @@ export type Database = {
             foreignKeyName: "custom_requests_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
-            referencedRelation: "admin_centers_view"
+            referencedRelation: "centers"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "custom_requests_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
-            referencedRelation: "centers"
+            referencedRelation: "public_centers_view"
             referencedColumns: ["id"]
           },
         ]
@@ -330,14 +330,14 @@ export type Database = {
             foreignKeyName: "packs_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
-            referencedRelation: "admin_centers_view"
+            referencedRelation: "centers"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "packs_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
-            referencedRelation: "centers"
+            referencedRelation: "public_centers_view"
             referencedColumns: ["id"]
           },
         ]
@@ -376,36 +376,77 @@ export type Database = {
           "Stripe ID": string | null
           Tel: string | null
         }
+        Relationships: []
+      }
+      public_centers_view: {
+        Row: {
+          address: string | null
+          ai_enabled: boolean | null
+          created_at: string | null
+          customization: Json | null
+          id: string | null
+          logo_url: string | null
+          name: string | null
+          phone: string | null
+          slug: string | null
+          subscription_plan:
+            | Database["public"]["Enums"]["subscription_plan"]
+            | null
+          updated_at: string | null
+          welcome_message: string | null
+        }
         Insert: {
-          Abo?: Database["public"]["Enums"]["subscription_plan"] | null
-          Business?: string | null
-          Email?: string | null
-          "Fin Abo"?: string | null
+          address?: string | null
+          ai_enabled?: boolean | null
+          created_at?: string | null
+          customization?: Json | null
           id?: string | null
-          Inscription?: string | null
-          Lien?: string | null
-          owner_id?: string | null
-          RDV?: never
-          "Stripe ID"?: string | null
-          Tel?: string | null
+          logo_url?: string | null
+          name?: string | null
+          phone?: string | null
+          slug?: string | null
+          subscription_plan?:
+            | Database["public"]["Enums"]["subscription_plan"]
+            | null
+          updated_at?: string | null
+          welcome_message?: string | null
         }
         Update: {
-          Abo?: Database["public"]["Enums"]["subscription_plan"] | null
-          Business?: string | null
-          Email?: string | null
-          "Fin Abo"?: string | null
+          address?: string | null
+          ai_enabled?: boolean | null
+          created_at?: string | null
+          customization?: Json | null
           id?: string | null
-          Inscription?: string | null
-          Lien?: string | null
-          owner_id?: string | null
-          RDV?: never
-          "Stripe ID"?: string | null
-          Tel?: string | null
+          logo_url?: string | null
+          name?: string | null
+          phone?: string | null
+          slug?: string | null
+          subscription_plan?:
+            | Database["public"]["Enums"]["subscription_plan"]
+            | null
+          updated_at?: string | null
+          welcome_message?: string | null
         }
         Relationships: []
       }
     }
     Functions: {
+      get_admin_centers_data: {
+        Args: never
+        Returns: {
+          Abo: Database["public"]["Enums"]["subscription_plan"]
+          Business: string
+          Email: string
+          "Fin Abo": string
+          id: string
+          Inscription: string
+          Lien: string
+          owner_id: string
+          RDV: number
+          "Stripe ID": string
+          Tel: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
