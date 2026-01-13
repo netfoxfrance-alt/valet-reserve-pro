@@ -6,10 +6,11 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CenterCustomization, CustomLink, defaultCustomization } from '@/types/customization';
+import { CenterCustomization, CustomLink, defaultCustomization, PageSection, defaultSections } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Type, Layout, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail, ImagePlus, X, Search, Globe, MapPin, Tag, Package, Link2, Plus, ShoppingBag, BookOpen, Video, Calendar, FileText, ChevronUp, ChevronDown } from 'lucide-react';
+import { Palette, Type, Layout, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail, ImagePlus, X, Search, Globe, MapPin, Tag, Package, Link2, Plus, ShoppingBag, BookOpen, Video, Calendar, FileText, ChevronUp, ChevronDown, Layers } from 'lucide-react';
+import { SectionsEditor } from './SectionsEditor';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
@@ -112,12 +113,10 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
   };
 
   const applyPreset = (preset: typeof COLOR_PRESETS[0]) => {
-    updateLocal({
-      colors: {
-        primary: preset.primary,
-        secondary: preset.secondary,
-        accent: preset.accent,
-      },
+    updateColors({
+      primary: preset.primary,
+      secondary: preset.secondary,
+      accent: preset.accent,
     });
   };
 
@@ -266,9 +265,9 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 <Share2 className="w-4 h-4" />
                 <span>Réseaux</span>
               </TabsTrigger>
-              <TabsTrigger value="layout" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Layout className="w-4 h-4" />
-                <span>Affichage</span>
+              <TabsTrigger value="sections" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                <Layers className="w-4 h-4" />
+                <span>Sections</span>
               </TabsTrigger>
               <TabsTrigger value="packs" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Package className="w-4 h-4" />
@@ -380,6 +379,50 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                     className="flex-1"
                     placeholder="#10b981"
                   />
+                </div>
+              </div>
+            </div>
+
+            {/* Text Colors Section */}
+            <div className="pt-4 border-t">
+              <Label className="text-sm font-medium mb-3 block">Couleurs de texte</Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="text-primary-color">Texte principal (titres)</Label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      id="text-primary-color"
+                      value={local.colors.text_primary || '#111827'}
+                      onChange={(e) => updateColors({ text_primary: e.target.value })}
+                      className="w-12 h-10 rounded border border-border cursor-pointer"
+                    />
+                    <Input
+                      value={local.colors.text_primary || '#111827'}
+                      onChange={(e) => updateColors({ text_primary: e.target.value })}
+                      className="flex-1"
+                      placeholder="#111827"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="text-secondary-color">Texte secondaire</Label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      id="text-secondary-color"
+                      value={local.colors.text_secondary || '#6b7280'}
+                      onChange={(e) => updateColors({ text_secondary: e.target.value })}
+                      className="w-12 h-10 rounded border border-border cursor-pointer"
+                    />
+                    <Input
+                      value={local.colors.text_secondary || '#6b7280'}
+                      onChange={(e) => updateColors({ text_secondary: e.target.value })}
+                      className="flex-1"
+                      placeholder="#6b7280"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -646,52 +689,46 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             </p>
           </TabsContent>
 
-          {/* Layout Tab */}
-          <TabsContent value="layout" className="space-y-4">
-            <div className="flex items-center justify-between py-2">
-              <div>
-                <p className="font-medium text-foreground">Afficher les horaires</p>
-                <p className="text-sm text-muted-foreground">Montre les heures d'ouverture</p>
-              </div>
-              <Switch
-                checked={local.layout.show_hours}
-                onCheckedChange={(checked) => updateLayout({ show_hours: checked })}
-              />
-            </div>
+          {/* Sections Tab */}
+          <TabsContent value="sections" className="space-y-4">
+            <SectionsEditor
+              sections={local.sections || defaultSections}
+              onUpdate={(sections) => updateLocal({ sections })}
+            />
 
-            <div className="flex items-center justify-between py-2">
-              <div>
-                <p className="font-medium text-foreground">Afficher l'adresse</p>
-                <p className="text-sm text-muted-foreground">Montre l'adresse du centre</p>
+            {/* Quick toggles for info cards */}
+            <div className="pt-4 border-t space-y-3">
+              <Label className="text-sm font-medium">Cartes d'informations</Label>
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <p className="font-medium text-foreground text-sm">Afficher les horaires</p>
+                </div>
+                <Switch
+                  checked={local.layout.show_hours}
+                  onCheckedChange={(checked) => updateLayout({ show_hours: checked })}
+                />
               </div>
-              <Switch
-                checked={local.layout.show_address}
-                onCheckedChange={(checked) => updateLayout({ show_address: checked })}
-              />
-            </div>
 
-            <div className="flex items-center justify-between py-2">
-              <div>
-                <p className="font-medium text-foreground">Afficher le téléphone</p>
-                <p className="text-sm text-muted-foreground">Montre le numéro de téléphone</p>
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <p className="font-medium text-foreground text-sm">Afficher l'adresse</p>
+                </div>
+                <Switch
+                  checked={local.layout.show_address}
+                  onCheckedChange={(checked) => updateLayout({ show_address: checked })}
+                />
               </div>
-              <Switch
-                checked={local.layout.show_phone}
-                onCheckedChange={(checked) => updateLayout({ show_phone: checked })}
-              />
-            </div>
 
-            <div className="flex items-center justify-between py-2 border-t pt-4">
-              <div>
-                <p className="font-medium text-foreground">Formulaire de contact</p>
-                <p className="text-sm text-muted-foreground">Permet aux visiteurs de vous envoyer une demande</p>
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <p className="font-medium text-foreground text-sm">Afficher le téléphone</p>
+                </div>
+                <Switch
+                  checked={local.layout.show_phone}
+                  onCheckedChange={(checked) => updateLayout({ show_phone: checked })}
+                />
               </div>
-              <Switch
-                checked={local.layout.show_contact_form}
-                onCheckedChange={(checked) => updateLayout({ show_contact_form: checked })}
-              />
             </div>
-
           </TabsContent>
 
           {/* Packs Tab */}

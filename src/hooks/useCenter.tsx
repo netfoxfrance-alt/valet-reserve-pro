@@ -35,6 +35,7 @@ const parseCustomization = (data: unknown): CenterCustomization => {
     gallery_images: parsed.gallery_images ?? [],
     visible_pack_ids: parsed.visible_pack_ids ?? [],
     custom_links: parsed.custom_links ?? [],
+    sections: parsed.sections ?? defaultCustomization.sections,
   };
 };
 
