@@ -427,7 +427,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     );
   };
 
-  // Combined info section (phone, address, hours in one elegant block)
+  // Combined info section (phone, address, hours)
   const renderInfoSection = () => {
     const hasPhone = activeBlocks.some(b => b.type === 'phone') && center.phone;
     const hasAddress = activeBlocks.some(b => b.type === 'address') && center.address;
@@ -435,6 +435,96 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
 
     if (!hasPhone && !hasAddress && !hasHours) return null;
 
+    const infoStyle = customization.layout.info_style || 'card';
+
+    // Style: Inline (minimal - just icons and text in a row)
+    if (infoStyle === 'inline') {
+      return (
+        <div className="flex flex-wrap justify-center gap-4 mb-6 text-sm">
+          {hasPhone && (
+            <a 
+              href={`tel:${center.phone}`}
+              className="flex items-center gap-1.5 transition-opacity hover:opacity-70"
+              style={{ color: textColors.secondary }}
+            >
+              <Phone className="w-4 h-4" style={{ color: customization.colors.primary }} />
+              <span>{center.phone}</span>
+            </a>
+          )}
+          {hasAddress && (
+            <a 
+              href={`https://maps.google.com/?q=${encodeURIComponent(center.address || '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 transition-opacity hover:opacity-70"
+              style={{ color: textColors.secondary }}
+            >
+              <MapPin className="w-4 h-4" style={{ color: customization.colors.primary }} />
+              <span className="max-w-[150px] truncate">{center.address}</span>
+            </a>
+          )}
+          {hasHours && (
+            <div 
+              className="flex items-center gap-1.5"
+              style={{ color: textColors.secondary }}
+            >
+              <Clock className="w-4 h-4" style={{ color: customization.colors.primary }} />
+              <span>9h - 19h</span>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Style: Compact (small pills/badges)
+    if (infoStyle === 'compact') {
+      return (
+        <div className="flex flex-wrap justify-center gap-2 mb-6">
+          {hasPhone && (
+            <a 
+              href={`tel:${center.phone}`}
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm transition-all hover:scale-105"
+              style={{ 
+                backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+                color: textColors.primary,
+              }}
+            >
+              <Phone className="w-3.5 h-3.5" style={{ color: customization.colors.primary }} />
+              {center.phone}
+            </a>
+          )}
+          {hasAddress && (
+            <a 
+              href={`https://maps.google.com/?q=${encodeURIComponent(center.address || '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm transition-all hover:scale-105"
+              style={{ 
+                backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+                color: textColors.primary,
+              }}
+            >
+              <MapPin className="w-3.5 h-3.5" style={{ color: customization.colors.primary }} />
+              <span className="max-w-[120px] truncate">{center.address}</span>
+            </a>
+          )}
+          {hasHours && (
+            <div 
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm"
+              style={{ 
+                backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+                color: textColors.primary,
+              }}
+            >
+              <Clock className="w-3.5 h-3.5" style={{ color: customization.colors.primary }} />
+              Lun-Sam 9h-19h
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Style: Card (default - grouped card)
     return (
       <div className="mb-8">
         <div 
