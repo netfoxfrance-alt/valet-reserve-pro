@@ -4,23 +4,22 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { PageBlock, BlockType, CustomLink } from '@/types/customization';
+import { Card } from '@/components/ui/card';
+import { PageBlock, BlockType, CustomLink, CenterCustomization } from '@/types/customization';
 import { 
   ChevronUp, ChevronDown, Plus, Trash2, GripVertical, Package, ImageIcon, 
   Mail, Type, Upload, X, Loader2, Link2, Clock, MapPin, Phone,
-  ShoppingBag, BookOpen, Video, Calendar, FileText
+  ShoppingBag, BookOpen, Video, Calendar, FileText, Instagram
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
-} from '@/components/ui/dropdown-menu';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
@@ -32,8 +31,10 @@ import {
 interface BlocksEditorProps {
   blocks: PageBlock[];
   customLinks: CustomLink[];
+  social: CenterCustomization['social'];
   onUpdateBlocks: (blocks: PageBlock[]) => void;
   onUpdateLinks: (links: CustomLink[]) => void;
+  onUpdateSocial: (social: CenterCustomization['social']) => void;
   userId: string;
   centerAddress?: string;
   centerPhone?: string;
@@ -61,17 +62,6 @@ const BLOCK_LABELS: Record<BlockType, string> = {
   phone: 'Téléphone',
 };
 
-const BLOCK_DESCRIPTIONS: Record<BlockType, string> = {
-  formules: 'Affiche vos tarifs et formules',
-  gallery: 'Galerie, réalisations, avant/après...',
-  text_block: 'Bloc de texte personnalisé',
-  links: 'Liens vers boutique, réseaux...',
-  contact: 'Formulaire pour être contacté',
-  hours: "Vos horaires d'ouverture",
-  address: 'Votre adresse',
-  phone: 'Votre numéro de téléphone',
-};
-
 const GALLERY_TYPES = [
   { value: 'gallery', label: 'Galerie' },
   { value: 'realizations', label: 'Réalisations' },
@@ -87,27 +77,67 @@ const LINK_ICONS = [
   { value: 'file', label: 'Document', icon: FileText },
 ];
 
+// Categories for the add dialog
+const ELEMENT_CATEGORIES = [
+  {
+    title: 'Contenu',
+    items: [
+      { type: 'gallery' as BlockType, label: 'Images', description: 'Galerie, réalisations, avant/après', icon: ImageIcon, multiple: true },
+      { type: 'text_block' as BlockType, label: 'Texte', description: 'Bloc de texte personnalisé', icon: Type, multiple: true },
+    ],
+  },
+  {
+    title: 'Liens',
+    items: [
+      { type: 'links' as BlockType, label: 'Liens personnalisés', description: 'Boutique, ebook, portfolio...', icon: Link2, multiple: false },
+    ],
+  },
+  {
+    title: 'Contact',
+    items: [
+      { type: 'contact' as BlockType, label: 'Formulaire', description: 'Pour être contacté', icon: Mail, multiple: false },
+      { type: 'phone' as BlockType, label: 'Téléphone', description: 'Votre numéro', icon: Phone, multiple: false },
+      { type: 'address' as BlockType, label: 'Adresse', description: 'Votre localisation', icon: MapPin, multiple: false },
+      { type: 'hours' as BlockType, label: 'Horaires', description: "Vos horaires d'ouverture", icon: Clock, multiple: false },
+    ],
+  },
+];
+
 export function BlocksEditor({ 
   blocks, 
   customLinks,
+  social,
   onUpdateBlocks, 
   onUpdateLinks,
+  onUpdateSocial,
   userId,
   centerAddress,
   centerPhone,
 }: BlocksEditorProps) {
   const { toast } = useToast();
   const [uploadingFor, setUploadingFor] = useState<string | null>(null);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
   
   const sortedBlocks = [...blocks].sort((a, b) => a.order - b.order);
 
   // Check which singular blocks already exist
-  const hasFormules = blocks.some(b => b.type === 'formules');
   const hasContact = blocks.some(b => b.type === 'contact');
   const hasHours = blocks.some(b => b.type === 'hours');
   const hasAddress = blocks.some(b => b.type === 'address');
   const hasPhone = blocks.some(b => b.type === 'phone');
   const hasLinks = blocks.some(b => b.type === 'links');
+
+  const isBlockAvailable = (type: BlockType, multiple: boolean) => {
+    if (multiple) return true;
+    switch (type) {
+      case 'contact': return !hasContact;
+      case 'hours': return !hasHours;
+      case 'address': return !hasAddress;
+      case 'phone': return !hasPhone;
+      case 'links': return !hasLinks;
+      default: return true;
+    }
+  };
 
   const moveBlock = (id: string, direction: 'up' | 'down') => {
     const index = sortedBlocks.findIndex(b => b.id === id);
@@ -156,7 +186,6 @@ export function BlocksEditor({
       order: maxOrder + 1,
     };
     
-    // Set defaults based on type
     if (type === 'gallery') {
       newBlock.images = [];
       newBlock.galleryType = 'gallery';
@@ -165,6 +194,8 @@ export function BlocksEditor({
     }
     
     onUpdateBlocks([...blocks, newBlock]);
+    setAddDialogOpen(false);
+    toast({ title: `${BLOCK_LABELS[type]} ajouté` });
   };
 
   const removeBlock = (id: string) => {
@@ -173,15 +204,12 @@ export function BlocksEditor({
   };
 
   const canDelete = (block: PageBlock) => {
-    // Can always delete galleries and text blocks
     if (block.type === 'gallery' || block.type === 'text_block') return true;
-    // Cannot delete formules (it's the base)
     if (block.type === 'formules') return false;
-    // Other types can be deleted
     return true;
   };
 
-  // Image upload for gallery blocks
+  // Image upload
   const handleImageUpload = async (blockId: string, event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
@@ -201,7 +229,6 @@ export function BlocksEditor({
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        
         if (!file.type.startsWith('image/')) continue;
         if (file.size > 5 * 1024 * 1024) {
           toast({ title: 'Image trop lourde (max 5 Mo)', variant: 'destructive' });
@@ -255,7 +282,7 @@ export function BlocksEditor({
     }
   };
 
-  // Custom Links management
+  // Custom Links
   const addLink = () => {
     const newLink: CustomLink = {
       id: crypto.randomUUID(),
@@ -363,64 +390,115 @@ export function BlocksEditor({
 
       case 'links':
         return (
-          <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-3">
-            {customLinks.map((link) => (
-              <div key={link.id} className="flex gap-2 items-start">
-                <Select
-                  value={link.icon || 'link'}
-                  onValueChange={(v) => updateLink(link.id, { icon: v as CustomLink['icon'] })}
-                >
-                  <SelectTrigger className="w-24 h-9 flex-shrink-0">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {LINK_ICONS.map(opt => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        <div className="flex items-center gap-2">
-                          <opt.icon className="w-3 h-3" />
-                          <span className="text-xs">{opt.label}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="flex-1 space-y-1">
+          <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-4">
+            {/* Social Networks Section */}
+            <div className="space-y-3">
+              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Réseaux sociaux</Label>
+              <div className="grid gap-2">
+                <div className="flex gap-2 items-center">
+                  <Instagram className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                   <Input
-                    value={link.title}
-                    onChange={(e) => updateLink(link.id, { title: e.target.value })}
-                    placeholder="Titre"
-                    className="h-9 text-sm"
-                  />
-                  <Input
-                    value={link.url}
-                    onChange={(e) => updateLink(link.id, { url: e.target.value })}
-                    placeholder="https://..."
+                    value={social.instagram || ''}
+                    onChange={(e) => onUpdateSocial({ ...social, instagram: e.target.value })}
+                    placeholder="Instagram (sans @)"
                     className="h-9 text-sm"
                   />
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeLink(link.id)}
-                  className="h-9 w-9 p-0 text-destructive hover:text-destructive flex-shrink-0"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                <div className="flex gap-2 items-center">
+                  <svg className="w-4 h-4 text-muted-foreground flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                  </svg>
+                  <Input
+                    value={social.tiktok || ''}
+                    onChange={(e) => onUpdateSocial({ ...social, tiktok: e.target.value })}
+                    placeholder="TikTok (sans @)"
+                    className="h-9 text-sm"
+                  />
+                </div>
+                <div className="flex gap-2 items-center">
+                  <svg className="w-4 h-4 text-muted-foreground flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                  <Input
+                    value={social.facebook || ''}
+                    onChange={(e) => onUpdateSocial({ ...social, facebook: e.target.value })}
+                    placeholder="Page Facebook"
+                    className="h-9 text-sm"
+                  />
+                </div>
+                <div className="flex gap-2 items-center">
+                  <Mail className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <Input
+                    value={social.email || ''}
+                    onChange={(e) => onUpdateSocial({ ...social, email: e.target.value })}
+                    placeholder="Email de contact"
+                    className="h-9 text-sm"
+                  />
+                </div>
               </div>
-            ))}
-            
-            {customLinks.length < 6 && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={addLink}
-                className="w-full gap-1.5"
-              >
-                <Plus className="w-4 h-4" />
-                Ajouter un lien
-              </Button>
-            )}
-            <p className="text-xs text-muted-foreground">Max 6 liens</p>
+            </div>
+
+            {/* Custom Links Section */}
+            <div className="space-y-3 pt-2 border-t">
+              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Liens personnalisés</Label>
+              {customLinks.map((link) => (
+                <div key={link.id} className="flex gap-2 items-start">
+                  <Select
+                    value={link.icon || 'link'}
+                    onValueChange={(v) => updateLink(link.id, { icon: v as CustomLink['icon'] })}
+                  >
+                    <SelectTrigger className="w-24 h-9 flex-shrink-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {LINK_ICONS.map(opt => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          <div className="flex items-center gap-2">
+                            <opt.icon className="w-3 h-3" />
+                            <span className="text-xs">{opt.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div className="flex-1 space-y-1">
+                    <Input
+                      value={link.title}
+                      onChange={(e) => updateLink(link.id, { title: e.target.value })}
+                      placeholder="Titre"
+                      className="h-9 text-sm"
+                    />
+                    <Input
+                      value={link.url}
+                      onChange={(e) => updateLink(link.id, { url: e.target.value })}
+                      placeholder="https://..."
+                      className="h-9 text-sm"
+                    />
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeLink(link.id)}
+                    className="h-9 w-9 p-0 text-destructive hover:text-destructive flex-shrink-0"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+              
+              {customLinks.length < 6 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={addLink}
+                  className="w-full gap-1.5"
+                >
+                  <Plus className="w-4 h-4" />
+                  Ajouter un lien
+                </Button>
+              )}
+              <p className="text-xs text-muted-foreground">Max 6 liens personnalisés</p>
+            </div>
           </div>
         );
 
@@ -457,78 +535,25 @@ export function BlocksEditor({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <Label className="text-base font-medium">Éléments de la page</Label>
-          <p className="text-sm text-muted-foreground">Ajoutez et ordonnez vos blocs</p>
+    <div className="space-y-6">
+      {/* Big Add Button - Linktree style */}
+      <button
+        onClick={() => setAddDialogOpen(true)}
+        className="w-full py-8 border-2 border-dashed border-primary/30 rounded-2xl flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-all duration-300 group"
+      >
+        <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+          <Plus className="w-7 h-7 text-primary" />
         </div>
-        
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <Plus className="w-4 h-4" />
-              Ajouter
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>Contenu</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => addBlock('gallery')} className="gap-2">
-              <ImageIcon className="w-4 h-4" />
-              Images
-              <span className="ml-auto text-xs text-muted-foreground">∞</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => addBlock('text_block')} className="gap-2">
-              <Type className="w-4 h-4" />
-              Texte
-              <span className="ml-auto text-xs text-muted-foreground">∞</span>
-            </DropdownMenuItem>
-            
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel>Informations</DropdownMenuLabel>
-            
-            {!hasLinks && (
-              <DropdownMenuItem onClick={() => addBlock('links')} className="gap-2">
-                <Link2 className="w-4 h-4" />
-                Liens
-              </DropdownMenuItem>
-            )}
-            {!hasContact && (
-              <DropdownMenuItem onClick={() => addBlock('contact')} className="gap-2">
-                <Mail className="w-4 h-4" />
-                Formulaire de contact
-              </DropdownMenuItem>
-            )}
-            {!hasHours && (
-              <DropdownMenuItem onClick={() => addBlock('hours')} className="gap-2">
-                <Clock className="w-4 h-4" />
-                Horaires
-              </DropdownMenuItem>
-            )}
-            {!hasAddress && (
-              <DropdownMenuItem onClick={() => addBlock('address')} className="gap-2">
-                <MapPin className="w-4 h-4" />
-                Adresse
-              </DropdownMenuItem>
-            )}
-            {!hasPhone && (
-              <DropdownMenuItem onClick={() => addBlock('phone')} className="gap-2">
-                <Phone className="w-4 h-4" />
-                Téléphone
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+        <div className="text-center">
+          <p className="font-semibold text-foreground">Ajouter un élément</p>
+          <p className="text-sm text-muted-foreground">Images, texte, liens, contact...</p>
+        </div>
+      </button>
 
-      {sortedBlocks.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed rounded-xl">
-          <Package className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
-          <p className="text-muted-foreground">Aucun élément ajouté</p>
-          <p className="text-sm text-muted-foreground">Cliquez sur "Ajouter" pour commencer</p>
-        </div>
-      ) : (
+      {/* Current Elements */}
+      {sortedBlocks.length > 0 && (
         <div className="space-y-3">
+          <Label className="text-sm font-medium text-muted-foreground">Vos éléments</Label>
           {sortedBlocks.map((block, index) => {
             const Icon = BLOCK_ICONS[block.type];
             
@@ -560,9 +585,6 @@ export function BlocksEditor({
                       className="h-8 text-sm font-medium border-0 bg-transparent p-0 focus-visible:ring-0"
                       placeholder="Titre du bloc"
                     />
-                    <p className="text-xs text-muted-foreground truncate">
-                      {BLOCK_DESCRIPTIONS[block.type]}
-                    </p>
                   </div>
 
                   {/* Move buttons */}
@@ -587,14 +609,12 @@ export function BlocksEditor({
                     </Button>
                   </div>
 
-                  {/* Toggle */}
                   <Switch
                     checked={block.enabled}
                     onCheckedChange={() => toggleBlock(block.id)}
                     className="flex-shrink-0"
                   />
 
-                  {/* Delete */}
                   {canDelete(block) && (
                     <Button
                       variant="ghost"
@@ -607,13 +627,63 @@ export function BlocksEditor({
                   )}
                 </div>
 
-                {/* Block-specific content */}
                 {renderBlockContent(block)}
               </div>
             );
           })}
         </div>
       )}
+
+      {/* Add Element Dialog */}
+      <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Ajouter un élément</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 mt-4">
+            {ELEMENT_CATEGORIES.map((category) => (
+              <div key={category.title}>
+                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3 block">
+                  {category.title}
+                </Label>
+                <div className="grid gap-2">
+                  {category.items.map((item) => {
+                    const available = isBlockAvailable(item.type, item.multiple);
+                    return (
+                      <button
+                        key={item.type}
+                        onClick={() => available && addBlock(item.type)}
+                        disabled={!available}
+                        className={cn(
+                          "flex items-center gap-3 p-3 rounded-xl border text-left transition-all",
+                          available 
+                            ? "hover:border-primary hover:bg-primary/5 cursor-pointer" 
+                            : "opacity-50 cursor-not-allowed"
+                        )}
+                      >
+                        <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
+                          <item.icon className="w-5 h-5 text-muted-foreground" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm">{item.label}</p>
+                          <p className="text-xs text-muted-foreground">{item.description}</p>
+                        </div>
+                        {!available && (
+                          <span className="text-xs text-muted-foreground">Déjà ajouté</span>
+                        )}
+                        {item.multiple && (
+                          <span className="text-xs text-muted-foreground">∞</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
