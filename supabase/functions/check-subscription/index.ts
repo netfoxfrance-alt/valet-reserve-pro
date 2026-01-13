@@ -24,33 +24,48 @@ serve(async (req) => {
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
     logStep("Stripe key verified");
 
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      throw new Error("No authorization header provided");
+    }
+    logStep("Authorization header found");
+
+    // Create client with user's auth header for getClaims
+    const supabaseAuth = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    // Verify JWT and get claims
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      throw new Error(`Authentication error: ${claimsError?.message || "Invalid token"}`);
+    }
+
+    const userId = claimsData.claims.sub as string;
+    const userEmail = claimsData.claims.email as string;
+    if (!userId || !userEmail) throw new Error("User not authenticated or email not available");
+    logStep("User authenticated", { userId, email: userEmail });
+
+    // Create service role client for database operations
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
       { auth: { persistSession: false } }
     );
 
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header provided");
-    logStep("Authorization header found");
-
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
-    const user = userData.user;
-    if (!user?.email) throw new Error("User not authenticated or email not available");
-    logStep("User authenticated", { userId: user.id, email: user.email });
-
     // Admin bypass - always return subscribed for admin emails
     const adminEmails = ["melvin.puyoo@gmail.com"];
-    if (adminEmails.includes(user.email.toLowerCase())) {
+    if (adminEmails.includes(userEmail.toLowerCase())) {
       logStep("Admin user detected, bypassing Stripe check");
       
       // Ensure admin is marked as pro in database
       await supabaseClient
         .from('centers')
         .update({ subscription_plan: 'pro' })
-        .eq('owner_id', user.id);
+        .eq('owner_id', userId);
       
       return new Response(JSON.stringify({
         subscribed: true,
@@ -63,7 +78,7 @@ serve(async (req) => {
     }
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    const customers = await stripe.customers.list({ email: userEmail, limit: 1 });
 
     if (customers.data.length === 0) {
       logStep("No customer found, user is not subscribed");
@@ -111,7 +126,7 @@ serve(async (req) => {
       const { error: updateError } = await supabaseClient
         .from('centers')
         .update({ subscription_plan: nextPlan })
-        .eq('owner_id', user.id);
+        .eq('owner_id', userId);
 
       if (updateError) {
         logStep("Error updating subscription plan", { error: updateError.message });
@@ -125,7 +140,7 @@ serve(async (req) => {
       const { error: updateError } = await supabaseClient
         .from('centers')
         .update({ subscription_plan: 'free' })
-        .eq('owner_id', user.id);
+        .eq('owner_id', userId);
 
       if (updateError) {
         logStep("Error updating subscription plan to free", { error: updateError.message });
