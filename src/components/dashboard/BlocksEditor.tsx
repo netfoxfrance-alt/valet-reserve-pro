@@ -707,12 +707,12 @@ export function BlocksEditor({
 
       {/* Add Element Dialog */}
       <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
+        <DialogContent className="max-w-md max-h-[85vh] flex flex-col">
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle>Ajouter un élément</DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-5 mt-4">
+          <div className="space-y-5 mt-4 overflow-y-auto flex-1 pr-2">
             {!linksSubmenuOpen ? (
               // Main menu
               <>
@@ -775,6 +775,8 @@ export function BlocksEditor({
                     </div>
                   </div>
                 ))}
+                {/* Bottom padding for scroll */}
+                <div className="h-4" />
               </>
             ) : (
               // Links submenu - individual selection
