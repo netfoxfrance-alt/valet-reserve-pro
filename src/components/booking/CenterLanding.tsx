@@ -656,8 +656,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
           {center.logo_url && (
             <div 
               className={cn(
-                "mx-auto mb-4 inline-flex items-center justify-center rounded-2xl overflow-hidden",
-                customization.cover_url && "bg-white p-2 shadow-xl ring-1 ring-black/5"
+                "mx-auto mb-4 inline-flex items-center justify-center rounded-xl overflow-hidden",
+                customization.cover_url && "bg-white/95 p-1.5 shadow-md"
               )}
             >
               <img
