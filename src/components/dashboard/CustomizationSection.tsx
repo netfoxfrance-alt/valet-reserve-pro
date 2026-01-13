@@ -342,34 +342,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 />
               </div>
 
-              {/* Info Display Style */}
-              <div className="mt-4">
-                <Label className="text-sm font-medium mb-3 block">Style des informations</Label>
-                <p className="text-xs text-muted-foreground mb-3">
-                  Choisissez l'affichage du téléphone, adresse et horaires
-                </p>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { value: 'card' as const, label: 'Carte', desc: 'Regroupé' },
-                    { value: 'compact' as const, label: 'Compact', desc: 'Discret' },
-                    { value: 'inline' as const, label: 'Ligne', desc: 'Minimal' },
-                  ].map((style) => (
-                    <button
-                      key={style.value}
-                      onClick={() => updateLayout({ info_style: style.value })}
-                      className={cn(
-                        "p-3 rounded-xl border-2 transition-all text-center",
-                        (local.layout.info_style || 'card') === style.value
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-muted-foreground"
-                      )}
-                    >
-                      <p className="font-medium text-sm">{style.label}</p>
-                      <p className="text-[10px] text-muted-foreground">{style.desc}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
 
             {/* CTA Button Text */}

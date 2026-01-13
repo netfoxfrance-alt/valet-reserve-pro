@@ -427,177 +427,114 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     );
   };
 
-  // Combined info section (phone, address, hours)
-  const renderInfoSection = () => {
-    const hasPhone = activeBlocks.some(b => b.type === 'phone') && center.phone;
-    const hasAddress = activeBlocks.some(b => b.type === 'address') && center.address;
-    const hasHours = activeBlocks.some(b => b.type === 'hours');
+  // Render individual info block with its own style
+  const renderInfoBlock = (block: PageBlock, content: string | null, icon: React.ReactNode, href?: string) => {
+    if (!content) return null;
+    
+    const style = block.infoStyle || 'minimal';
+    const Wrapper = href ? 'a' : 'div';
+    const wrapperProps = href ? { href, ...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {}) } : {};
 
-    if (!hasPhone && !hasAddress && !hasHours) return null;
-
-    const infoStyle = customization.layout.info_style || 'card';
-
-    // Style: Inline (minimal - just icons and text in a row)
-    if (infoStyle === 'inline') {
+    // Style: Minimal - clean, understated
+    if (style === 'minimal') {
       return (
-        <div className="flex flex-wrap justify-center gap-4 mb-6 text-sm">
-          {hasPhone && (
-            <a 
-              href={`tel:${center.phone}`}
-              className="flex items-center gap-1.5 transition-opacity hover:opacity-70"
-              style={{ color: textColors.secondary }}
-            >
-              <Phone className="w-4 h-4" style={{ color: customization.colors.primary }} />
-              <span>{center.phone}</span>
-            </a>
-          )}
-          {hasAddress && (
-            <a 
-              href={`https://maps.google.com/?q=${encodeURIComponent(center.address || '')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 transition-opacity hover:opacity-70"
-              style={{ color: textColors.secondary }}
-            >
-              <MapPin className="w-4 h-4" style={{ color: customization.colors.primary }} />
-              <span className="max-w-[150px] truncate">{center.address}</span>
-            </a>
-          )}
-          {hasHours && (
-            <div 
-              className="flex items-center gap-1.5"
-              style={{ color: textColors.secondary }}
-            >
-              <Clock className="w-4 h-4" style={{ color: customization.colors.primary }} />
-              <span>9h - 19h</span>
-            </div>
-          )}
-        </div>
+        <Wrapper
+          {...wrapperProps}
+          className="flex items-center gap-2 text-sm transition-opacity hover:opacity-70"
+          style={{ color: textColors.secondary }}
+        >
+          <span className="w-5 h-5 flex items-center justify-center" style={{ color: customization.colors.primary }}>
+            {icon}
+          </span>
+          <span>{content}</span>
+        </Wrapper>
       );
     }
 
-    // Style: Compact (small pills/badges)
-    if (infoStyle === 'compact') {
+    // Style: Pill - compact badge
+    if (style === 'pill') {
       return (
-        <div className="flex flex-wrap justify-center gap-2 mb-6">
-          {hasPhone && (
-            <a 
-              href={`tel:${center.phone}`}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm transition-all hover:scale-105"
-              style={{ 
-                backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
-                color: textColors.primary,
-              }}
-            >
-              <Phone className="w-3.5 h-3.5" style={{ color: customization.colors.primary }} />
-              {center.phone}
-            </a>
-          )}
-          {hasAddress && (
-            <a 
-              href={`https://maps.google.com/?q=${encodeURIComponent(center.address || '')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm transition-all hover:scale-105"
-              style={{ 
-                backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
-                color: textColors.primary,
-              }}
-            >
-              <MapPin className="w-3.5 h-3.5" style={{ color: customization.colors.primary }} />
-              <span className="max-w-[120px] truncate">{center.address}</span>
-            </a>
-          )}
-          {hasHours && (
-            <div 
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm"
-              style={{ 
-                backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
-                color: textColors.primary,
-              }}
-            >
-              <Clock className="w-3.5 h-3.5" style={{ color: customization.colors.primary }} />
-              Lun-Sam 9h-19h
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    // Style: Card (default - grouped card)
-    return (
-      <div className="mb-8">
-        <div 
-          className="rounded-2xl overflow-hidden divide-y"
-          style={{
-            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
-            borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
-            border: `1px solid ${customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'}`,
+        <Wrapper
+          {...wrapperProps}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all hover:scale-[1.02] active:scale-[0.98]"
+          style={{ 
+            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+            color: textColors.primary,
           }}
         >
-          {hasPhone && (
-            <a 
-              href={`tel:${center.phone}`} 
-              className="flex items-center gap-3 p-4 transition-all hover:bg-black/5 dark:hover:bg-white/5"
-            >
-              <div 
-                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: customization.colors.primary + '15' }}
-              >
-                <Phone className="w-5 h-5" style={{ color: customization.colors.primary }} />
-              </div>
-              <div className="flex-1">
-                <p className="text-xs uppercase tracking-wide mb-0.5" style={{ color: textColors.secondary }}>Téléphone</p>
-                <p className="font-medium" style={{ color: textColors.primary }}>{center.phone}</p>
-              </div>
-              <ChevronRight className="w-4 h-4" style={{ color: textColors.secondary }} />
-            </a>
-          )}
-          
-          {hasAddress && (
-            <a 
-              href={`https://maps.google.com/?q=${encodeURIComponent(center.address || '')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 p-4 transition-all hover:bg-black/5 dark:hover:bg-white/5"
-            >
-              <div 
-                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: customization.colors.primary + '15' }}
-              >
-                <MapPin className="w-5 h-5" style={{ color: customization.colors.primary }} />
-              </div>
-              <div className="flex-1">
-                <p className="text-xs uppercase tracking-wide mb-0.5" style={{ color: textColors.secondary }}>Adresse</p>
-                <p className="font-medium" style={{ color: textColors.primary }}>{center.address}</p>
-              </div>
-              <ChevronRight className="w-4 h-4" style={{ color: textColors.secondary }} />
-            </a>
-          )}
-          
-          {hasHours && (
-            <div className="flex items-center gap-3 p-4">
-              <div 
-                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: customization.colors.primary + '15' }}
-              >
-                <Clock className="w-5 h-5" style={{ color: customization.colors.primary }} />
-              </div>
-              <div className="flex-1">
-                <p className="text-xs uppercase tracking-wide mb-0.5" style={{ color: textColors.secondary }}>Horaires</p>
-                <p className="font-medium" style={{ color: textColors.primary }}>Lun - Sam : 9h00 - 19h00</p>
-              </div>
-            </div>
-          )}
+          <span style={{ color: customization.colors.primary }}>{icon}</span>
+          <span>{content}</span>
+        </Wrapper>
+      );
+    }
+
+    // Style: Card - full card with label
+    return (
+      <Wrapper
+        {...wrapperProps}
+        className="flex items-center gap-3 p-4 rounded-2xl transition-all hover:scale-[1.01] active:scale-[0.99]"
+        style={{ 
+          backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
+          border: `1px solid ${customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'}`,
+          boxShadow: customization.layout.dark_mode ? 'none' : '0 1px 3px rgba(0,0,0,0.04)',
+        }}
+      >
+        <div 
+          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+          style={{ backgroundColor: customization.colors.primary + '15' }}
+        >
+          <span style={{ color: customization.colors.primary }}>{icon}</span>
         </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-medium" style={{ color: textColors.primary }}>{content}</p>
+        </div>
+        {href && <ChevronRight className="w-4 h-4 flex-shrink-0" style={{ color: textColors.secondary }} />}
+      </Wrapper>
+    );
+  };
+
+  // Render phone block
+  const renderPhone = (block: PageBlock) => {
+    if (!center.phone) return null;
+    return (
+      <div key={block.id} className="mb-4">
+        {renderInfoBlock(
+          block,
+          center.phone,
+          <Phone className="w-4 h-4" />,
+          `tel:${center.phone}`
+        )}
       </div>
     );
   };
 
-  // Individual block renderers (kept for backwards compatibility but now hidden from main render)
-  const renderHours = (block: PageBlock) => null; // Now rendered in info section
-  const renderAddress = (block: PageBlock) => null; // Now rendered in info section
-  const renderPhone = (block: PageBlock) => null; // Now rendered in info section
+  // Render address block
+  const renderAddress = (block: PageBlock) => {
+    if (!center.address) return null;
+    return (
+      <div key={block.id} className="mb-4">
+        {renderInfoBlock(
+          block,
+          center.address,
+          <MapPin className="w-4 h-4" />,
+          `https://maps.google.com/?q=${encodeURIComponent(center.address)}`
+        )}
+      </div>
+    );
+  };
+
+  // Render hours block
+  const renderHours = (block: PageBlock) => {
+    return (
+      <div key={block.id} className="mb-4">
+        {renderInfoBlock(
+          block,
+          'Lun - Sam : 9h00 - 19h00',
+          <Clock className="w-4 h-4" />
+        )}
+      </div>
+    );
+  };
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -778,13 +715,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
           </div>
         )}
 
-        {/* Info Section (Phone, Address, Hours) - Rendered at top */}
-        {renderInfoSection()}
-
-        {/* Dynamic Blocks (excluding phone, address, hours which are in info section) */}
-        {activeBlocks
-          .filter(block => !['phone', 'address', 'hours'].includes(block.type))
-          .map(block => renderBlock(block))}
+        {/* Dynamic Blocks */}
+        {activeBlocks.map(block => renderBlock(block))}
 
         {/* Footer */}
         <div className="text-center pt-8 border-t" style={{ borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)' }}>

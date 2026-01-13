@@ -16,6 +16,9 @@ export type BlockType =
   | 'address'       // Address display
   | 'phone';        // Phone display
 
+// Display style for info blocks (phone, address, hours)
+export type InfoBlockStyle = 'minimal' | 'pill' | 'card';
+
 export interface PageBlock {
   id: string;
   type: BlockType;
@@ -26,6 +29,7 @@ export interface PageBlock {
   content?: string;           // For text_block
   images?: string[];          // For gallery
   galleryType?: 'gallery' | 'realizations' | 'before_after';  // Subtype for gallery
+  infoStyle?: InfoBlockStyle; // For phone, address, hours - display style
 }
 
 export interface CenterCustomization {
@@ -43,7 +47,6 @@ export interface CenterCustomization {
   };
   layout: {
     dark_mode: boolean;
-    info_style: 'card' | 'compact' | 'inline';  // Style for phone/address/hours display
   };
   social: {
     instagram: string;
@@ -102,7 +105,6 @@ export const defaultCustomization: CenterCustomization = {
   },
   layout: {
     dark_mode: false,
-    info_style: 'card',
   },
   social: {
     instagram: '',

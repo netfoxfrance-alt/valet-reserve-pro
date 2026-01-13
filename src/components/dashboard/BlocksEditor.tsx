@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { PageBlock, BlockType, CustomLink, CenterCustomization } from '@/types/customization';
+import { PageBlock, BlockType, CustomLink, CenterCustomization, InfoBlockStyle } from '@/types/customization';
 import { 
   ChevronUp, ChevronDown, Plus, Trash2, GripVertical, Package, ImageIcon, 
   Mail, Type, Upload, X, Loader2, Link2, Clock, MapPin, Phone,
@@ -209,6 +209,41 @@ export function BlocksEditor({
       b.id === id ? { ...b, galleryType } : b
     ));
   };
+
+  const updateBlockInfoStyle = (id: string, infoStyle: InfoBlockStyle) => {
+    onUpdateBlocks(blocks.map(b => 
+      b.id === id ? { ...b, infoStyle } : b
+    ));
+  };
+
+  // Style selector for info blocks (phone, address, hours)
+  const INFO_STYLES: { value: InfoBlockStyle; label: string; preview: string }[] = [
+    { value: 'minimal', label: 'Minimal', preview: 'Discret' },
+    { value: 'pill', label: 'Pill', preview: 'Badge' },
+    { value: 'card', label: 'Carte', preview: 'Complet' },
+  ];
+
+  const renderStyleSelector = (block: PageBlock) => (
+    <div className="flex items-center gap-2">
+      <Label className="text-xs text-muted-foreground">Style :</Label>
+      <div className="flex gap-1.5">
+        {INFO_STYLES.map((style) => (
+          <button
+            key={style.value}
+            onClick={() => updateBlockInfoStyle(block.id, style.value)}
+            className={cn(
+              "px-3 py-1.5 text-xs rounded-lg border transition-all",
+              (block.infoStyle || 'minimal') === style.value
+                ? "border-primary bg-primary/10 text-primary font-medium"
+                : "border-border hover:border-muted-foreground text-muted-foreground"
+            )}
+          >
+            {style.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 
   const addBlock = (type: BlockType) => {
     const maxOrder = Math.max(...blocks.map(b => b.order), 0);
@@ -575,28 +610,31 @@ export function BlocksEditor({
 
       case 'address':
         return (
-          <div className="px-3 sm:px-4 pb-3 sm:pb-4">
+          <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-3">
             <p className="text-sm text-muted-foreground">
               {centerAddress || 'Adresse non configurée (Paramètres → Informations)'}
             </p>
+            {renderStyleSelector(block)}
           </div>
         );
 
       case 'phone':
         return (
-          <div className="px-3 sm:px-4 pb-3 sm:pb-4">
+          <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-3">
             <p className="text-sm text-muted-foreground">
               {centerPhone || 'Téléphone non configuré (Paramètres → Informations)'}
             </p>
+            {renderStyleSelector(block)}
           </div>
         );
 
       case 'hours':
         return (
-          <div className="px-3 sm:px-4 pb-3 sm:pb-4">
+          <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-3">
             <p className="text-sm text-muted-foreground">
               Horaires configurés dans Paramètres → Disponibilités
             </p>
+            {renderStyleSelector(block)}
           </div>
         );
 
