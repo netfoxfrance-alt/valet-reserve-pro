@@ -1,16 +1,19 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { PageSection, defaultSections } from '@/types/customization';
-import { ChevronUp, ChevronDown, Plus, Trash2, GripVertical, Package, ImageIcon, Info, Mail, Type } from 'lucide-react';
+import { ChevronUp, ChevronDown, Plus, Trash2, GripVertical, Package, ImageIcon, Info, Mail, Type, Upload, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface SectionsEditorProps {
   sections: PageSection[];
   onUpdate: (sections: PageSection[]) => void;
+  userId: string;
 }
 
 const SECTION_ICONS: Record<PageSection['type'], React.ElementType> = {
@@ -21,18 +24,20 @@ const SECTION_ICONS: Record<PageSection['type'], React.ElementType> = {
   text_block: Type,
 };
 
-const SECTION_LABELS: Record<PageSection['type'], string> = {
-  formules: 'Formules',
-  gallery: 'Galerie',
-  about: 'À propos',
-  contact: 'Contact',
-  text_block: 'Bloc de texte',
+const SECTION_DESCRIPTIONS: Record<PageSection['type'], string> = {
+  formules: 'Affiche vos formules et tarifs',
+  gallery: 'Affiche vos photos',
+  about: 'Texte de présentation',
+  contact: 'Formulaire de contact',
+  text_block: 'Bloc de texte libre',
 };
 
-export function SectionsEditor({ sections, onUpdate }: SectionsEditorProps) {
+export function SectionsEditor({ sections, onUpdate, userId }: SectionsEditorProps) {
+  const { toast } = useToast();
+  const [uploadingFor, setUploadingFor] = useState<string | null>(null);
+  
   // Ensure we have at least default sections
   const currentSections = sections?.length > 0 ? sections : defaultSections;
-  
   const sortedSections = [...currentSections].sort((a, b) => a.order - b.order);
 
   const moveSection = (id: string, direction: 'up' | 'down') => {
@@ -45,7 +50,6 @@ export function SectionsEditor({ sections, onUpdate }: SectionsEditorProps) {
     const newSections = [...sortedSections];
     [newSections[index], newSections[newIndex]] = [newSections[newIndex], newSections[index]];
     
-    // Update order values
     const reordered = newSections.map((s, i) => ({ ...s, order: i + 1 }));
     onUpdate(reordered);
   };
@@ -84,74 +88,170 @@ export function SectionsEditor({ sections, onUpdate }: SectionsEditorProps) {
     onUpdate([...currentSections, newSection]);
   };
 
+  const addGallery = () => {
+    const maxOrder = Math.max(...currentSections.map(s => s.order), 0);
+    const newSection: PageSection = {
+      id: `gallery_${Date.now()}`,
+      type: 'gallery',
+      title: 'Nouvelle galerie',
+      enabled: true,
+      order: maxOrder + 1,
+      images: [],
+    };
+    onUpdate([...currentSections, newSection]);
+  };
+
   const removeSection = (id: string) => {
     const section = currentSections.find(s => s.id === id);
-    // Only allow removing text_block sections
-    if (section?.type !== 'text_block') return;
+    // Only allow removing user-created sections (text_block and additional galleries)
+    const isUserCreated = section?.type === 'text_block' || 
+      (section?.type === 'gallery' && section.id !== 'gallery');
+    
+    if (!isUserCreated) return;
     
     const filtered = currentSections.filter(s => s.id !== id);
-    // Reorder
     const reordered = filtered.sort((a, b) => a.order - b.order).map((s, i) => ({ ...s, order: i + 1 }));
     onUpdate(reordered);
+  };
+
+  const handleImageUpload = async (sectionId: string, event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    const section = currentSections.find(s => s.id === sectionId);
+    if (!section || section.type !== 'gallery') return;
+
+    const currentImages = section.images || [];
+    if (currentImages.length + files.length > 8) {
+      toast({ title: 'Maximum 8 images par galerie', variant: 'destructive' });
+      return;
+    }
+
+    setUploadingFor(sectionId);
+    const newUrls: string[] = [];
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        if (!file.type.startsWith('image/')) continue;
+        if (file.size > 5 * 1024 * 1024) {
+          toast({ title: 'Image trop lourde (max 5 Mo)', variant: 'destructive' });
+          continue;
+        }
+
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${userId}/gallery/${sectionId}/${Date.now()}-${i}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('center-gallery')
+          .upload(fileName, file);
+
+        if (!uploadError) {
+          const { data: { publicUrl } } = supabase.storage
+            .from('center-gallery')
+            .getPublicUrl(fileName);
+          newUrls.push(publicUrl);
+        }
+      }
+
+      if (newUrls.length > 0) {
+        const updated = currentSections.map(s => 
+          s.id === sectionId ? { ...s, images: [...(s.images || []), ...newUrls] } : s
+        );
+        onUpdate(updated);
+        toast({ title: `${newUrls.length} image(s) ajoutée(s)` });
+      }
+    } catch (error) {
+      console.error('Gallery upload error:', error);
+      toast({ title: 'Erreur lors du téléchargement', variant: 'destructive' });
+    } finally {
+      setUploadingFor(null);
+      event.target.value = '';
+    }
+  };
+
+  const removeImage = async (sectionId: string, urlToRemove: string) => {
+    try {
+      const urlObj = new URL(urlToRemove);
+      const pathParts = urlObj.pathname.split('/center-gallery/');
+      if (pathParts.length > 1) {
+        await supabase.storage.from('center-gallery').remove([pathParts[1]]);
+      }
+      
+      const updated = currentSections.map(s => 
+        s.id === sectionId ? { ...s, images: (s.images || []).filter(url => url !== urlToRemove) } : s
+      );
+      onUpdate(updated);
+      toast({ title: 'Image supprimée' });
+    } catch (error) {
+      toast({ title: 'Erreur lors de la suppression', variant: 'destructive' });
+    }
+  };
+
+  const canDelete = (section: PageSection) => {
+    // Can delete text_blocks and user-created galleries (those not with id 'gallery')
+    return section.type === 'text_block' || 
+      (section.type === 'gallery' && section.id !== 'gallery');
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <Label className="text-base font-medium">Sections de la page</Label>
-          <p className="text-sm text-muted-foreground">Réordonnez et personnalisez les sections</p>
+          <Label className="text-base font-medium">Blocs de la page</Label>
+          <p className="text-sm text-muted-foreground">Réordonnez et personnalisez vos blocs</p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={addTextBlock}
-          className="gap-1.5"
-        >
-          <Plus className="w-4 h-4" />
-          Ajouter texte
-        </Button>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         {sortedSections.map((section, index) => {
           const Icon = SECTION_ICONS[section.type];
-          const isTextBlock = section.type === 'text_block';
+          const isGallery = section.type === 'gallery';
+          const isTextContent = section.type === 'text_block' || section.type === 'about';
+          const isUploading = uploadingFor === section.id;
           
           return (
             <div 
               key={section.id}
               className={cn(
-                "border rounded-xl p-4 transition-all",
+                "border rounded-xl overflow-hidden transition-all",
                 section.enabled 
                   ? "bg-background border-border" 
                   : "bg-muted/30 border-muted opacity-60"
               )}
             >
-              {/* Header row */}
-              <div className="flex items-center gap-3">
-                {/* Drag handle / Icon */}
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <GripVertical className="w-4 h-4 cursor-grab" />
-                  <Icon className="w-4 h-4" />
+              {/* Header */}
+              <div className="flex items-center gap-2 p-3 sm:p-4">
+                <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab flex-shrink-0" />
+                
+                <div 
+                  className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: section.enabled ? 'hsl(var(--primary) / 0.1)' : undefined }}
+                >
+                  <Icon className={cn("w-4 h-4", section.enabled ? "text-primary" : "text-muted-foreground")} />
                 </div>
 
-                {/* Title input */}
-                <Input
-                  value={section.title}
-                  onChange={(e) => updateSectionTitle(section.id, e.target.value)}
-                  className="flex-1 h-9 font-medium"
-                  placeholder="Titre de la section"
-                />
+                <div className="flex-1 min-w-0">
+                  <Input
+                    value={section.title}
+                    onChange={(e) => updateSectionTitle(section.id, e.target.value)}
+                    className="h-8 text-sm font-medium border-0 bg-transparent p-0 focus-visible:ring-0"
+                    placeholder="Titre du bloc"
+                  />
+                  <p className="text-xs text-muted-foreground truncate">
+                    {SECTION_DESCRIPTIONS[section.type]}
+                  </p>
+                </div>
 
                 {/* Move buttons */}
-                <div className="flex items-center gap-0.5">
+                <div className="flex items-center gap-0.5 flex-shrink-0">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => moveSection(section.id, 'up')}
                     disabled={index === 0}
-                    className="h-8 w-8 p-0"
+                    className="h-7 w-7 p-0"
                   >
                     <ChevronUp className="w-4 h-4" />
                   </Button>
@@ -160,7 +260,7 @@ export function SectionsEditor({ sections, onUpdate }: SectionsEditorProps) {
                     size="sm"
                     onClick={() => moveSection(section.id, 'down')}
                     disabled={index === sortedSections.length - 1}
-                    className="h-8 w-8 p-0"
+                    className="h-7 w-7 p-0"
                   >
                     <ChevronDown className="w-4 h-4" />
                   </Button>
@@ -170,54 +270,113 @@ export function SectionsEditor({ sections, onUpdate }: SectionsEditorProps) {
                 <Switch
                   checked={section.enabled}
                   onCheckedChange={() => toggleSection(section.id)}
+                  className="flex-shrink-0"
                 />
 
-                {/* Delete (only for text blocks) */}
-                {isTextBlock && (
+                {/* Delete */}
+                {canDelete(section) && (
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => removeSection(section.id)}
-                    className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                    className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 )}
               </div>
 
-              {/* Content textarea for text blocks */}
-              {isTextBlock && section.enabled && (
-                <div className="mt-3 pl-9">
+              {/* Content area for text blocks and about */}
+              {isTextContent && section.enabled && (
+                <div className="px-3 sm:px-4 pb-3 sm:pb-4">
                   <Textarea
                     value={section.content || ''}
                     onChange={(e) => updateSectionContent(section.id, e.target.value)}
-                    placeholder="Contenu de la section..."
+                    placeholder="Écrivez votre texte ici..."
                     rows={3}
-                    className="resize-none"
+                    className="resize-none text-sm"
                   />
                 </div>
               )}
 
-              {/* Helper text for built-in sections */}
-              {!isTextBlock && (
-                <p className="text-xs text-muted-foreground mt-2 pl-9">
-                  {section.type === 'formules' && 'Affiche vos formules et tarifs'}
-                  {section.type === 'gallery' && 'Affiche vos photos de réalisations'}
-                  {section.type === 'about' && 'Affiche votre texte "À propos"'}
-                  {section.type === 'contact' && 'Affiche le formulaire de contact'}
-                </p>
+              {/* Image gallery for gallery sections */}
+              {isGallery && section.enabled && (
+                <div className="px-3 sm:px-4 pb-3 sm:pb-4">
+                  <div className="grid grid-cols-4 gap-2">
+                    {(section.images || []).map((url, imgIndex) => (
+                      <div key={imgIndex} className="relative group aspect-square">
+                        <img
+                          src={url}
+                          alt={`Image ${imgIndex + 1}`}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                        <button
+                          onClick={() => removeImage(section.id, url)}
+                          className="absolute top-1 right-1 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                    
+                    {(section.images || []).length < 8 && (
+                      <div className="aspect-square border-2 border-dashed border-border rounded-lg flex items-center justify-center">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={(e) => handleImageUpload(section.id, e)}
+                          className="sr-only"
+                          id={`gallery-upload-${section.id}`}
+                          disabled={isUploading}
+                        />
+                        <Label
+                          htmlFor={`gallery-upload-${section.id}`}
+                          className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 rounded-lg transition-colors"
+                        >
+                          {isUploading ? (
+                            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                          ) : (
+                            <>
+                              <Upload className="w-5 h-5 text-muted-foreground" />
+                              <span className="text-[10px] text-muted-foreground mt-1">Ajouter</span>
+                            </>
+                          )}
+                        </Label>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {(section.images || []).length}/8 images • Max 5 Mo
+                  </p>
+                </div>
               )}
             </div>
           );
         })}
       </div>
 
-      {sortedSections.length === 0 && (
-        <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-xl">
-          <Package className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          <p className="text-sm">Aucune section</p>
-        </div>
-      )}
+      {/* Add buttons */}
+      <div className="flex flex-wrap gap-2 pt-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={addGallery}
+          className="gap-1.5"
+        >
+          <ImageIcon className="w-4 h-4" />
+          Ajouter galerie
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={addTextBlock}
+          className="gap-1.5"
+        >
+          <Type className="w-4 h-4" />
+          Ajouter texte
+        </Button>
+      </div>
     </div>
   );
 }
