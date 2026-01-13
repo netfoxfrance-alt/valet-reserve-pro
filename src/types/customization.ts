@@ -43,6 +43,7 @@ export interface CenterCustomization {
   };
   layout: {
     dark_mode: boolean;
+    info_style: 'card' | 'compact' | 'inline';  // Style for phone/address/hours display
   };
   social: {
     instagram: string;
@@ -101,6 +102,7 @@ export const defaultCustomization: CenterCustomization = {
   },
   layout: {
     dark_mode: false,
+    info_style: 'card',
   },
   social: {
     instagram: '',
