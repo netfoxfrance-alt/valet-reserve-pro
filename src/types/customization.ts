@@ -5,11 +5,22 @@ export interface CustomLink {
   icon?: 'link' | 'shop' | 'book' | 'video' | 'calendar' | 'file';
 }
 
+export interface PageSection {
+  id: string;
+  type: 'formules' | 'gallery' | 'about' | 'contact' | 'text_block';
+  title: string;
+  enabled: boolean;
+  order: number;
+  content?: string; // For text_block sections
+}
+
 export interface CenterCustomization {
   colors: {
     primary: string;
     secondary: string;
     accent: string;
+    text_primary: string;
+    text_secondary: string;
   };
   texts: {
     tagline: string;
@@ -42,13 +53,24 @@ export interface CenterCustomization {
   gallery_images: string[];
   visible_pack_ids: string[];
   custom_links: CustomLink[];
+  sections: PageSection[];
 }
+
+// Default sections for new centers
+export const defaultSections: PageSection[] = [
+  { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
+  { id: 'gallery', type: 'gallery', title: 'Nos réalisations', enabled: true, order: 2 },
+  { id: 'about', type: 'about', title: 'À propos', enabled: true, order: 3 },
+  { id: 'contact', type: 'contact', title: 'Nous contacter', enabled: true, order: 4 },
+];
 
 export const defaultCustomization: CenterCustomization = {
   colors: {
     primary: '#3b82f6',
     secondary: '#1e293b',
     accent: '#10b981',
+    text_primary: '#111827',
+    text_secondary: '#6b7280',
   },
   texts: {
     tagline: '',
@@ -81,4 +103,5 @@ export const defaultCustomization: CenterCustomization = {
   gallery_images: [],
   visible_pack_ids: [],
   custom_links: [],
+  sections: defaultSections,
 };
