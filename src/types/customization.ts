@@ -11,7 +11,8 @@ export interface PageSection {
   title: string;
   enabled: boolean;
   order: number;
-  content?: string; // For text_block sections
+  content?: string; // For text_block and about sections
+  images?: string[]; // For gallery sections - each gallery has its own images
 }
 
 export interface CenterCustomization {
@@ -25,15 +26,12 @@ export interface CenterCustomization {
   texts: {
     tagline: string;
     cta_button: string;
-    about: string;
     welcome_message: string;
   };
   layout: {
     show_hours: boolean;
     show_address: boolean;
     show_phone: boolean;
-    show_contact_form: boolean;
-    show_gallery: boolean;
     dark_mode: boolean;
     links_position: 'top' | 'after_formules' | 'after_gallery' | 'bottom';
   };
@@ -50,7 +48,7 @@ export interface CenterCustomization {
     city: string;
   };
   cover_url: string | null;
-  gallery_images: string[];
+  gallery_images: string[]; // Legacy - kept for backward compatibility, migrated to sections
   visible_pack_ids: string[];
   custom_links: CustomLink[];
   sections: PageSection[];
@@ -59,8 +57,8 @@ export interface CenterCustomization {
 // Default sections for new centers
 export const defaultSections: PageSection[] = [
   { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
-  { id: 'gallery', type: 'gallery', title: 'Nos réalisations', enabled: true, order: 2 },
-  { id: 'about', type: 'about', title: 'À propos', enabled: true, order: 3 },
+  { id: 'gallery', type: 'gallery', title: 'Nos réalisations', enabled: true, order: 2, images: [] },
+  { id: 'about', type: 'about', title: 'À propos', enabled: true, order: 3, content: '' },
   { id: 'contact', type: 'contact', title: 'Nous contacter', enabled: true, order: 4 },
 ];
 
@@ -75,15 +73,12 @@ export const defaultCustomization: CenterCustomization = {
   texts: {
     tagline: '',
     cta_button: 'Réserver',
-    about: '',
     welcome_message: '',
   },
   layout: {
     show_hours: true,
     show_address: true,
     show_phone: true,
-    show_contact_form: true,
-    show_gallery: true,
     dark_mode: false,
     links_position: 'top',
   },

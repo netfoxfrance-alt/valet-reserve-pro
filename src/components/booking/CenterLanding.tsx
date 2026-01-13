@@ -29,6 +29,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [contactSent, setContactSent] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxImages, setLightboxImages] = useState<string[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
   // Check if center is currently open
@@ -53,12 +54,30 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     };
   }, [center.customization]);
 
+  // Migrate legacy gallery_images to first gallery section if needed
+  const migratedSections = useMemo(() => {
+    const sections = [...customization.sections];
+    const legacyImages = customization.gallery_images || [];
+    
+    // Find the first gallery section
+    const gallerySection = sections.find(s => s.type === 'gallery');
+    
+    // If there are legacy images and the gallery section has no images, migrate
+    if (legacyImages.length > 0 && gallerySection && (!gallerySection.images || gallerySection.images.length === 0)) {
+      return sections.map(s => 
+        s.id === gallerySection.id ? { ...s, images: legacyImages } : s
+      );
+    }
+    
+    return sections;
+  }, [customization.sections, customization.gallery_images]);
+
   // Get sorted, enabled sections
   const activeSections = useMemo(() => {
-    return [...customization.sections]
+    return [...migratedSections]
       .filter(s => s.enabled)
       .sort((a, b) => a.order - b.order);
-  }, [customization.sections]);
+  }, [migratedSections]);
 
   // Get text colors based on dark mode
   const textColors = useMemo(() => ({
@@ -198,9 +217,16 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     );
   };
 
-  // Gallery section renderer
+  // Gallery section renderer - now uses section.images
   const renderGallery = (section: PageSection) => {
-    if (!customization.gallery_images || customization.gallery_images.length === 0) return null;
+    const images = section.images || [];
+    if (images.length === 0) return null;
+
+    const openLightbox = (index: number) => {
+      setLightboxImages(images);
+      setLightboxIndex(index);
+      setLightboxOpen(true);
+    };
 
     return (
       <div className="mb-10">
@@ -211,7 +237,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
           {section.title}
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-          {customization.gallery_images.slice(0, 8).map((url, index) => (
+          {images.slice(0, 8).map((url, index) => (
             <button 
               key={index} 
               className="aspect-square rounded-xl overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 transition-transform duration-300 hover:scale-[1.03] animate-fade-in"
@@ -219,10 +245,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
                 '--tw-ring-color': customization.colors.primary,
                 animationDelay: `${index * 0.05}s`,
               } as React.CSSProperties}
-              onClick={() => {
-                setLightboxIndex(index);
-                setLightboxOpen(true);
-              }}
+              onClick={() => openLightbox(index)}
             >
               <img
                 src={url}
@@ -236,9 +259,10 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     );
   };
 
-  // About section renderer
+  // About section renderer - now uses section.content
   const renderAbout = (section: PageSection) => {
-    if (!customization.texts.about) return null;
+    const content = section.content || '';
+    if (!content) return null;
 
     return (
       <div className="mb-10">
@@ -252,7 +276,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
           className="text-sm sm:text-base leading-relaxed whitespace-pre-line"
           style={{ color: textColors.secondary }}
         >
-          {customization.texts.about}
+          {content}
         </p>
       </div>
     );
@@ -260,8 +284,6 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
 
   // Contact section renderer
   const renderContact = (section: PageSection) => {
-    if (!customization.layout.show_contact_form) return null;
-
     return (
       <div className="mb-10">
         <h2 
@@ -677,7 +699,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
         </div>
       </main>
 
-      {/* Gallery Lightbox */}
+      {/* Gallery Lightbox - now uses dynamic lightboxImages */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
         <DialogContent className="max-w-4xl w-full p-0 bg-black/95 border-none">
           <div className="relative flex items-center justify-center min-h-[50vh] max-h-[90vh]">
@@ -688,16 +710,16 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
               <X className="w-6 h-6 text-white" />
             </button>
             
-            {customization.gallery_images && customization.gallery_images.length > 1 && (
+            {lightboxImages.length > 1 && (
               <>
                 <button 
-                  onClick={() => setLightboxIndex((prev) => prev === 0 ? customization.gallery_images!.length - 1 : prev - 1)}
+                  onClick={() => setLightboxIndex((prev) => prev === 0 ? lightboxImages.length - 1 : prev - 1)}
                   className="absolute left-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
                 >
                   <ChevronLeft className="w-6 h-6 text-white" />
                 </button>
                 <button 
-                  onClick={() => setLightboxIndex((prev) => prev === customization.gallery_images!.length - 1 ? 0 : prev + 1)}
+                  onClick={() => setLightboxIndex((prev) => prev === lightboxImages.length - 1 ? 0 : prev + 1)}
                   className="absolute right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
                 >
                   <ChevronRight className="w-6 h-6 text-white" />
@@ -706,14 +728,14 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
             )}
             
             <img
-              src={customization.gallery_images?.[lightboxIndex] || ''}
+              src={lightboxImages[lightboxIndex] || ''}
               alt={`Image ${lightboxIndex + 1}`}
               className="max-w-full max-h-[85vh] object-contain"
             />
             
-            {customization.gallery_images && customization.gallery_images.length > 1 && (
+            {lightboxImages.length > 1 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm font-medium">
-                {lightboxIndex + 1} / {customization.gallery_images.length}
+                {lightboxIndex + 1} / {lightboxImages.length}
               </div>
             )}
           </div>

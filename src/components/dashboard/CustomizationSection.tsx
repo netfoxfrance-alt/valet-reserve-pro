@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CenterCustomization, CustomLink, defaultCustomization, PageSection, defaultSections } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Type, Layout, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail, ImagePlus, X, Search, Globe, MapPin, Tag, Package, Link2, Plus, ShoppingBag, BookOpen, Video, Calendar, FileText, ChevronUp, ChevronDown, Layers } from 'lucide-react';
+import { Palette, Type, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail, X, Search, Globe, MapPin, Tag, Package, Link2, Plus, ShoppingBag, BookOpen, Video, Calendar, FileText, ChevronUp, ChevronDown, Layers } from 'lucide-react';
 import { SectionsEditor } from './SectionsEditor';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
@@ -36,10 +36,9 @@ const COLOR_PRESETS = [
 export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [] }: CustomizationSectionProps) {
   const { toast } = useToast();
   const [uploadingCover, setUploadingCover] = useState(false);
-  const [uploadingGallery, setUploadingGallery] = useState(false);
   const [local, setLocal] = useState<CenterCustomization>(customization);
 
-  // Sync local state when prop changes from parent (e.g., from DB load)
+  // Sync local state when prop changes from parent
   useEffect(() => {
     setLocal(customization);
   }, [customization]);
@@ -74,7 +73,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     updateLocal({ visible_pack_ids: newIds });
   };
 
-  // If no visible_pack_ids set yet, all packs are visible by default
   const effectiveVisiblePacks = (local.visible_pack_ids?.length ?? 0) > 0 
     ? local.visible_pack_ids 
     : packs.map(p => p.id);
@@ -177,78 +175,17 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     }
   };
 
-  const handleGalleryUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files || files.length === 0) return;
-
-    const currentImages = local.gallery_images || [];
-    if (currentImages.length + files.length > 8) {
-      toast({ title: 'Erreur', description: 'Maximum 8 images dans la galerie.', variant: 'destructive' });
-      return;
-    }
-
-    setUploadingGallery(true);
-    const newUrls: string[] = [];
-
-    try {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        
-        if (!file.type.startsWith('image/')) continue;
-        if (file.size > 5 * 1024 * 1024) continue;
-
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${userId}/gallery/${Date.now()}-${i}.${fileExt}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('center-gallery')
-          .upload(fileName, file);
-
-        if (!uploadError) {
-          const { data: { publicUrl } } = supabase.storage
-            .from('center-gallery')
-            .getPublicUrl(fileName);
-          newUrls.push(publicUrl);
-        }
-      }
-
-      if (newUrls.length > 0) {
-        updateLocal({ gallery_images: [...currentImages, ...newUrls] });
-        toast({ title: `${newUrls.length} image(s) ajoutée(s)` });
-      }
-    } catch (error) {
-      console.error('Gallery upload error:', error);
-      toast({ title: 'Erreur', description: 'Impossible de télécharger les images.', variant: 'destructive' });
-    } finally {
-      setUploadingGallery(false);
-      event.target.value = '';
-    }
-  };
-
-  const handleRemoveGalleryImage = async (urlToRemove: string) => {
-    try {
-      // Extract path from URL
-      const urlObj = new URL(urlToRemove);
-      const pathParts = urlObj.pathname.split('/center-gallery/');
-      if (pathParts.length > 1) {
-        await supabase.storage.from('center-gallery').remove([pathParts[1]]);
-      }
-      
-      const updatedImages = (local.gallery_images || []).filter(url => url !== urlToRemove);
-      updateLocal({ gallery_images: updatedImages });
-      toast({ title: 'Image supprimée' });
-    } catch (error) {
-      toast({ title: 'Erreur', description: 'Impossible de supprimer l\'image.', variant: 'destructive' });
-    }
-  };
-
   return (
     <section className="mb-6 sm:mb-8">
       <Card variant="elevated" className="p-4 sm:p-6">
-        <Tabs defaultValue="colors" className="w-full">
+        <Tabs defaultValue="sections" className="w-full">
           {/* Mobile: 2-row grid, Desktop: single row */}
           <div className="mb-6">
-            <TabsList className="grid grid-cols-5 sm:grid-cols-9 gap-1 w-full bg-muted/50 p-1.5 rounded-xl h-auto">
+            <TabsList className="grid grid-cols-4 sm:grid-cols-8 gap-1 w-full bg-muted/50 p-1.5 rounded-xl h-auto">
+              <TabsTrigger value="sections" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                <Layers className="w-4 h-4" />
+                <span>Blocs</span>
+              </TabsTrigger>
               <TabsTrigger value="colors" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Palette className="w-4 h-4" />
                 <span>Couleurs</span>
@@ -265,21 +202,13 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 <Share2 className="w-4 h-4" />
                 <span>Réseaux</span>
               </TabsTrigger>
-              <TabsTrigger value="sections" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Layers className="w-4 h-4" />
-                <span>Sections</span>
-              </TabsTrigger>
               <TabsTrigger value="packs" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Package className="w-4 h-4" />
                 <span>Formules</span>
               </TabsTrigger>
               <TabsTrigger value="cover" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Image className="w-4 h-4" />
-                <span>Image</span>
-              </TabsTrigger>
-              <TabsTrigger value="gallery" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <ImagePlus className="w-4 h-4" />
-                <span>Galerie</span>
+                <span>Bannière</span>
               </TabsTrigger>
               <TabsTrigger value="seo" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Search className="w-4 h-4" />
@@ -287,6 +216,41 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               </TabsTrigger>
             </TabsList>
           </div>
+
+          {/* Sections Tab (First!) */}
+          <TabsContent value="sections" className="space-y-4">
+            <SectionsEditor
+              sections={local.sections || defaultSections}
+              onUpdate={(sections) => updateLocal({ sections })}
+              userId={userId}
+            />
+
+            {/* Quick toggles for info cards */}
+            <div className="pt-4 border-t space-y-3">
+              <Label className="text-sm font-medium">Cartes d'informations</Label>
+              <div className="flex items-center justify-between py-2">
+                <p className="font-medium text-foreground text-sm">Afficher les horaires</p>
+                <Switch
+                  checked={local.layout.show_hours}
+                  onCheckedChange={(checked) => updateLayout({ show_hours: checked })}
+                />
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <p className="font-medium text-foreground text-sm">Afficher l'adresse</p>
+                <Switch
+                  checked={local.layout.show_address}
+                  onCheckedChange={(checked) => updateLayout({ show_address: checked })}
+                />
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <p className="font-medium text-foreground text-sm">Afficher le téléphone</p>
+                <Switch
+                  checked={local.layout.show_phone}
+                  onCheckedChange={(checked) => updateLayout({ show_phone: checked })}
+                />
+              </div>
+            </div>
+          </TabsContent>
 
           {/* Colors Tab */}
           <TabsContent value="colors" className="space-y-6">
@@ -305,18 +269,9 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                     )}
                   >
                     <div className="flex gap-1 mb-1.5">
-                      <div 
-                        className="w-4 h-4 rounded-full" 
-                        style={{ backgroundColor: preset.primary }}
-                      />
-                      <div 
-                        className="w-4 h-4 rounded-full" 
-                        style={{ backgroundColor: preset.secondary }}
-                      />
-                      <div 
-                        className="w-4 h-4 rounded-full" 
-                        style={{ backgroundColor: preset.accent }}
-                      />
+                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.primary }} />
+                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.secondary }} />
+                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.accent }} />
                     </div>
                     <p className="text-xs text-center text-muted-foreground">{preset.name}</p>
                   </button>
@@ -383,7 +338,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               </div>
             </div>
 
-            {/* Text Colors Section */}
+            {/* Text Colors */}
             <div className="pt-4 border-t">
               <Label className="text-sm font-medium mb-3 block">Couleurs de texte</Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -431,7 +386,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             <div className="flex items-center justify-between py-3 px-4 rounded-lg border bg-secondary/30">
               <div>
                 <p className="font-medium text-foreground">Mode sombre</p>
-                <p className="text-sm text-muted-foreground">Utilise un thème sombre pour la page</p>
+                <p className="text-sm text-muted-foreground">Thème sombre pour la page publique</p>
               </div>
               <Switch
                 checked={local.layout.dark_mode}
@@ -454,18 +409,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="about">À propos / Histoire</Label>
-              <Textarea
-                id="about"
-                value={local.texts.about || ''}
-                onChange={(e) => updateTexts({ about: e.target.value })}
-                placeholder="Racontez l'histoire de votre entreprise, votre passion, vos valeurs..."
-                rows={4}
-              />
-              <p className="text-xs text-muted-foreground">Texte affiché sur votre page publique pour présenter votre activité</p>
-            </div>
-
-            <div className="space-y-2">
               <Label htmlFor="welcome-message">Phrase page réservation</Label>
               <Input
                 id="welcome-message"
@@ -473,7 +416,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 onChange={(e) => updateTexts({ welcome_message: e.target.value })}
                 placeholder="Ex: Réservez votre rendez-vous en quelques clics"
               />
-              <p className="text-xs text-muted-foreground">Affiché en haut de la page de réservation (après sélection d'une formule)</p>
+              <p className="text-xs text-muted-foreground">Affiché en haut de la page de réservation</p>
             </div>
 
             <div className="space-y-2">
@@ -493,7 +436,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               <div className="flex items-center justify-between">
                 <div>
                   <Label>Liens personnalisés</Label>
-                  <p className="text-xs text-muted-foreground">Ajoutez des liens vers votre boutique, ebook, vidéos, etc.</p>
+                  <p className="text-xs text-muted-foreground">Ajoutez des liens vers votre boutique, ebook, etc.</p>
                 </div>
                 <Button
                   variant="outline"
@@ -510,7 +453,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
                   <Link2 className="w-8 h-8 mx-auto mb-2 opacity-50" />
                   <p className="text-sm">Aucun lien personnalisé</p>
-                  <p className="text-xs">Cliquez sur "Ajouter" pour créer un lien</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -546,34 +488,22 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="link">
-                              <div className="flex items-center gap-2">
-                                <Link2 className="w-4 h-4" /> Lien
-                              </div>
+                              <div className="flex items-center gap-2"><Link2 className="w-4 h-4" /> Lien</div>
                             </SelectItem>
                             <SelectItem value="shop">
-                              <div className="flex items-center gap-2">
-                                <ShoppingBag className="w-4 h-4" /> Boutique
-                              </div>
+                              <div className="flex items-center gap-2"><ShoppingBag className="w-4 h-4" /> Boutique</div>
                             </SelectItem>
                             <SelectItem value="book">
-                              <div className="flex items-center gap-2">
-                                <BookOpen className="w-4 h-4" /> Ebook
-                              </div>
+                              <div className="flex items-center gap-2"><BookOpen className="w-4 h-4" /> Ebook</div>
                             </SelectItem>
                             <SelectItem value="video">
-                              <div className="flex items-center gap-2">
-                                <Video className="w-4 h-4" /> Vidéo
-                              </div>
+                              <div className="flex items-center gap-2"><Video className="w-4 h-4" /> Vidéo</div>
                             </SelectItem>
                             <SelectItem value="calendar">
-                              <div className="flex items-center gap-2">
-                                <Calendar className="w-4 h-4" /> Calendrier
-                              </div>
+                              <div className="flex items-center gap-2"><Calendar className="w-4 h-4" /> Calendrier</div>
                             </SelectItem>
                             <SelectItem value="file">
-                              <div className="flex items-center gap-2">
-                                <FileText className="w-4 h-4" /> Document
-                              </div>
+                              <div className="flex items-center gap-2"><FileText className="w-4 h-4" /> Document</div>
                             </SelectItem>
                           </SelectContent>
                         </Select>
@@ -589,7 +519,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                       <Input
                         value={link.title}
                         onChange={(e) => updateCustomLink(link.id, { title: e.target.value })}
-                        placeholder="Titre du lien (ex: Notre boutique)"
+                        placeholder="Titre du lien"
                       />
                       <Input
                         value={link.url}
@@ -601,7 +531,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 </div>
               )}
 
-              {/* Position selector */}
               {(local.custom_links?.length || 0) > 0 && (
                 <div className="pt-4 border-t space-y-2">
                   <Label>Position sur la page</Label>
@@ -616,10 +545,9 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                       <SelectItem value="top">En haut (après réseaux sociaux)</SelectItem>
                       <SelectItem value="after_formules">Après les formules</SelectItem>
                       <SelectItem value="after_gallery">Après la galerie</SelectItem>
-                      <SelectItem value="bottom">En bas (avant formulaire contact)</SelectItem>
+                      <SelectItem value="bottom">En bas (avant le footer)</SelectItem>
                     </SelectContent>
                   </Select>
-                  <p className="text-xs text-muted-foreground">Choisissez où afficher vos liens sur votre page publique</p>
                 </div>
               )}
             </div>
@@ -689,48 +617,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             </p>
           </TabsContent>
 
-          {/* Sections Tab */}
-          <TabsContent value="sections" className="space-y-4">
-            <SectionsEditor
-              sections={local.sections || defaultSections}
-              onUpdate={(sections) => updateLocal({ sections })}
-            />
-
-            {/* Quick toggles for info cards */}
-            <div className="pt-4 border-t space-y-3">
-              <Label className="text-sm font-medium">Cartes d'informations</Label>
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <p className="font-medium text-foreground text-sm">Afficher les horaires</p>
-                </div>
-                <Switch
-                  checked={local.layout.show_hours}
-                  onCheckedChange={(checked) => updateLayout({ show_hours: checked })}
-                />
-              </div>
-
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <p className="font-medium text-foreground text-sm">Afficher l'adresse</p>
-                </div>
-                <Switch
-                  checked={local.layout.show_address}
-                  onCheckedChange={(checked) => updateLayout({ show_address: checked })}
-                />
-              </div>
-
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <p className="font-medium text-foreground text-sm">Afficher le téléphone</p>
-                </div>
-                <Switch
-                  checked={local.layout.show_phone}
-                  onCheckedChange={(checked) => updateLayout({ show_phone: checked })}
-                />
-              </div>
-            </div>
-          </TabsContent>
-
           {/* Packs Tab */}
           <TabsContent value="packs" className="space-y-4">
             {packs.length === 0 ? (
@@ -782,7 +668,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             <div>
               <Label className="mb-3 block">Image de couverture</Label>
               <p className="text-sm text-muted-foreground mb-4">
-                L'image affichée en haut de votre page de réservation.
+                L'image affichée en haut de votre page (bannière).
               </p>
 
               {local.cover_url ? (
@@ -861,66 +747,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                   </p>
                 </div>
               )}
-            </div>
-          </TabsContent>
-
-          {/* Gallery Tab */}
-          <TabsContent value="gallery" className="space-y-4">
-            <div>
-              <Label className="mb-3 block">Galerie de réalisations</Label>
-              <p className="text-sm text-muted-foreground mb-4">
-                Ajoutez jusqu'à 8 photos de vos réalisations pour montrer la qualité de votre travail.
-              </p>
-
-              {/* Gallery Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-                {(local.gallery_images || []).map((url, index) => (
-                  <div key={index} className="relative group aspect-square">
-                    <img
-                      src={url}
-                      alt={`Réalisation ${index + 1}`}
-                      className="w-full h-full object-cover rounded-lg border border-border"
-                    />
-                    <button
-                      onClick={() => handleRemoveGalleryImage(url)}
-                      className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-
-                {/* Add Button */}
-                {(local.gallery_images || []).length < 8 && (
-                  <div className="aspect-square border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleGalleryUpload}
-                      className="sr-only"
-                      id="gallery-upload"
-                    />
-                    <Label
-                      htmlFor="gallery-upload"
-                      className="w-full h-full flex flex-col items-center justify-center cursor-pointer"
-                    >
-                      {uploadingGallery ? (
-                        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-                      ) : (
-                        <>
-                          <ImagePlus className="w-6 h-6 text-muted-foreground mb-1" />
-                          <span className="text-xs text-muted-foreground">Ajouter</span>
-                        </>
-                      )}
-                    </Label>
-                  </div>
-                )}
-              </div>
-
-              <p className="text-xs text-muted-foreground">
-                {(local.gallery_images || []).length}/8 images. JPG, PNG ou WebP. Max 5 Mo par image.
-              </p>
             </div>
           </TabsContent>
 
@@ -1005,9 +831,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 onChange={(e) => updateLocal({ seo: { ...local.seo, keywords: e.target.value } })}
                 placeholder="nettoyage auto, detailing, lavage voiture..."
               />
-              <p className="text-xs text-muted-foreground">
-                Mots-clés sur lesquels vous souhaitez être trouvé
-              </p>
             </div>
           </TabsContent>
         </Tabs>
