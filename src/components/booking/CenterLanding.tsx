@@ -613,12 +613,12 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
       }}
     >
       <div className="max-w-lg mx-auto px-4 pb-8">
-        {/* Fixed CTA Bar - Apple Premium Style (absolute in preview mode) */}
+        {/* Fixed CTA Bar - Apple Premium Style (sticky in preview mode to stay within container) */}
         {hasPacks && isPro && (
           <div 
             className={cn(
               "bottom-0 left-0 right-0 z-50 border-t backdrop-blur-xl safe-area-pb",
-              isPreview ? "absolute" : "fixed"
+              isPreview ? "sticky" : "fixed"
             )}
             style={{ 
               backgroundColor: customization.layout.dark_mode 
