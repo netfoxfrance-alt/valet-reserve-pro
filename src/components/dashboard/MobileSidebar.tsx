@@ -33,7 +33,7 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
   const [copied, setCopied] = useState(false);
   
   const isPro = subscription.subscribed;
-  const bookingUrl = center ? `${window.location.origin}/c/${center.slug}` : '';
+  const bookingUrl = center ? `${window.location.origin}/${center.slug}` : '';
   
   const handleCopyLink = () => {
     if (bookingUrl) {
@@ -99,9 +99,9 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
                 Votre lien client
               </div>
               <div className="flex gap-2">
-                <code className="flex-1 text-xs bg-background rounded-lg px-2 py-1.5 text-muted-foreground truncate">
-                  /c/{center.slug}
-                </code>
+              <code className="flex-1 text-xs bg-background rounded-lg px-2 py-1.5 text-muted-foreground truncate">
+                /{center.slug}
+              </code>
                 <Button
                   variant="outline"
                   size="sm"

@@ -34,8 +34,6 @@ const App = () => (
             <Route path="/booking" element={<Booking />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/complete-signup" element={<CompleteSignup />} />
-            <Route path="/c/:slug" element={<CenterBooking />} />
-            
             {/* All dashboard routes - Trial model (no restrictions) */}
             <Route path="/dashboard" element={
               <ProtectedRoute>
@@ -72,6 +70,9 @@ const App = () => (
                 <DashboardMyPage />
               </ProtectedRoute>
             } />
+            
+            {/* Public center page - must be last before catch-all to avoid conflicts */}
+            <Route path="/:slug" element={<CenterBooking />} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>

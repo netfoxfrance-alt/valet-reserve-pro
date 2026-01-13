@@ -27,7 +27,7 @@ export function DashboardSidebar() {
   const [copied, setCopied] = useState(false);
   
   const isPro = subscription.subscribed;
-  const bookingUrl = center ? `${window.location.origin}/c/${center.slug}` : '';
+  const bookingUrl = center ? `${window.location.origin}/${center.slug}` : '';
   
   // Calculate trial days remaining
   const getTrialDaysRemaining = () => {
@@ -101,7 +101,7 @@ export function DashboardSidebar() {
             </div>
             <div className="flex gap-2">
               <code className="flex-1 text-xs bg-background rounded-lg px-2 py-1.5 text-muted-foreground truncate">
-                /c/{center.slug}
+                /{center.slug}
               </code>
               <Button
                 variant="outline"

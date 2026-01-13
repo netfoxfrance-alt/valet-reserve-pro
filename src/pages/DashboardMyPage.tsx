@@ -105,7 +105,7 @@ export default function DashboardMyPage() {
     );
   }
 
-  const publicUrl = center ? `${window.location.origin}/c/${center.slug}` : '';
+  const publicUrl = center ? `${window.location.origin}/${center.slug}` : '';
 
   return (
     <div className="min-h-screen bg-background">
@@ -204,7 +204,7 @@ export default function DashboardMyPage() {
                 <div 
                   key={previewKey}
                   className={cn(
-                    "bg-background rounded-lg sm:rounded-xl shadow-xl overflow-hidden transition-all duration-300",
+                    "bg-background rounded-lg sm:rounded-xl shadow-xl overflow-hidden transition-all duration-300 relative",
                     previewMode === 'mobile' 
                       ? "w-full max-w-[320px] sm:max-w-[375px]" 
                       : "w-full max-w-[800px]"
@@ -215,7 +215,7 @@ export default function DashboardMyPage() {
                     minHeight: previewMode === 'mobile' ? '400px' : '500px',
                   }}
                 >
-                  <div className="h-full overflow-y-auto">
+                  <div className="h-full overflow-y-auto relative">
                     {previewCenter && (
                       <CenterLanding
                         center={previewCenter}
@@ -224,6 +224,7 @@ export default function DashboardMyPage() {
                         onSelectPack={() => {}}
                         hasPacks={packs.length > 0}
                         isPro={center?.subscription_plan === 'pro' || center?.subscription_plan === 'trial'}
+                        isPreview
                       />
                     )}
                   </div>
@@ -297,7 +298,7 @@ export default function DashboardMyPage() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="request-message">Précisions (optionnel)</Label>
+              <Label htmlFor="request-message">Précisions</Label>
               <Textarea
                 id="request-message"
                 placeholder="Décrivez votre besoin en détail..."
