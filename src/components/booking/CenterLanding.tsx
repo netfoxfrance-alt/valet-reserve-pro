@@ -403,105 +403,111 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     );
   };
 
-  // Hours block renderer
-  const renderHours = (block: PageBlock) => {
+  // Compact info items renderer (for phone, address, hours - inline style)
+  const renderInfoItem = (icon: React.ReactNode, content: React.ReactNode, href?: string) => {
+    const Wrapper = href ? 'a' : 'div';
     return (
-      <div key={block.id} className="mb-10">
-        <h2 
-          className="text-xl font-semibold mb-4 tracking-tight"
-          style={{ color: textColors.primary }}
+      <Wrapper
+        {...(href ? { href } : {})}
+        className="flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-black/5 dark:hover:bg-white/5"
+        style={{
+          backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+        }}
+      >
+        <div 
+          className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+          style={{ backgroundColor: customization.colors.primary + '15' }}
         >
-          {block.title}
-        </h2>
-        <Card 
-          className="p-4 rounded-2xl"
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          {content}
+        </div>
+      </Wrapper>
+    );
+  };
+
+  // Combined info section (phone, address, hours in one elegant block)
+  const renderInfoSection = () => {
+    const hasPhone = activeBlocks.some(b => b.type === 'phone') && center.phone;
+    const hasAddress = activeBlocks.some(b => b.type === 'address') && center.address;
+    const hasHours = activeBlocks.some(b => b.type === 'hours');
+
+    if (!hasPhone && !hasAddress && !hasHours) return null;
+
+    return (
+      <div className="mb-8">
+        <div 
+          className="rounded-2xl overflow-hidden divide-y"
           style={{
             backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
             borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
+            border: `1px solid ${customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'}`,
           }}
         >
-          <div className="flex items-center gap-3">
-            <div 
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: customization.colors.primary + '15' }}
+          {hasPhone && (
+            <a 
+              href={`tel:${center.phone}`} 
+              className="flex items-center gap-3 p-4 transition-all hover:bg-black/5 dark:hover:bg-white/5"
             >
-              <Clock className="w-5 h-5" style={{ color: customization.colors.primary }} />
+              <div 
+                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: customization.colors.primary + '15' }}
+              >
+                <Phone className="w-5 h-5" style={{ color: customization.colors.primary }} />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs uppercase tracking-wide mb-0.5" style={{ color: textColors.secondary }}>Téléphone</p>
+                <p className="font-medium" style={{ color: textColors.primary }}>{center.phone}</p>
+              </div>
+              <ChevronRight className="w-4 h-4" style={{ color: textColors.secondary }} />
+            </a>
+          )}
+          
+          {hasAddress && (
+            <a 
+              href={`https://maps.google.com/?q=${encodeURIComponent(center.address || '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-4 transition-all hover:bg-black/5 dark:hover:bg-white/5"
+            >
+              <div 
+                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: customization.colors.primary + '15' }}
+              >
+                <MapPin className="w-5 h-5" style={{ color: customization.colors.primary }} />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs uppercase tracking-wide mb-0.5" style={{ color: textColors.secondary }}>Adresse</p>
+                <p className="font-medium" style={{ color: textColors.primary }}>{center.address}</p>
+              </div>
+              <ChevronRight className="w-4 h-4" style={{ color: textColors.secondary }} />
+            </a>
+          )}
+          
+          {hasHours && (
+            <div className="flex items-center gap-3 p-4">
+              <div 
+                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: customization.colors.primary + '15' }}
+              >
+                <Clock className="w-5 h-5" style={{ color: customization.colors.primary }} />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs uppercase tracking-wide mb-0.5" style={{ color: textColors.secondary }}>Horaires</p>
+                <p className="font-medium" style={{ color: textColors.primary }}>Lun - Sam : 9h00 - 19h00</p>
+              </div>
             </div>
-            <div>
-              <p className="font-medium" style={{ color: textColors.primary }}>Lun - Sam</p>
-              <p className="text-sm" style={{ color: textColors.secondary }}>9h00 - 19h00</p>
-            </div>
-          </div>
-        </Card>
+          )}
+        </div>
       </div>
     );
   };
 
-  // Address block renderer
-  const renderAddress = (block: PageBlock) => {
-    if (!center.address) return null;
-    
-    return (
-      <div key={block.id} className="mb-10">
-        <h2 
-          className="text-xl font-semibold mb-4 tracking-tight"
-          style={{ color: textColors.primary }}
-        >
-          {block.title}
-        </h2>
-        <Card 
-          className="p-4 rounded-2xl"
-          style={{
-            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
-            borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
-          }}
-        >
-          <div className="flex items-center gap-3">
-            <div 
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: customization.colors.primary + '15' }}
-            >
-              <MapPin className="w-5 h-5" style={{ color: customization.colors.primary }} />
-            </div>
-            <p className="font-medium" style={{ color: textColors.primary }}>{center.address}</p>
-          </div>
-        </Card>
-      </div>
-    );
-  };
-
-  // Phone block renderer
-  const renderPhone = (block: PageBlock) => {
-    if (!center.phone) return null;
-    
-    return (
-      <div key={block.id} className="mb-10">
-        <h2 
-          className="text-xl font-semibold mb-4 tracking-tight"
-          style={{ color: textColors.primary }}
-        >
-          {block.title}
-        </h2>
-        <Card 
-          className="p-4 rounded-2xl"
-          style={{
-            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
-            borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
-          }}
-        >
-          <a href={`tel:${center.phone}`} className="flex items-center gap-3">
-            <div 
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: customization.colors.primary + '15' }}
-            >
-              <Phone className="w-5 h-5" style={{ color: customization.colors.primary }} />
-            </div>
-            <p className="font-medium" style={{ color: textColors.primary }}>{center.phone}</p>
-          </a>
-        </Card>
-      </div>
-    );
-  };
+  // Individual block renderers (kept for backwards compatibility but now hidden from main render)
+  const renderHours = (block: PageBlock) => null; // Now rendered in info section
+  const renderAddress = (block: PageBlock) => null; // Now rendered in info section
+  const renderPhone = (block: PageBlock) => null; // Now rendered in info section
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -682,8 +688,13 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
           </div>
         )}
 
-        {/* Dynamic Blocks */}
-        {activeBlocks.map(block => renderBlock(block))}
+        {/* Info Section (Phone, Address, Hours) - Rendered at top */}
+        {renderInfoSection()}
+
+        {/* Dynamic Blocks (excluding phone, address, hours which are in info section) */}
+        {activeBlocks
+          .filter(block => !['phone', 'address', 'hours'].includes(block.type))
+          .map(block => renderBlock(block))}
 
         {/* Footer */}
         <div className="text-center pt-8 border-t" style={{ borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)' }}>
