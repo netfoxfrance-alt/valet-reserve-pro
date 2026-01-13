@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
     <priority>1.0</priority>
   </url>`;
 
-    // Add each center page
+    // Add each center page with correct /c/ prefix
     for (const center of centers || []) {
       const lastmod = center.updated_at 
         ? new Date(center.updated_at).toISOString().split('T')[0]
@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
       
       xml += `
   <url>
-    <loc>${baseUrl}/${center.slug}</loc>
+    <loc>${baseUrl}/c/${center.slug}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
