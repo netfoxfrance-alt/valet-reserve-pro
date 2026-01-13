@@ -572,13 +572,30 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
 
   return (
     <div 
-      className="min-h-screen transition-colors duration-300"
+      className="min-h-screen transition-colors duration-300 pb-24"
       style={{ 
         ...customStyles,
         backgroundColor: customization.layout.dark_mode ? '#0f0f0f' : '#fafafa',
       }}
     >
       <div className="max-w-lg mx-auto px-4 pb-8">
+        {/* Fixed CTA Button */}
+        {hasPacks && isPro && (
+          <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-black/10 to-transparent pointer-events-none">
+            <div className="max-w-lg mx-auto pointer-events-auto">
+              <Button
+                onClick={onStartBooking}
+                className="w-full h-14 text-lg font-semibold rounded-2xl transition-all duration-300 hover:shadow-xl hover:scale-[1.02] shadow-2xl"
+                style={{ 
+                  backgroundColor: customization.colors.primary,
+                  boxShadow: `0 10px 40px -10px ${customization.colors.primary}80`,
+                }}
+              >
+                {customization.texts.cta_button || 'Réserver'}
+              </Button>
+            </div>
+          </div>
+        )}
         {/* Cover Image */}
         {customization.cover_url && (
           <div className="relative -mx-4 mb-6">
@@ -594,11 +611,14 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
         {/* Header */}
         <div className={cn("text-center", customization.cover_url ? "-mt-16 relative z-10 mb-6" : "pt-8 mb-6")}>
           {center.logo_url && (
-            <div className="w-20 h-20 mx-auto mb-4 rounded-2xl overflow-hidden border-4 border-white shadow-xl">
+            <div className="mx-auto mb-4 max-w-[160px] max-h-[80px] flex items-center justify-center">
               <img
                 src={center.logo_url}
                 alt={center.name}
-                className="w-full h-full object-cover"
+                className="max-w-full max-h-full w-auto h-auto object-contain rounded-xl shadow-lg"
+                style={{
+                  border: customization.cover_url ? '3px solid white' : undefined,
+                }}
               />
             </div>
           )}
@@ -650,17 +670,6 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
               </a>
             ))}
           </div>
-        )}
-
-        {/* Main CTA */}
-        {hasPacks && isPro && (
-          <Button
-            onClick={onStartBooking}
-            className="w-full h-14 text-lg font-semibold rounded-2xl mb-8 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
-            style={{ backgroundColor: customization.colors.primary }}
-          >
-            {customization.texts.cta_button || 'Réserver'}
-          </Button>
         )}
 
         {/* Dynamic Blocks */}

@@ -150,7 +150,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     <section className="mb-6 sm:mb-8">
       <Card variant="elevated" className="p-4 sm:p-6">
         <Tabs defaultValue="design" className="w-full">
-          {/* 4 Clean tabs: Design, Formules, Blocs, SEO */}
+          {/* 4 Clean tabs: Design, Formules, Éléments, SEO */}
           <div className="mb-6">
             <TabsList className="grid grid-cols-4 gap-1 w-full bg-muted/50 p-1.5 rounded-xl h-auto">
               <TabsTrigger value="design" className="flex flex-col items-center gap-0.5 px-2 py-2.5 text-xs sm:text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
@@ -163,7 +163,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               </TabsTrigger>
               <TabsTrigger value="blocks" className="flex flex-col items-center gap-0.5 px-2 py-2.5 text-xs sm:text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Layers className="w-4 h-4" />
-                <span>Blocs</span>
+                <span>Éléments</span>
               </TabsTrigger>
               <TabsTrigger value="seo" className="flex flex-col items-center gap-0.5 px-2 py-2.5 text-xs sm:text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Search className="w-4 h-4" />
@@ -172,7 +172,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             </TabsList>
           </div>
 
-          {/* Design Tab - Colors, Banner, Logo, Social */}
+          {/* Design Tab - Banner, Colors only (simplified) */}
           <TabsContent value="design" className="space-y-6">
             {/* Banner Section */}
             <div>
@@ -247,6 +247,9 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                   </Label>
                 </div>
               )}
+              <p className="text-xs text-muted-foreground mt-2">
+                Le logo se configure dans Paramètres → Informations
+              </p>
             </div>
 
             {/* Color Presets */}
@@ -340,70 +343,29 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               </div>
             </div>
 
-            {/* Texts */}
-            <div className="space-y-3">
-              <Label className="text-sm font-medium">Textes</Label>
-              <div className="space-y-2">
-                <Input
-                  value={local.texts.tagline}
-                  onChange={(e) => updateTexts({ tagline: e.target.value })}
-                  placeholder="Slogan / Sous-titre"
-                  className="h-10"
-                />
-                <Input
-                  value={local.texts.cta_button}
-                  onChange={(e) => updateTexts({ cta_button: e.target.value })}
-                  placeholder="Texte du bouton (ex: Réserver)"
-                  className="h-10"
-                />
-              </div>
+            {/* CTA Button Text */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Bouton d'action</Label>
+              <Input
+                value={local.texts.cta_button}
+                onChange={(e) => updateTexts({ cta_button: e.target.value })}
+                placeholder="Texte du bouton (ex: Réserver)"
+                className="h-10"
+              />
+              <p className="text-xs text-muted-foreground">
+                Ce bouton reste fixé en bas de votre page
+              </p>
             </div>
 
-            {/* Social Media */}
-            <div className="space-y-3">
-              <Label className="text-sm font-medium">Réseaux sociaux</Label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="flex gap-2 items-center">
-                  <Instagram className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                  <Input
-                    value={local.social.instagram}
-                    onChange={(e) => updateSocial({ instagram: e.target.value })}
-                    placeholder="Instagram (sans @)"
-                    className="h-9"
-                  />
-                </div>
-                <div className="flex gap-2 items-center">
-                  <svg className="w-4 h-4 text-muted-foreground flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                  </svg>
-                  <Input
-                    value={local.social.tiktok}
-                    onChange={(e) => updateSocial({ tiktok: e.target.value })}
-                    placeholder="TikTok (sans @)"
-                    className="h-9"
-                  />
-                </div>
-                <div className="flex gap-2 items-center">
-                  <svg className="w-4 h-4 text-muted-foreground flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                  </svg>
-                  <Input
-                    value={local.social.facebook}
-                    onChange={(e) => updateSocial({ facebook: e.target.value })}
-                    placeholder="Page Facebook"
-                    className="h-9"
-                  />
-                </div>
-                <div className="flex gap-2 items-center">
-                  <Mail className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                  <Input
-                    value={local.social.email}
-                    onChange={(e) => updateSocial({ email: e.target.value })}
-                    placeholder="Email de contact"
-                    className="h-9"
-                  />
-                </div>
-              </div>
+            {/* Tagline */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Slogan</Label>
+              <Input
+                value={local.texts.tagline}
+                onChange={(e) => updateTexts({ tagline: e.target.value })}
+                placeholder="Votre slogan ou sous-titre"
+                className="h-10"
+              />
             </div>
           </TabsContent>
 
@@ -458,8 +420,10 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             <BlocksEditor
               blocks={local.blocks || defaultBlocks}
               customLinks={local.custom_links || []}
+              social={local.social || { instagram: '', tiktok: '', facebook: '', email: '' }}
               onUpdateBlocks={(blocks) => updateLocal({ blocks })}
               onUpdateLinks={(custom_links) => updateLocal({ custom_links })}
+              onUpdateSocial={(social) => updateLocal({ social })}
               userId={userId}
               centerAddress={centerAddress}
               centerPhone={centerPhone}
