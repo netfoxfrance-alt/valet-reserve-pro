@@ -4,14 +4,12 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CenterCustomization, CustomLink, defaultCustomization, PageSection, defaultSections } from '@/types/customization';
+import { CenterCustomization, defaultCustomization, defaultBlocks } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Type, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail, X, Search, Globe, MapPin, Tag, Package, Link2, Plus, ShoppingBag, BookOpen, Video, Calendar, FileText, ChevronUp, ChevronDown, Layers } from 'lucide-react';
-import { SectionsEditor } from './SectionsEditor';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, Search, MapPin, Tag, Package, Layers } from 'lucide-react';
+import { BlocksEditor } from './BlocksEditor';
 import { cn } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -22,6 +20,8 @@ interface CustomizationSectionProps {
   customization: CenterCustomization;
   onUpdate: (customization: CenterCustomization) => void;
   packs?: Pack[];
+  centerAddress?: string;
+  centerPhone?: string;
 }
 
 const COLOR_PRESETS = [
@@ -33,7 +33,7 @@ const COLOR_PRESETS = [
   { name: 'Rose', primary: '#ec4899', secondary: '#500724', accent: '#8b5cf6' },
 ];
 
-export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [] }: CustomizationSectionProps) {
+export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [], centerAddress, centerPhone }: CustomizationSectionProps) {
   const { toast } = useToast();
   const [uploadingCover, setUploadingCover] = useState(false);
   const [local, setLocal] = useState<CenterCustomization>(customization);
@@ -76,39 +76,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
   const effectiveVisiblePacks = (local.visible_pack_ids?.length ?? 0) > 0 
     ? local.visible_pack_ids 
     : packs.map(p => p.id);
-
-  const addCustomLink = () => {
-    const newLink: CustomLink = {
-      id: crypto.randomUUID(),
-      title: '',
-      url: '',
-      icon: 'link',
-    };
-    updateLocal({ custom_links: [...(local.custom_links || []), newLink] });
-  };
-
-  const updateCustomLink = (id: string, updates: Partial<CustomLink>) => {
-    const updatedLinks = (local.custom_links || []).map(link =>
-      link.id === id ? { ...link, ...updates } : link
-    );
-    updateLocal({ custom_links: updatedLinks });
-  };
-
-  const removeCustomLink = (id: string) => {
-    updateLocal({ custom_links: (local.custom_links || []).filter(link => link.id !== id) });
-  };
-
-  const moveCustomLink = (id: string, direction: 'up' | 'down') => {
-    const links = [...(local.custom_links || [])];
-    const index = links.findIndex(link => link.id === id);
-    if (index === -1) return;
-    
-    const newIndex = direction === 'up' ? index - 1 : index + 1;
-    if (newIndex < 0 || newIndex >= links.length) return;
-    
-    [links[index], links[newIndex]] = [links[newIndex], links[index]];
-    updateLocal({ custom_links: links });
-  };
 
   const applyPreset = (preset: typeof COLOR_PRESETS[0]) => {
     updateColors({
@@ -175,515 +142,54 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     }
   };
 
+  const updateSeo = (seo: Partial<CenterCustomization['seo']>) => {
+    updateLocal({ seo: { ...local.seo, ...seo } });
+  };
+
   return (
     <section className="mb-6 sm:mb-8">
       <Card variant="elevated" className="p-4 sm:p-6">
-        <Tabs defaultValue="sections" className="w-full">
-          {/* Mobile: 2-row grid, Desktop: single row */}
+        <Tabs defaultValue="design" className="w-full">
+          {/* 4 Clean tabs: Design, Formules, Blocs, SEO */}
           <div className="mb-6">
-            <TabsList className="grid grid-cols-4 sm:grid-cols-8 gap-1 w-full bg-muted/50 p-1.5 rounded-xl h-auto">
-              <TabsTrigger value="sections" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Layers className="w-4 h-4" />
-                <span>Blocs</span>
-              </TabsTrigger>
-              <TabsTrigger value="colors" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <TabsList className="grid grid-cols-4 gap-1 w-full bg-muted/50 p-1.5 rounded-xl h-auto">
+              <TabsTrigger value="design" className="flex flex-col items-center gap-0.5 px-2 py-2.5 text-xs sm:text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Palette className="w-4 h-4" />
-                <span>Couleurs</span>
+                <span>Design</span>
               </TabsTrigger>
-              <TabsTrigger value="texts" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Type className="w-4 h-4" />
-                <span>Textes</span>
-              </TabsTrigger>
-              <TabsTrigger value="links" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Link2 className="w-4 h-4" />
-                <span>Liens</span>
-              </TabsTrigger>
-              <TabsTrigger value="social" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Share2 className="w-4 h-4" />
-                <span>Réseaux</span>
-              </TabsTrigger>
-              <TabsTrigger value="packs" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+              <TabsTrigger value="formules" className="flex flex-col items-center gap-0.5 px-2 py-2.5 text-xs sm:text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Package className="w-4 h-4" />
                 <span>Formules</span>
               </TabsTrigger>
-              <TabsTrigger value="cover" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Image className="w-4 h-4" />
-                <span>Bannière</span>
+              <TabsTrigger value="blocks" className="flex flex-col items-center gap-0.5 px-2 py-2.5 text-xs sm:text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                <Layers className="w-4 h-4" />
+                <span>Blocs</span>
               </TabsTrigger>
-              <TabsTrigger value="seo" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+              <TabsTrigger value="seo" className="flex flex-col items-center gap-0.5 px-2 py-2.5 text-xs sm:text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Search className="w-4 h-4" />
                 <span>SEO</span>
               </TabsTrigger>
             </TabsList>
           </div>
 
-          {/* Sections Tab (First!) */}
-          <TabsContent value="sections" className="space-y-4">
-            <SectionsEditor
-              sections={local.sections || defaultSections}
-              onUpdate={(sections) => updateLocal({ sections })}
-              userId={userId}
-            />
-
-            {/* Quick toggles for info cards */}
-            <div className="pt-4 border-t space-y-3">
-              <Label className="text-sm font-medium">Cartes d'informations</Label>
-              <div className="flex items-center justify-between py-2">
-                <p className="font-medium text-foreground text-sm">Afficher les horaires</p>
-                <Switch
-                  checked={local.layout.show_hours}
-                  onCheckedChange={(checked) => updateLayout({ show_hours: checked })}
-                />
-              </div>
-              <div className="flex items-center justify-between py-2">
-                <p className="font-medium text-foreground text-sm">Afficher l'adresse</p>
-                <Switch
-                  checked={local.layout.show_address}
-                  onCheckedChange={(checked) => updateLayout({ show_address: checked })}
-                />
-              </div>
-              <div className="flex items-center justify-between py-2">
-                <p className="font-medium text-foreground text-sm">Afficher le téléphone</p>
-                <Switch
-                  checked={local.layout.show_phone}
-                  onCheckedChange={(checked) => updateLayout({ show_phone: checked })}
-                />
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* Colors Tab */}
-          <TabsContent value="colors" className="space-y-6">
+          {/* Design Tab - Colors, Banner, Logo, Social */}
+          <TabsContent value="design" className="space-y-6">
+            {/* Banner Section */}
             <div>
-              <Label className="text-sm font-medium mb-3 block">Thèmes prédéfinis</Label>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                {COLOR_PRESETS.map((preset) => (
-                  <button
-                    key={preset.name}
-                    onClick={() => applyPreset(preset)}
-                    className={cn(
-                      "p-3 rounded-lg border-2 transition-all hover:scale-105",
-                      local.colors.primary === preset.primary 
-                        ? "border-primary ring-2 ring-primary/20" 
-                        : "border-border hover:border-muted-foreground"
-                    )}
-                  >
-                    <div className="flex gap-1 mb-1.5">
-                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.primary }} />
-                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.secondary }} />
-                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.accent }} />
-                    </div>
-                    <p className="text-xs text-center text-muted-foreground">{preset.name}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="primary-color">Couleur principale</Label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    id="primary-color"
-                    value={local.colors.primary}
-                    onChange={(e) => updateColors({ primary: e.target.value })}
-                    className="w-12 h-10 rounded border border-border cursor-pointer"
-                  />
-                  <Input
-                    value={local.colors.primary}
-                    onChange={(e) => updateColors({ primary: e.target.value })}
-                    className="flex-1"
-                    placeholder="#3b82f6"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="secondary-color">Couleur secondaire</Label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    id="secondary-color"
-                    value={local.colors.secondary}
-                    onChange={(e) => updateColors({ secondary: e.target.value })}
-                    className="w-12 h-10 rounded border border-border cursor-pointer"
-                  />
-                  <Input
-                    value={local.colors.secondary}
-                    onChange={(e) => updateColors({ secondary: e.target.value })}
-                    className="flex-1"
-                    placeholder="#1e293b"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="accent-color">Couleur d'accent</Label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    id="accent-color"
-                    value={local.colors.accent}
-                    onChange={(e) => updateColors({ accent: e.target.value })}
-                    className="w-12 h-10 rounded border border-border cursor-pointer"
-                  />
-                  <Input
-                    value={local.colors.accent}
-                    onChange={(e) => updateColors({ accent: e.target.value })}
-                    className="flex-1"
-                    placeholder="#10b981"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Text Colors */}
-            <div className="pt-4 border-t">
-              <Label className="text-sm font-medium mb-3 block">Couleurs de texte</Label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="text-primary-color">Texte principal (titres)</Label>
-                  <div className="flex gap-2">
-                    <input
-                      type="color"
-                      id="text-primary-color"
-                      value={local.colors.text_primary || '#111827'}
-                      onChange={(e) => updateColors({ text_primary: e.target.value })}
-                      className="w-12 h-10 rounded border border-border cursor-pointer"
-                    />
-                    <Input
-                      value={local.colors.text_primary || '#111827'}
-                      onChange={(e) => updateColors({ text_primary: e.target.value })}
-                      className="flex-1"
-                      placeholder="#111827"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="text-secondary-color">Texte secondaire</Label>
-                  <div className="flex gap-2">
-                    <input
-                      type="color"
-                      id="text-secondary-color"
-                      value={local.colors.text_secondary || '#6b7280'}
-                      onChange={(e) => updateColors({ text_secondary: e.target.value })}
-                      className="w-12 h-10 rounded border border-border cursor-pointer"
-                    />
-                    <Input
-                      value={local.colors.text_secondary || '#6b7280'}
-                      onChange={(e) => updateColors({ text_secondary: e.target.value })}
-                      className="flex-1"
-                      placeholder="#6b7280"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Dark Mode Toggle */}
-            <div className="flex items-center justify-between py-3 px-4 rounded-lg border bg-secondary/30">
-              <div>
-                <p className="font-medium text-foreground">Mode sombre</p>
-                <p className="text-sm text-muted-foreground">Thème sombre pour la page publique</p>
-              </div>
-              <Switch
-                checked={local.layout.dark_mode}
-                onCheckedChange={(checked) => updateLayout({ dark_mode: checked })}
-              />
-            </div>
-          </TabsContent>
-
-          {/* Texts Tab */}
-          <TabsContent value="texts" className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="tagline">Slogan / Sous-titre</Label>
-              <Input
-                id="tagline"
-                value={local.texts.tagline}
-                onChange={(e) => updateTexts({ tagline: e.target.value })}
-                placeholder="Ex: Spécialiste du lavage premium depuis 2010"
-              />
-              <p className="text-xs text-muted-foreground">Affiché sous le nom de votre centre</p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="welcome-message">Phrase page réservation</Label>
-              <Input
-                id="welcome-message"
-                value={local.texts.welcome_message || ''}
-                onChange={(e) => updateTexts({ welcome_message: e.target.value })}
-                placeholder="Ex: Réservez votre rendez-vous en quelques clics"
-              />
-              <p className="text-xs text-muted-foreground">Affiché en haut de la page de réservation</p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="cta-button">Texte du bouton principal</Label>
-              <Input
-                id="cta-button"
-                value={local.texts.cta_button}
-                onChange={(e) => updateTexts({ cta_button: e.target.value })}
-                placeholder="Réserver"
-              />
-            </div>
-          </TabsContent>
-
-          {/* Custom Links Tab */}
-          <TabsContent value="links" className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label>Liens personnalisés</Label>
-                  <p className="text-xs text-muted-foreground">Ajoutez des liens vers votre boutique, ebook, etc.</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={addCustomLink}
-                  disabled={(local.custom_links?.length || 0) >= 6}
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Ajouter
-                </Button>
-              </div>
-
-              {(local.custom_links || []).length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
-                  <Link2 className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">Aucun lien personnalisé</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {(local.custom_links || []).map((link, index) => (
-                    <div key={link.id} className="p-3 border rounded-lg space-y-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => moveCustomLink(link.id, 'up')}
-                            disabled={index === 0}
-                            className="h-8 w-8 p-0"
-                          >
-                            <ChevronUp className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => moveCustomLink(link.id, 'down')}
-                            disabled={index === (local.custom_links?.length || 0) - 1}
-                            className="h-8 w-8 p-0"
-                          >
-                            <ChevronDown className="w-4 h-4" />
-                          </Button>
-                        </div>
-                        <Select
-                          value={link.icon || 'link'}
-                          onValueChange={(value) => updateCustomLink(link.id, { icon: value as CustomLink['icon'] })}
-                        >
-                          <SelectTrigger className="w-[120px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="link">
-                              <div className="flex items-center gap-2"><Link2 className="w-4 h-4" /> Lien</div>
-                            </SelectItem>
-                            <SelectItem value="shop">
-                              <div className="flex items-center gap-2"><ShoppingBag className="w-4 h-4" /> Boutique</div>
-                            </SelectItem>
-                            <SelectItem value="book">
-                              <div className="flex items-center gap-2"><BookOpen className="w-4 h-4" /> Ebook</div>
-                            </SelectItem>
-                            <SelectItem value="video">
-                              <div className="flex items-center gap-2"><Video className="w-4 h-4" /> Vidéo</div>
-                            </SelectItem>
-                            <SelectItem value="calendar">
-                              <div className="flex items-center gap-2"><Calendar className="w-4 h-4" /> Calendrier</div>
-                            </SelectItem>
-                            <SelectItem value="file">
-                              <div className="flex items-center gap-2"><FileText className="w-4 h-4" /> Document</div>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeCustomLink(link.id)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                      <Input
-                        value={link.title}
-                        onChange={(e) => updateCustomLink(link.id, { title: e.target.value })}
-                        placeholder="Titre du lien"
-                      />
-                      <Input
-                        value={link.url}
-                        onChange={(e) => updateCustomLink(link.id, { url: e.target.value })}
-                        placeholder="https://..."
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {(local.custom_links?.length || 0) > 0 && (
-                <div className="pt-4 border-t space-y-2">
-                  <Label>Position sur la page</Label>
-                  <Select
-                    value={local.layout.links_position || 'top'}
-                    onValueChange={(value) => updateLayout({ links_position: value as 'top' | 'after_formules' | 'after_gallery' | 'bottom' })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="top">En haut (après réseaux sociaux)</SelectItem>
-                      <SelectItem value="after_formules">Après les formules</SelectItem>
-                      <SelectItem value="after_gallery">Après la galerie</SelectItem>
-                      <SelectItem value="bottom">En bas (avant le footer)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-            </div>
-          </TabsContent>
-
-          {/* Social Tab */}
-          <TabsContent value="social" className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="social-instagram">Instagram</Label>
-              <div className="flex gap-2 items-center">
-                <Instagram className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-                <Input
-                  id="social-instagram"
-                  value={local.social.instagram}
-                  onChange={(e) => updateSocial({ instagram: e.target.value })}
-                  placeholder="votre_compte (sans @)"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="social-tiktok">TikTok</Label>
-              <div className="flex gap-2 items-center">
-                <svg className="w-5 h-5 text-muted-foreground flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                </svg>
-                <Input
-                  id="social-tiktok"
-                  value={local.social.tiktok}
-                  onChange={(e) => updateSocial({ tiktok: e.target.value })}
-                  placeholder="votre_compte (sans @)"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="social-facebook">Facebook</Label>
-              <div className="flex gap-2 items-center">
-                <svg className="w-5 h-5 text-muted-foreground flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                </svg>
-                <Input
-                  id="social-facebook"
-                  value={local.social.facebook}
-                  onChange={(e) => updateSocial({ facebook: e.target.value })}
-                  placeholder="Nom de votre page Facebook"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="social-email">Email de contact</Label>
-              <div className="flex gap-2 items-center">
-                <Mail className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-                <Input
-                  id="social-email"
-                  type="email"
-                  value={local.social.email}
-                  onChange={(e) => updateSocial({ email: e.target.value })}
-                  placeholder="contact@votreentreprise.com"
-                />
-              </div>
-            </div>
-            
-            <p className="text-xs text-muted-foreground pt-2">
-              Ces liens seront affichés sur votre page publique sous forme d'icônes.
-            </p>
-          </TabsContent>
-
-          {/* Packs Tab */}
-          <TabsContent value="packs" className="space-y-4">
-            {packs.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p>Aucune formule créée</p>
-                <p className="text-sm">Créez des formules dans l'onglet "Formules" du tableau de bord.</p>
-              </div>
-            ) : (
-              <>
-                <p className="text-sm text-muted-foreground">
-                  Sélectionnez les formules à afficher sur votre page publique.
-                </p>
-                <div className="space-y-3">
-                  {packs.map((pack) => {
-                    const isVisible = effectiveVisiblePacks.includes(pack.id);
-                    return (
-                      <div 
-                        key={pack.id}
-                        className={cn(
-                          "flex items-center justify-between p-4 rounded-lg border transition-colors cursor-pointer",
-                          isVisible ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground"
-                        )}
-                        onClick={() => togglePackVisibility(pack.id)}
-                      >
-                        <div className="flex items-center gap-3">
-                          <Checkbox
-                            checked={isVisible}
-                            onCheckedChange={() => togglePackVisibility(pack.id)}
-                          />
-                          <div>
-                            <p className="font-medium">{pack.name}</p>
-                            {pack.description && (
-                              <p className="text-sm text-muted-foreground line-clamp-1">{pack.description}</p>
-                            )}
-                          </div>
-                        </div>
-                        <p className="font-semibold text-primary">{pack.price}€</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            )}
-          </TabsContent>
-
-          {/* Cover Tab */}
-          <TabsContent value="cover" className="space-y-4">
-            <div>
-              <Label className="mb-3 block">Image de couverture</Label>
-              <p className="text-sm text-muted-foreground mb-4">
-                L'image affichée en haut de votre page (bannière).
-              </p>
-
+              <Label className="text-sm font-medium mb-3 block">Bannière</Label>
               {local.cover_url ? (
                 <div className="relative">
                   <img
                     src={local.cover_url}
                     alt="Couverture"
-                    className="w-full h-40 object-cover rounded-lg border border-border"
+                    className="w-full h-32 object-cover rounded-lg border border-border"
                   />
                   {uploadingCover && (
                     <div className="absolute inset-0 bg-background/80 rounded-lg flex items-center justify-center">
                       <Loader2 className="w-6 h-6 animate-spin text-primary" />
                     </div>
                   )}
-                  <div className="flex gap-2 mt-3">
+                  <div className="flex gap-2 mt-2">
                     <input
                       type="file"
                       accept="image/*"
@@ -699,7 +205,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                         "cursor-pointer"
                       )}
                     >
-                      <Upload className="w-4 h-4 mr-2" />
+                      <Upload className="w-4 h-4 mr-1.5" />
                       Changer
                     </Label>
                     <Button
@@ -709,17 +215,14 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                       disabled={uploadingCover}
                       className="text-destructive hover:text-destructive"
                     >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Supprimer
+                      <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
               ) : (
-                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                  <Image className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Aucune image de couverture
-                  </p>
+                <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+                  <Image className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-sm text-muted-foreground mb-2">Aucune bannière</p>
                   <input
                     type="file"
                     accept="image/*"
@@ -736,101 +239,311 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                     )}
                   >
                     {uploadingCover ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
                     ) : (
-                      <Upload className="w-4 h-4 mr-2" />
+                      <Upload className="w-4 h-4 mr-1.5" />
                     )}
-                    Ajouter une image
+                    Ajouter
                   </Label>
-                  <p className="text-xs text-muted-foreground mt-3">
-                    JPG, PNG ou WebP. Max 5 Mo. Ratio 16:9 recommandé.
-                  </p>
                 </div>
               )}
             </div>
+
+            {/* Color Presets */}
+            <div>
+              <Label className="text-sm font-medium mb-3 block">Couleurs</Label>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-4">
+                {COLOR_PRESETS.map((preset) => (
+                  <button
+                    key={preset.name}
+                    onClick={() => applyPreset(preset)}
+                    className={cn(
+                      "p-2.5 rounded-lg border-2 transition-all hover:scale-105",
+                      local.colors.primary === preset.primary 
+                        ? "border-primary ring-2 ring-primary/20" 
+                        : "border-border hover:border-muted-foreground"
+                    )}
+                  >
+                    <div className="flex gap-1 mb-1">
+                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.primary }} />
+                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.secondary }} />
+                    </div>
+                    <p className="text-[10px] text-center text-muted-foreground">{preset.name}</p>
+                  </button>
+                ))}
+              </div>
+              
+              {/* Custom Colors */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-xs">Principale</Label>
+                  <div className="flex gap-1.5">
+                    <input
+                      type="color"
+                      value={local.colors.primary}
+                      onChange={(e) => updateColors({ primary: e.target.value })}
+                      className="w-10 h-9 rounded border border-border cursor-pointer"
+                    />
+                    <Input
+                      value={local.colors.primary}
+                      onChange={(e) => updateColors({ primary: e.target.value })}
+                      className="flex-1 h-9 text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs">Titres</Label>
+                  <div className="flex gap-1.5">
+                    <input
+                      type="color"
+                      value={local.colors.text_primary || '#111827'}
+                      onChange={(e) => updateColors({ text_primary: e.target.value })}
+                      className="w-10 h-9 rounded border border-border cursor-pointer"
+                    />
+                    <Input
+                      value={local.colors.text_primary || '#111827'}
+                      onChange={(e) => updateColors({ text_primary: e.target.value })}
+                      className="flex-1 h-9 text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs">Texte</Label>
+                  <div className="flex gap-1.5">
+                    <input
+                      type="color"
+                      value={local.colors.text_secondary || '#6b7280'}
+                      onChange={(e) => updateColors({ text_secondary: e.target.value })}
+                      className="w-10 h-9 rounded border border-border cursor-pointer"
+                    />
+                    <Input
+                      value={local.colors.text_secondary || '#6b7280'}
+                      onChange={(e) => updateColors({ text_secondary: e.target.value })}
+                      className="flex-1 h-9 text-xs"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Dark Mode */}
+              <div className="flex items-center justify-between py-3 px-3 rounded-lg border bg-secondary/30 mt-4">
+                <div>
+                  <p className="font-medium text-sm">Mode sombre</p>
+                  <p className="text-xs text-muted-foreground">Thème sombre pour la page</p>
+                </div>
+                <Switch
+                  checked={local.layout.dark_mode}
+                  onCheckedChange={(checked) => updateLayout({ dark_mode: checked })}
+                />
+              </div>
+            </div>
+
+            {/* Texts */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Textes</Label>
+              <div className="space-y-2">
+                <Input
+                  value={local.texts.tagline}
+                  onChange={(e) => updateTexts({ tagline: e.target.value })}
+                  placeholder="Slogan / Sous-titre"
+                  className="h-10"
+                />
+                <Input
+                  value={local.texts.cta_button}
+                  onChange={(e) => updateTexts({ cta_button: e.target.value })}
+                  placeholder="Texte du bouton (ex: Réserver)"
+                  className="h-10"
+                />
+              </div>
+            </div>
+
+            {/* Social Media */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Réseaux sociaux</Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="flex gap-2 items-center">
+                  <Instagram className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <Input
+                    value={local.social.instagram}
+                    onChange={(e) => updateSocial({ instagram: e.target.value })}
+                    placeholder="Instagram (sans @)"
+                    className="h-9"
+                  />
+                </div>
+                <div className="flex gap-2 items-center">
+                  <svg className="w-4 h-4 text-muted-foreground flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                  </svg>
+                  <Input
+                    value={local.social.tiktok}
+                    onChange={(e) => updateSocial({ tiktok: e.target.value })}
+                    placeholder="TikTok (sans @)"
+                    className="h-9"
+                  />
+                </div>
+                <div className="flex gap-2 items-center">
+                  <svg className="w-4 h-4 text-muted-foreground flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                  <Input
+                    value={local.social.facebook}
+                    onChange={(e) => updateSocial({ facebook: e.target.value })}
+                    placeholder="Page Facebook"
+                    className="h-9"
+                  />
+                </div>
+                <div className="flex gap-2 items-center">
+                  <Mail className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <Input
+                    value={local.social.email}
+                    onChange={(e) => updateSocial({ email: e.target.value })}
+                    placeholder="Email de contact"
+                    className="h-9"
+                  />
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Formules Tab */}
+          <TabsContent value="formules" className="space-y-4">
+            {packs.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p>Aucune formule créée</p>
+                <p className="text-sm">Créez des formules dans l'onglet "Formules" du menu.</p>
+              </div>
+            ) : (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  Sélectionnez les formules visibles sur votre page.
+                </p>
+                <div className="space-y-2">
+                  {packs.map((pack) => {
+                    const isVisible = effectiveVisiblePacks.includes(pack.id);
+                    return (
+                      <div 
+                        key={pack.id}
+                        className={cn(
+                          "flex items-center justify-between p-3 rounded-lg border transition-colors cursor-pointer",
+                          isVisible ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground"
+                        )}
+                        onClick={() => togglePackVisibility(pack.id)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Checkbox
+                            checked={isVisible}
+                            onCheckedChange={() => togglePackVisibility(pack.id)}
+                          />
+                          <div>
+                            <p className="font-medium text-sm">{pack.name}</p>
+                            {pack.description && (
+                              <p className="text-xs text-muted-foreground line-clamp-1">{pack.description}</p>
+                            )}
+                          </div>
+                        </div>
+                        <p className="font-semibold text-primary text-sm">{pack.price}€</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </TabsContent>
+
+          {/* Blocs Tab */}
+          <TabsContent value="blocks" className="space-y-4">
+            <BlocksEditor
+              blocks={local.blocks || defaultBlocks}
+              customLinks={local.custom_links || []}
+              onUpdateBlocks={(blocks) => updateLocal({ blocks })}
+              onUpdateLinks={(custom_links) => updateLocal({ custom_links })}
+              userId={userId}
+              centerAddress={centerAddress}
+              centerPhone={centerPhone}
+            />
           </TabsContent>
 
           {/* SEO Tab */}
           <TabsContent value="seo" className="space-y-4">
-            <div>
-              <p className="text-sm text-muted-foreground mb-4">
-                Personnalisez comment votre page apparaît dans les résultats Google.
-              </p>
-              
-              {/* Google Preview */}
-              <div className="p-4 rounded-lg bg-secondary/50 mb-4">
-                <p className="text-xs text-muted-foreground mb-3">Aperçu Google</p>
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">cleaningpage.com › ...</p>
-                  <p className="text-lg text-[#1a0dab] hover:underline cursor-pointer font-medium line-clamp-1">
-                    {local.seo?.title || 'Votre titre Google'}
-                  </p>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {local.seo?.description || 'Votre description apparaîtra ici...'}
-                  </p>
-                </div>
+            <p className="text-sm text-muted-foreground">
+              Personnalisez comment votre page apparaît sur Google.
+            </p>
+            
+            {/* Google Preview */}
+            <div className="p-4 rounded-lg bg-secondary/50">
+              <p className="text-xs text-muted-foreground mb-2">Aperçu Google</p>
+              <div className="space-y-0.5">
+                <p className="text-xs text-muted-foreground">cleaningpage.com › ...</p>
+                <p className="text-base text-[#1a0dab] hover:underline cursor-pointer font-medium line-clamp-1">
+                  {local.seo?.title || 'Votre titre Google'}
+                </p>
+                <p className="text-sm text-muted-foreground line-clamp-2">
+                  {local.seo?.description || 'Votre description apparaîtra ici...'}
+                </p>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="seo-city" className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-muted-foreground" />
-                Ville
-              </Label>
-              <Input
-                id="seo-city"
-                value={local.seo?.city || ''}
-                onChange={(e) => updateLocal({ seo: { ...local.seo, city: e.target.value } })}
-                placeholder="Ex: Paris, Lyon, Marseille..."
-              />
-              <p className="text-xs text-muted-foreground">
-                Importante pour apparaître dans les recherches "Nettoyage + Ville"
-              </p>
-            </div>
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="seo-city" className="flex items-center gap-2 text-sm">
+                  <MapPin className="w-4 h-4 text-muted-foreground" />
+                  Ville
+                </Label>
+                <Input
+                  id="seo-city"
+                  value={local.seo?.city || ''}
+                  onChange={(e) => updateSeo({ city: e.target.value })}
+                  placeholder="Paris, Lyon, Marseille..."
+                  className="h-10"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="seo-title" className="flex items-center gap-2">
-                <Globe className="w-4 h-4 text-muted-foreground" />
-                Titre Google (max 60 caractères)
-              </Label>
-              <Input
-                id="seo-title"
-                value={local.seo?.title || ''}
-                onChange={(e) => updateLocal({ seo: { ...local.seo, title: e.target.value.slice(0, 60) } })}
-                placeholder="Mon Entreprise - Nettoyage professionnel"
-                maxLength={60}
-              />
-              <p className="text-xs text-muted-foreground text-right">
-                {(local.seo?.title || '').length}/60
-              </p>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="seo-description">Description Google (max 160 caractères)</Label>
-              <Textarea
-                id="seo-description"
-                value={local.seo?.description || ''}
-                onChange={(e) => updateLocal({ seo: { ...local.seo, description: e.target.value.slice(0, 160) } })}
-                placeholder="Décrivez votre activité en incluant votre ville et vos services..."
-                rows={3}
-                maxLength={160}
-              />
-              <p className="text-xs text-muted-foreground text-right">
-                {(local.seo?.description || '').length}/160
-              </p>
-            </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="seo-title" className="text-sm">Titre Google</Label>
+                <Input
+                  id="seo-title"
+                  value={local.seo?.title || ''}
+                  onChange={(e) => updateSeo({ title: e.target.value })}
+                  placeholder="Ex: Nettoyage auto à Paris | MonCentre"
+                  className="h-10"
+                  maxLength={60}
+                />
+                <p className="text-xs text-muted-foreground text-right">
+                  {(local.seo?.title || '').length}/60
+                </p>
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="seo-keywords" className="flex items-center gap-2">
-                <Tag className="w-4 h-4 text-muted-foreground" />
-                Mots-clés (séparés par des virgules)
-              </Label>
-              <Input
-                id="seo-keywords"
-                value={local.seo?.keywords || ''}
-                onChange={(e) => updateLocal({ seo: { ...local.seo, keywords: e.target.value } })}
-                placeholder="nettoyage auto, detailing, lavage voiture..."
-              />
+              <div className="space-y-1.5">
+                <Label htmlFor="seo-description" className="text-sm">Description</Label>
+                <Input
+                  id="seo-description"
+                  value={local.seo?.description || ''}
+                  onChange={(e) => updateSeo({ description: e.target.value })}
+                  placeholder="Décrivez votre activité en 2-3 phrases..."
+                  className="h-10"
+                  maxLength={160}
+                />
+                <p className="text-xs text-muted-foreground text-right">
+                  {(local.seo?.description || '').length}/160
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="seo-keywords" className="flex items-center gap-2 text-sm">
+                  <Tag className="w-4 h-4 text-muted-foreground" />
+                  Mots-clés
+                </Label>
+                <Input
+                  id="seo-keywords"
+                  value={local.seo?.keywords || ''}
+                  onChange={(e) => updateSeo({ keywords: e.target.value })}
+                  placeholder="nettoyage, detailing, voiture, Paris..."
+                  className="h-10"
+                />
+              </div>
             </div>
           </TabsContent>
         </Tabs>
