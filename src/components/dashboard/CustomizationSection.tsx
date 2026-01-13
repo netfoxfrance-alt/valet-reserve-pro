@@ -9,12 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CenterCustomization, CustomLink, defaultCustomization, PageSection, defaultSections } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Type, Layout, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail, ImagePlus, X, Search, Globe, MapPin, Tag, Package, Link2, Plus, ShoppingBag, BookOpen, Video, Calendar, FileText, ChevronUp, ChevronDown, Layers } from 'lucide-react';
+import { Palette, Type, Image, Upload, Trash2, Loader2, Share2, Instagram, Mail, ImagePlus, X, Search, Globe, MapPin, Tag, Package, Link2, Plus, ShoppingBag, BookOpen, Video, Calendar, FileText, ChevronUp, ChevronDown, Settings2, Paintbrush } from 'lucide-react';
 import { SectionsEditor } from './SectionsEditor';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface CustomizationSectionProps {
   centerId: string;
@@ -33,13 +34,47 @@ const COLOR_PRESETS = [
   { name: 'Rose', primary: '#ec4899', secondary: '#500724', accent: '#8b5cf6' },
 ];
 
+// Collapsible Section Component for better organization
+function CollapsibleSection({ 
+  title, 
+  icon: Icon, 
+  children, 
+  defaultOpen = false 
+}: { 
+  title: string; 
+  icon: React.ElementType; 
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-secondary/30 rounded-xl hover:bg-secondary/50 transition-colors group">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary/10 text-primary">
+            <Icon className="w-4 h-4" />
+          </div>
+          <span className="font-medium text-foreground">{title}</span>
+        </div>
+        <ChevronDown className={cn(
+          "w-5 h-5 text-muted-foreground transition-transform duration-200",
+          isOpen && "rotate-180"
+        )} />
+      </CollapsibleTrigger>
+      <CollapsibleContent className="px-4 pb-4 pt-3 space-y-4">
+        {children}
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
+
 export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [] }: CustomizationSectionProps) {
   const { toast } = useToast();
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
   const [local, setLocal] = useState<CenterCustomization>(customization);
 
-  // Sync local state when prop changes from parent (e.g., from DB load)
   useEffect(() => {
     setLocal(customization);
   }, [customization]);
@@ -74,7 +109,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     updateLocal({ visible_pack_ids: newIds });
   };
 
-  // If no visible_pack_ids set yet, all packs are visible by default
   const effectiveVisiblePacks = (local.visible_pack_ids?.length ?? 0) > 0 
     ? local.visible_pack_ids 
     : packs.map(p => p.id);
@@ -227,7 +261,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
 
   const handleRemoveGalleryImage = async (urlToRemove: string) => {
     try {
-      // Extract path from URL
       const urlObj = new URL(urlToRemove);
       const pathParts = urlObj.pathname.split('/center-gallery/');
       if (pathParts.length > 1) {
@@ -245,770 +278,489 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
   return (
     <section className="mb-6 sm:mb-8">
       <Card variant="elevated" className="p-4 sm:p-6">
-        <Tabs defaultValue="colors" className="w-full">
-          {/* Mobile: 2-row grid, Desktop: single row */}
+        <Tabs defaultValue="content" className="w-full">
+          {/* Simplified 3-tab navigation */}
           <div className="mb-6">
-            <TabsList className="grid grid-cols-5 sm:grid-cols-9 gap-1 w-full bg-muted/50 p-1.5 rounded-xl h-auto">
-              <TabsTrigger value="colors" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Palette className="w-4 h-4" />
-                <span>Couleurs</span>
-              </TabsTrigger>
-              <TabsTrigger value="texts" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <TabsList className="grid grid-cols-3 gap-1 w-full bg-muted/50 p-1.5 rounded-xl h-auto">
+              <TabsTrigger value="content" className="flex items-center justify-center gap-2 px-3 py-3 text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Type className="w-4 h-4" />
-                <span>Textes</span>
+                <span>Contenu</span>
               </TabsTrigger>
-              <TabsTrigger value="links" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Link2 className="w-4 h-4" />
-                <span>Liens</span>
+              <TabsTrigger value="appearance" className="flex items-center justify-center gap-2 px-3 py-3 text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                <Paintbrush className="w-4 h-4" />
+                <span>Apparence</span>
               </TabsTrigger>
-              <TabsTrigger value="social" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Share2 className="w-4 h-4" />
-                <span>Réseaux</span>
-              </TabsTrigger>
-              <TabsTrigger value="sections" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Layers className="w-4 h-4" />
-                <span>Sections</span>
-              </TabsTrigger>
-              <TabsTrigger value="packs" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Package className="w-4 h-4" />
-                <span>Formules</span>
-              </TabsTrigger>
-              <TabsTrigger value="cover" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Image className="w-4 h-4" />
-                <span>Image</span>
-              </TabsTrigger>
-              <TabsTrigger value="gallery" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <ImagePlus className="w-4 h-4" />
-                <span>Galerie</span>
-              </TabsTrigger>
-              <TabsTrigger value="seo" className="flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] sm:text-xs rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Search className="w-4 h-4" />
-                <span>SEO</span>
+              <TabsTrigger value="advanced" className="flex items-center justify-center gap-2 px-3 py-3 text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                <Settings2 className="w-4 h-4" />
+                <span>Avancé</span>
               </TabsTrigger>
             </TabsList>
           </div>
 
-          {/* Colors Tab */}
-          <TabsContent value="colors" className="space-y-6">
-            <div>
-              <Label className="text-sm font-medium mb-3 block">Thèmes prédéfinis</Label>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                {COLOR_PRESETS.map((preset) => (
-                  <button
-                    key={preset.name}
-                    onClick={() => applyPreset(preset)}
-                    className={cn(
-                      "p-3 rounded-lg border-2 transition-all hover:scale-105",
-                      local.colors.primary === preset.primary 
-                        ? "border-primary ring-2 ring-primary/20" 
-                        : "border-border hover:border-muted-foreground"
-                    )}
-                  >
-                    <div className="flex gap-1 mb-1.5">
-                      <div 
-                        className="w-4 h-4 rounded-full" 
-                        style={{ backgroundColor: preset.primary }}
-                      />
-                      <div 
-                        className="w-4 h-4 rounded-full" 
-                        style={{ backgroundColor: preset.secondary }}
-                      />
-                      <div 
-                        className="w-4 h-4 rounded-full" 
-                        style={{ backgroundColor: preset.accent }}
-                      />
-                    </div>
-                    <p className="text-xs text-center text-muted-foreground">{preset.name}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* ==================== CONTENT TAB ==================== */}
+          <TabsContent value="content" className="space-y-3">
+            {/* Texts Section */}
+            <CollapsibleSection title="Textes" icon={Type} defaultOpen={true}>
               <div className="space-y-2">
-                <Label htmlFor="primary-color">Couleur principale</Label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    id="primary-color"
-                    value={local.colors.primary}
-                    onChange={(e) => updateColors({ primary: e.target.value })}
-                    className="w-12 h-10 rounded border border-border cursor-pointer"
-                  />
-                  <Input
-                    value={local.colors.primary}
-                    onChange={(e) => updateColors({ primary: e.target.value })}
-                    className="flex-1"
-                    placeholder="#3b82f6"
-                  />
-                </div>
+                <Label htmlFor="tagline">Slogan / Sous-titre</Label>
+                <Input
+                  id="tagline"
+                  value={local.texts.tagline}
+                  onChange={(e) => updateTexts({ tagline: e.target.value })}
+                  placeholder="Ex: Spécialiste du lavage premium depuis 2010"
+                />
+                <p className="text-xs text-muted-foreground">Affiché sous le nom de votre centre</p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="secondary-color">Couleur secondaire</Label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    id="secondary-color"
-                    value={local.colors.secondary}
-                    onChange={(e) => updateColors({ secondary: e.target.value })}
-                    className="w-12 h-10 rounded border border-border cursor-pointer"
-                  />
-                  <Input
-                    value={local.colors.secondary}
-                    onChange={(e) => updateColors({ secondary: e.target.value })}
-                    className="flex-1"
-                    placeholder="#1e293b"
-                  />
-                </div>
+                <Label htmlFor="about">À propos / Histoire</Label>
+                <Textarea
+                  id="about"
+                  value={local.texts.about || ''}
+                  onChange={(e) => updateTexts({ about: e.target.value })}
+                  placeholder="Racontez l'histoire de votre entreprise..."
+                  rows={3}
+                />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="accent-color">Couleur d'accent</Label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    id="accent-color"
-                    value={local.colors.accent}
-                    onChange={(e) => updateColors({ accent: e.target.value })}
-                    className="w-12 h-10 rounded border border-border cursor-pointer"
-                  />
-                  <Input
-                    value={local.colors.accent}
-                    onChange={(e) => updateColors({ accent: e.target.value })}
-                    className="flex-1"
-                    placeholder="#10b981"
-                  />
+                <Label htmlFor="cta-button">Texte du bouton principal</Label>
+                <Input
+                  id="cta-button"
+                  value={local.texts.cta_button}
+                  onChange={(e) => updateTexts({ cta_button: e.target.value })}
+                  placeholder="Réserver"
+                />
+              </div>
+            </CollapsibleSection>
+
+            {/* Sections Section */}
+            <CollapsibleSection title="Ordre des sections" icon={ChevronUp} defaultOpen={false}>
+              <SectionsEditor
+                sections={local.sections || defaultSections}
+                onUpdate={(sections) => updateLocal({ sections })}
+              />
+              
+              {/* Info cards toggles */}
+              <div className="pt-4 border-t space-y-3">
+                <Label className="text-sm font-medium">Infos affichées</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div className="flex items-center justify-between p-3 rounded-lg border bg-background">
+                    <span className="text-sm">Horaires</span>
+                    <Switch
+                      checked={local.layout.show_hours}
+                      onCheckedChange={(checked) => updateLayout({ show_hours: checked })}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-lg border bg-background">
+                    <span className="text-sm">Adresse</span>
+                    <Switch
+                      checked={local.layout.show_address}
+                      onCheckedChange={(checked) => updateLayout({ show_address: checked })}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-lg border bg-background">
+                    <span className="text-sm">Téléphone</span>
+                    <Switch
+                      checked={local.layout.show_phone}
+                      onCheckedChange={(checked) => updateLayout({ show_phone: checked })}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </CollapsibleSection>
 
-            {/* Text Colors Section */}
-            <div className="pt-4 border-t">
-              <Label className="text-sm font-medium mb-3 block">Couleurs de texte</Label>
+            {/* Social Links Section */}
+            <CollapsibleSection title="Réseaux sociaux" icon={Share2} defaultOpen={false}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="text-primary-color">Texte principal (titres)</Label>
-                  <div className="flex gap-2">
-                    <input
-                      type="color"
-                      id="text-primary-color"
-                      value={local.colors.text_primary || '#111827'}
-                      onChange={(e) => updateColors({ text_primary: e.target.value })}
-                      className="w-12 h-10 rounded border border-border cursor-pointer"
-                    />
-                    <Input
-                      value={local.colors.text_primary || '#111827'}
-                      onChange={(e) => updateColors({ text_primary: e.target.value })}
-                      className="flex-1"
-                      placeholder="#111827"
-                    />
-                  </div>
+                  <Label className="flex items-center gap-2 text-sm">
+                    <Instagram className="w-4 h-4" /> Instagram
+                  </Label>
+                  <Input
+                    value={local.social.instagram}
+                    onChange={(e) => updateSocial({ instagram: e.target.value })}
+                    placeholder="votre_compte"
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="text-secondary-color">Texte secondaire</Label>
+                  <Label className="flex items-center gap-2 text-sm">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                    </svg>
+                    TikTok
+                  </Label>
+                  <Input
+                    value={local.social.tiktok}
+                    onChange={(e) => updateSocial({ tiktok: e.target.value })}
+                    placeholder="votre_compte"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2 text-sm">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                    Facebook
+                  </Label>
+                  <Input
+                    value={local.social.facebook}
+                    onChange={(e) => updateSocial({ facebook: e.target.value })}
+                    placeholder="votre_page"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2 text-sm">
+                    <Mail className="w-4 h-4" /> Email
+                  </Label>
+                  <Input
+                    type="email"
+                    value={local.social.email}
+                    onChange={(e) => updateSocial({ email: e.target.value })}
+                    placeholder="contact@example.com"
+                  />
+                </div>
+              </div>
+            </CollapsibleSection>
+
+            {/* Custom Links Section */}
+            <CollapsibleSection title="Liens personnalisés" icon={Link2} defaultOpen={false}>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">Boutique, ebook, vidéos...</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={addCustomLink}
+                    disabled={(local.custom_links?.length || 0) >= 6}
+                  >
+                    <Plus className="w-4 h-4 mr-1" />
+                    Ajouter
+                  </Button>
+                </div>
+
+                {(local.custom_links || []).length === 0 ? (
+                  <div className="text-center py-6 text-muted-foreground border-2 border-dashed rounded-lg">
+                    <Link2 className="w-6 h-6 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">Aucun lien</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {(local.custom_links || []).map((link, index) => (
+                      <div key={link.id} className="p-3 border rounded-lg space-y-2 bg-background">
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-0.5">
+                            <Button variant="ghost" size="sm" onClick={() => moveCustomLink(link.id, 'up')} disabled={index === 0} className="h-7 w-7 p-0">
+                              <ChevronUp className="w-3 h-3" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => moveCustomLink(link.id, 'down')} disabled={index === (local.custom_links?.length || 0) - 1} className="h-7 w-7 p-0">
+                              <ChevronDown className="w-3 h-3" />
+                            </Button>
+                          </div>
+                          <Select value={link.icon || 'link'} onValueChange={(value) => updateCustomLink(link.id, { icon: value as CustomLink['icon'] })}>
+                            <SelectTrigger className="w-28 h-8">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="link"><div className="flex items-center gap-2"><Link2 className="w-3 h-3" /> Lien</div></SelectItem>
+                              <SelectItem value="shop"><div className="flex items-center gap-2"><ShoppingBag className="w-3 h-3" /> Boutique</div></SelectItem>
+                              <SelectItem value="book"><div className="flex items-center gap-2"><BookOpen className="w-3 h-3" /> Ebook</div></SelectItem>
+                              <SelectItem value="video"><div className="flex items-center gap-2"><Video className="w-3 h-3" /> Vidéo</div></SelectItem>
+                              <SelectItem value="calendar"><div className="flex items-center gap-2"><Calendar className="w-3 h-3" /> RDV</div></SelectItem>
+                              <SelectItem value="file"><div className="flex items-center gap-2"><FileText className="w-3 h-3" /> Doc</div></SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <Input value={link.title} onChange={(e) => updateCustomLink(link.id, { title: e.target.value })} placeholder="Titre" className="flex-1 h-8" />
+                          <Button variant="ghost" size="sm" onClick={() => removeCustomLink(link.id)} className="text-destructive h-7 w-7 p-0">
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                        <Input value={link.url} onChange={(e) => updateCustomLink(link.id, { url: e.target.value })} placeholder="https://..." className="h-8" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {(local.custom_links?.length || 0) > 0 && (
+                  <div className="pt-3 border-t">
+                    <Label className="text-sm mb-2 block">Position sur la page</Label>
+                    <Select value={local.layout.links_position || 'top'} onValueChange={(value) => updateLayout({ links_position: value as 'top' | 'after_formules' | 'after_gallery' | 'bottom' })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="top">En haut</SelectItem>
+                        <SelectItem value="after_formules">Après les formules</SelectItem>
+                        <SelectItem value="after_gallery">Après la galerie</SelectItem>
+                        <SelectItem value="bottom">En bas</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
+            </CollapsibleSection>
+          </TabsContent>
+
+          {/* ==================== APPEARANCE TAB ==================== */}
+          <TabsContent value="appearance" className="space-y-3">
+            {/* Colors Section */}
+            <CollapsibleSection title="Couleurs" icon={Palette} defaultOpen={true}>
+              <div>
+                <Label className="text-sm font-medium mb-3 block">Thèmes prédéfinis</Label>
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                  {COLOR_PRESETS.map((preset) => (
+                    <button
+                      key={preset.name}
+                      onClick={() => applyPreset(preset)}
+                      className={cn(
+                        "p-2.5 rounded-lg border-2 transition-all hover:scale-105",
+                        local.colors.primary === preset.primary 
+                          ? "border-primary ring-2 ring-primary/20" 
+                          : "border-border hover:border-muted-foreground"
+                      )}
+                    >
+                      <div className="flex gap-1 justify-center mb-1">
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: preset.primary }} />
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: preset.secondary }} />
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: preset.accent }} />
+                      </div>
+                      <p className="text-[10px] text-center text-muted-foreground">{preset.name}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Principale</Label>
                   <div className="flex gap-2">
-                    <input
-                      type="color"
-                      id="text-secondary-color"
-                      value={local.colors.text_secondary || '#6b7280'}
-                      onChange={(e) => updateColors({ text_secondary: e.target.value })}
-                      className="w-12 h-10 rounded border border-border cursor-pointer"
-                    />
-                    <Input
-                      value={local.colors.text_secondary || '#6b7280'}
-                      onChange={(e) => updateColors({ text_secondary: e.target.value })}
-                      className="flex-1"
-                      placeholder="#6b7280"
-                    />
+                    <input type="color" value={local.colors.primary} onChange={(e) => updateColors({ primary: e.target.value })} className="w-10 h-9 rounded border cursor-pointer" />
+                    <Input value={local.colors.primary} onChange={(e) => updateColors({ primary: e.target.value })} className="flex-1 h-9 text-xs" />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Secondaire</Label>
+                  <div className="flex gap-2">
+                    <input type="color" value={local.colors.secondary} onChange={(e) => updateColors({ secondary: e.target.value })} className="w-10 h-9 rounded border cursor-pointer" />
+                    <Input value={local.colors.secondary} onChange={(e) => updateColors({ secondary: e.target.value })} className="flex-1 h-9 text-xs" />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Accent</Label>
+                  <div className="flex gap-2">
+                    <input type="color" value={local.colors.accent} onChange={(e) => updateColors({ accent: e.target.value })} className="w-10 h-9 rounded border cursor-pointer" />
+                    <Input value={local.colors.accent} onChange={(e) => updateColors({ accent: e.target.value })} className="flex-1 h-9 text-xs" />
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Dark Mode Toggle */}
-            <div className="flex items-center justify-between py-3 px-4 rounded-lg border bg-secondary/30">
-              <div>
-                <p className="font-medium text-foreground">Mode sombre</p>
-                <p className="text-sm text-muted-foreground">Utilise un thème sombre pour la page</p>
-              </div>
-              <Switch
-                checked={local.layout.dark_mode}
-                onCheckedChange={(checked) => updateLayout({ dark_mode: checked })}
-              />
-            </div>
-          </TabsContent>
-
-          {/* Texts Tab */}
-          <TabsContent value="texts" className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="tagline">Slogan / Sous-titre</Label>
-              <Input
-                id="tagline"
-                value={local.texts.tagline}
-                onChange={(e) => updateTexts({ tagline: e.target.value })}
-                placeholder="Ex: Spécialiste du lavage premium depuis 2010"
-              />
-              <p className="text-xs text-muted-foreground">Affiché sous le nom de votre centre</p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="about">À propos / Histoire</Label>
-              <Textarea
-                id="about"
-                value={local.texts.about || ''}
-                onChange={(e) => updateTexts({ about: e.target.value })}
-                placeholder="Racontez l'histoire de votre entreprise, votre passion, vos valeurs..."
-                rows={4}
-              />
-              <p className="text-xs text-muted-foreground">Texte affiché sur votre page publique pour présenter votre activité</p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="welcome-message">Phrase page réservation</Label>
-              <Input
-                id="welcome-message"
-                value={local.texts.welcome_message || ''}
-                onChange={(e) => updateTexts({ welcome_message: e.target.value })}
-                placeholder="Ex: Réservez votre rendez-vous en quelques clics"
-              />
-              <p className="text-xs text-muted-foreground">Affiché en haut de la page de réservation (après sélection d'une formule)</p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="cta-button">Texte du bouton principal</Label>
-              <Input
-                id="cta-button"
-                value={local.texts.cta_button}
-                onChange={(e) => updateTexts({ cta_button: e.target.value })}
-                placeholder="Réserver"
-              />
-            </div>
-          </TabsContent>
-
-          {/* Custom Links Tab */}
-          <TabsContent value="links" className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label>Liens personnalisés</Label>
-                  <p className="text-xs text-muted-foreground">Ajoutez des liens vers votre boutique, ebook, vidéos, etc.</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={addCustomLink}
-                  disabled={(local.custom_links?.length || 0) >= 6}
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Ajouter
-                </Button>
-              </div>
-
-              {(local.custom_links || []).length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
-                  <Link2 className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">Aucun lien personnalisé</p>
-                  <p className="text-xs">Cliquez sur "Ajouter" pour créer un lien</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {(local.custom_links || []).map((link, index) => (
-                    <div key={link.id} className="p-3 border rounded-lg space-y-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => moveCustomLink(link.id, 'up')}
-                            disabled={index === 0}
-                            className="h-8 w-8 p-0"
-                          >
-                            <ChevronUp className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => moveCustomLink(link.id, 'down')}
-                            disabled={index === (local.custom_links?.length || 0) - 1}
-                            className="h-8 w-8 p-0"
-                          >
-                            <ChevronDown className="w-4 h-4" />
-                          </Button>
-                        </div>
-                        <Select
-                          value={link.icon || 'link'}
-                          onValueChange={(value) => updateCustomLink(link.id, { icon: value as CustomLink['icon'] })}
-                        >
-                          <SelectTrigger className="w-[120px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="link">
-                              <div className="flex items-center gap-2">
-                                <Link2 className="w-4 h-4" /> Lien
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="shop">
-                              <div className="flex items-center gap-2">
-                                <ShoppingBag className="w-4 h-4" /> Boutique
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="book">
-                              <div className="flex items-center gap-2">
-                                <BookOpen className="w-4 h-4" /> Ebook
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="video">
-                              <div className="flex items-center gap-2">
-                                <Video className="w-4 h-4" /> Vidéo
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="calendar">
-                              <div className="flex items-center gap-2">
-                                <Calendar className="w-4 h-4" /> Calendrier
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="file">
-                              <div className="flex items-center gap-2">
-                                <FileText className="w-4 h-4" /> Document
-                              </div>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeCustomLink(link.id)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                      <Input
-                        value={link.title}
-                        onChange={(e) => updateCustomLink(link.id, { title: e.target.value })}
-                        placeholder="Titre du lien (ex: Notre boutique)"
-                      />
-                      <Input
-                        value={link.url}
-                        onChange={(e) => updateCustomLink(link.id, { url: e.target.value })}
-                        placeholder="https://..."
-                      />
+              {/* Text Colors */}
+              <div className="pt-3 border-t">
+                <Label className="text-sm font-medium mb-2 block">Couleurs de texte</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">Titres</Label>
+                    <div className="flex gap-2">
+                      <input type="color" value={local.colors.text_primary || '#111827'} onChange={(e) => updateColors({ text_primary: e.target.value })} className="w-10 h-9 rounded border cursor-pointer" />
+                      <Input value={local.colors.text_primary || '#111827'} onChange={(e) => updateColors({ text_primary: e.target.value })} className="flex-1 h-9 text-xs" />
                     </div>
-                  ))}
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">Descriptions</Label>
+                    <div className="flex gap-2">
+                      <input type="color" value={local.colors.text_secondary || '#6b7280'} onChange={(e) => updateColors({ text_secondary: e.target.value })} className="w-10 h-9 rounded border cursor-pointer" />
+                      <Input value={local.colors.text_secondary || '#6b7280'} onChange={(e) => updateColors({ text_secondary: e.target.value })} className="flex-1 h-9 text-xs" />
+                    </div>
+                  </div>
                 </div>
-              )}
-
-              {/* Position selector */}
-              {(local.custom_links?.length || 0) > 0 && (
-                <div className="pt-4 border-t space-y-2">
-                  <Label>Position sur la page</Label>
-                  <Select
-                    value={local.layout.links_position || 'top'}
-                    onValueChange={(value) => updateLayout({ links_position: value as 'top' | 'after_formules' | 'after_gallery' | 'bottom' })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="top">En haut (après réseaux sociaux)</SelectItem>
-                      <SelectItem value="after_formules">Après les formules</SelectItem>
-                      <SelectItem value="after_gallery">Après la galerie</SelectItem>
-                      <SelectItem value="bottom">En bas (avant formulaire contact)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-muted-foreground">Choisissez où afficher vos liens sur votre page publique</p>
-                </div>
-              )}
-            </div>
-          </TabsContent>
-
-          {/* Social Tab */}
-          <TabsContent value="social" className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="social-instagram">Instagram</Label>
-              <div className="flex gap-2 items-center">
-                <Instagram className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-                <Input
-                  id="social-instagram"
-                  value={local.social.instagram}
-                  onChange={(e) => updateSocial({ instagram: e.target.value })}
-                  placeholder="votre_compte (sans @)"
-                />
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="social-tiktok">TikTok</Label>
-              <div className="flex gap-2 items-center">
-                <svg className="w-5 h-5 text-muted-foreground flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                </svg>
-                <Input
-                  id="social-tiktok"
-                  value={local.social.tiktok}
-                  onChange={(e) => updateSocial({ tiktok: e.target.value })}
-                  placeholder="votre_compte (sans @)"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="social-facebook">Facebook</Label>
-              <div className="flex gap-2 items-center">
-                <svg className="w-5 h-5 text-muted-foreground flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                </svg>
-                <Input
-                  id="social-facebook"
-                  value={local.social.facebook}
-                  onChange={(e) => updateSocial({ facebook: e.target.value })}
-                  placeholder="Nom de votre page Facebook"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="social-email">Email de contact</Label>
-              <div className="flex gap-2 items-center">
-                <Mail className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-                <Input
-                  id="social-email"
-                  type="email"
-                  value={local.social.email}
-                  onChange={(e) => updateSocial({ email: e.target.value })}
-                  placeholder="contact@votreentreprise.com"
-                />
-              </div>
-            </div>
-            
-            <p className="text-xs text-muted-foreground pt-2">
-              Ces liens seront affichés sur votre page publique sous forme d'icônes.
-            </p>
-          </TabsContent>
-
-          {/* Sections Tab */}
-          <TabsContent value="sections" className="space-y-4">
-            <SectionsEditor
-              sections={local.sections || defaultSections}
-              onUpdate={(sections) => updateLocal({ sections })}
-            />
-
-            {/* Quick toggles for info cards */}
-            <div className="pt-4 border-t space-y-3">
-              <Label className="text-sm font-medium">Cartes d'informations</Label>
-              <div className="flex items-center justify-between py-2">
+              {/* Dark Mode */}
+              <div className="flex items-center justify-between p-3 rounded-lg border bg-background">
                 <div>
-                  <p className="font-medium text-foreground text-sm">Afficher les horaires</p>
+                  <p className="font-medium text-sm">Mode sombre</p>
+                  <p className="text-xs text-muted-foreground">Thème sombre pour la page</p>
                 </div>
                 <Switch
-                  checked={local.layout.show_hours}
-                  onCheckedChange={(checked) => updateLayout({ show_hours: checked })}
+                  checked={local.layout.dark_mode}
+                  onCheckedChange={(checked) => updateLayout({ dark_mode: checked })}
                 />
               </div>
+            </CollapsibleSection>
 
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <p className="font-medium text-foreground text-sm">Afficher l'adresse</p>
-                </div>
-                <Switch
-                  checked={local.layout.show_address}
-                  onCheckedChange={(checked) => updateLayout({ show_address: checked })}
-                />
-              </div>
-
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <p className="font-medium text-foreground text-sm">Afficher le téléphone</p>
-                </div>
-                <Switch
-                  checked={local.layout.show_phone}
-                  onCheckedChange={(checked) => updateLayout({ show_phone: checked })}
-                />
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* Packs Tab */}
-          <TabsContent value="packs" className="space-y-4">
-            {packs.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p>Aucune formule créée</p>
-                <p className="text-sm">Créez des formules dans l'onglet "Formules" du tableau de bord.</p>
-              </div>
-            ) : (
-              <>
-                <p className="text-sm text-muted-foreground">
-                  Sélectionnez les formules à afficher sur votre page publique.
-                </p>
-                <div className="space-y-3">
-                  {packs.map((pack) => {
-                    const isVisible = effectiveVisiblePacks.includes(pack.id);
-                    return (
-                      <div 
-                        key={pack.id}
-                        className={cn(
-                          "flex items-center justify-between p-4 rounded-lg border transition-colors cursor-pointer",
-                          isVisible ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground"
-                        )}
-                        onClick={() => togglePackVisibility(pack.id)}
-                      >
-                        <div className="flex items-center gap-3">
-                          <Checkbox
-                            checked={isVisible}
-                            onCheckedChange={() => togglePackVisibility(pack.id)}
-                          />
-                          <div>
-                            <p className="font-medium">{pack.name}</p>
-                            {pack.description && (
-                              <p className="text-sm text-muted-foreground line-clamp-1">{pack.description}</p>
-                            )}
-                          </div>
-                        </div>
-                        <p className="font-semibold text-primary">{pack.price}€</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            )}
-          </TabsContent>
-
-          {/* Cover Tab */}
-          <TabsContent value="cover" className="space-y-4">
-            <div>
-              <Label className="mb-3 block">Image de couverture</Label>
-              <p className="text-sm text-muted-foreground mb-4">
-                L'image affichée en haut de votre page de réservation.
-              </p>
-
+            {/* Cover Image Section */}
+            <CollapsibleSection title="Bannière" icon={Image} defaultOpen={false}>
               {local.cover_url ? (
                 <div className="relative">
-                  <img
-                    src={local.cover_url}
-                    alt="Couverture"
-                    className="w-full h-40 object-cover rounded-lg border border-border"
-                  />
+                  <img src={local.cover_url} alt="Couverture" className="w-full h-32 object-cover rounded-lg border" />
                   {uploadingCover && (
                     <div className="absolute inset-0 bg-background/80 rounded-lg flex items-center justify-center">
                       <Loader2 className="w-6 h-6 animate-spin text-primary" />
                     </div>
                   )}
-                  <div className="flex gap-2 mt-3">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleCoverUpload}
-                      className="sr-only"
-                      id="cover-upload"
-                    />
-                    <Label
-                      htmlFor="cover-upload"
-                      className={cn(
-                        buttonVariants({ variant: 'outline', size: 'sm' }),
-                        uploadingCover && 'pointer-events-none opacity-50',
-                        "cursor-pointer"
-                      )}
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Changer
+                  <div className="flex gap-2 mt-2">
+                    <input type="file" accept="image/*" onChange={handleCoverUpload} className="sr-only" id="cover-upload" />
+                    <Label htmlFor="cover-upload" className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), uploadingCover && 'pointer-events-none opacity-50', "cursor-pointer")}>
+                      <Upload className="w-4 h-4 mr-1" /> Changer
                     </Label>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleRemoveCover}
-                      disabled={uploadingCover}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Supprimer
+                    <Button variant="ghost" size="sm" onClick={handleRemoveCover} disabled={uploadingCover} className="text-destructive">
+                      <Trash2 className="w-4 h-4 mr-1" /> Supprimer
                     </Button>
                   </div>
                 </div>
               ) : (
-                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                  <Image className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Aucune image de couverture
-                  </p>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleCoverUpload}
-                    className="sr-only"
-                    id="cover-upload-empty"
-                  />
-                  <Label
-                    htmlFor="cover-upload-empty"
-                    className={cn(
-                      buttonVariants({ variant: 'outline', size: 'sm' }),
-                      uploadingCover && 'pointer-events-none opacity-50',
-                      "cursor-pointer"
-                    )}
-                  >
-                    {uploadingCover ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    ) : (
-                      <Upload className="w-4 h-4 mr-2" />
-                    )}
-                    Ajouter une image
+                <div className="border-2 border-dashed rounded-lg p-6 text-center">
+                  <Image className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-sm text-muted-foreground mb-2">Aucune bannière</p>
+                  <input type="file" accept="image/*" onChange={handleCoverUpload} className="sr-only" id="cover-upload-empty" />
+                  <Label htmlFor="cover-upload-empty" className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), uploadingCover && 'pointer-events-none opacity-50', "cursor-pointer")}>
+                    {uploadingCover ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Upload className="w-4 h-4 mr-1" />}
+                    Ajouter
                   </Label>
-                  <p className="text-xs text-muted-foreground mt-3">
-                    JPG, PNG ou WebP. Max 5 Mo. Ratio 16:9 recommandé.
-                  </p>
                 </div>
               )}
-            </div>
-          </TabsContent>
+            </CollapsibleSection>
 
-          {/* Gallery Tab */}
-          <TabsContent value="gallery" className="space-y-4">
-            <div>
-              <Label className="mb-3 block">Galerie de réalisations</Label>
-              <p className="text-sm text-muted-foreground mb-4">
-                Ajoutez jusqu'à 8 photos de vos réalisations pour montrer la qualité de votre travail.
-              </p>
-
-              {/* Gallery Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+            {/* Gallery Section */}
+            <CollapsibleSection title="Galerie photos" icon={ImagePlus} defaultOpen={false}>
+              <p className="text-sm text-muted-foreground mb-3">Jusqu'à 8 photos de vos réalisations.</p>
+              
+              <div className="grid grid-cols-4 gap-2 mb-3">
                 {(local.gallery_images || []).map((url, index) => (
                   <div key={index} className="relative group aspect-square">
-                    <img
-                      src={url}
-                      alt={`Réalisation ${index + 1}`}
-                      className="w-full h-full object-cover rounded-lg border border-border"
-                    />
-                    <button
-                      onClick={() => handleRemoveGalleryImage(url)}
-                      className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
+                    <img src={url} alt={`Photo ${index + 1}`} className="w-full h-full object-cover rounded-lg border" />
+                    <button onClick={() => handleRemoveGalleryImage(url)} className="absolute top-1 right-1 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                       <X className="w-3 h-3" />
                     </button>
                   </div>
                 ))}
 
-                {/* Add Button */}
                 {(local.gallery_images || []).length < 8 && (
-                  <div className="aspect-square border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleGalleryUpload}
-                      className="sr-only"
-                      id="gallery-upload"
-                    />
-                    <Label
-                      htmlFor="gallery-upload"
-                      className="w-full h-full flex flex-col items-center justify-center cursor-pointer"
-                    >
-                      {uploadingGallery ? (
-                        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-                      ) : (
+                  <div className="aspect-square border-2 border-dashed rounded-lg flex items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
+                    <input type="file" accept="image/*" multiple onChange={handleGalleryUpload} className="sr-only" id="gallery-upload" />
+                    <Label htmlFor="gallery-upload" className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
+                      {uploadingGallery ? <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /> : (
                         <>
-                          <ImagePlus className="w-6 h-6 text-muted-foreground mb-1" />
-                          <span className="text-xs text-muted-foreground">Ajouter</span>
+                          <ImagePlus className="w-5 h-5 text-muted-foreground" />
+                          <span className="text-[10px] text-muted-foreground mt-1">Ajouter</span>
                         </>
                       )}
                     </Label>
                   </div>
                 )}
               </div>
-
-              <p className="text-xs text-muted-foreground">
-                {(local.gallery_images || []).length}/8 images. JPG, PNG ou WebP. Max 5 Mo par image.
-              </p>
-            </div>
+              
+              <p className="text-xs text-muted-foreground">{(local.gallery_images || []).length}/8 images</p>
+            </CollapsibleSection>
           </TabsContent>
 
-          {/* SEO Tab */}
-          <TabsContent value="seo" className="space-y-4">
-            <div>
-              <p className="text-sm text-muted-foreground mb-4">
-                Personnalisez comment votre page apparaît dans les résultats Google.
-              </p>
+          {/* ==================== ADVANCED TAB ==================== */}
+          <TabsContent value="advanced" className="space-y-3">
+            {/* Visible Packs Section */}
+            <CollapsibleSection title="Formules visibles" icon={Package} defaultOpen={true}>
+              {packs.length === 0 ? (
+                <div className="text-center py-6 text-muted-foreground">
+                  <Package className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">Aucune formule créée</p>
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm text-muted-foreground mb-3">Sélectionnez les formules à afficher.</p>
+                  <div className="space-y-2">
+                    {packs.map((pack) => {
+                      const isVisible = effectiveVisiblePacks.includes(pack.id);
+                      return (
+                        <div 
+                          key={pack.id}
+                          className={cn(
+                            "flex items-center justify-between p-3 rounded-lg border transition-colors cursor-pointer",
+                            isVisible ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground"
+                          )}
+                          onClick={() => togglePackVisibility(pack.id)}
+                        >
+                          <div className="flex items-center gap-3">
+                            <Checkbox checked={isVisible} onCheckedChange={() => togglePackVisibility(pack.id)} />
+                            <div>
+                              <p className="font-medium text-sm">{pack.name}</p>
+                              {pack.description && <p className="text-xs text-muted-foreground line-clamp-1">{pack.description}</p>}
+                            </div>
+                          </div>
+                          <p className="font-semibold text-primary text-sm">{pack.price}€</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </CollapsibleSection>
+
+            {/* SEO Section */}
+            <CollapsibleSection title="Référencement (SEO)" icon={Search} defaultOpen={false}>
+              <p className="text-sm text-muted-foreground mb-3">Comment votre page apparaît sur Google.</p>
               
               {/* Google Preview */}
-              <div className="p-4 rounded-lg bg-secondary/50 mb-4">
-                <p className="text-xs text-muted-foreground mb-3">Aperçu Google</p>
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">cleaningpage.com › ...</p>
-                  <p className="text-lg text-[#1a0dab] hover:underline cursor-pointer font-medium line-clamp-1">
-                    {local.seo?.title || 'Votre titre Google'}
-                  </p>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {local.seo?.description || 'Votre description apparaîtra ici...'}
-                  </p>
+              <div className="p-3 rounded-lg bg-secondary/50 mb-4">
+                <p className="text-xs text-muted-foreground mb-2">Aperçu Google</p>
+                <div className="space-y-0.5">
+                  <p className="text-xs text-muted-foreground">cleaningpage.com › ...</p>
+                  <p className="text-sm text-[#1a0dab] font-medium line-clamp-1">{local.seo?.title || 'Votre titre Google'}</p>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{local.seo?.description || 'Votre description...'}</p>
                 </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="seo-city" className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-muted-foreground" />
-                Ville
-              </Label>
-              <Input
-                id="seo-city"
-                value={local.seo?.city || ''}
-                onChange={(e) => updateLocal({ seo: { ...local.seo, city: e.target.value } })}
-                placeholder="Ex: Paris, Lyon, Marseille..."
-              />
-              <p className="text-xs text-muted-foreground">
-                Importante pour apparaître dans les recherches "Nettoyage + Ville"
-              </p>
-            </div>
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label className="flex items-center gap-2 text-sm">
+                    <MapPin className="w-3 h-3" /> Ville
+                  </Label>
+                  <Input
+                    value={local.seo?.city || ''}
+                    onChange={(e) => updateLocal({ seo: { ...local.seo, city: e.target.value } })}
+                    placeholder="Paris, Lyon..."
+                    className="h-9"
+                  />
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="seo-title" className="flex items-center gap-2">
-                <Globe className="w-4 h-4 text-muted-foreground" />
-                Titre Google (max 60 caractères)
-              </Label>
-              <Input
-                id="seo-title"
-                value={local.seo?.title || ''}
-                onChange={(e) => updateLocal({ seo: { ...local.seo, title: e.target.value.slice(0, 60) } })}
-                placeholder="Mon Entreprise - Nettoyage professionnel"
-                maxLength={60}
-              />
-              <p className="text-xs text-muted-foreground text-right">
-                {(local.seo?.title || '').length}/60
-              </p>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="seo-description">Description Google (max 160 caractères)</Label>
-              <Textarea
-                id="seo-description"
-                value={local.seo?.description || ''}
-                onChange={(e) => updateLocal({ seo: { ...local.seo, description: e.target.value.slice(0, 160) } })}
-                placeholder="Décrivez votre activité en incluant votre ville et vos services..."
-                rows={3}
-                maxLength={160}
-              />
-              <p className="text-xs text-muted-foreground text-right">
-                {(local.seo?.description || '').length}/160
-              </p>
-            </div>
+                <div className="space-y-1.5">
+                  <Label className="flex items-center gap-2 text-sm">
+                    <Globe className="w-3 h-3" /> Titre ({(local.seo?.title || '').length}/60)
+                  </Label>
+                  <Input
+                    value={local.seo?.title || ''}
+                    onChange={(e) => updateLocal({ seo: { ...local.seo, title: e.target.value.slice(0, 60) } })}
+                    placeholder="Mon Entreprise - Nettoyage professionnel"
+                    maxLength={60}
+                    className="h-9"
+                  />
+                </div>
+                
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Description ({(local.seo?.description || '').length}/160)</Label>
+                  <Textarea
+                    value={local.seo?.description || ''}
+                    onChange={(e) => updateLocal({ seo: { ...local.seo, description: e.target.value.slice(0, 160) } })}
+                    placeholder="Décrivez votre activité..."
+                    rows={2}
+                    maxLength={160}
+                  />
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="seo-keywords" className="flex items-center gap-2">
-                <Tag className="w-4 h-4 text-muted-foreground" />
-                Mots-clés (séparés par des virgules)
-              </Label>
-              <Input
-                id="seo-keywords"
-                value={local.seo?.keywords || ''}
-                onChange={(e) => updateLocal({ seo: { ...local.seo, keywords: e.target.value } })}
-                placeholder="nettoyage auto, detailing, lavage voiture..."
-              />
-              <p className="text-xs text-muted-foreground">
-                Mots-clés sur lesquels vous souhaitez être trouvé
-              </p>
-            </div>
+                <div className="space-y-1.5">
+                  <Label className="flex items-center gap-2 text-sm">
+                    <Tag className="w-3 h-3" /> Mots-clés
+                  </Label>
+                  <Input
+                    value={local.seo?.keywords || ''}
+                    onChange={(e) => updateLocal({ seo: { ...local.seo, keywords: e.target.value } })}
+                    placeholder="nettoyage auto, detailing..."
+                    className="h-9"
+                  />
+                </div>
+              </div>
+            </CollapsibleSection>
           </TabsContent>
         </Tabs>
       </Card>
