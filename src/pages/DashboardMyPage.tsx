@@ -263,31 +263,47 @@ export default function DashboardMyPage() {
           
           <div className="space-y-4 py-4">
             <div className="space-y-3">
-              <Label>Type de demande</Label>
+              <Label>Je souhaite :</Label>
               <RadioGroup value={requestType} onValueChange={(v) => setRequestType(v as 'design' | 'functionality' | 'both')}>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="design" id="design" />
-                  <Label htmlFor="design" className="font-normal cursor-pointer">Design (couleurs, style, mise en page)</Label>
+                <div className="flex items-start space-x-3 p-3 rounded-lg border hover:bg-secondary/50 transition-colors cursor-pointer">
+                  <RadioGroupItem value="page_creation" id="page_creation" className="mt-0.5" />
+                  <div>
+                    <Label htmlFor="page_creation" className="font-medium cursor-pointer">Qu'on fasse ma page à ma place</Label>
+                    <p className="text-xs text-muted-foreground mt-0.5">On s'occupe de tout : design, textes, photos</p>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="functionality" id="functionality" />
-                  <Label htmlFor="functionality" className="font-normal cursor-pointer">Fonctionnalité (nouvelles options, intégrations)</Label>
+                <div className="flex items-start space-x-3 p-3 rounded-lg border hover:bg-secondary/50 transition-colors cursor-pointer">
+                  <RadioGroupItem value="functionality" id="functionality" className="mt-0.5" />
+                  <div>
+                    <Label htmlFor="functionality" className="font-medium cursor-pointer">Des fonctionnalités en plus</Label>
+                    <p className="text-xs text-muted-foreground mt-0.5">Paiement en ligne, réservation auto, intégrations...</p>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="both" id="both" />
-                  <Label htmlFor="both" className="font-normal cursor-pointer">Les deux</Label>
+                <div className="flex items-start space-x-3 p-3 rounded-lg border hover:bg-secondary/50 transition-colors cursor-pointer">
+                  <RadioGroupItem value="design" id="design" className="mt-0.5" />
+                  <div>
+                    <Label htmlFor="design" className="font-medium cursor-pointer">Un design plus poussé</Label>
+                    <p className="text-xs text-muted-foreground mt-0.5">Personnalisation avancée, animations, style unique</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3 p-3 rounded-lg border hover:bg-secondary/50 transition-colors cursor-pointer">
+                  <RadioGroupItem value="both" id="both" className="mt-0.5" />
+                  <div>
+                    <Label htmlFor="both" className="font-medium cursor-pointer">Autre chose</Label>
+                    <p className="text-xs text-muted-foreground mt-0.5">Précisez votre besoin ci-dessous</p>
+                  </div>
                 </div>
               </RadioGroup>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="request-message">Votre demande</Label>
+              <Label htmlFor="request-message">Précisions (optionnel)</Label>
               <Textarea
                 id="request-message"
-                placeholder="Décrivez ce que vous aimeriez modifier ou ajouter..."
+                placeholder="Décrivez votre besoin en détail..."
                 value={requestMessage}
                 onChange={(e) => setRequestMessage(e.target.value)}
-                rows={4}
+                rows={3}
               />
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -10,6 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useMyPacks, Pack } from '@/hooks/useCenter';
 import { Pencil, Clock, Plus, Trash2, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { toast } from 'sonner';
+import { VariantsEditor } from '@/components/dashboard/VariantsEditor';
+import { FeaturesEditor } from '@/components/dashboard/FeaturesEditor';
 
 interface PriceVariant {
   name: string;
@@ -93,158 +95,86 @@ export default function DashboardPacks() {
     }
   };
 
-  const addVariant = (isNew: boolean) => {
-    if (isNew) {
-      setNewPack({
-        ...newPack,
-        price_variants: [...newPack.price_variants, { name: '', price: 0 }],
-      });
-    } else {
-      setEditForm({
-        ...editForm,
-        price_variants: [...(editForm.price_variants || []), { name: '', price: 0 }],
-      });
-    }
-  };
+  // Stable callbacks for new pack variants
+  const handleAddNewVariant = useCallback(() => {
+    setNewPack(prev => ({
+      ...prev,
+      price_variants: [...prev.price_variants, { name: '', price: 0 }],
+    }));
+  }, []);
 
-  const updateVariant = (isNew: boolean, index: number, field: 'name' | 'price', value: string | number) => {
-    if (isNew) {
-      const variants = [...newPack.price_variants];
+  const handleUpdateNewVariant = useCallback((index: number, field: 'name' | 'price', value: string | number) => {
+    setNewPack(prev => {
+      const variants = [...prev.price_variants];
       variants[index] = { ...variants[index], [field]: value };
-      setNewPack({ ...newPack, price_variants: variants });
-    } else {
-      const variants = [...(editForm.price_variants || [])];
+      return { ...prev, price_variants: variants };
+    });
+  }, []);
+
+  const handleRemoveNewVariant = useCallback((index: number) => {
+    setNewPack(prev => ({
+      ...prev,
+      price_variants: prev.price_variants.filter((_, i) => i !== index),
+    }));
+  }, []);
+
+  // Stable callbacks for edit form variants
+  const handleAddEditVariant = useCallback(() => {
+    setEditForm(prev => ({
+      ...prev,
+      price_variants: [...(prev.price_variants || []), { name: '', price: 0 }],
+    }));
+  }, []);
+
+  const handleUpdateEditVariant = useCallback((index: number, field: 'name' | 'price', value: string | number) => {
+    setEditForm(prev => {
+      const variants = [...(prev.price_variants || [])];
       variants[index] = { ...variants[index], [field]: value };
-      setEditForm({ ...editForm, price_variants: variants });
-    }
-  };
+      return { ...prev, price_variants: variants };
+    });
+  }, []);
 
-  const removeVariant = (isNew: boolean, index: number) => {
-    if (isNew) {
-      setNewPack({
-        ...newPack,
-        price_variants: newPack.price_variants.filter((_, i) => i !== index),
-      });
-    } else {
-      setEditForm({
-        ...editForm,
-        price_variants: (editForm.price_variants || []).filter((_, i) => i !== index),
-      });
-    }
-  };
+  const handleRemoveEditVariant = useCallback((index: number) => {
+    setEditForm(prev => ({
+      ...prev,
+      price_variants: (prev.price_variants || []).filter((_, i) => i !== index),
+    }));
+  }, []);
 
-  const addFeature = (isNew: boolean) => {
-    if (isNew) {
-      setNewPack({ ...newPack, features: [...newPack.features, ''] });
-    } else {
-      setEditForm({ ...editForm, features: [...(editForm.features || []), ''] });
-    }
-  };
+  // Stable callbacks for new pack features
+  const handleAddNewFeature = useCallback(() => {
+    setNewPack(prev => ({ ...prev, features: [...prev.features, ''] }));
+  }, []);
 
-  const updateFeature = (isNew: boolean, index: number, value: string) => {
-    if (isNew) {
-      const features = [...newPack.features];
+  const handleUpdateNewFeature = useCallback((index: number, value: string) => {
+    setNewPack(prev => {
+      const features = [...prev.features];
       features[index] = value;
-      setNewPack({ ...newPack, features });
-    } else {
-      const features = [...(editForm.features || [])];
+      return { ...prev, features };
+    });
+  }, []);
+
+  const handleRemoveNewFeature = useCallback((index: number) => {
+    setNewPack(prev => ({ ...prev, features: prev.features.filter((_, i) => i !== index) }));
+  }, []);
+
+  // Stable callbacks for edit form features
+  const handleAddEditFeature = useCallback(() => {
+    setEditForm(prev => ({ ...prev, features: [...(prev.features || []), ''] }));
+  }, []);
+
+  const handleUpdateEditFeature = useCallback((index: number, value: string) => {
+    setEditForm(prev => {
+      const features = [...(prev.features || [])];
       features[index] = value;
-      setEditForm({ ...editForm, features });
-    }
-  };
+      return { ...prev, features };
+    });
+  }, []);
 
-  const removeFeature = (isNew: boolean, index: number) => {
-    if (isNew) {
-      setNewPack({ ...newPack, features: newPack.features.filter((_, i) => i !== index) });
-    } else {
-      setEditForm({ ...editForm, features: (editForm.features || []).filter((_, i) => i !== index) });
-    }
-  };
+  const handleRemoveEditFeature = useCallback((index: number) => {
+    setEditForm(prev => ({ ...prev, features: (prev.features || []).filter((_, i) => i !== index) }));
+  }, []);
 
-  const VariantsEditor = ({ variants, isNew }: { variants: PriceVariant[], isNew: boolean }) => (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <Label className="text-sm font-medium">Variantes de prix</Label>
-        <Button type="button" variant="outline" size="sm" onClick={() => addVariant(isNew)}>
-          <Plus className="w-3 h-3 mr-1" />
-          Ajouter
-        </Button>
-      </div>
-      <p className="text-xs text-muted-foreground">
-        Ex: Citadine, Berline, SUV... ou Canapé 2 places, 3 places...
-      </p>
-      {variants.length === 0 ? (
-        <p className="text-sm text-muted-foreground italic">Aucune variante (prix unique)</p>
-      ) : (
-        <div className="space-y-2">
-          {variants.map((variant, index) => (
-            <div key={index} className="flex gap-2 items-center">
-              <Input
-                placeholder="Nom (ex: Citadine)"
-                value={variant.name}
-                onChange={(e) => updateVariant(isNew, index, 'name', e.target.value)}
-                className="flex-1"
-              />
-              <Input
-                type="number"
-                placeholder="Prix"
-                value={variant.price || ''}
-                onChange={(e) => updateVariant(isNew, index, 'price', parseFloat(e.target.value) || 0)}
-                className="w-24"
-              />
-              <span className="text-muted-foreground">€</span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => removeVariant(isNew, index)}
-                className="text-destructive hover:text-destructive h-8 w-8"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-
-  const FeaturesEditor = ({ features, isNew }: { features: string[], isNew: boolean }) => (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <Label className="text-sm font-medium">Ce qui est inclus</Label>
-        <Button type="button" variant="outline" size="sm" onClick={() => addFeature(isNew)}>
-          <Plus className="w-3 h-3 mr-1" />
-          Ajouter
-        </Button>
-      </div>
-      {features.length === 0 ? (
-        <p className="text-sm text-muted-foreground italic">Aucun élément listé</p>
-      ) : (
-        <div className="space-y-2">
-          {features.map((feature, index) => (
-            <div key={index} className="flex gap-2 items-center">
-              <Input
-                placeholder="Ex: Nettoyage sièges"
-                value={feature}
-                onChange={(e) => updateFeature(isNew, index, e.target.value)}
-                className="flex-1"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => removeFeature(isNew, index)}
-                className="text-destructive hover:text-destructive h-8 w-8"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
 
   if (loading) {
     return (
@@ -318,7 +248,12 @@ export default function DashboardPacks() {
                   </div>
                 )}
 
-                <VariantsEditor variants={newPack.price_variants} isNew={true} />
+                <VariantsEditor 
+                  variants={newPack.price_variants} 
+                  onAdd={handleAddNewVariant}
+                  onUpdate={handleUpdateNewVariant}
+                  onRemove={handleRemoveNewVariant}
+                />
 
                 <div className="space-y-2">
                   <Label htmlFor="new-description">Description</Label>
@@ -331,7 +266,12 @@ export default function DashboardPacks() {
                   />
                 </div>
 
-                <FeaturesEditor features={newPack.features} isNew={true} />
+                <FeaturesEditor 
+                  features={newPack.features} 
+                  onAdd={handleAddNewFeature}
+                  onUpdate={handleUpdateNewFeature}
+                  onRemove={handleRemoveNewFeature}
+                />
 
                 <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
                   <Button variant="ghost" onClick={() => setIsCreating(false)} className="w-full sm:w-auto">
@@ -397,7 +337,12 @@ export default function DashboardPacks() {
                           </div>
                         )}
 
-                        <VariantsEditor variants={editForm.price_variants || []} isNew={false} />
+                        <VariantsEditor 
+                          variants={editForm.price_variants || []} 
+                          onAdd={handleAddEditVariant}
+                          onUpdate={handleUpdateEditVariant}
+                          onRemove={handleRemoveEditVariant}
+                        />
 
                         <div className="space-y-2">
                           <Label htmlFor={`description-${pack.id}`}>Description</Label>
@@ -409,7 +354,12 @@ export default function DashboardPacks() {
                           />
                         </div>
 
-                        <FeaturesEditor features={editForm.features || []} isNew={false} />
+                        <FeaturesEditor 
+                          features={editForm.features || []} 
+                          onAdd={handleAddEditFeature}
+                          onUpdate={handleUpdateEditFeature}
+                          onRemove={handleRemoveEditFeature}
+                        />
 
                         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
                           <Button variant="ghost" onClick={() => setEditingId(null)} className="w-full sm:w-auto">

@@ -164,13 +164,13 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
       {/* Main Content */}
       <main className={`flex-1 px-4 pb-24 ${customization.layout.dark_mode ? 'bg-gray-900' : 'bg-background'}`}>
         <div className="max-w-2xl mx-auto">
-          {/* Logo overlapping cover */}
+          {/* Logo overlapping cover - supports all formats */}
           <div className="relative -mt-12 mb-4">
             {center.logo_url ? (
               <img 
                 src={center.logo_url} 
                 alt={center.name} 
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-4 shadow-lg"
+                className="max-h-20 sm:max-h-24 max-w-[160px] sm:max-w-[200px] w-auto h-auto rounded-xl object-contain border-4 shadow-lg bg-white"
                 style={{ 
                   borderColor: customization.layout.dark_mode ? customization.colors.secondary : 'white',
                 }}
@@ -510,20 +510,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
           )}
 
 
-          {/* Additional info if no address or phone */}
-          {!center.address && !center.phone && !center.welcome_message && !customization.texts.about && (
-            <div 
-              className="mb-8 p-4 rounded-xl"
-              style={{ backgroundColor: customization.colors.primary + '10' }}
-            >
-              <p 
-                className="text-sm text-center"
-                style={{ color: customization.layout.dark_mode ? '#d1d5db' : undefined }}
-              >
-                Spécialiste du nettoyage et de l'esthétique automobile.
-              </p>
-            </div>
-          )}
+          {/* Section supprimée - plus de texte par défaut inutile */}
 
           {/* Custom Links - Position: bottom */}
           {customization.layout.links_position === 'bottom' && renderCustomLinks()}

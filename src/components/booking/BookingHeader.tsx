@@ -15,9 +15,7 @@ export function BookingHeader({ centerName = "Centre", welcomeMessage }: Booking
             <span className="hidden sm:inline text-muted-foreground">• {centerName}</span>
           )}
         </div>
-        <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-          Une question ?
-        </button>
+{/* Bouton contact retiré */}
       </div>
     </header>
   );
