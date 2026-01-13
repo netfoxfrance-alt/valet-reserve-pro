@@ -13,4 +13,5 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://www.cleaningpage.com/sitemap.xml
+# Sitemap accessible via Edge Function
+Sitemap: https://obkafavlsimcqiohyigs.supabase.co/functions/v1/sitemap
