@@ -579,16 +579,26 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
       }}
     >
       <div className="max-w-lg mx-auto px-4 pb-8">
-        {/* Fixed CTA Button */}
+        {/* Fixed CTA Bar - Apple Premium Style */}
         {hasPacks && isPro && (
-          <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-black/10 to-transparent pointer-events-none">
-            <div className="max-w-lg mx-auto pointer-events-auto">
+          <div 
+            className="fixed bottom-0 left-0 right-0 z-50 border-t backdrop-blur-xl safe-area-pb"
+            style={{ 
+              backgroundColor: customization.layout.dark_mode 
+                ? 'rgba(15, 15, 15, 0.85)' 
+                : 'rgba(255, 255, 255, 0.85)',
+              borderColor: customization.layout.dark_mode 
+                ? 'rgba(255, 255, 255, 0.1)' 
+                : 'rgba(0, 0, 0, 0.06)',
+            }}
+          >
+            <div className="max-w-lg mx-auto px-4 py-3">
               <Button
                 onClick={onStartBooking}
-                className="w-full h-14 text-lg font-semibold rounded-2xl transition-all duration-300 hover:shadow-xl hover:scale-[1.02] shadow-2xl"
+                className="w-full h-12 text-base font-semibold rounded-xl transition-all duration-300 hover:opacity-90 active:scale-[0.98]"
                 style={{ 
                   backgroundColor: customization.colors.primary,
-                  boxShadow: `0 10px 40px -10px ${customization.colors.primary}80`,
+                  color: 'white',
                 }}
               >
                 {customization.texts.cta_button || 'Réserver'}

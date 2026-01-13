@@ -77,6 +77,16 @@ const LINK_ICONS = [
   { value: 'file', label: 'Document', icon: FileText },
 ];
 
+// Link type options for the links submenu
+const LINK_TYPE_OPTIONS = [
+  { id: 'social', label: 'Réseaux sociaux', description: 'Instagram, TikTok, Facebook', icon: Instagram },
+  { id: 'shop', label: 'Boutique', description: 'Lien vers votre shop', icon: ShoppingBag },
+  { id: 'book', label: 'Ebook / Document', description: 'PDF, guides, ressources', icon: BookOpen },
+  { id: 'video', label: 'Vidéo', description: 'YouTube, Vimeo...', icon: Video },
+  { id: 'calendar', label: 'Calendrier', description: 'Lien de réservation externe', icon: Calendar },
+  { id: 'file', label: 'Autre lien', description: 'Tout autre type de lien', icon: FileText },
+];
+
 // Categories for the add dialog
 const ELEMENT_CATEGORIES = [
   {
@@ -89,7 +99,7 @@ const ELEMENT_CATEGORIES = [
   {
     title: 'Liens',
     items: [
-      { type: 'links' as BlockType, label: 'Liens personnalisés', description: 'Boutique, ebook, portfolio...', icon: Link2, multiple: false },
+      { type: 'links' as BlockType, label: 'Liens', description: 'Réseaux sociaux, boutique, ebook...', icon: Link2, multiple: false, hasSubmenu: true },
     ],
   },
   {
@@ -117,6 +127,7 @@ export function BlocksEditor({
   const { toast } = useToast();
   const [uploadingFor, setUploadingFor] = useState<string | null>(null);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [linksSubmenuOpen, setLinksSubmenuOpen] = useState(false);
   
   const sortedBlocks = [...blocks].sort((a, b) => a.order - b.order);
 
@@ -642,45 +653,100 @@ export function BlocksEditor({
           </DialogHeader>
           
           <div className="space-y-6 mt-4">
-            {ELEMENT_CATEGORIES.map((category) => (
-              <div key={category.title}>
+            {!linksSubmenuOpen ? (
+              // Main menu
+              <>
+                {ELEMENT_CATEGORIES.map((category) => (
+                  <div key={category.title}>
+                    <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3 block">
+                      {category.title}
+                    </Label>
+                    <div className="grid gap-2">
+                      {category.items.map((item) => {
+                        const available = isBlockAvailable(item.type, item.multiple);
+                        const hasSubmenu = 'hasSubmenu' in item && item.hasSubmenu;
+                        
+                        return (
+                          <button
+                            key={item.type}
+                            onClick={() => {
+                              if (!available) return;
+                              if (hasSubmenu) {
+                                setLinksSubmenuOpen(true);
+                              } else {
+                                addBlock(item.type);
+                              }
+                            }}
+                            disabled={!available}
+                            className={cn(
+                              "flex items-center gap-3 p-3 rounded-xl border text-left transition-all",
+                              available 
+                                ? "hover:border-primary hover:bg-primary/5 cursor-pointer" 
+                                : "opacity-50 cursor-not-allowed"
+                            )}
+                          >
+                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                              <item.icon className="w-5 h-5 text-primary" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-sm">{item.label}</p>
+                              <p className="text-xs text-muted-foreground">{item.description}</p>
+                            </div>
+                            {!available && (
+                              <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">Ajouté</span>
+                            )}
+                            {available && (
+                              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                <Plus className="w-4 h-4 text-primary" />
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : (
+              // Links submenu
+              <div>
+                <button
+                  onClick={() => setLinksSubmenuOpen(false)}
+                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
+                >
+                  <ChevronUp className="w-4 h-4 rotate-[-90deg]" />
+                  Retour
+                </button>
+                
                 <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3 block">
-                  {category.title}
+                  Choisissez vos liens
                 </Label>
+                
                 <div className="grid gap-2">
-                  {category.items.map((item) => {
-                    const available = isBlockAvailable(item.type, item.multiple);
-                    return (
-                      <button
-                        key={item.type}
-                        onClick={() => available && addBlock(item.type)}
-                        disabled={!available}
-                        className={cn(
-                          "flex items-center gap-3 p-3 rounded-xl border text-left transition-all",
-                          available 
-                            ? "hover:border-primary hover:bg-primary/5 cursor-pointer" 
-                            : "opacity-50 cursor-not-allowed"
-                        )}
-                      >
-                        <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
-                          <item.icon className="w-5 h-5 text-muted-foreground" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm">{item.label}</p>
-                          <p className="text-xs text-muted-foreground">{item.description}</p>
-                        </div>
-                        {!available && (
-                          <span className="text-xs text-muted-foreground">Déjà ajouté</span>
-                        )}
-                        {item.multiple && (
-                          <span className="text-xs text-muted-foreground">∞</span>
-                        )}
-                      </button>
-                    );
-                  })}
+                  {LINK_TYPE_OPTIONS.map((option) => (
+                    <button
+                      key={option.id}
+                      onClick={() => {
+                        addBlock('links');
+                        setLinksSubmenuOpen(false);
+                      }}
+                      className="flex items-center gap-3 p-3 rounded-xl border text-left transition-all hover:border-primary hover:bg-primary/5 cursor-pointer"
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <option.icon className="w-5 h-5 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm">{option.label}</p>
+                        <p className="text-xs text-muted-foreground">{option.description}</p>
+                      </div>
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Plus className="w-4 h-4 text-primary" />
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </div>
-            ))}
+            )}
           </div>
         </DialogContent>
       </Dialog>
