@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
       
       xml += `
   <url>
-    <loc>${baseUrl}/c/${center.slug}</loc>
+    <loc>${baseUrl}/${center.slug}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

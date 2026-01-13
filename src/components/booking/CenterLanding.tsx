@@ -19,9 +19,10 @@ interface CenterLandingProps {
   onSelectPack?: (pack: Pack) => void;
   hasPacks: boolean;
   isPro: boolean;
+  isPreview?: boolean;
 }
 
-export function CenterLanding({ center, packs, onStartBooking, onSelectPack, hasPacks, isPro }: CenterLandingProps) {
+export function CenterLanding({ center, packs, onStartBooking, onSelectPack, hasPacks, isPro, isPreview = false }: CenterLandingProps) {
   const { toast } = useToast();
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
@@ -612,10 +613,13 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
       }}
     >
       <div className="max-w-lg mx-auto px-4 pb-8">
-        {/* Fixed CTA Bar - Apple Premium Style */}
+        {/* Fixed CTA Bar - Apple Premium Style (absolute in preview mode) */}
         {hasPacks && isPro && (
           <div 
-            className="fixed bottom-0 left-0 right-0 z-50 border-t backdrop-blur-xl safe-area-pb"
+            className={cn(
+              "bottom-0 left-0 right-0 z-50 border-t backdrop-blur-xl safe-area-pb",
+              isPreview ? "absolute" : "fixed"
+            )}
             style={{ 
               backgroundColor: customization.layout.dark_mode 
                 ? 'rgba(15, 15, 15, 0.85)' 
