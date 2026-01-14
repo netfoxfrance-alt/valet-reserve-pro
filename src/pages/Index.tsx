@@ -569,7 +569,7 @@ export default function Index() {
                   {/* Preview Content - Profile Card */}
                   <div className="bg-card rounded-2xl border border-border/40 overflow-hidden shadow-sm max-w-sm mx-auto">
                     {/* Banner */}
-                    <div className="h-28 relative">
+                    <div className="h-24 relative">
                       <img 
                         src={mockupBanner} 
                         alt="Preview" 
@@ -577,48 +577,77 @@ export default function Index() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
                       {/* Logo overlay */}
-                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2">
-                        <div className="bg-emerald-600 text-white px-4 py-1.5 rounded-lg font-bold text-sm shadow-lg">
-                          IMPEC'CAR
+                      <div className="absolute -bottom-5 left-1/2 -translate-x-1/2">
+                        <div className="w-14 h-14 bg-foreground rounded-2xl flex items-center justify-center border-4 border-card shadow-lg">
+                          <Droplets className="w-6 h-6 text-background" />
                         </div>
                       </div>
                     </div>
 
                     {/* Content */}
-                    <div className="p-5 text-center">
-                      <h3 className="text-lg font-bold text-foreground mb-2">IMPEC'CAR</h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed mb-4 px-2">
-                        réalise, 7/7 et 24/24, le lavage de votre voiture ou tout autre véhicule à l'eau sur le lieu de votre choix
+                    <div className="p-4 pt-8 text-center">
+                      <h3 className="text-base font-bold text-foreground mb-1">Clean Express</h3>
+                      <p className="text-[11px] text-muted-foreground leading-relaxed mb-3 px-1">
+                        Lavage auto premium à domicile, 7j/7. Qualité professionnelle, résultat impeccable.
                       </p>
 
                       {/* Status Badge */}
-                      <div className="flex justify-center mb-4">
-                        <span className="flex items-center gap-1.5 text-emerald-600 text-xs font-medium border border-emerald-200 bg-emerald-50 rounded-full px-3 py-1">
-                          <span className="w-2 h-2 bg-emerald-500 rounded-full" />
+                      <div className="flex justify-center mb-3">
+                        <span className="flex items-center gap-1.5 text-emerald-600 text-[10px] font-medium border border-emerald-200 bg-emerald-50 rounded-full px-2.5 py-0.5">
+                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
                           Ouvert
                         </span>
                       </div>
 
                       {/* Social Icons */}
-                      <div className="flex justify-center gap-3 mb-5">
+                      <div className="flex justify-center gap-2 mb-4">
                         {[Instagram, MessageCircle, Users, Mail].map((Icon, i) => (
-                          <div key={i} className="w-10 h-10 bg-secondary/60 rounded-full flex items-center justify-center hover:bg-secondary transition-colors cursor-pointer">
-                            <Icon className="w-4 h-4 text-foreground" />
+                          <div key={i} className="w-8 h-8 bg-secondary/60 rounded-full flex items-center justify-center hover:bg-secondary transition-colors cursor-pointer">
+                            <Icon className="w-3.5 h-3.5 text-foreground" />
                           </div>
                         ))}
                       </div>
 
                       {/* Info Items */}
-                      <div className="space-y-2 text-left px-2">
-                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                          <Phone className="w-4 h-4" />
-                          <span>0687661023</span>
+                      <div className="space-y-1.5 text-left px-1 mb-4">
+                        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                          <Phone className="w-3.5 h-3.5" />
+                          <span>06 12 34 56 78</span>
                         </div>
-                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                          <Clock className="w-4 h-4" />
-                          <span>Lun - Sam : 9h00 - 19h00</span>
+                        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>Lun - Sam : 8h00 - 20h00</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                          <MapPin className="w-3.5 h-3.5" />
+                          <span>Paris et Île-de-France</span>
                         </div>
                       </div>
+
+                      {/* Formules Section */}
+                      <div className="mb-4">
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 font-medium text-left">Nos formules</p>
+                        <div className="space-y-1.5">
+                          <div className="flex justify-between items-center bg-secondary/50 rounded-lg px-3 py-2">
+                            <span className="text-[11px] text-foreground font-medium">Lavage Express</span>
+                            <span className="text-[11px] font-bold text-primary">25€</span>
+                          </div>
+                          <div className="flex justify-between items-center bg-secondary/50 rounded-lg px-3 py-2">
+                            <span className="text-[11px] text-foreground font-medium">Nettoyage Complet</span>
+                            <span className="text-[11px] font-bold text-primary">55€</span>
+                          </div>
+                          <div className="flex justify-between items-center bg-secondary/50 rounded-lg px-3 py-2">
+                            <span className="text-[11px] text-foreground font-medium">Premium Intérieur</span>
+                            <span className="text-[11px] font-bold text-primary">90€</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* CTA Button */}
+                      <button className="w-full bg-foreground text-background py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 shadow-sm hover:opacity-90 transition-opacity">
+                        <Calendar className="w-4 h-4" />
+                        Réserver maintenant
+                      </button>
                     </div>
                   </div>
                 </div>
