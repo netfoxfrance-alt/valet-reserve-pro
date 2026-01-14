@@ -182,8 +182,8 @@ export default function Index() {
                       />
                       {/* Logo overlay - premium style like reference */}
                       <div className="absolute -bottom-10 left-1/2 -translate-x-1/2">
-                        <div className="w-20 h-20 bg-emerald-500 rounded-[1.25rem] shadow-2xl flex items-center justify-center ring-[6px] ring-card overflow-hidden p-2.5">
-                          <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-contain" />
+                        <div className="w-20 h-20 rounded-[1.25rem] shadow-2xl ring-[6px] ring-card overflow-hidden">
+                          <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
                         </div>
                       </div>
                     </div>
