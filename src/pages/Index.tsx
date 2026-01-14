@@ -162,126 +162,141 @@ export default function Index() {
               </div>
             </div>
 
-            {/* Right: Floating UI Card - No phone frame */}
+            {/* Right: Dynamic Floating Cards Composition */}
             <div className="flex justify-center lg:justify-end">
-              <div className="relative group">
-                {/* Ambient glow effects */}
-                <div className="absolute -inset-16 bg-gradient-to-tr from-primary/15 via-transparent to-primary/10 blur-3xl opacity-50 group-hover:opacity-70 transition-opacity duration-700" />
-                <div className="absolute -inset-8 bg-primary/5 blur-[50px] animate-pulse" style={{ animationDuration: '5s' }} />
+              <div className="relative w-[340px] sm:w-[400px] h-[450px] sm:h-[520px]">
                 
-                {/* Floating Card */}
-                <div className="relative bg-card rounded-3xl overflow-hidden w-[300px] sm:w-[340px] shadow-2xl shadow-black/10 ring-1 ring-border/50 group-hover:shadow-3xl group-hover:shadow-black/15 transition-all duration-500 group-hover:-translate-y-1">
-                  
-                  {/* Banner */}
-                  <div className="h-40 relative overflow-hidden">
-                    <img 
-                      src={mockupBanner} 
-                      alt="Service preview" 
-                      className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
-                    
-                    {/* Logo */}
-                    <div className="absolute -bottom-6 left-5">
-                      <div className="w-16 h-16 bg-white rounded-2xl shadow-xl flex items-center justify-center ring-4 ring-card">
-                        <span className="text-zinc-900 font-bold text-base tracking-tight">CP</span>
+                {/* Background decorative elements */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
+                <div className="absolute top-20 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl" />
+                
+                {/* Card 1: Main Profile Card - Center, slightly tilted */}
+                <div className="absolute top-8 left-1/2 -translate-x-1/2 z-20 animate-fade-in">
+                  <div 
+                    className="bg-card rounded-3xl overflow-hidden w-[260px] sm:w-[280px] shadow-2xl shadow-black/15 ring-1 ring-border/30 hover:shadow-3xl transition-all duration-500 hover:-translate-y-1"
+                    style={{ transform: 'rotate(-2deg)' }}
+                  >
+                    {/* Mini Banner */}
+                    <div className="h-20 relative overflow-hidden bg-gradient-to-br from-primary/20 via-primary/10 to-emerald-500/20">
+                      <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+                      {/* Logo centered */}
+                      <div className="absolute -bottom-5 left-1/2 -translate-x-1/2">
+                        <div className="w-14 h-14 bg-white rounded-2xl shadow-lg flex items-center justify-center ring-4 ring-card">
+                          <span className="text-zinc-900 font-bold text-sm">CP</span>
+                        </div>
                       </div>
                     </div>
                     
-                    {/* Social icon */}
-                    <div className="absolute top-4 right-4">
-                      <div className="w-9 h-9 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center ring-1 ring-white/20 hover:bg-black/50 transition-colors cursor-pointer">
-                        <Instagram className="w-4 h-4 text-white" />
+                    <div className="px-5 pb-5 pt-7 text-center">
+                      <h3 className="text-base font-bold text-foreground mb-0.5">Clean Auto Pro</h3>
+                      <p className="text-xs text-muted-foreground mb-3">Lavage auto • Detailing • Paris</p>
+                      
+                      <div className="flex items-center justify-center gap-3 mb-4">
+                        <div className="flex items-center gap-1 text-xs">
+                          <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                          <span className="font-semibold text-foreground">4.9</span>
+                        </div>
+                        <span className="w-1 h-1 bg-muted-foreground/30 rounded-full" />
+                        <span className="text-[10px] bg-emerald-500/15 text-emerald-600 px-2 py-0.5 rounded-full font-medium">OUVERT</span>
+                      </div>
+                      
+                      {/* Quick action buttons */}
+                      <div className="flex gap-2">
+                        <button className="flex-1 flex items-center justify-center gap-1.5 bg-foreground text-background rounded-xl py-2.5 text-xs font-medium">
+                          <Phone className="w-3.5 h-3.5" />
+                          Appeler
+                        </button>
+                        <button className="flex-1 flex items-center justify-center gap-1.5 bg-secondary text-foreground rounded-xl py-2.5 text-xs font-medium">
+                          <MapPin className="w-3.5 h-3.5" />
+                          Y aller
+                        </button>
                       </div>
                     </div>
                   </div>
-
-                  <div className="px-5 pb-6 pt-8">
-                    {/* Header */}
-                    <div className="mb-5">
-                      <div className="flex items-center gap-2.5 mb-1.5">
-                        <h3 className="text-lg font-bold text-foreground tracking-tight">Clean Auto Pro</h3>
-                        <span className="text-[10px] bg-emerald-500/15 text-emerald-600 px-2.5 py-1 rounded-full font-semibold tracking-wide">OUVERT</span>
+                </div>
+                
+                {/* Card 2: Services Card - Bottom left, tilted */}
+                <div className="absolute bottom-4 -left-4 sm:left-0 z-10 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                  <div 
+                    className="bg-card rounded-2xl p-4 w-[180px] shadow-xl shadow-black/10 ring-1 ring-border/30 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1"
+                    style={{ transform: 'rotate(-6deg)' }}
+                  >
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <Sparkles className="w-4 h-4 text-primary" />
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span>Lavage automobile premium</span>
-                        <span className="w-1 h-1 bg-muted-foreground/40 rounded-full" />
-                        <div className="flex items-center gap-1">
-                          <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                          <span className="font-semibold text-foreground">4.9</span>
-                          <span className="text-muted-foreground/70">(312)</span>
-                        </div>
-                      </div>
+                      <span className="text-xs font-semibold text-foreground">Nos formules</span>
                     </div>
-
-                    {/* Action buttons */}
-                    <div className="grid grid-cols-3 gap-2.5 mb-5">
-                      <button className="flex flex-col items-center justify-center gap-1.5 bg-foreground text-background rounded-2xl py-3.5 hover:opacity-90 transition-opacity">
-                        <Phone className="w-[18px] h-[18px]" />
-                        <span className="text-[11px] font-medium">Appeler</span>
-                      </button>
-                      <button className="flex flex-col items-center justify-center gap-1.5 bg-secondary hover:bg-secondary/80 text-foreground rounded-2xl py-3.5 transition-colors">
-                        <MapPin className="w-[18px] h-[18px]" />
-                        <span className="text-[11px] font-medium">Y aller</span>
-                      </button>
-                      <button className="flex flex-col items-center justify-center gap-1.5 bg-secondary hover:bg-secondary/80 text-foreground rounded-2xl py-3.5 transition-colors">
-                        <Share2 className="w-[18px] h-[18px]" />
-                        <span className="text-[11px] font-medium">Partager</span>
-                      </button>
-                    </div>
-
-                    {/* Info pills */}
-                    <div className="flex gap-2.5 mb-5">
-                      <div className="flex-1 bg-secondary/50 rounded-xl p-3 hover:bg-secondary/70 transition-colors cursor-pointer">
-                        <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
-                          <Clock className="w-3.5 h-3.5" />
-                          <span className="text-[10px] uppercase tracking-wider font-medium">Horaires</span>
-                        </div>
-                        <p className="text-sm font-semibold text-foreground">9h - 19h</p>
-                      </div>
-                      <div className="flex-1 bg-secondary/50 rounded-xl p-3 hover:bg-secondary/70 transition-colors cursor-pointer">
-                        <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
-                          <MapPin className="w-3.5 h-3.5" />
-                          <span className="text-[10px] uppercase tracking-wider font-medium">Adresse</span>
-                        </div>
-                        <p className="text-sm font-semibold text-foreground">Paris 15ème</p>
-                      </div>
-                    </div>
-
-                    {/* Services */}
-                    <div className="space-y-2 mb-5">
-                      {[
-                        { name: 'Lavage Express', price: '30€', tag: null },
-                        { name: 'Lavage Complet', price: '70€', tag: 'Populaire' },
-                        { name: 'Rénovation Premium', price: '150€', tag: null },
-                      ].map((item) => (
-                        <div 
-                          key={item.name} 
-                          className="flex items-center justify-between bg-secondary/30 hover:bg-secondary/50 rounded-xl px-4 py-3 transition-colors cursor-pointer group/item"
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-foreground">{item.name}</span>
-                            {item.tag && (
-                              <span className="text-[9px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">
-                                {item.tag}
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-primary">{item.price}</span>
-                            <ChevronRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover/item:opacity-100 transition-opacity" />
-                          </div>
+                    <div className="space-y-1.5">
+                      {['Lavage Express', 'Lavage Complet', 'Rénovation'].map((name, i) => (
+                        <div key={name} className="flex items-center justify-between bg-secondary/40 rounded-lg px-2.5 py-2">
+                          <span className="text-[10px] font-medium text-foreground">{name}</span>
+                          <span className="text-[10px] font-bold text-primary">{[30, 70, 150][i]}€</span>
                         </div>
                       ))}
                     </div>
-
-                    {/* CTA */}
-                    <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl py-4 text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/25 hover:-translate-y-0.5">
-                      <Calendar className="w-4 h-4" />
-                      Réserver un créneau
+                  </div>
+                </div>
+                
+                {/* Card 3: Calendar/Booking Card - Bottom right, tilted opposite */}
+                <div className="absolute bottom-12 -right-2 sm:right-2 z-10 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                  <div 
+                    className="bg-card rounded-2xl p-4 w-[160px] shadow-xl shadow-black/10 ring-1 ring-border/30 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1"
+                    style={{ transform: 'rotate(5deg)' }}
+                  >
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 bg-emerald-500/10 rounded-lg flex items-center justify-center">
+                        <Calendar className="w-4 h-4 text-emerald-600" />
+                      </div>
+                      <span className="text-xs font-semibold text-foreground">Réserver</span>
+                    </div>
+                    <div className="grid grid-cols-4 gap-1 mb-3">
+                      {['L', 'M', 'M', 'J'].map((day, i) => (
+                        <div 
+                          key={i}
+                          className={`text-center py-1.5 rounded-lg text-[9px] font-medium ${
+                            i === 1 ? 'bg-primary text-primary-foreground' : 'bg-secondary/50 text-foreground'
+                          }`}
+                        >
+                          <div>{day}</div>
+                          <div className="text-[8px] opacity-70">{7 + i}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <button className="w-full bg-primary text-primary-foreground rounded-lg py-2 text-[10px] font-semibold">
+                      Voir les créneaux
                     </button>
                   </div>
                 </div>
+                
+                {/* Card 4: Stats mini card - Top right */}
+                <div className="absolute top-0 right-4 sm:right-8 z-5 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                  <div 
+                    className="bg-card rounded-xl p-3 shadow-lg shadow-black/10 ring-1 ring-border/30"
+                    style={{ transform: 'rotate(8deg)' }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 bg-amber-500/10 rounded-lg flex items-center justify-center">
+                        <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-foreground">312 avis</p>
+                        <p className="text-[9px] text-muted-foreground">clients satisfaits</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Floating social icons */}
+                <div className="absolute bottom-32 right-0 sm:right-6 flex gap-2 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                  <div className="w-10 h-10 bg-card rounded-full shadow-lg ring-1 ring-border/30 flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
+                    <Instagram className="w-4 h-4 text-foreground" />
+                  </div>
+                  <div className="w-10 h-10 bg-card rounded-full shadow-lg ring-1 ring-border/30 flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
+                    <Phone className="w-4 h-4 text-foreground" />
+                  </div>
+                </div>
+                
               </div>
             </div>
 
