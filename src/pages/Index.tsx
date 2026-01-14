@@ -522,38 +522,9 @@ export default function Index() {
             Simple et complet pour gérer réservations, formules, et personnaliser votre page.
           </p>
 
-          {/* Dashboard Tabs Preview - Interactive */}
-          <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-wrap gap-2 sm:gap-3 mb-10 justify-center">
-            {[
-              { icon: Globe, label: 'Ma Page', tab: 'mypage' as const, badge: null },
-              { icon: Calendar, label: 'Réservations', tab: 'reservations' as const, badge: '3' },
-              { icon: BarChart3, label: 'Statistiques', tab: 'stats' as const, badge: null },
-              { icon: Droplets, label: 'Formules', tab: 'formules' as const, badge: null },
-              { icon: Settings, label: 'Paramètres', tab: 'settings' as const, badge: null },
-            ].map((item) => (
-              <button 
-                key={item.label}
-                onClick={() => setDashboardTab(item.tab)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer ${
-                  dashboardTab === item.tab 
-                    ? 'bg-foreground text-background shadow-lg' 
-                    : 'bg-card border border-border/60 text-foreground hover:bg-secondary/50'
-                }`}
-              >
-                <item.icon className="w-4 h-4" />
-                {item.label}
-                {item.badge && (
-                  <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Dashboard Browser Mockup */}
-          <div className="opacity-0 animate-fade-in-up stagger-4">
-            <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60 max-w-4xl mx-auto">
+          {/* Dashboard Browser Mockup - Apple Style */}
+          <div className="opacity-0 animate-fade-in-up stagger-3">
+            <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60 max-w-5xl mx-auto">
               {/* Browser Bar */}
               <div className="bg-secondary/50 px-4 py-3 flex items-center gap-3 border-b border-border/40">
                 <div className="flex gap-1.5">
@@ -570,15 +541,15 @@ export default function Index() {
               </div>
 
               {/* Dashboard Content */}
-              <div className="flex min-h-[420px]">
+              <div className="flex min-h-[480px]">
                 {/* Sidebar */}
-                <div className="w-56 bg-secondary/30 border-r border-border/40 p-4 flex-shrink-0 hidden md:block">
-                  <div className="flex items-center gap-2 mb-1">
+                <div className="w-52 bg-secondary/20 border-r border-border/40 p-5 flex-shrink-0 hidden md:flex flex-col">
+                  <div className="mb-1">
                     <Logo size="md" />
                   </div>
-                  <p className="text-xs text-muted-foreground mb-6 truncate">clean-auto-pro</p>
+                  <p className="text-xs text-muted-foreground mb-8 truncate">clean-auto-pro</p>
 
-                  <nav className="space-y-1">
+                  <nav className="space-y-1 flex-1">
                     {[
                       { icon: Globe, label: 'Ma Page', tab: 'mypage' as const },
                       { icon: Calendar, label: 'Réservations', tab: 'reservations' as const, badge: '3' },
@@ -595,12 +566,12 @@ export default function Index() {
                             : 'text-muted-foreground hover:bg-card/50'
                         }`}
                       >
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2.5">
                           <item.icon className="w-4 h-4" />
                           {item.label}
                         </div>
                         {item.badge && (
-                          <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                          <span className="bg-emerald-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
                             {item.badge}
                           </span>
                         )}
@@ -609,7 +580,7 @@ export default function Index() {
                   </nav>
 
                   {/* Link at bottom */}
-                  <div className="mt-8 pt-4 border-t border-border/40">
+                  <div className="pt-4 border-t border-border/40">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Link2 className="w-4 h-4" />
                       <span className="text-xs">Votre lien</span>
@@ -619,181 +590,186 @@ export default function Index() {
                 </div>
 
                 {/* Main Content Area */}
-                <div className="flex-1 p-3 sm:p-6">
-                  {/* Ma Page Tab */}
+                <div className="flex-1 p-5 sm:p-6 flex flex-col">
+                  {/* Ma Page Tab - Clean Apple Style */}
                   {dashboardTab === 'mypage' && (
                     <div className="h-full flex flex-col">
                       {/* Header with tabs and actions */}
-                      <div className="flex items-center justify-between mb-4 sm:mb-6 border-b border-border/40 pb-3">
-                        <div className="flex items-center gap-3 sm:gap-5 text-xs sm:text-sm overflow-x-auto">
-                          <span className="text-muted-foreground whitespace-nowrap cursor-pointer hover:text-foreground transition-colors">Infos</span>
-                          <span className="text-foreground font-medium border-b-2 border-foreground pb-3 -mb-3 whitespace-nowrap">Style</span>
-                          <span className="text-muted-foreground whitespace-nowrap cursor-pointer hover:text-foreground transition-colors">Sections</span>
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-6 text-sm">
+                          <span className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Infos</span>
+                          <span className="text-foreground font-medium relative">
+                            Style
+                            <span className="absolute -bottom-2 left-0 right-0 h-0.5 bg-foreground rounded-full" />
+                          </span>
+                          <span className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors flex items-center gap-1">
+                            Sections
+                            <span className="w-1.5 h-1.5 bg-amber-400 rounded-full" />
+                          </span>
                         </div>
-                        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                          <span className="text-emerald-500 text-[10px] sm:text-xs flex items-center gap-1.5 font-medium">
+                        <div className="flex items-center gap-3">
+                          <span className="text-emerald-500 text-xs flex items-center gap-1.5 font-medium">
                             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                             Sync
                           </span>
-                          <button className="bg-foreground text-background px-3 sm:px-5 py-1.5 sm:py-2 rounded-lg text-[10px] sm:text-xs font-medium shadow-sm hover:opacity-90 transition-opacity">
+                          <button className="bg-foreground text-background px-5 py-2 rounded-lg text-xs font-medium shadow-sm hover:opacity-90 transition-opacity">
                             Publier
                           </button>
                         </div>
                       </div>
 
-                      {/* Main content grid */}
-                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6">
-                        {/* Left: Customization controls */}
-                        <div className="lg:col-span-2 space-y-3 sm:space-y-4">
-                          {/* Color Picker */}
-                          <div className="bg-secondary/50 rounded-xl p-3 sm:p-4 border border-border/30">
-                            <p className="text-xs sm:text-sm font-medium text-foreground mb-3">Couleur principale</p>
-                            <div className="flex gap-2 items-center flex-wrap">
+                      {/* Main content - Two columns */}
+                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                        {/* Left: Customization Controls */}
+                        <div className="space-y-4">
+                          {/* Color Picker Card */}
+                          <div className="bg-background rounded-2xl p-5 border border-border/40 shadow-sm">
+                            <p className="text-sm font-medium text-foreground mb-4">Couleur principale</p>
+                            <div className="grid grid-cols-4 gap-3">
                               {[
-                                { color: 'bg-zinc-900', active: false },
-                                { color: 'bg-white border-2 border-zinc-200', active: true },
+                                { color: 'bg-zinc-900', active: true },
+                                { color: 'bg-white border-2 border-zinc-200', active: false },
                                 { color: 'bg-red-500', active: false },
                                 { color: 'bg-emerald-500', active: false },
                                 { color: 'bg-blue-500', active: false },
                                 { color: 'bg-violet-500', active: false },
+                                { color: 'bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500', active: false, isPlus: true },
                               ].map((c, i) => (
                                 <div 
                                   key={i}
-                                  className={`w-8 h-8 sm:w-9 sm:h-9 ${c.color} rounded-full cursor-pointer transition-all hover:scale-110 ${c.active ? 'ring-2 ring-offset-2 ring-offset-background ring-foreground scale-110' : ''}`}
-                                />
+                                  className={`w-11 h-11 ${c.color} rounded-full cursor-pointer transition-all hover:scale-105 ${c.active ? 'ring-2 ring-offset-2 ring-offset-background ring-foreground scale-105' : ''} ${c.isPlus ? 'flex items-center justify-center' : ''}`}
+                                >
+                                  {c.isPlus && <span className="text-white text-sm font-bold">+</span>}
+                                </div>
                               ))}
-                              <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 rounded-full cursor-pointer flex items-center justify-center hover:scale-110 transition-all">
-                                <span className="text-white text-xs font-bold">+</span>
-                              </div>
                             </div>
                           </div>
 
-                          {/* Theme Toggle */}
-                          <div className="bg-secondary/50 rounded-xl p-3 sm:p-4 border border-border/30">
-                            <p className="text-xs sm:text-sm font-medium text-foreground mb-3">Thème</p>
-                            <div className="flex gap-2 bg-secondary/50 p-1 rounded-lg">
-                              <button className="flex-1 text-muted-foreground px-4 py-2 rounded-md text-xs sm:text-sm transition-all hover:text-foreground">
+                          {/* Theme Toggle Card */}
+                          <div className="bg-background rounded-2xl p-5 border border-border/40 shadow-sm">
+                            <p className="text-sm font-medium text-foreground mb-4">Thème</p>
+                            <div className="flex gap-2 bg-secondary/60 p-1.5 rounded-xl">
+                              <button className="flex-1 text-muted-foreground px-4 py-2.5 rounded-lg text-sm transition-all hover:text-foreground">
                                 Clair
                               </button>
-                              <button className="flex-1 bg-foreground text-background px-4 py-2 rounded-md text-xs sm:text-sm font-medium shadow-sm">
+                              <button className="flex-1 bg-foreground text-background px-4 py-2.5 rounded-lg text-sm font-medium shadow-sm">
                                 Sombre
                               </button>
                             </div>
                           </div>
 
-                          {/* Action Button Preview */}
-                          <div className="bg-secondary/50 rounded-xl p-3 sm:p-4 border border-border/30">
-                            <p className="text-xs sm:text-sm font-medium text-foreground mb-3">Bouton d'action</p>
-                            <button className="w-full bg-foreground text-background py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-medium shadow-sm hover:opacity-90 transition-opacity">
+                          {/* Action Button Card */}
+                          <div className="bg-background rounded-2xl p-5 border border-border/40 shadow-sm">
+                            <p className="text-sm font-medium text-foreground mb-4">Bouton d'action</p>
+                            <button className="w-full bg-foreground text-background py-3 rounded-xl text-sm font-medium shadow-sm hover:opacity-90 transition-opacity">
                               Réserver un créneau
                             </button>
                           </div>
                         </div>
 
-                        {/* Right: Live Preview */}
-                        <div className="lg:col-span-3 flex flex-col min-h-[300px] sm:min-h-[360px]">
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="text-xs sm:text-sm font-medium text-foreground">Aperçu en direct</span>
+                        {/* Right: Live Phone Preview */}
+                        <div className="flex flex-col">
+                          <div className="flex items-center justify-between mb-4">
+                            <span className="text-sm font-medium text-foreground">Aperçu en direct</span>
                             <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 bg-secondary/60 rounded-md flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
-                                <Phone className="w-3 h-3 text-muted-foreground" />
-                              </div>
-                              <Eye className="w-4 h-4 text-muted-foreground" />
+                              <button className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
+                                <Phone className="w-3.5 h-3.5 text-muted-foreground" />
+                              </button>
+                              <button className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
+                                <Eye className="w-3.5 h-3.5 text-muted-foreground" />
+                              </button>
                             </div>
                           </div>
                           
-                          {/* Premium Phone Preview Container */}
-                          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-secondary/40 to-secondary/20 rounded-xl p-4 sm:p-6">
+                          {/* Premium Phone Preview */}
+                          <div className="flex-1 flex items-center justify-center">
                             <div className="relative">
                               {/* Phone Frame */}
-                              <div className="relative bg-zinc-800 rounded-[2rem] p-2 shadow-2xl shadow-black/30">
+                              <div className="relative bg-zinc-800 rounded-[2.5rem] p-2 shadow-2xl shadow-black/40">
                                 {/* Dynamic Island */}
-                                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-16 h-5 bg-black rounded-full z-10" />
+                                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-6 bg-black rounded-full z-10" />
                                 
-                                <div className="bg-zinc-950 rounded-[1.5rem] overflow-hidden w-[200px] sm:w-[220px]">
+                                <div className="bg-zinc-950 rounded-[2rem] overflow-hidden w-[220px]">
                                   {/* Banner with overlay */}
-                                  <div className="h-24 sm:h-28 relative">
+                                  <div className="h-28 relative">
                                     <img 
                                       src={mockupBanner} 
                                       alt="Preview" 
                                       className="w-full h-full object-cover opacity-90"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent" />
-                                    <div className="absolute -bottom-4 left-4">
-                                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl flex items-center justify-center border-4 border-zinc-950 shadow-lg">
-                                        <span className="text-zinc-900 font-bold text-[10px] sm:text-xs">MP</span>
+                                    <div className="absolute -bottom-5 left-4">
+                                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center border-4 border-zinc-950 shadow-lg">
+                                        <span className="text-zinc-900 font-bold text-xs">MP</span>
                                       </div>
                                     </div>
-                                    <div className="absolute top-3 right-3 flex gap-1.5">
-                                      <div className="w-6 h-6 bg-zinc-800/80 backdrop-blur-sm rounded-full flex items-center justify-center">
-                                        <Instagram className="w-3 h-3 text-zinc-300" />
+                                    <div className="absolute top-3 right-3">
+                                      <div className="w-7 h-7 bg-zinc-800/80 backdrop-blur-sm rounded-full flex items-center justify-center">
+                                        <Instagram className="w-3.5 h-3.5 text-zinc-300" />
                                       </div>
                                     </div>
                                   </div>
                                   
-                                  <div className="p-4 pt-6">
+                                  <div className="p-4 pt-7">
                                     {/* Header */}
                                     <div className="flex items-center gap-2 mb-1">
-                                      <p className="text-[11px] sm:text-xs font-bold text-white">Maison Propre</p>
-                                      <span className="text-[7px] sm:text-[8px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full font-medium">Ouvert</span>
+                                      <p className="text-xs font-bold text-white">Maison Propre</p>
+                                      <span className="text-[8px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full font-medium">Ouvert</span>
                                     </div>
-                                    <div className="flex items-center gap-1.5 mb-3">
-                                      <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                                      <span className="text-[9px] sm:text-[10px] text-white font-medium">4.8</span>
-                                      <span className="text-[8px] sm:text-[9px] text-zinc-500">(89 avis)</span>
+                                    <div className="flex items-center gap-1.5 mb-4">
+                                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                                      <span className="text-[10px] text-white font-medium">4.8</span>
+                                      <span className="text-[9px] text-zinc-500">(89 avis)</span>
                                     </div>
                                     
                                     {/* Action buttons */}
-                                    <div className="flex gap-2 mb-3">
-                                      <button className="flex-1 flex items-center justify-center gap-1 bg-white text-zinc-900 rounded-lg py-1.5 text-[8px] sm:text-[9px] font-medium">
-                                        <Phone className="w-2.5 h-2.5" />
+                                    <div className="flex gap-2 mb-4">
+                                      <button className="flex-1 flex items-center justify-center gap-1.5 bg-white text-zinc-900 rounded-xl py-2 text-[9px] font-medium">
+                                        <Phone className="w-3 h-3" />
                                         Appeler
                                       </button>
-                                      <button className="flex-1 flex items-center justify-center gap-1 bg-zinc-800 text-zinc-300 rounded-lg py-1.5 text-[8px] sm:text-[9px]">
-                                        <MapPin className="w-2.5 h-2.5" />
+                                      <button className="flex-1 flex items-center justify-center gap-1.5 bg-zinc-800 text-zinc-300 rounded-xl py-2 text-[9px]">
+                                        <MapPin className="w-3 h-3" />
                                         Y aller
                                       </button>
                                     </div>
 
                                     {/* Gallery preview */}
-                                    <div className="mb-3">
-                                      <p className="text-[7px] sm:text-[8px] text-zinc-500 uppercase tracking-wider mb-1.5 font-medium">Galerie</p>
-                                      <div className="flex gap-1">
-                                        <div className="w-12 h-10 bg-zinc-800 rounded-lg overflow-hidden">
+                                    <div className="mb-4">
+                                      <p className="text-[8px] text-zinc-500 uppercase tracking-wider mb-2 font-medium">Galerie</p>
+                                      <div className="flex gap-1.5">
+                                        <div className="w-14 h-11 bg-zinc-800 rounded-lg overflow-hidden">
                                           <img src={mockupBanner} alt="" className="w-full h-full object-cover opacity-80" />
                                         </div>
-                                        <div className="w-12 h-10 bg-zinc-800 rounded-lg overflow-hidden">
+                                        <div className="w-14 h-11 bg-zinc-800 rounded-lg overflow-hidden">
                                           <img src={sofaBanner} alt="" className="w-full h-full object-cover opacity-80" />
                                         </div>
-                                        <div className="w-12 h-10 bg-zinc-800 rounded-lg flex items-center justify-center">
-                                          <span className="text-[8px] sm:text-[9px] text-zinc-500 font-medium">+4</span>
+                                        <div className="w-14 h-11 bg-zinc-800 rounded-lg flex items-center justify-center">
+                                          <span className="text-[9px] text-zinc-500 font-medium">+4</span>
                                         </div>
                                       </div>
                                     </div>
                                     
                                     {/* Services */}
-                                    <div className="space-y-1.5 mb-3">
-                                      <div className="flex justify-between items-center bg-zinc-900/60 rounded-lg px-2.5 py-1.5">
-                                        <span className="text-[8px] sm:text-[9px] text-zinc-300">Ménage 2h</span>
-                                        <span className="text-[8px] sm:text-[9px] font-bold text-white">60€</span>
+                                    <div className="space-y-2 mb-4">
+                                      <div className="flex justify-between items-center bg-zinc-900/70 rounded-xl px-3 py-2">
+                                        <span className="text-[9px] text-zinc-300">Ménage 2h</span>
+                                        <span className="text-[9px] font-bold text-white">60€</span>
                                       </div>
-                                      <div className="flex justify-between items-center bg-zinc-900/60 rounded-lg px-2.5 py-1.5">
-                                        <span className="text-[8px] sm:text-[9px] text-zinc-300">Grand ménage</span>
-                                        <span className="text-[8px] sm:text-[9px] font-bold text-white">120€</span>
+                                      <div className="flex justify-between items-center bg-zinc-900/70 rounded-xl px-3 py-2">
+                                        <span className="text-[9px] text-zinc-300">Grand ménage</span>
+                                        <span className="text-[9px] font-bold text-white">120€</span>
                                       </div>
                                     </div>
                                     
                                     {/* CTA */}
-                                    <button className="w-full bg-white text-zinc-900 py-2 rounded-xl text-[9px] sm:text-[10px] font-semibold flex items-center justify-center gap-1.5 shadow-lg shadow-white/10">
-                                      <Calendar className="w-3 h-3" />
+                                    <button className="w-full bg-white text-zinc-900 py-2.5 rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 shadow-lg shadow-white/10">
+                                      <Calendar className="w-3.5 h-3.5" />
                                       Prendre rendez-vous
                                     </button>
                                   </div>
                                 </div>
                               </div>
-                              
-                              {/* Decorative glow */}
-                              <div className="absolute -inset-8 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 rounded-full blur-2xl -z-10 opacity-60" />
                             </div>
                           </div>
                         </div>
