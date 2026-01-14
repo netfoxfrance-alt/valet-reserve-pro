@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 import sofaBanner from '@/assets/sofa-cleaning-banner.jpg';
-import cleaningLogo from '@/assets/cleaning-services-logo.png';
+import gocleanLogo from '@/assets/goclean-logo.png';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -180,17 +180,17 @@ export default function Index() {
                         alt="Service preview" 
                         className="w-full h-full object-cover"
                       />
-                      {/* Logo overlay - clean centered style */}
-                      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
-                        <div className="w-[72px] h-[72px] bg-white rounded-[1.25rem] shadow-xl flex items-center justify-center ring-[3px] ring-white overflow-hidden">
-                          <img src={cleaningLogo} alt="Logo" className="w-full h-full object-cover" />
+                      {/* Logo overlay */}
+                      <div className="absolute -bottom-7 left-1/2 -translate-x-1/2">
+                        <div className="w-[70px] h-[70px] bg-white rounded-2xl shadow-xl flex items-center justify-center ring-4 ring-card p-2">
+                          <img src={gocleanLogo} alt="GoClean Logo" className="w-full h-full object-contain" />
                         </div>
                       </div>
                     </div>
                     
-                    <div className="px-4 pb-5 pt-10 text-center">
+                    <div className="px-4 pb-5 pt-9 text-center">
                       {/* Name & Description */}
-                      <h3 className="text-base font-bold text-foreground mb-1">Cleaning Services</h3>
+                      <h3 className="text-base font-bold text-foreground mb-1">GoClean Premium</h3>
                       <p className="text-[10px] text-muted-foreground leading-relaxed mb-3 px-2">
                         Nettoyage automobile premium à domicile, 7j/7. Qualité garantie.
                       </p>
