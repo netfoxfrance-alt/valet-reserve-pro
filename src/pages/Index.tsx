@@ -651,91 +651,97 @@ export default function Index() {
                             </div>
                           </div>
                           
-                          {/* Preview Container - Clean minimal style */}
-                          <div className="flex-1 bg-secondary/30 rounded-2xl p-4 overflow-y-auto">
-                            <div className="bg-card rounded-2xl shadow-sm border border-border/40 overflow-hidden max-w-[280px] mx-auto">
-                              {/* Banner */}
-                              <div className="h-28 relative">
+                          {/* Preview Container - Style like real public page */}
+                          <div className="flex-1 bg-secondary/30 rounded-2xl overflow-hidden">
+                            <div className="bg-card h-full overflow-y-auto">
+                              {/* Banner with logo overlay */}
+                              <div className="h-32 relative">
                                 <img 
                                   src={mockupBanner} 
                                   alt="Preview" 
                                   className="w-full h-full object-cover"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
-                                
-                                {/* Logo */}
-                                <div className="absolute -bottom-5 left-4">
-                                  <div className="w-14 h-14 bg-card rounded-2xl flex items-center justify-center shadow-lg ring-4 ring-card">
-                                    <div className="w-11 h-11 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center">
-                                      <Sparkles className="w-5 h-5 text-white" />
+                                {/* Logo centered at bottom of banner */}
+                                <div className="absolute left-1/2 -translate-x-1/2 -bottom-8">
+                                  <div className="bg-white/95 rounded-2xl p-2 shadow-lg ring-1 ring-black/5">
+                                    <div className="w-16 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                                      <span className="text-white font-black text-lg tracking-tight">CP</span>
                                     </div>
-                                  </div>
-                                </div>
-                                
-                                {/* Social icon */}
-                                <div className="absolute top-3 right-3">
-                                  <div className="w-8 h-8 bg-card/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md">
-                                    <Instagram className="w-4 h-4 text-foreground" />
                                   </div>
                                 </div>
                               </div>
                               
-                              <div className="p-4 pt-7">
-                                {/* Header */}
-                                <div className="mb-4">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <h3 className="text-base font-bold text-foreground">Clean Studio</h3>
-                                    <span className="text-[9px] bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
-                                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                                      Ouvert
-                                    </span>
-                                  </div>
-                                  <p className="text-xs text-muted-foreground">Nettoyage auto premium à domicile</p>
+                              <div className="px-5 pt-12 pb-4">
+                                {/* Business Name */}
+                                <h3 className="text-xl font-bold text-foreground text-center mb-2">Clean Premium</h3>
+                                
+                                {/* Description */}
+                                <p className="text-sm text-muted-foreground text-center leading-relaxed mb-4">
+                                  Nettoyage automobile premium à domicile, 7j/7. Qualité professionnelle garantie.
+                                </p>
+                                
+                                {/* Status Badge */}
+                                <div className="flex justify-center mb-4">
+                                  <span className="inline-flex items-center gap-1.5 text-xs bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full font-medium">
+                                    <span className="w-2 h-2 bg-emerald-500 rounded-full" />
+                                    Ouvert
+                                  </span>
                                 </div>
-
-                                {/* Social icons row */}
-                                <div className="flex justify-center gap-2 mb-4">
-                                  <div className="w-9 h-9 bg-secondary rounded-full flex items-center justify-center">
-                                    <Instagram className="w-4 h-4 text-foreground" />
+                                
+                                {/* Social Icons Row */}
+                                <div className="flex justify-center gap-3 mb-5">
+                                  <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center border border-border/40">
+                                    <Instagram className="w-5 h-5 text-foreground" />
                                   </div>
-                                  <div className="w-9 h-9 bg-secondary rounded-full flex items-center justify-center">
-                                    <svg className="w-4 h-4 text-foreground" viewBox="0 0 24 24" fill="currentColor">
+                                  <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center border border-border/40">
+                                    <svg className="w-5 h-5 text-foreground" viewBox="0 0 24 24" fill="currentColor">
                                       <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
                                     </svg>
                                   </div>
-                                  <div className="w-9 h-9 bg-secondary rounded-full flex items-center justify-center">
-                                    <Mail className="w-4 h-4 text-foreground" />
+                                  <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center border border-border/40">
+                                    <svg className="w-5 h-5 text-foreground" viewBox="0 0 24 24" fill="currentColor">
+                                      <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+                                    </svg>
+                                  </div>
+                                  <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center border border-border/40">
+                                    <Mail className="w-5 h-5 text-foreground" />
                                   </div>
                                 </div>
                                 
-                                {/* Info items - minimal style */}
-                                <div className="space-y-2 mb-4 text-sm text-muted-foreground">
-                                  <div className="flex items-center gap-2">
-                                    <Phone className="w-4 h-4" />
+                                {/* Info Items */}
+                                <div className="space-y-2.5 mb-5">
+                                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                                    <Phone className="w-4 h-4 flex-shrink-0" />
                                     <span>06 12 34 56 78</span>
                                   </div>
-                                  <div className="flex items-center gap-2">
-                                    <Clock className="w-4 h-4" />
-                                    <span>Lun - Sam : 9h - 19h</span>
+                                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                                    <Clock className="w-4 h-4 flex-shrink-0" />
+                                    <span>Lun - Sam : 9h00 - 19h00</span>
                                   </div>
-                                </div>
-
-                                {/* Services */}
-                                <div className="space-y-2 mb-4">
-                                  <div className="flex justify-between items-center bg-secondary/50 rounded-xl px-3 py-2.5">
-                                    <span className="text-xs font-medium text-foreground">Lavage Express</span>
-                                    <span className="text-xs font-bold text-primary">35€</span>
-                                  </div>
-                                  <div className="flex justify-between items-center bg-secondary/50 rounded-xl px-3 py-2.5">
-                                    <span className="text-xs font-medium text-foreground">Nettoyage Complet</span>
-                                    <span className="text-xs font-bold text-primary">89€</span>
+                                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                                    <MapPin className="w-4 h-4 flex-shrink-0" />
+                                    <span>Paris</span>
                                   </div>
                                 </div>
                                 
-                                {/* CTA Button */}
-                                <button className="w-full bg-foreground text-background py-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
-                                  <Calendar className="w-4 h-4" />
-                                  Réserver
+                                {/* Formulas Title */}
+                                <h4 className="text-base font-semibold text-foreground mb-3">Nos formules</h4>
+                                
+                                {/* Formula Cards Grid */}
+                                <div className="grid grid-cols-2 gap-3 mb-4">
+                                  <div className="bg-card border border-border/40 rounded-xl p-3">
+                                    <h5 className="text-sm font-semibold text-foreground mb-1">Express</h5>
+                                    <p className="text-base font-bold text-muted-foreground">35€</p>
+                                  </div>
+                                  <div className="bg-card border border-border/40 rounded-xl p-3">
+                                    <h5 className="text-sm font-semibold text-foreground mb-1">Complet</h5>
+                                    <p className="text-base font-bold text-muted-foreground">89€</p>
+                                  </div>
+                                </div>
+                                
+                                {/* CTA Button - Fixed style like real page */}
+                                <button className="w-full bg-neutral-700 hover:bg-neutral-800 text-white py-3.5 rounded-2xl text-sm font-semibold transition-colors">
+                                  Réserver maintenant
                                 </button>
                               </div>
                             </div>
