@@ -623,88 +623,34 @@ export default function Index() {
                   {/* Ma Page Tab */}
                   {dashboardTab === 'mypage' && (
                     <div className="h-full flex flex-col">
-                      {/* Header with tabs and actions */}
-                      <div className="flex items-center justify-between mb-4 sm:mb-6 border-b border-border/40 pb-3">
-                        <div className="flex items-center gap-3 sm:gap-5 text-xs sm:text-sm overflow-x-auto">
-                          <span className="text-muted-foreground whitespace-nowrap cursor-pointer hover:text-foreground transition-colors">Infos</span>
-                          <span className="text-foreground font-medium border-b-2 border-foreground pb-3 -mb-3 whitespace-nowrap">Style</span>
-                          <span className="text-muted-foreground whitespace-nowrap cursor-pointer hover:text-foreground transition-colors">Sections</span>
-                        </div>
-                        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                          <span className="text-emerald-500 text-[10px] sm:text-xs flex items-center gap-1.5 font-medium">
-                            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                            Sync
-                          </span>
-                          <button className="bg-foreground text-background px-3 sm:px-5 py-1.5 sm:py-2 rounded-lg text-[10px] sm:text-xs font-medium shadow-sm hover:opacity-90 transition-opacity">
-                            Publier
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Main content grid */}
-                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6">
-                        {/* Left: Customization controls */}
-                        <div className="lg:col-span-2 space-y-3 sm:space-y-4">
-                          {/* Color Picker */}
-                          <div className="bg-secondary/50 rounded-xl p-3 sm:p-4 border border-border/30">
-                            <p className="text-xs sm:text-sm font-medium text-foreground mb-3">Couleur principale</p>
-                            <div className="flex gap-2 items-center flex-wrap">
-                              {[
-                                { color: 'bg-zinc-900', active: false },
-                                { color: 'bg-white border-2 border-zinc-200', active: true },
-                                { color: 'bg-red-500', active: false },
-                                { color: 'bg-emerald-500', active: false },
-                                { color: 'bg-blue-500', active: false },
-                                { color: 'bg-violet-500', active: false },
-                              ].map((c, i) => (
-                                <div 
-                                  key={i}
-                                  className={`w-8 h-8 sm:w-9 sm:h-9 ${c.color} rounded-full cursor-pointer transition-all hover:scale-110 ${c.active ? 'ring-2 ring-offset-2 ring-offset-background ring-foreground scale-110' : ''}`}
-                                />
-                              ))}
-                              <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 rounded-full cursor-pointer flex items-center justify-center hover:scale-110 transition-all">
-                                <span className="text-white text-xs font-bold">+</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Theme Toggle */}
-                          <div className="bg-secondary/50 rounded-xl p-3 sm:p-4 border border-border/30">
-                            <p className="text-xs sm:text-sm font-medium text-foreground mb-3">Thème</p>
-                            <div className="flex gap-2 bg-secondary/50 p-1 rounded-lg">
-                              <button className="flex-1 text-muted-foreground px-4 py-2 rounded-md text-xs sm:text-sm transition-all hover:text-foreground">
-                                Clair
-                              </button>
-                              <button className="flex-1 bg-foreground text-background px-4 py-2 rounded-md text-xs sm:text-sm font-medium shadow-sm">
-                                Sombre
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Action Button Preview */}
-                          <div className="bg-secondary/50 rounded-xl p-3 sm:p-4 border border-border/30">
-                            <p className="text-xs sm:text-sm font-medium text-foreground mb-3">Bouton d'action</p>
-                            <button className="w-full bg-foreground text-background py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-medium shadow-sm hover:opacity-90 transition-opacity">
-                              Réserver un créneau
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Right: Live Preview */}
-                        <div className="lg:col-span-3 flex flex-col min-h-[300px] sm:min-h-[360px]">
+                      {/* Main content grid - Preview left, Controls right */}
+                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                        {/* Left: Live Preview */}
+                        <div className="flex flex-col min-h-[300px] sm:min-h-[400px] order-2 lg:order-1">
                           <div className="flex items-center justify-between mb-3">
-                            <span className="text-xs sm:text-sm font-medium text-foreground">Aperçu en direct</span>
+                            <span className="text-xs sm:text-sm font-medium text-foreground">Aperçu</span>
                             <div className="flex items-center gap-2">
                               <div className="w-6 h-6 bg-secondary/60 rounded-md flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
                                 <Phone className="w-3 h-3 text-muted-foreground" />
                               </div>
-                              <Eye className="w-4 h-4 text-muted-foreground" />
+                              <div className="w-6 h-6 bg-secondary/60 rounded-md flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
+                                <svg className="w-3 h-3 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <rect x="2" y="3" width="20" height="14" rx="2" />
+                                  <path d="M8 21h8" />
+                                  <path d="M12 17v4" />
+                                </svg>
+                              </div>
+                              <div className="w-6 h-6 bg-secondary/60 rounded-md flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
+                                <svg className="w-3 h-3 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+                                </svg>
+                              </div>
                             </div>
                           </div>
                           
-                          {/* Premium Phone Preview Container */}
-                          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-secondary/40 to-secondary/20 rounded-xl p-4 sm:p-6">
-                            <div className="relative">
+                          {/* Phone Preview Container */}
+                          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-secondary/40 to-secondary/20 rounded-xl p-4 sm:p-6 overflow-hidden">
+                            <div className="relative scale-[0.85] sm:scale-100">
                               {/* Phone Frame */}
                               <div className="relative bg-zinc-800 rounded-[2rem] p-2 shadow-2xl shadow-black/30">
                                 {/* Dynamic Island */}
@@ -712,88 +658,158 @@ export default function Index() {
                                 
                                 <div className="bg-zinc-950 rounded-[1.5rem] overflow-hidden w-[200px] sm:w-[220px]">
                                   {/* Banner with overlay */}
-                                  <div className="h-24 sm:h-28 relative">
+                                  <div className="h-20 sm:h-24 relative">
                                     <img 
                                       src={mockupBanner} 
                                       alt="Preview" 
                                       className="w-full h-full object-cover opacity-90"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent" />
-                                    <div className="absolute -bottom-4 left-4">
-                                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl flex items-center justify-center border-4 border-zinc-950 shadow-lg">
-                                        <span className="text-zinc-900 font-bold text-[10px] sm:text-xs">MP</span>
+                                    <div className="absolute -bottom-3 left-3">
+                                      <div className="w-9 h-9 sm:w-10 sm:h-10 bg-white rounded-xl flex items-center justify-center border-3 border-zinc-950 shadow-lg">
+                                        <span className="text-zinc-900 font-bold text-[9px] sm:text-[10px]">IC</span>
                                       </div>
                                     </div>
-                                    <div className="absolute top-3 right-3 flex gap-1.5">
-                                      <div className="w-6 h-6 bg-zinc-800/80 backdrop-blur-sm rounded-full flex items-center justify-center">
-                                        <Instagram className="w-3 h-3 text-zinc-300" />
+                                    <div className="absolute top-2 right-2 flex gap-1">
+                                      <div className="w-5 h-5 bg-zinc-800/80 backdrop-blur-sm rounded-full flex items-center justify-center">
+                                        <Instagram className="w-2.5 h-2.5 text-zinc-300" />
                                       </div>
                                     </div>
                                   </div>
                                   
-                                  <div className="p-4 pt-6">
+                                  <div className="p-3 pt-5">
                                     {/* Header */}
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <p className="text-[11px] sm:text-xs font-bold text-white">Maison Propre</p>
-                                      <span className="text-[7px] sm:text-[8px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full font-medium">Ouvert</span>
+                                    <div className="text-center mb-2">
+                                      <p className="text-[10px] sm:text-[11px] font-bold text-white mb-0.5">IMPEC'CAR</p>
+                                      <p className="text-[7px] sm:text-[8px] text-zinc-400 leading-tight px-2">réalise, 7/7 et 24/24, le lavage de votre voiture...</p>
                                     </div>
-                                    <div className="flex items-center gap-1.5 mb-3">
-                                      <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                                      <span className="text-[9px] sm:text-[10px] text-white font-medium">4.8</span>
-                                      <span className="text-[8px] sm:text-[9px] text-zinc-500">(89 avis)</span>
+                                    <div className="flex items-center justify-center gap-1.5 mb-2">
+                                      <span className="text-[7px] sm:text-[8px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full font-medium flex items-center gap-0.5">
+                                        <span className="w-1 h-1 bg-emerald-400 rounded-full" />
+                                        Ouvert
+                                      </span>
                                     </div>
                                     
-                                    {/* Action buttons */}
-                                    <div className="flex gap-2 mb-3">
-                                      <button className="flex-1 flex items-center justify-center gap-1 bg-white text-zinc-900 rounded-lg py-1.5 text-[8px] sm:text-[9px] font-medium">
+                                    {/* Social icons */}
+                                    <div className="flex justify-center gap-1.5 mb-2">
+                                      <div className="w-6 h-6 bg-zinc-800 rounded-full flex items-center justify-center">
+                                        <Instagram className="w-3 h-3 text-zinc-400" />
+                                      </div>
+                                      <div className="w-6 h-6 bg-zinc-800 rounded-full flex items-center justify-center">
+                                        <svg className="w-3 h-3 text-zinc-400" viewBox="0 0 24 24" fill="currentColor">
+                                          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                                        </svg>
+                                      </div>
+                                      <div className="w-6 h-6 bg-zinc-800 rounded-full flex items-center justify-center">
+                                        <svg className="w-3 h-3 text-zinc-400" viewBox="0 0 24 24" fill="currentColor">
+                                          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                        </svg>
+                                      </div>
+                                      <div className="w-6 h-6 bg-zinc-800 rounded-full flex items-center justify-center">
+                                        <Mail className="w-3 h-3 text-zinc-400" />
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Info items */}
+                                    <div className="space-y-1 text-[8px] text-zinc-400">
+                                      <div className="flex items-center gap-1.5">
                                         <Phone className="w-2.5 h-2.5" />
-                                        Appeler
-                                      </button>
-                                      <button className="flex-1 flex items-center justify-center gap-1 bg-zinc-800 text-zinc-300 rounded-lg py-1.5 text-[8px] sm:text-[9px]">
-                                        <MapPin className="w-2.5 h-2.5" />
-                                        Y aller
-                                      </button>
-                                    </div>
-
-                                    {/* Gallery preview */}
-                                    <div className="mb-3">
-                                      <p className="text-[7px] sm:text-[8px] text-zinc-500 uppercase tracking-wider mb-1.5 font-medium">Galerie</p>
-                                      <div className="flex gap-1">
-                                        <div className="w-12 h-10 bg-zinc-800 rounded-lg overflow-hidden">
-                                          <img src={mockupBanner} alt="" className="w-full h-full object-cover opacity-80" />
-                                        </div>
-                                        <div className="w-12 h-10 bg-zinc-800 rounded-lg overflow-hidden">
-                                          <img src={sofaBanner} alt="" className="w-full h-full object-cover opacity-80" />
-                                        </div>
-                                        <div className="w-12 h-10 bg-zinc-800 rounded-lg flex items-center justify-center">
-                                          <span className="text-[8px] sm:text-[9px] text-zinc-500 font-medium">+4</span>
-                                        </div>
+                                        <span>0687661023</span>
+                                      </div>
+                                      <div className="flex items-center gap-1.5">
+                                        <Clock className="w-2.5 h-2.5" />
+                                        <span>Lun - Sam : 9h00 - 19h00</span>
                                       </div>
                                     </div>
-                                    
-                                    {/* Services */}
-                                    <div className="space-y-1.5 mb-3">
-                                      <div className="flex justify-between items-center bg-zinc-900/60 rounded-lg px-2.5 py-1.5">
-                                        <span className="text-[8px] sm:text-[9px] text-zinc-300">Ménage 2h</span>
-                                        <span className="text-[8px] sm:text-[9px] font-bold text-white">60€</span>
-                                      </div>
-                                      <div className="flex justify-between items-center bg-zinc-900/60 rounded-lg px-2.5 py-1.5">
-                                        <span className="text-[8px] sm:text-[9px] text-zinc-300">Grand ménage</span>
-                                        <span className="text-[8px] sm:text-[9px] font-bold text-white">120€</span>
-                                      </div>
-                                    </div>
-                                    
-                                    {/* CTA */}
-                                    <button className="w-full bg-white text-zinc-900 py-2 rounded-xl text-[9px] sm:text-[10px] font-semibold flex items-center justify-center gap-1.5 shadow-lg shadow-white/10">
-                                      <Calendar className="w-3 h-3" />
-                                      Prendre rendez-vous
-                                    </button>
                                   </div>
                                 </div>
                               </div>
-                              
-                              {/* Decorative glow */}
-                              <div className="absolute -inset-8 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 rounded-full blur-2xl -z-10 opacity-60" />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right: Customization controls */}
+                        <div className="flex flex-col order-1 lg:order-2">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-xs sm:text-sm font-medium text-foreground">Personnalisation</span>
+                          </div>
+                          
+                          <div className="bg-card rounded-xl border border-border/40 flex-1 overflow-hidden">
+                            {/* Tabs like real dashboard */}
+                            <div className="flex items-center justify-around border-b border-border/40 py-2 px-2">
+                              <div className="flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg cursor-pointer text-foreground">
+                                <Palette className="w-4 h-4" />
+                                <span className="text-[9px] sm:text-[10px] font-medium">Design</span>
+                                <div className="w-full h-0.5 bg-foreground rounded-full mt-0.5" />
+                              </div>
+                              <div className="flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg cursor-pointer text-muted-foreground hover:text-foreground/70">
+                                <Droplets className="w-4 h-4" />
+                                <span className="text-[9px] sm:text-[10px] font-medium">Formules</span>
+                              </div>
+                              <div className="flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg cursor-pointer text-muted-foreground hover:text-foreground/70">
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                                <span className="text-[9px] sm:text-[10px] font-medium">Éléments</span>
+                              </div>
+                              <div className="flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg cursor-pointer text-muted-foreground hover:text-foreground/70">
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                                <span className="text-[9px] sm:text-[10px] font-medium">SEO</span>
+                              </div>
+                            </div>
+
+                            <div className="p-3 sm:p-4 space-y-3">
+                              {/* Add Element Button - like real dashboard */}
+                              <div className="border-2 border-dashed border-border/60 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-foreground/30 transition-colors">
+                                <div className="w-10 h-10 bg-secondary/60 rounded-full flex items-center justify-center mb-2">
+                                  <span className="text-xl text-muted-foreground">+</span>
+                                </div>
+                                <p className="text-xs sm:text-sm font-medium text-foreground">Ajouter un élément</p>
+                                <p className="text-[10px] text-muted-foreground">Images, texte, liens, contact...</p>
+                              </div>
+
+                              {/* Elements list */}
+                              <div className="space-y-2">
+                                <p className="text-[10px] sm:text-xs text-muted-foreground font-medium">Vos éléments</p>
+                                
+                                {/* Element item - Phone */}
+                                <div className="bg-secondary/40 rounded-xl p-2.5 sm:p-3 border border-border/30">
+                                  <div className="flex items-center gap-2">
+                                    <div className="text-muted-foreground cursor-grab">
+                                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                                    </div>
+                                    <div className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center">
+                                      <Phone className="w-3.5 h-3.5 text-muted-foreground" />
+                                    </div>
+                                    <span className="text-[10px] sm:text-xs font-medium text-foreground flex-1">Téléphone</span>
+                                    <div className="flex items-center gap-1">
+                                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground rotate-90" />
+                                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground -rotate-90" />
+                                      <div className="w-8 h-4 bg-foreground rounded-full relative">
+                                        <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full" />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Element item - Hours */}
+                                <div className="bg-secondary/40 rounded-xl p-2.5 sm:p-3 border border-border/30">
+                                  <div className="flex items-center gap-2">
+                                    <div className="text-muted-foreground cursor-grab">
+                                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                                    </div>
+                                    <div className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center">
+                                      <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+                                    </div>
+                                    <span className="text-[10px] sm:text-xs font-medium text-foreground flex-1">Horaires</span>
+                                    <div className="flex items-center gap-1">
+                                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground rotate-90" />
+                                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground -rotate-90" />
+                                      <div className="w-8 h-4 bg-foreground rounded-full relative">
+                                        <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full" />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
