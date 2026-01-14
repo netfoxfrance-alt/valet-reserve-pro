@@ -522,7 +522,7 @@ export default function Index() {
             Simple et complet pour gérer réservations, formules, et personnaliser votre page.
           </p>
 
-          {/* Dashboard Browser Mockup - Apple Style */}
+          {/* Dashboard Browser Mockup - Real Dashboard Style */}
           <div className="opacity-0 animate-fade-in-up stagger-3">
             <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60 max-w-5xl mx-auto">
               {/* Browser Bar */}
@@ -540,434 +540,222 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* Dashboard Content */}
-              <div className="flex min-h-[480px]">
-                {/* Sidebar */}
-                <div className="w-52 bg-secondary/20 border-r border-border/40 p-5 flex-shrink-0 hidden md:flex flex-col">
-                  <div className="mb-1">
-                    <Logo size="md" />
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-8 truncate">clean-auto-pro</p>
-
-                  <nav className="space-y-1 flex-1">
-                    {[
-                      { icon: Globe, label: 'Ma Page', tab: 'mypage' as const },
-                      { icon: Calendar, label: 'Réservations', tab: 'reservations' as const, badge: '3' },
-                      { icon: BarChart3, label: 'Statistiques', tab: 'stats' as const },
-                      { icon: Droplets, label: 'Formules', tab: 'formules' as const },
-                      { icon: Settings, label: 'Paramètres', tab: 'settings' as const },
-                    ].map((item) => (
-                      <button
-                        key={item.label}
-                        onClick={() => setDashboardTab(item.tab)}
-                        className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm transition-all ${
-                          dashboardTab === item.tab 
-                            ? 'bg-foreground text-background font-medium' 
-                            : 'text-muted-foreground hover:bg-card/50'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <item.icon className="w-4 h-4" />
-                          {item.label}
-                        </div>
-                        {item.badge && (
-                          <span className="bg-emerald-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                            {item.badge}
-                          </span>
-                        )}
+              {/* Dashboard Content - Two Panel Layout */}
+              <div className="flex min-h-[520px]">
+                {/* Left Panel: Aperçu (Preview) */}
+                <div className="flex-1 p-6 border-r border-border/40 bg-secondary/10">
+                  {/* Aperçu Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="text-sm font-medium text-foreground">Aperçu</span>
+                    <div className="flex items-center gap-2">
+                      <button className="w-8 h-8 bg-background border border-border/60 rounded-lg flex items-center justify-center hover:bg-secondary/50 transition-colors">
+                        <Phone className="w-4 h-4 text-muted-foreground" />
                       </button>
-                    ))}
-                  </nav>
-
-                  {/* Link at bottom */}
-                  <div className="pt-4 border-t border-border/40">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Link2 className="w-4 h-4" />
-                      <span className="text-xs">Votre lien</span>
+                      <button className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center">
+                        <svg className="w-4 h-4 text-background" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <rect x="3" y="4" width="18" height="14" rx="2" strokeWidth="2"/>
+                          <path d="M8 21h8" strokeWidth="2"/>
+                          <path d="M12 18v3" strokeWidth="2"/>
+                        </svg>
+                      </button>
+                      <button className="w-8 h-8 bg-background border border-border/60 rounded-lg flex items-center justify-center hover:bg-secondary/50 transition-colors ml-1">
+                        <svg className="w-4 h-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                          <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
                     </div>
-                    <p className="text-[10px] text-muted-foreground mt-1 truncate">cleaningpage.com/clean-auto...</p>
+                  </div>
+
+                  {/* Preview Content - Profile Card */}
+                  <div className="bg-card rounded-2xl border border-border/40 overflow-hidden shadow-sm max-w-sm mx-auto">
+                    {/* Banner */}
+                    <div className="h-28 relative">
+                      <img 
+                        src={mockupBanner} 
+                        alt="Preview" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
+                      {/* Logo overlay */}
+                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2">
+                        <div className="bg-emerald-600 text-white px-4 py-1.5 rounded-lg font-bold text-sm shadow-lg">
+                          IMPEC'CAR
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-5 text-center">
+                      <h3 className="text-lg font-bold text-foreground mb-2">IMPEC'CAR</h3>
+                      <p className="text-xs text-muted-foreground leading-relaxed mb-4 px-2">
+                        réalise, 7/7 et 24/24, le lavage de votre voiture ou tout autre véhicule à l'eau sur le lieu de votre choix
+                      </p>
+
+                      {/* Status Badge */}
+                      <div className="flex justify-center mb-4">
+                        <span className="flex items-center gap-1.5 text-emerald-600 text-xs font-medium border border-emerald-200 bg-emerald-50 rounded-full px-3 py-1">
+                          <span className="w-2 h-2 bg-emerald-500 rounded-full" />
+                          Ouvert
+                        </span>
+                      </div>
+
+                      {/* Social Icons */}
+                      <div className="flex justify-center gap-3 mb-5">
+                        {[Instagram, MessageCircle, Users, Mail].map((Icon, i) => (
+                          <div key={i} className="w-10 h-10 bg-secondary/60 rounded-full flex items-center justify-center hover:bg-secondary transition-colors cursor-pointer">
+                            <Icon className="w-4 h-4 text-foreground" />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Info Items */}
+                      <div className="space-y-2 text-left px-2">
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <Phone className="w-4 h-4" />
+                          <span>0687661023</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <Clock className="w-4 h-4" />
+                          <span>Lun - Sam : 9h00 - 19h00</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Main Content Area */}
-                <div className="flex-1 p-5 sm:p-6 flex flex-col">
-                  {/* Ma Page Tab - Clean Apple Style */}
-                  {dashboardTab === 'mypage' && (
-                    <div className="h-full flex flex-col">
-                      {/* Header with tabs and actions */}
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-6 text-sm">
-                          <span className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Infos</span>
-                          <span className="text-foreground font-medium relative">
-                            Style
-                            <span className="absolute -bottom-2 left-0 right-0 h-0.5 bg-foreground rounded-full" />
-                          </span>
-                          <span className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors flex items-center gap-1">
-                            Sections
-                            <span className="w-1.5 h-1.5 bg-amber-400 rounded-full" />
-                          </span>
+                {/* Right Panel: Personnalisation */}
+                <div className="w-[420px] p-6 bg-background hidden lg:block">
+                  <h3 className="text-lg font-semibold text-foreground mb-5">Personnalisation</h3>
+
+                  {/* Tab Icons */}
+                  <div className="bg-secondary/40 rounded-2xl p-2 mb-6">
+                    <div className="flex">
+                      {[
+                        { icon: Palette, label: 'Design', active: false },
+                        { icon: Droplets, label: 'Formules', active: false },
+                        { icon: Sparkles, label: 'Éléments', active: true },
+                        { icon: BarChart3, label: 'SEO', active: false },
+                      ].map((tab) => (
+                        <button 
+                          key={tab.label}
+                          className={`flex-1 flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl transition-all ${
+                            tab.active 
+                              ? 'bg-card shadow-sm' 
+                              : 'text-muted-foreground hover:text-foreground'
+                          }`}
+                        >
+                          <tab.icon className={`w-5 h-5 ${tab.active ? 'text-foreground' : ''}`} />
+                          <span className={`text-[11px] ${tab.active ? 'text-foreground font-medium' : ''}`}>{tab.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Add Element Button */}
+                  <div className="border-2 border-dashed border-border/60 rounded-2xl p-8 mb-6 flex flex-col items-center justify-center hover:border-primary/40 hover:bg-secondary/20 transition-colors cursor-pointer">
+                    <div className="w-12 h-12 bg-secondary/60 rounded-full flex items-center justify-center mb-3">
+                      <span className="text-2xl text-muted-foreground">+</span>
+                    </div>
+                    <p className="text-sm font-medium text-foreground mb-1">Ajouter un élément</p>
+                    <p className="text-xs text-muted-foreground">Images, texte, liens, contact...</p>
+                  </div>
+
+                  {/* Elements List */}
+                  <p className="text-sm text-muted-foreground mb-3">Vos éléments</p>
+                  <div className="space-y-3">
+                    {/* Phone Block */}
+                    <div className="bg-card rounded-xl border border-border/40 p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="text-muted-foreground cursor-grab">
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="9" cy="6" r="1.5"/>
+                            <circle cx="15" cy="6" r="1.5"/>
+                            <circle cx="9" cy="12" r="1.5"/>
+                            <circle cx="15" cy="12" r="1.5"/>
+                            <circle cx="9" cy="18" r="1.5"/>
+                            <circle cx="15" cy="18" r="1.5"/>
+                          </svg>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-emerald-500 text-xs flex items-center gap-1.5 font-medium">
-                            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                            Sync
-                          </span>
-                          <button className="bg-foreground text-background px-5 py-2 rounded-lg text-xs font-medium shadow-sm hover:opacity-90 transition-opacity">
-                            Publier
+                        <div className="w-8 h-8 bg-secondary/60 rounded-lg flex items-center justify-center">
+                          <Phone className="w-4 h-4 text-foreground" />
+                        </div>
+                        <span className="flex-1 text-sm font-medium text-foreground">Téléphone</span>
+                        <div className="flex items-center gap-1">
+                          <button className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground">
+                            <ChevronRight className="w-4 h-4 rotate-[-90deg]" />
+                          </button>
+                          <button className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground">
+                            <ChevronRight className="w-4 h-4 rotate-90" />
                           </button>
                         </div>
-                      </div>
-
-                      {/* Main content - Two columns */}
-                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-                        {/* Left: Customization Controls */}
-                        <div className="space-y-4">
-                          {/* Color Picker Card */}
-                          <div className="bg-background rounded-2xl p-5 border border-border/40 shadow-sm">
-                            <p className="text-sm font-medium text-foreground mb-4">Couleur principale</p>
-                            <div className="grid grid-cols-4 gap-3">
-                              {[
-                                { color: 'bg-zinc-900', active: true },
-                                { color: 'bg-white border-2 border-zinc-200', active: false },
-                                { color: 'bg-red-500', active: false },
-                                { color: 'bg-emerald-500', active: false },
-                                { color: 'bg-blue-500', active: false },
-                                { color: 'bg-violet-500', active: false },
-                                { color: 'bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500', active: false, isPlus: true },
-                              ].map((c, i) => (
-                                <div 
-                                  key={i}
-                                  className={`w-11 h-11 ${c.color} rounded-full cursor-pointer transition-all hover:scale-105 ${c.active ? 'ring-2 ring-offset-2 ring-offset-background ring-foreground scale-105' : ''} ${c.isPlus ? 'flex items-center justify-center' : ''}`}
-                                >
-                                  {c.isPlus && <span className="text-white text-sm font-bold">+</span>}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Theme Toggle Card */}
-                          <div className="bg-background rounded-2xl p-5 border border-border/40 shadow-sm">
-                            <p className="text-sm font-medium text-foreground mb-4">Thème</p>
-                            <div className="flex gap-2 bg-secondary/60 p-1.5 rounded-xl">
-                              <button className="flex-1 text-muted-foreground px-4 py-2.5 rounded-lg text-sm transition-all hover:text-foreground">
-                                Clair
-                              </button>
-                              <button className="flex-1 bg-foreground text-background px-4 py-2.5 rounded-lg text-sm font-medium shadow-sm">
-                                Sombre
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Action Button Card */}
-                          <div className="bg-background rounded-2xl p-5 border border-border/40 shadow-sm">
-                            <p className="text-sm font-medium text-foreground mb-4">Bouton d'action</p>
-                            <button className="w-full bg-foreground text-background py-3 rounded-xl text-sm font-medium shadow-sm hover:opacity-90 transition-opacity">
-                              Réserver un créneau
-                            </button>
-                          </div>
+                        <div className="w-10 h-6 bg-foreground rounded-full relative">
+                          <div className="absolute right-0.5 top-0.5 w-5 h-5 bg-background rounded-full" />
                         </div>
-
-                        {/* Right: Live Phone Preview */}
-                        <div className="flex flex-col">
-                          <div className="flex items-center justify-between mb-4">
-                            <span className="text-sm font-medium text-foreground">Aperçu en direct</span>
-                            <div className="flex items-center gap-2">
-                              <button className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
-                                <Phone className="w-3.5 h-3.5 text-muted-foreground" />
-                              </button>
-                              <button className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
-                                <Eye className="w-3.5 h-3.5 text-muted-foreground" />
-                              </button>
-                            </div>
-                          </div>
-                          
-                          {/* Premium Phone Preview */}
-                          <div className="flex-1 flex items-center justify-center">
-                            <div className="relative">
-                              {/* Phone Frame */}
-                              <div className="relative bg-zinc-800 rounded-[2.5rem] p-2 shadow-2xl shadow-black/40">
-                                {/* Dynamic Island */}
-                                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-6 bg-black rounded-full z-10" />
-                                
-                                <div className="bg-zinc-950 rounded-[2rem] overflow-hidden w-[220px]">
-                                  {/* Banner with overlay */}
-                                  <div className="h-28 relative">
-                                    <img 
-                                      src={mockupBanner} 
-                                      alt="Preview" 
-                                      className="w-full h-full object-cover opacity-90"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent" />
-                                    <div className="absolute -bottom-5 left-4">
-                                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center border-4 border-zinc-950 shadow-lg">
-                                        <span className="text-zinc-900 font-bold text-xs">MP</span>
-                                      </div>
-                                    </div>
-                                    <div className="absolute top-3 right-3">
-                                      <div className="w-7 h-7 bg-zinc-800/80 backdrop-blur-sm rounded-full flex items-center justify-center">
-                                        <Instagram className="w-3.5 h-3.5 text-zinc-300" />
-                                      </div>
-                                    </div>
-                                  </div>
-                                  
-                                  <div className="p-4 pt-7">
-                                    {/* Header */}
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <p className="text-xs font-bold text-white">Maison Propre</p>
-                                      <span className="text-[8px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full font-medium">Ouvert</span>
-                                    </div>
-                                    <div className="flex items-center gap-1.5 mb-4">
-                                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                                      <span className="text-[10px] text-white font-medium">4.8</span>
-                                      <span className="text-[9px] text-zinc-500">(89 avis)</span>
-                                    </div>
-                                    
-                                    {/* Action buttons */}
-                                    <div className="flex gap-2 mb-4">
-                                      <button className="flex-1 flex items-center justify-center gap-1.5 bg-white text-zinc-900 rounded-xl py-2 text-[9px] font-medium">
-                                        <Phone className="w-3 h-3" />
-                                        Appeler
-                                      </button>
-                                      <button className="flex-1 flex items-center justify-center gap-1.5 bg-zinc-800 text-zinc-300 rounded-xl py-2 text-[9px]">
-                                        <MapPin className="w-3 h-3" />
-                                        Y aller
-                                      </button>
-                                    </div>
-
-                                    {/* Gallery preview */}
-                                    <div className="mb-4">
-                                      <p className="text-[8px] text-zinc-500 uppercase tracking-wider mb-2 font-medium">Galerie</p>
-                                      <div className="flex gap-1.5">
-                                        <div className="w-14 h-11 bg-zinc-800 rounded-lg overflow-hidden">
-                                          <img src={mockupBanner} alt="" className="w-full h-full object-cover opacity-80" />
-                                        </div>
-                                        <div className="w-14 h-11 bg-zinc-800 rounded-lg overflow-hidden">
-                                          <img src={sofaBanner} alt="" className="w-full h-full object-cover opacity-80" />
-                                        </div>
-                                        <div className="w-14 h-11 bg-zinc-800 rounded-lg flex items-center justify-center">
-                                          <span className="text-[9px] text-zinc-500 font-medium">+4</span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    
-                                    {/* Services */}
-                                    <div className="space-y-2 mb-4">
-                                      <div className="flex justify-between items-center bg-zinc-900/70 rounded-xl px-3 py-2">
-                                        <span className="text-[9px] text-zinc-300">Ménage 2h</span>
-                                        <span className="text-[9px] font-bold text-white">60€</span>
-                                      </div>
-                                      <div className="flex justify-between items-center bg-zinc-900/70 rounded-xl px-3 py-2">
-                                        <span className="text-[9px] text-zinc-300">Grand ménage</span>
-                                        <span className="text-[9px] font-bold text-white">120€</span>
-                                      </div>
-                                    </div>
-                                    
-                                    {/* CTA */}
-                                    <button className="w-full bg-white text-zinc-900 py-2.5 rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 shadow-lg shadow-white/10">
-                                      <Calendar className="w-3.5 h-3.5" />
-                                      Prendre rendez-vous
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Réservations Tab */}
-                  {dashboardTab === 'reservations' && (
-                    <>
-                      <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-lg font-semibold text-foreground">Réservations</h3>
-                        <div className="text-xs text-muted-foreground">Aujourd'hui</div>
-                      </div>
-
-                      {/* Stats cards */}
-                      <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div className="bg-secondary/50 rounded-xl p-4">
-                          <p className="text-xs text-muted-foreground mb-1">RDV du jour</p>
-                          <p className="text-3xl font-bold text-foreground">8</p>
-                          <p className="text-xs text-green-600">+2 nouveaux</p>
-                        </div>
-                        <div className="bg-secondary/50 rounded-xl p-4">
-                          <p className="text-xs text-muted-foreground mb-1">CA du jour</p>
-                          <p className="text-3xl font-bold text-foreground">340€</p>
-                          <p className="text-xs text-green-600">+15%</p>
-                        </div>
-                      </div>
-
-                      <p className="text-sm font-medium text-muted-foreground mb-3">Prochains RDV</p>
-
-                      <div className="space-y-2">
-                        {[
-                          { name: 'Jean Martin', vehicle: 'Audi A4', time: '10:00', status: 'Confirmé', color: 'green' },
-                          { name: 'Marie Dupont', vehicle: 'BMW X3', time: '11:30', status: 'En attente', color: 'yellow' },
-                          { name: 'Pierre Bernard', vehicle: 'Renault Clio', time: '14:00', status: 'Arrivé', color: 'blue' },
-                        ].map((booking, i) => (
-                          <div key={i} className="flex items-center gap-3 bg-secondary/30 rounded-xl p-4">
-                            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-sm font-semibold text-primary">
-                              {booking.name.split(' ').map(n => n[0]).join('')}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-foreground truncate">{booking.name}</p>
-                              <p className="text-xs text-muted-foreground">{booking.vehicle} • {booking.time}</p>
-                            </div>
-                            <span className={`text-xs px-2 py-1 rounded-full ${
-                              booking.color === 'green' ? 'bg-green-100 text-green-700' :
-                              booking.color === 'yellow' ? 'bg-yellow-100 text-yellow-700' :
-                              'bg-blue-100 text-blue-700'
-                            }`}>
-                              {booking.status}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  )}
-
-                  {/* Statistiques Tab */}
-                  {dashboardTab === 'stats' && (
-                    <>
-                      <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4 sm:mb-6">Statistiques</h3>
-                      
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
-                        {[
-                          { value: '127', label: 'Réservations', sub: 'ce mois' },
-                          { value: '4 850€', label: "CA", sub: 'ce mois' },
-                          { value: '89', label: 'Clients', sub: 'uniques' },
-                          { value: '54€', label: 'Panier', sub: 'moyen' },
-                        ].map((stat, i) => (
-                          <div key={i} className="bg-secondary/40 rounded-xl p-2 sm:p-4 text-center">
-                            <p className="text-lg sm:text-2xl font-bold text-foreground">{stat.value}</p>
-                            <p className="text-[10px] sm:text-xs text-muted-foreground">{stat.label}</p>
-                            <p className="text-[8px] sm:text-[10px] text-muted-foreground/70">{stat.sub}</p>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Chart mockup */}
-                      <div className="bg-secondary/30 rounded-xl p-3 sm:p-4">
-                        <p className="text-xs sm:text-sm font-medium text-foreground mb-3 sm:mb-4">Évolution CA (6 mois)</p>
-                        <div className="flex items-end justify-between gap-1 sm:gap-2 h-24 sm:h-32">
-                          {[35, 48, 42, 55, 68, 85].map((h, i) => (
-                            <div 
-                              key={i} 
-                              className="flex-1 bg-primary/70 rounded-t transition-all hover:bg-primary"
-                              style={{ height: `${h}%` }}
-                            />
-                          ))}
-                        </div>
-                        <div className="flex justify-between mt-2">
-                          {['Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'].map((m) => (
-                            <span key={m} className="text-[8px] sm:text-[10px] text-muted-foreground flex-1 text-center">{m}</span>
-                          ))}
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  {/* Formules Tab */}
-                  {dashboardTab === 'formules' && (
-                    <>
-                      <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-lg font-semibold text-foreground">Vos formules</h3>
-                        <button className="bg-foreground text-background px-4 py-1.5 rounded-lg text-xs font-medium">
-                          + Ajouter
+                        <button className="w-6 h-6 flex items-center justify-center text-red-400 hover:text-red-500">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
                         </button>
                       </div>
-                      
-                      <div className="space-y-3">
-                        {[
-                          { name: 'Lavage simple', desc: 'Extérieur uniquement', price: '15€', active: true },
-                          { name: 'Nettoyage intérieur', desc: 'Aspiration et nettoyage', price: '35€', active: true },
-                          { name: 'Formule complète', desc: 'Intérieur + extérieur', price: '65€', active: true },
-                          { name: 'Rénovation premium', desc: 'Polish + céramique', price: '150€', active: false },
-                        ].map((pack, i) => (
-                          <div key={i} className="flex items-center gap-4 bg-secondary/30 rounded-xl p-4">
-                            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                              <Droplets className="w-6 h-6 text-primary" />
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <p className="text-sm font-medium text-foreground">{pack.name}</p>
-                                {!pack.active && (
-                                  <span className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded">Inactif</span>
-                                )}
-                              </div>
-                              <p className="text-xs text-muted-foreground">{pack.desc}</p>
-                            </div>
-                            <p className="text-sm font-semibold text-primary">{pack.price}</p>
-                            <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                          </div>
+                      <p className="text-xs text-muted-foreground mt-3 ml-14">Téléphone non configuré (Paramètres → Informations)</p>
+                      <div className="flex items-center gap-2 mt-3 ml-14">
+                        <span className="text-xs text-muted-foreground">Style :</span>
+                        {['Minimal', 'Pill', 'Carte'].map((style, i) => (
+                          <button 
+                            key={style}
+                            className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${
+                              i === 0 
+                                ? 'bg-foreground text-background' 
+                                : 'bg-secondary/60 text-muted-foreground hover:bg-secondary'
+                            }`}
+                          >
+                            {style}
+                          </button>
                         ))}
                       </div>
-                    </>
-                  )}
+                    </div>
 
-                  {/* Paramètres Tab */}
-                  {dashboardTab === 'settings' && (
-                    <>
-                      <h3 className="text-lg font-semibold text-foreground mb-6">Paramètres</h3>
-                      
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="space-y-4">
-                          <div className="bg-secondary/40 rounded-xl p-4">
-                            <p className="text-sm font-medium text-foreground mb-3">Informations</p>
-                            <div className="space-y-2 text-sm">
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Nom</span>
-                                <span className="text-foreground">Clean Auto Pro</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Email</span>
-                                <span className="text-foreground">contact@cleanautopro.fr</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Téléphone</span>
-                                <span className="text-foreground">01 23 45 67 89</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="bg-secondary/40 rounded-xl p-4">
-                            <p className="text-sm font-medium text-foreground mb-3">Abonnement</p>
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="text-foreground font-medium">CleaningPage Pro</p>
-                                <p className="text-xs text-muted-foreground">Renouvellement le 15 Jan</p>
-                              </div>
-                              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Actif</span>
-                            </div>
-                          </div>
+                    {/* Hours Block */}
+                    <div className="bg-card rounded-xl border border-border/40 p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="text-muted-foreground cursor-grab">
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="9" cy="6" r="1.5"/>
+                            <circle cx="15" cy="6" r="1.5"/>
+                            <circle cx="9" cy="12" r="1.5"/>
+                            <circle cx="15" cy="12" r="1.5"/>
+                            <circle cx="9" cy="18" r="1.5"/>
+                            <circle cx="15" cy="18" r="1.5"/>
+                          </svg>
                         </div>
-
-                        <div className="bg-secondary/40 rounded-xl p-4">
-                          <p className="text-sm font-medium text-foreground mb-3">Disponibilités</p>
-                          <div className="space-y-2">
-                            {[
-                              { day: 'Lundi - Vendredi', hours: '9:00 - 19:00', enabled: true },
-                              { day: 'Samedi', hours: '9:00 - 17:00', enabled: true },
-                              { day: 'Dimanche', hours: 'Fermé', enabled: false },
-                            ].map((day) => (
-                              <div key={day.day} className="flex items-center justify-between">
-                                <span className="text-sm text-foreground">{day.day}</span>
-                                <span className={`text-sm ${day.enabled ? 'text-foreground' : 'text-muted-foreground'}`}>
-                                  {day.hours}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
+                        <div className="w-8 h-8 bg-secondary/60 rounded-lg flex items-center justify-center">
+                          <Clock className="w-4 h-4 text-foreground" />
                         </div>
+                        <span className="flex-1 text-sm font-medium text-foreground">Horaires</span>
+                        <div className="flex items-center gap-1">
+                          <button className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground">
+                            <ChevronRight className="w-4 h-4 rotate-[-90deg]" />
+                          </button>
+                          <button className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground">
+                            <ChevronRight className="w-4 h-4 rotate-90" />
+                          </button>
+                        </div>
+                        <div className="w-10 h-6 bg-foreground rounded-full relative">
+                          <div className="absolute right-0.5 top-0.5 w-5 h-5 bg-background rounded-full" />
+                        </div>
+                        <button className="w-6 h-6 flex items-center justify-center text-red-400 hover:text-red-500">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
                       </div>
-                    </>
-                  )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
       </section>
 
