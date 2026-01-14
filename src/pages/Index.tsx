@@ -625,13 +625,13 @@ export default function Index() {
                     <div className="h-full flex flex-col">
                       {/* Main content grid - Preview left, Controls right */}
                       <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                        {/* Left: Live Preview */}
+                        {/* Left: Live Preview - Simple card style like real dashboard */}
                         <div className="flex flex-col min-h-[300px] sm:min-h-[400px] order-2 lg:order-1">
                           <div className="flex items-center justify-between mb-3">
                             <span className="text-xs sm:text-sm font-medium text-foreground">Aperçu</span>
                             <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 bg-secondary/60 rounded-md flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
-                                <Phone className="w-3 h-3 text-muted-foreground" />
+                              <div className="w-6 h-6 bg-foreground rounded-md flex items-center justify-center">
+                                <Phone className="w-3 h-3 text-background" />
                               </div>
                               <div className="w-6 h-6 bg-secondary/60 rounded-md flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
                                 <svg className="w-3 h-3 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -642,129 +642,101 @@ export default function Index() {
                               </div>
                               <div className="w-6 h-6 bg-secondary/60 rounded-md flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
                                 <svg className="w-3 h-3 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+                                  <path d="M21 12a9 9 0 0 0-9-9 9 9 0 0 0-9 9" />
+                                  <path d="M3 12a9 9 0 0 0 9 9 9 9 0 0 0 9-9" />
+                                  <path d="M12 3v18" />
+                                  <path d="m8 7 4-4 4 4" />
                                 </svg>
                               </div>
                             </div>
                           </div>
                           
-                          {/* Phone Preview Container - Apple Premium Style */}
-                          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-zinc-100 to-zinc-50 dark:from-zinc-900 dark:to-zinc-800 rounded-2xl p-4 sm:p-6 overflow-hidden">
-                            <div className="relative">
-                              {/* Subtle glow effect */}
-                              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent blur-3xl scale-150 opacity-30" />
-                              
-                              {/* Phone Frame - iPhone 15 Pro style */}
-                              <div className="relative bg-zinc-900 rounded-[2.5rem] p-[3px] shadow-2xl shadow-black/40">
-                                {/* Titanium edge effect */}
-                                <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-zinc-600 via-zinc-800 to-zinc-900" />
+                          {/* Preview Container - Clean minimal style */}
+                          <div className="flex-1 bg-secondary/30 rounded-2xl p-4 overflow-y-auto">
+                            <div className="bg-card rounded-2xl shadow-sm border border-border/40 overflow-hidden max-w-[280px] mx-auto">
+                              {/* Banner */}
+                              <div className="h-28 relative">
+                                <img 
+                                  src={mockupBanner} 
+                                  alt="Preview" 
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
                                 
-                                {/* Inner bezel */}
-                                <div className="relative bg-black rounded-[2.3rem] p-[2px]">
-                                  {/* Dynamic Island */}
-                                  <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-6 bg-black rounded-full z-20 flex items-center justify-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-zinc-800" />
-                                    <div className="w-3 h-3 rounded-full bg-zinc-900 ring-1 ring-zinc-800" />
-                                  </div>
-                                  
-                                  <div className="bg-white rounded-[2.2rem] overflow-hidden w-[220px] sm:w-[240px]">
-                                    {/* Status bar */}
-                                    <div className="px-6 pt-2 pb-1 flex items-center justify-between">
-                                      <span className="text-[10px] font-semibold text-zinc-900">9:41</span>
-                                      <div className="flex items-center gap-1">
-                                        <div className="flex gap-[2px]">
-                                          <div className="w-[3px] h-[10px] bg-zinc-900 rounded-full" />
-                                          <div className="w-[3px] h-[8px] bg-zinc-900 rounded-full" />
-                                          <div className="w-[3px] h-[6px] bg-zinc-900 rounded-full" />
-                                          <div className="w-[3px] h-[4px] bg-zinc-300 rounded-full" />
-                                        </div>
-                                        <div className="w-5 h-[10px] bg-zinc-900 rounded-sm ml-1 relative">
-                                          <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-[2px] w-[2px] h-[4px] bg-zinc-900 rounded-r-sm" />
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    {/* Banner with overlay */}
-                                    <div className="h-24 sm:h-28 relative mx-2 rounded-xl overflow-hidden">
-                                      <img 
-                                        src={mockupBanner} 
-                                        alt="Preview" 
-                                        className="w-full h-full object-cover"
-                                      />
-                                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                                      
-                                      {/* Logo - Premium style */}
-                                      <div className="absolute -bottom-4 left-3">
-                                        <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-xl ring-4 ring-white">
-                                          <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center">
-                                            <Sparkles className="w-5 h-5 text-white" />
-                                          </div>
-                                        </div>
-                                      </div>
-                                      
-                                      {/* Instagram icon */}
-                                      <div className="absolute top-2 right-2">
-                                        <div className="w-7 h-7 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
-                                          <Instagram className="w-3.5 h-3.5 text-zinc-700" />
-                                        </div>
-                                      </div>
-                                    </div>
-                                    
-                                    <div className="p-3 pt-6">
-                                      {/* Header */}
-                                      <div className="mb-3">
-                                        <div className="flex items-center gap-2 mb-0.5">
-                                          <p className="text-[13px] font-bold text-zinc-900">Clean Studio</p>
-                                          <span className="text-[8px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
-                                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                                            Ouvert
-                                          </span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5">
-                                          <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                                          <span className="text-[10px] font-semibold text-zinc-900">4.9</span>
-                                          <span className="text-[9px] text-zinc-500">(128 avis)</span>
-                                        </div>
-                                      </div>
-
-                                      {/* Services preview - Apple card style */}
-                                      <div className="space-y-1.5 mb-3">
-                                        <div className="flex justify-between items-center bg-zinc-50 rounded-xl px-3 py-2.5 border border-zinc-100">
-                                          <div>
-                                            <span className="text-[10px] font-semibold text-zinc-900 block">Lavage Express</span>
-                                            <span className="text-[8px] text-zinc-500">30 min</span>
-                                          </div>
-                                          <span className="text-[11px] font-bold text-emerald-600">35€</span>
-                                        </div>
-                                        <div className="flex justify-between items-center bg-zinc-50 rounded-xl px-3 py-2.5 border border-zinc-100">
-                                          <div>
-                                            <span className="text-[10px] font-semibold text-zinc-900 block">Nettoyage Complet</span>
-                                            <span className="text-[8px] text-zinc-500">1h30</span>
-                                          </div>
-                                          <span className="text-[11px] font-bold text-emerald-600">89€</span>
-                                        </div>
-                                        <div className="flex justify-between items-center bg-zinc-50 rounded-xl px-3 py-2.5 border border-zinc-100">
-                                          <div>
-                                            <span className="text-[10px] font-semibold text-zinc-900 block">Rénovation Premium</span>
-                                            <span className="text-[8px] text-zinc-500">3h</span>
-                                          </div>
-                                          <span className="text-[11px] font-bold text-emerald-600">189€</span>
-                                        </div>
-                                      </div>
-                                      
-                                      {/* CTA Button - Premium style */}
-                                      <button className="w-full bg-zinc-900 text-white py-3 rounded-2xl text-[11px] font-semibold flex items-center justify-center gap-2 shadow-lg shadow-zinc-900/20 hover:bg-zinc-800 transition-colors">
-                                        <Calendar className="w-4 h-4" />
-                                        Réserver maintenant
-                                      </button>
-                                    </div>
-                                    
-                                    {/* Home indicator */}
-                                    <div className="flex justify-center pb-2">
-                                      <div className="w-28 h-1 bg-zinc-200 rounded-full" />
+                                {/* Logo */}
+                                <div className="absolute -bottom-5 left-4">
+                                  <div className="w-14 h-14 bg-card rounded-2xl flex items-center justify-center shadow-lg ring-4 ring-card">
+                                    <div className="w-11 h-11 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center">
+                                      <Sparkles className="w-5 h-5 text-white" />
                                     </div>
                                   </div>
                                 </div>
+                                
+                                {/* Social icon */}
+                                <div className="absolute top-3 right-3">
+                                  <div className="w-8 h-8 bg-card/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md">
+                                    <Instagram className="w-4 h-4 text-foreground" />
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div className="p-4 pt-7">
+                                {/* Header */}
+                                <div className="mb-4">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <h3 className="text-base font-bold text-foreground">Clean Studio</h3>
+                                    <span className="text-[9px] bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
+                                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                                      Ouvert
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-muted-foreground">Nettoyage auto premium à domicile</p>
+                                </div>
+
+                                {/* Social icons row */}
+                                <div className="flex justify-center gap-2 mb-4">
+                                  <div className="w-9 h-9 bg-secondary rounded-full flex items-center justify-center">
+                                    <Instagram className="w-4 h-4 text-foreground" />
+                                  </div>
+                                  <div className="w-9 h-9 bg-secondary rounded-full flex items-center justify-center">
+                                    <svg className="w-4 h-4 text-foreground" viewBox="0 0 24 24" fill="currentColor">
+                                      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                                    </svg>
+                                  </div>
+                                  <div className="w-9 h-9 bg-secondary rounded-full flex items-center justify-center">
+                                    <Mail className="w-4 h-4 text-foreground" />
+                                  </div>
+                                </div>
+                                
+                                {/* Info items - minimal style */}
+                                <div className="space-y-2 mb-4 text-sm text-muted-foreground">
+                                  <div className="flex items-center gap-2">
+                                    <Phone className="w-4 h-4" />
+                                    <span>06 12 34 56 78</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <Clock className="w-4 h-4" />
+                                    <span>Lun - Sam : 9h - 19h</span>
+                                  </div>
+                                </div>
+
+                                {/* Services */}
+                                <div className="space-y-2 mb-4">
+                                  <div className="flex justify-between items-center bg-secondary/50 rounded-xl px-3 py-2.5">
+                                    <span className="text-xs font-medium text-foreground">Lavage Express</span>
+                                    <span className="text-xs font-bold text-primary">35€</span>
+                                  </div>
+                                  <div className="flex justify-between items-center bg-secondary/50 rounded-xl px-3 py-2.5">
+                                    <span className="text-xs font-medium text-foreground">Nettoyage Complet</span>
+                                    <span className="text-xs font-bold text-primary">89€</span>
+                                  </div>
+                                </div>
+                                
+                                {/* CTA Button */}
+                                <button className="w-full bg-foreground text-background py-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
+                                  <Calendar className="w-4 h-4" />
+                                  Réserver
+                                </button>
                               </div>
                             </div>
                           </div>
@@ -777,20 +749,20 @@ export default function Index() {
                           </div>
                           
                           <div className="bg-card rounded-xl border border-border/40 flex-1 overflow-hidden">
-                            {/* Tabs like real dashboard */}
+                            {/* Tabs - Éléments selected */}
                             <div className="flex items-center justify-around border-b border-border/40 py-2 px-2">
-                              <div className="flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg cursor-pointer text-foreground">
+                              <div className="flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg cursor-pointer text-muted-foreground hover:text-foreground/70">
                                 <Palette className="w-4 h-4" />
                                 <span className="text-[9px] sm:text-[10px] font-medium">Design</span>
-                                <div className="w-full h-0.5 bg-foreground rounded-full mt-0.5" />
                               </div>
                               <div className="flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg cursor-pointer text-muted-foreground hover:text-foreground/70">
                                 <Droplets className="w-4 h-4" />
                                 <span className="text-[9px] sm:text-[10px] font-medium">Formules</span>
                               </div>
-                              <div className="flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg cursor-pointer text-muted-foreground hover:text-foreground/70">
+                              <div className="flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg cursor-pointer text-foreground">
                                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
                                 <span className="text-[9px] sm:text-[10px] font-medium">Éléments</span>
+                                <div className="w-full h-0.5 bg-foreground rounded-full mt-0.5" />
                               </div>
                               <div className="flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg cursor-pointer text-muted-foreground hover:text-foreground/70">
                                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -799,7 +771,7 @@ export default function Index() {
                             </div>
 
                             <div className="p-3 sm:p-4 space-y-3">
-                              {/* Add Element Button - like real dashboard */}
+                              {/* Add Element Button */}
                               <div className="border-2 border-dashed border-border/60 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-foreground/30 transition-colors">
                                 <div className="w-10 h-10 bg-secondary/60 rounded-full flex items-center justify-center mb-2">
                                   <span className="text-xl text-muted-foreground">+</span>
@@ -826,7 +798,7 @@ export default function Index() {
                                       <ChevronRight className="w-3.5 h-3.5 text-muted-foreground rotate-90" />
                                       <ChevronRight className="w-3.5 h-3.5 text-muted-foreground -rotate-90" />
                                       <div className="w-8 h-4 bg-foreground rounded-full relative">
-                                        <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full" />
+                                        <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-background rounded-full" />
                                       </div>
                                     </div>
                                   </div>
@@ -846,7 +818,7 @@ export default function Index() {
                                       <ChevronRight className="w-3.5 h-3.5 text-muted-foreground rotate-90" />
                                       <ChevronRight className="w-3.5 h-3.5 text-muted-foreground -rotate-90" />
                                       <div className="w-8 h-4 bg-foreground rounded-full relative">
-                                        <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full" />
+                                        <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-background rounded-full" />
                                       </div>
                                     </div>
                                   </div>
