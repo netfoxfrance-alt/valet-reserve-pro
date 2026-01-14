@@ -162,138 +162,151 @@ export default function Index() {
               </div>
             </div>
 
-            {/* Right: Dynamic Floating Cards Composition */}
+            {/* Right: Main Page Card + Floating Widgets - Linktree Style */}
             <div className="flex justify-center lg:justify-end">
-              <div className="relative w-[340px] sm:w-[400px] h-[450px] sm:h-[520px]">
+              <div className="relative w-[380px] sm:w-[480px] h-[500px] sm:h-[580px]">
                 
-                {/* Background decorative elements */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
-                <div className="absolute top-20 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl" />
-                
-                {/* Card 1: Main Profile Card - Center, slightly tilted */}
-                <div className="absolute top-8 left-1/2 -translate-x-1/2 z-20 animate-fade-in">
+                {/* Main Page Card - The full CleaningPage profile */}
+                <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20">
                   <div 
-                    className="bg-card rounded-3xl overflow-hidden w-[260px] sm:w-[280px] shadow-2xl shadow-black/15 ring-1 ring-border/30 hover:shadow-3xl transition-all duration-500 hover:-translate-y-1"
+                    className="bg-card rounded-[2rem] overflow-hidden w-[260px] sm:w-[280px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
                     style={{ transform: 'rotate(-2deg)' }}
                   >
-                    {/* Mini Banner */}
-                    <div className="h-20 relative overflow-hidden bg-gradient-to-br from-primary/20 via-primary/10 to-emerald-500/20">
-                      <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
-                      {/* Logo centered */}
+                    {/* Banner with image */}
+                    <div className="h-24 relative overflow-hidden">
+                      <img 
+                        src={mockupBanner} 
+                        alt="Service preview" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
+                      
+                      {/* Logo */}
                       <div className="absolute -bottom-5 left-1/2 -translate-x-1/2">
-                        <div className="w-14 h-14 bg-white rounded-2xl shadow-lg flex items-center justify-center ring-4 ring-card">
+                        <div className="w-14 h-14 bg-white rounded-2xl shadow-xl flex items-center justify-center ring-4 ring-card">
                           <span className="text-zinc-900 font-bold text-sm">CP</span>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="px-5 pb-5 pt-7 text-center">
+                    <div className="px-5 pb-5 pt-8 text-center">
+                      {/* Header */}
                       <h3 className="text-base font-bold text-foreground mb-0.5">Clean Auto Pro</h3>
-                      <p className="text-xs text-muted-foreground mb-3">Lavage auto • Detailing • Paris</p>
+                      <p className="text-[11px] text-muted-foreground mb-2">Lavage auto • Detailing • Paris</p>
                       
-                      <div className="flex items-center justify-center gap-3 mb-4">
+                      <div className="flex items-center justify-center gap-2 mb-4">
                         <div className="flex items-center gap-1 text-xs">
-                          <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                          <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                           <span className="font-semibold text-foreground">4.9</span>
                         </div>
                         <span className="w-1 h-1 bg-muted-foreground/30 rounded-full" />
-                        <span className="text-[10px] bg-emerald-500/15 text-emerald-600 px-2 py-0.5 rounded-full font-medium">OUVERT</span>
+                        <span className="text-[9px] bg-emerald-500/15 text-emerald-600 px-2 py-0.5 rounded-full font-semibold">OUVERT</span>
                       </div>
                       
-                      {/* Quick action buttons */}
-                      <div className="flex gap-2">
-                        <button className="flex-1 flex items-center justify-center gap-1.5 bg-foreground text-background rounded-xl py-2.5 text-xs font-medium">
+                      {/* Action buttons */}
+                      <div className="flex gap-2 mb-4">
+                        <button className="flex-1 flex items-center justify-center gap-1.5 bg-foreground text-background rounded-xl py-2.5 text-[11px] font-medium">
                           <Phone className="w-3.5 h-3.5" />
                           Appeler
                         </button>
-                        <button className="flex-1 flex items-center justify-center gap-1.5 bg-secondary text-foreground rounded-xl py-2.5 text-xs font-medium">
+                        <button className="flex-1 flex items-center justify-center gap-1.5 bg-secondary text-foreground rounded-xl py-2.5 text-[11px] font-medium">
                           <MapPin className="w-3.5 h-3.5" />
                           Y aller
                         </button>
                       </div>
+                      
+                      {/* Services preview */}
+                      <div className="space-y-1.5 mb-4">
+                        {[
+                          { name: 'Lavage Express', price: '30€' },
+                          { name: 'Lavage Complet', price: '70€' },
+                        ].map((item) => (
+                          <div 
+                            key={item.name} 
+                            className="flex items-center justify-between bg-secondary/40 rounded-xl px-3 py-2"
+                          >
+                            <span className="text-[11px] font-medium text-foreground">{item.name}</span>
+                            <span className="text-[11px] font-bold text-primary">{item.price}</span>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* CTA */}
+                      <button className="w-full bg-primary text-primary-foreground rounded-xl py-3 text-xs font-semibold flex items-center justify-center gap-1.5 shadow-lg shadow-primary/20">
+                        <Calendar className="w-3.5 h-3.5" />
+                        Réserver un créneau
+                      </button>
                     </div>
                   </div>
                 </div>
                 
-                {/* Card 2: Services Card - Bottom left, tilted */}
-                <div className="absolute bottom-4 -left-4 sm:left-0 z-10 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                {/* Widget: Formules Card - Left side */}
+                <div className="absolute bottom-16 sm:bottom-20 -left-2 sm:left-4 z-10">
                   <div 
-                    className="bg-card rounded-2xl p-4 w-[180px] shadow-xl shadow-black/10 ring-1 ring-border/30 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1"
-                    style={{ transform: 'rotate(-6deg)' }}
+                    className="bg-card rounded-2xl p-3.5 w-[165px] shadow-xl shadow-black/10 ring-1 ring-border/30"
+                    style={{ transform: 'rotate(-8deg)' }}
                   >
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
-                        <Sparkles className="w-4 h-4 text-primary" />
+                    <div className="flex items-center gap-2 mb-2.5">
+                      <div className="w-7 h-7 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <Sparkles className="w-3.5 h-3.5 text-primary" />
                       </div>
-                      <span className="text-xs font-semibold text-foreground">Nos formules</span>
+                      <span className="text-[11px] font-semibold text-foreground">Nos formules</span>
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       {['Lavage Express', 'Lavage Complet', 'Rénovation'].map((name, i) => (
-                        <div key={name} className="flex items-center justify-between bg-secondary/40 rounded-lg px-2.5 py-2">
-                          <span className="text-[10px] font-medium text-foreground">{name}</span>
-                          <span className="text-[10px] font-bold text-primary">{[30, 70, 150][i]}€</span>
+                        <div key={name} className="flex items-center justify-between text-[10px]">
+                          <span className="text-muted-foreground">{name}</span>
+                          <span className="font-bold text-foreground">{[30, 70, 150][i]}€</span>
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
                 
-                {/* Card 3: Calendar/Booking Card - Bottom right, tilted opposite */}
-                <div className="absolute bottom-12 -right-2 sm:right-2 z-10 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                {/* Widget: Réserver Card - Right side */}
+                <div className="absolute bottom-8 sm:bottom-12 -right-2 sm:right-4 z-10">
                   <div 
-                    className="bg-card rounded-2xl p-4 w-[160px] shadow-xl shadow-black/10 ring-1 ring-border/30 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1"
-                    style={{ transform: 'rotate(5deg)' }}
+                    className="bg-card rounded-2xl p-3.5 w-[150px] shadow-xl shadow-black/10 ring-1 ring-border/30"
+                    style={{ transform: 'rotate(6deg)' }}
                   >
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-8 h-8 bg-emerald-500/10 rounded-lg flex items-center justify-center">
-                        <Calendar className="w-4 h-4 text-emerald-600" />
+                    <div className="flex items-center gap-2 mb-2.5">
+                      <div className="w-7 h-7 bg-emerald-500/10 rounded-lg flex items-center justify-center">
+                        <Calendar className="w-3.5 h-3.5 text-emerald-600" />
                       </div>
-                      <span className="text-xs font-semibold text-foreground">Réserver</span>
+                      <span className="text-[11px] font-semibold text-foreground">Réserver</span>
                     </div>
-                    <div className="grid grid-cols-4 gap-1 mb-3">
+                    <div className="grid grid-cols-4 gap-1 mb-2.5">
                       {['L', 'M', 'M', 'J'].map((day, i) => (
                         <div 
                           key={i}
-                          className={`text-center py-1.5 rounded-lg text-[9px] font-medium ${
-                            i === 1 ? 'bg-primary text-primary-foreground' : 'bg-secondary/50 text-foreground'
+                          className={`text-center py-1.5 rounded-lg text-[8px] font-medium ${
+                            i === 1 ? 'bg-primary text-primary-foreground' : 'bg-secondary/60 text-foreground'
                           }`}
                         >
                           <div>{day}</div>
-                          <div className="text-[8px] opacity-70">{7 + i}</div>
+                          <div className="opacity-60">{7 + i}</div>
                         </div>
                       ))}
                     </div>
-                    <button className="w-full bg-primary text-primary-foreground rounded-lg py-2 text-[10px] font-semibold">
+                    <button className="w-full bg-zinc-900 text-white rounded-lg py-1.5 text-[9px] font-medium">
                       Voir les créneaux
                     </button>
                   </div>
                 </div>
                 
-                {/* Card 4: Stats mini card - Top right */}
-                <div className="absolute top-0 right-4 sm:right-8 z-5 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                {/* Widget: Avis Card - Top right */}
+                <div className="absolute top-0 right-6 sm:right-12 z-10">
                   <div 
-                    className="bg-card rounded-xl p-3 shadow-lg shadow-black/10 ring-1 ring-border/30"
-                    style={{ transform: 'rotate(8deg)' }}
+                    className="bg-card rounded-xl px-3 py-2 shadow-lg shadow-black/10 ring-1 ring-border/30"
+                    style={{ transform: 'rotate(6deg)' }}
                   >
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 bg-amber-500/10 rounded-lg flex items-center justify-center">
-                        <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                      </div>
+                      <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                       <div>
-                        <p className="text-xs font-bold text-foreground">312 avis</p>
-                        <p className="text-[9px] text-muted-foreground">clients satisfaits</p>
+                        <span className="text-xs font-bold text-foreground">312 avis</span>
+                        <p className="text-[8px] text-muted-foreground">clients satisfaits</p>
                       </div>
                     </div>
-                  </div>
-                </div>
-                
-                {/* Floating social icons */}
-                <div className="absolute bottom-32 right-0 sm:right-6 flex gap-2 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                  <div className="w-10 h-10 bg-card rounded-full shadow-lg ring-1 ring-border/30 flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
-                    <Instagram className="w-4 h-4 text-foreground" />
-                  </div>
-                  <div className="w-10 h-10 bg-card rounded-full shadow-lg ring-1 ring-border/30 flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
-                    <Phone className="w-4 h-4 text-foreground" />
                   </div>
                 </div>
                 
