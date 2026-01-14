@@ -709,6 +709,7 @@ export default function Index() {
                                 </div>
                                 
                                 {/* Info Items */}
+                                {/* Info Items */}
                                 <div className="space-y-2.5 mb-5">
                                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
                                     <Phone className="w-4 h-4 flex-shrink-0" />
@@ -720,7 +721,7 @@ export default function Index() {
                                   </div>
                                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
                                     <MapPin className="w-4 h-4 flex-shrink-0" />
-                                    <span>Paris</span>
+                                    <span>12 rue de la Paix, 75002 Paris</span>
                                   </div>
                                 </div>
                                 
@@ -790,45 +791,32 @@ export default function Index() {
                               <div className="space-y-2">
                                 <p className="text-[10px] sm:text-xs text-muted-foreground font-medium">Vos éléments</p>
                                 
-                                {/* Element item - Phone */}
-                                <div className="bg-secondary/40 rounded-xl p-2.5 sm:p-3 border border-border/30">
-                                  <div className="flex items-center gap-2">
-                                    <div className="text-muted-foreground cursor-grab">
-                                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
-                                    </div>
-                                    <div className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center">
-                                      <Phone className="w-3.5 h-3.5 text-muted-foreground" />
-                                    </div>
-                                    <span className="text-[10px] sm:text-xs font-medium text-foreground flex-1">Téléphone</span>
-                                    <div className="flex items-center gap-1">
-                                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground rotate-90" />
-                                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground -rotate-90" />
-                                      <div className="w-8 h-4 bg-foreground rounded-full relative">
-                                        <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-background rounded-full" />
+                                {/* Element items matching preview */}
+                                {[
+                                  { icon: Instagram, label: 'Instagram' },
+                                  { icon: () => <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>, label: 'TikTok' },
+                                  { icon: () => <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>, label: 'Facebook' },
+                                  { icon: Mail, label: 'Email' },
+                                  { icon: Phone, label: 'Téléphone' },
+                                  { icon: Clock, label: 'Horaires' },
+                                  { icon: MapPin, label: 'Adresse' },
+                                  { icon: ExternalLink, label: 'Boutique produits' },
+                                ].map((item, i) => (
+                                  <div key={i} className="bg-secondary/40 rounded-xl p-2 sm:p-2.5 border border-border/30">
+                                    <div className="flex items-center gap-2">
+                                      <div className="text-muted-foreground cursor-grab">
+                                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                                      </div>
+                                      <div className="w-6 h-6 bg-secondary/60 rounded-lg flex items-center justify-center text-muted-foreground">
+                                        <item.icon className="w-3 h-3" />
+                                      </div>
+                                      <span className="text-[10px] font-medium text-foreground flex-1">{item.label}</span>
+                                      <div className="w-7 h-3.5 bg-foreground rounded-full relative">
+                                        <div className="absolute right-0.5 top-0.5 w-2.5 h-2.5 bg-background rounded-full" />
                                       </div>
                                     </div>
                                   </div>
-                                </div>
-
-                                {/* Element item - Hours */}
-                                <div className="bg-secondary/40 rounded-xl p-2.5 sm:p-3 border border-border/30">
-                                  <div className="flex items-center gap-2">
-                                    <div className="text-muted-foreground cursor-grab">
-                                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
-                                    </div>
-                                    <div className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center">
-                                      <Clock className="w-3.5 h-3.5 text-muted-foreground" />
-                                    </div>
-                                    <span className="text-[10px] sm:text-xs font-medium text-foreground flex-1">Horaires</span>
-                                    <div className="flex items-center gap-1">
-                                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground rotate-90" />
-                                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground -rotate-90" />
-                                      <div className="w-8 h-4 bg-foreground rounded-full relative">
-                                        <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-background rounded-full" />
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
+                                ))}
                               </div>
                             </div>
                           </div>
