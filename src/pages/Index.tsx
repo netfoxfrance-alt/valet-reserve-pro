@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 import sofaBanner from '@/assets/sofa-cleaning-banner.jpg';
+import gocleanLogo from '@/assets/goclean-logo.png';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -179,17 +180,17 @@ export default function Index() {
                         alt="Service preview" 
                         className="w-full h-full object-cover"
                       />
-                      {/* Logo overlay - emerald style */}
-                      <div className="absolute -bottom-6 left-1/2 -translate-x-1/2">
-                        <div className="w-16 h-16 bg-emerald-500 rounded-2xl shadow-xl flex items-center justify-center ring-4 ring-card">
-                          <span className="text-white font-bold text-lg">CP</span>
+                      {/* Logo overlay */}
+                      <div className="absolute -bottom-7 left-1/2 -translate-x-1/2">
+                        <div className="w-[70px] h-[70px] bg-white rounded-2xl shadow-xl flex items-center justify-center ring-4 ring-card p-2">
+                          <img src={gocleanLogo} alt="GoClean Logo" className="w-full h-full object-contain" />
                         </div>
                       </div>
                     </div>
                     
                     <div className="px-4 pb-5 pt-9 text-center">
                       {/* Name & Description */}
-                      <h3 className="text-base font-bold text-foreground mb-1">Clean Premium</h3>
+                      <h3 className="text-base font-bold text-foreground mb-1">GoClean Premium</h3>
                       <p className="text-[10px] text-muted-foreground leading-relaxed mb-3 px-2">
                         Nettoyage automobile premium à domicile, 7j/7. Qualité garantie.
                       </p>
