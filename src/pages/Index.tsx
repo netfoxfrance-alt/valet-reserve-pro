@@ -162,149 +162,159 @@ export default function Index() {
               </div>
             </div>
 
-            {/* Right: Main Page Card + Floating Widgets - Linktree Style */}
+            {/* Right: Main Page Card + Stats Widgets - Linktree Style */}
             <div className="flex justify-center lg:justify-end">
-              <div className="relative w-[380px] sm:w-[480px] h-[500px] sm:h-[580px]">
+              <div className="relative w-[400px] sm:w-[520px] h-[520px] sm:h-[600px]">
                 
-                {/* Main Page Card - The full CleaningPage profile */}
-                <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20">
+                {/* Main Page Card - Full CleaningPage profile like the reference */}
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
                   <div 
-                    className="bg-card rounded-[2rem] overflow-hidden w-[260px] sm:w-[280px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
-                    style={{ transform: 'rotate(-2deg)' }}
+                    className="bg-card rounded-[2rem] overflow-hidden w-[250px] sm:w-[270px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
+                    style={{ transform: 'rotate(-3deg)' }}
                   >
-                    {/* Banner with image */}
-                    <div className="h-24 relative overflow-hidden">
+                    {/* Banner */}
+                    <div className="h-28 relative overflow-hidden">
                       <img 
                         src={mockupBanner} 
                         alt="Service preview" 
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
-                      
-                      {/* Logo */}
-                      <div className="absolute -bottom-5 left-1/2 -translate-x-1/2">
-                        <div className="w-14 h-14 bg-white rounded-2xl shadow-xl flex items-center justify-center ring-4 ring-card">
-                          <span className="text-zinc-900 font-bold text-sm">CP</span>
+                      {/* Logo overlay - emerald style */}
+                      <div className="absolute -bottom-6 left-1/2 -translate-x-1/2">
+                        <div className="w-16 h-16 bg-emerald-500 rounded-2xl shadow-xl flex items-center justify-center ring-4 ring-card">
+                          <span className="text-white font-bold text-lg">CP</span>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="px-5 pb-5 pt-8 text-center">
-                      {/* Header */}
-                      <h3 className="text-base font-bold text-foreground mb-0.5">Clean Auto Pro</h3>
-                      <p className="text-[11px] text-muted-foreground mb-2">Lavage auto • Detailing • Paris</p>
+                    <div className="px-4 pb-5 pt-9 text-center">
+                      {/* Name & Description */}
+                      <h3 className="text-base font-bold text-foreground mb-1">Clean Premium</h3>
+                      <p className="text-[10px] text-muted-foreground leading-relaxed mb-3 px-2">
+                        Nettoyage automobile premium à domicile, 7j/7. Qualité garantie.
+                      </p>
                       
-                      <div className="flex items-center justify-center gap-2 mb-4">
-                        <div className="flex items-center gap-1 text-xs">
-                          <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                          <span className="font-semibold text-foreground">4.9</span>
-                        </div>
-                        <span className="w-1 h-1 bg-muted-foreground/30 rounded-full" />
-                        <span className="text-[9px] bg-emerald-500/15 text-emerald-600 px-2 py-0.5 rounded-full font-semibold">OUVERT</span>
+                      {/* Ouvert badge */}
+                      <div className="flex justify-center mb-3">
+                        <span className="inline-flex items-center gap-1.5 text-[10px] bg-white border border-border/60 text-emerald-600 px-3 py-1.5 rounded-full font-medium shadow-sm">
+                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                          Ouvert
+                        </span>
                       </div>
                       
-                      {/* Action buttons */}
-                      <div className="flex gap-2 mb-4">
-                        <button className="flex-1 flex items-center justify-center gap-1.5 bg-foreground text-background rounded-xl py-2.5 text-[11px] font-medium">
-                          <Phone className="w-3.5 h-3.5" />
-                          Appeler
-                        </button>
-                        <button className="flex-1 flex items-center justify-center gap-1.5 bg-secondary text-foreground rounded-xl py-2.5 text-[11px] font-medium">
-                          <MapPin className="w-3.5 h-3.5" />
-                          Y aller
-                        </button>
-                      </div>
-                      
-                      {/* Services preview */}
-                      <div className="space-y-1.5 mb-4">
-                        {[
-                          { name: 'Lavage Express', price: '30€' },
-                          { name: 'Lavage Complet', price: '70€' },
-                        ].map((item) => (
-                          <div 
-                            key={item.name} 
-                            className="flex items-center justify-between bg-secondary/40 rounded-xl px-3 py-2"
-                          >
-                            <span className="text-[11px] font-medium text-foreground">{item.name}</span>
-                            <span className="text-[11px] font-bold text-primary">{item.price}</span>
+                      {/* Social icons row */}
+                      <div className="flex justify-center gap-2 mb-4">
+                        {[Instagram, MessageCircle, Users, Mail].map((Icon, i) => (
+                          <div key={i} className="w-9 h-9 bg-secondary/60 rounded-xl flex items-center justify-center hover:bg-secondary transition-colors cursor-pointer">
+                            <Icon className="w-4 h-4 text-foreground" />
                           </div>
                         ))}
                       </div>
                       
+                      {/* Contact info */}
+                      <div className="space-y-1.5 mb-4 text-left px-1">
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                          <Phone className="w-3 h-3" />
+                          <span>06 12 34 56 78</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                          <Clock className="w-3 h-3" />
+                          <span>Lun - Sam : 9h00 - 19h00</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                          <MapPin className="w-3 h-3" />
+                          <span>12 rue de la Paix, 75002 Paris</span>
+                        </div>
+                      </div>
+                      
+                      {/* Formules section */}
+                      <div className="mb-4">
+                        <p className="text-xs font-semibold text-foreground text-left mb-2">Nos formules</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="bg-secondary/30 rounded-xl p-3 text-left border border-border/30">
+                            <p className="text-[11px] font-medium text-foreground mb-0.5">Express</p>
+                            <p className="text-sm font-bold text-muted-foreground">35€</p>
+                          </div>
+                          <div className="bg-secondary/30 rounded-xl p-3 text-left border border-border/30">
+                            <p className="text-[11px] font-medium text-foreground mb-0.5">Complet</p>
+                            <p className="text-sm font-bold text-muted-foreground">89€</p>
+                          </div>
+                        </div>
+                      </div>
+                      
                       {/* CTA */}
-                      <button className="w-full bg-primary text-primary-foreground rounded-xl py-3 text-xs font-semibold flex items-center justify-center gap-1.5 shadow-lg shadow-primary/20">
-                        <Calendar className="w-3.5 h-3.5" />
-                        Réserver un créneau
+                      <button className="w-full bg-zinc-800 hover:bg-zinc-900 text-white rounded-xl py-3 text-xs font-semibold transition-colors">
+                        Réserver maintenant
                       </button>
                     </div>
                   </div>
                 </div>
                 
-                {/* Widget: Formules Card - Left side */}
-                <div className="absolute bottom-16 sm:bottom-20 -left-2 sm:left-4 z-10">
+                {/* Widget: Revenue Stats - Top Right */}
+                <div className="absolute top-2 right-4 sm:right-10 z-10">
                   <div 
-                    className="bg-card rounded-2xl p-3.5 w-[165px] shadow-xl shadow-black/10 ring-1 ring-border/30"
-                    style={{ transform: 'rotate(-8deg)' }}
+                    className="bg-card rounded-2xl p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
+                    style={{ transform: 'rotate(5deg)' }}
                   >
-                    <div className="flex items-center gap-2 mb-2.5">
-                      <div className="w-7 h-7 bg-primary/10 rounded-lg flex items-center justify-center">
-                        <Sparkles className="w-3.5 h-3.5 text-primary" />
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 bg-emerald-500/10 rounded-xl flex items-center justify-center">
+                        <BarChart3 className="w-4 h-4 text-emerald-600" />
                       </div>
-                      <span className="text-[11px] font-semibold text-foreground">Nos formules</span>
-                    </div>
-                    <div className="space-y-1">
-                      {['Lavage Express', 'Lavage Complet', 'Rénovation'].map((name, i) => (
-                        <div key={name} className="flex items-center justify-between text-[10px]">
-                          <span className="text-muted-foreground">{name}</span>
-                          <span className="font-bold text-foreground">{[30, 70, 150][i]}€</span>
-                        </div>
-                      ))}
+                      <div>
+                        <p className="text-lg font-bold text-foreground">4 280€</p>
+                        <p className="text-[9px] text-muted-foreground">ce mois-ci</p>
+                      </div>
                     </div>
                   </div>
                 </div>
                 
-                {/* Widget: Réserver Card - Right side */}
-                <div className="absolute bottom-8 sm:bottom-12 -right-2 sm:right-4 z-10">
+                {/* Widget: Reservations Stats - Bottom Left */}
+                <div className="absolute bottom-20 sm:bottom-24 -left-2 sm:left-6 z-10">
                   <div 
-                    className="bg-card rounded-2xl p-3.5 w-[150px] shadow-xl shadow-black/10 ring-1 ring-border/30"
-                    style={{ transform: 'rotate(6deg)' }}
+                    className="bg-card rounded-2xl p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
+                    style={{ transform: 'rotate(-7deg)' }}
                   >
-                    <div className="flex items-center gap-2 mb-2.5">
-                      <div className="w-7 h-7 bg-emerald-500/10 rounded-lg flex items-center justify-center">
-                        <Calendar className="w-3.5 h-3.5 text-emerald-600" />
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center">
+                        <Calendar className="w-4 h-4 text-primary" />
                       </div>
-                      <span className="text-[11px] font-semibold text-foreground">Réserver</span>
+                      <div>
+                        <p className="text-lg font-bold text-foreground">47</p>
+                        <p className="text-[9px] text-muted-foreground">réservations</p>
+                      </div>
                     </div>
-                    <div className="grid grid-cols-4 gap-1 mb-2.5">
-                      {['L', 'M', 'M', 'J'].map((day, i) => (
-                        <div 
-                          key={i}
-                          className={`text-center py-1.5 rounded-lg text-[8px] font-medium ${
-                            i === 1 ? 'bg-primary text-primary-foreground' : 'bg-secondary/60 text-foreground'
-                          }`}
-                        >
-                          <div>{day}</div>
-                          <div className="opacity-60">{7 + i}</div>
-                        </div>
-                      ))}
-                    </div>
-                    <button className="w-full bg-zinc-900 text-white rounded-lg py-1.5 text-[9px] font-medium">
-                      Voir les créneaux
-                    </button>
                   </div>
                 </div>
                 
-                {/* Widget: Avis Card - Top right */}
-                <div className="absolute top-0 right-6 sm:right-12 z-10">
+                {/* Widget: Views Stats - Bottom Right */}
+                <div className="absolute bottom-8 sm:bottom-12 right-2 sm:right-12 z-10">
                   <div 
-                    className="bg-card rounded-xl px-3 py-2 shadow-lg shadow-black/10 ring-1 ring-border/30"
-                    style={{ transform: 'rotate(6deg)' }}
+                    className="bg-card rounded-2xl p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
+                    style={{ transform: 'rotate(4deg)' }}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 bg-amber-500/10 rounded-xl flex items-center justify-center">
+                        <Eye className="w-4 h-4 text-amber-600" />
+                      </div>
+                      <div>
+                        <p className="text-lg font-bold text-foreground">1.2k</p>
+                        <p className="text-[9px] text-muted-foreground">vues ce mois</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Widget: Rating - Top Left */}
+                <div className="absolute top-16 sm:top-20 -left-1 sm:left-4 z-10">
+                  <div 
+                    className="bg-card rounded-xl px-3 py-2.5 shadow-lg shadow-black/10 ring-1 ring-border/30"
+                    style={{ transform: 'rotate(-4deg)' }}
                   >
                     <div className="flex items-center gap-2">
-                      <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                      <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
                       <div>
-                        <span className="text-xs font-bold text-foreground">312 avis</span>
-                        <p className="text-[8px] text-muted-foreground">clients satisfaits</p>
+                        <p className="text-sm font-bold text-foreground">4.9</p>
+                        <p className="text-[8px] text-muted-foreground">312 avis</p>
                       </div>
                     </div>
                   </div>
