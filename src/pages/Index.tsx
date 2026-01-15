@@ -8,7 +8,7 @@ import {
   Shield, Clock, Check, Car, Droplets, MapPin, Phone, 
   Star, Settings, LogOut, ChevronRight, Globe, Palette, Eye,
   Instagram, MessageCircle, Share2, ExternalLink, Sparkles, Mail, Loader2,
-  Zap, Crown, ImagePlus, Upload, Tag, CalendarDays, Plus, Facebook, Type
+  Zap, Crown, ImagePlus, Upload, Tag, CalendarDays, Plus, Facebook, Type, MousePointer2
 } from 'lucide-react';
 import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 import sofaBanner from '@/assets/sofa-cleaning-banner.jpg';
@@ -360,8 +360,72 @@ export default function Index() {
           <div className="opacity-0 animate-fade-in-up stagger-2">
             {/* Mobile Layout */}
             <div className="sm:hidden">
-              {/* Central Page Preview - Mobile */}
-              <div className="relative mx-auto w-[280px] mb-8">
+              {/* Mobile Widgets Grid - ABOVE mockup */}
+              <div className="grid grid-cols-2 gap-3 max-w-[280px] mx-auto mb-6">
+                {/* Colors - with cursor */}
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30 relative">
+                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Couleurs</p>
+                  <div className="flex gap-1.5">
+                    {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500'].map((bg, i) => (
+                      <div key={i} className={`w-5 h-5 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-1 ring-offset-card' : ''}`} />
+                    ))}
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-red-500 via-green-500 to-purple-500 flex items-center justify-center">
+                      <Plus className="w-2.5 h-2.5 text-white" />
+                    </div>
+                  </div>
+                  {/* Cursor icon */}
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 animate-pulse">
+                    <MousePointer2 className="w-5 h-5 text-foreground drop-shadow-md" />
+                  </div>
+                </div>
+                
+                {/* Disponibilités */}
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30">
+                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Disponibilités</p>
+                  <div className="space-y-1">
+                    {[
+                      { day: 'Lun', hours: '9h-18h', active: true },
+                      { day: 'Sam', hours: 'Fermé', active: false },
+                    ].map((d, i) => (
+                      <div key={i} className="flex items-center gap-1">
+                        <span className="text-[8px] w-5 text-muted-foreground">{d.day}</span>
+                        <span className={`text-[8px] flex-1 ${d.active ? 'text-foreground' : 'text-muted-foreground'}`}>{d.hours}</span>
+                        <div className={`w-5 h-2.5 rounded-full ${d.active ? 'bg-emerald-500' : 'bg-secondary'}`} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Texte */}
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30 flex items-center gap-2">
+                  <div className="w-6 h-6 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Type className="w-3 h-3 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-[9px] text-muted-foreground">Texte</p>
+                    <p className="text-[10px] font-medium text-foreground">Ajouter</p>
+                  </div>
+                </div>
+                
+                {/* Galerie */}
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30">
+                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Galerie</p>
+                  <div className="flex gap-1">
+                    <div className="w-7 h-7 bg-secondary rounded overflow-hidden">
+                      <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="w-7 h-7 bg-secondary rounded overflow-hidden">
+                      <img src={sofaBanner} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="w-7 h-7 bg-secondary/60 rounded flex items-center justify-center border border-dashed border-border">
+                      <Plus className="w-3 h-3 text-muted-foreground" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Central Page Preview - Mobile - BELOW widgets */}
+              <div className="relative mx-auto w-[280px]">
                 <div className="bg-card rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
                   {/* Banner with real car cleaning image */}
                   <div className="h-24 relative overflow-hidden rounded-t-[2rem]">
@@ -429,66 +493,6 @@ export default function Index() {
                     <button className="w-full bg-neutral-800 dark:bg-neutral-700 text-white py-3 rounded-xl text-sm font-semibold shadow-lg">
                       Réserver maintenant
                     </button>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Mobile Widgets Grid */}
-              <div className="grid grid-cols-2 gap-3 max-w-[280px] mx-auto">
-                {/* Colors */}
-                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30">
-                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Couleurs</p>
-                  <div className="flex gap-1.5">
-                    {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500'].map((bg, i) => (
-                      <div key={i} className={`w-5 h-5 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-1 ring-offset-card' : ''}`} />
-                    ))}
-                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-red-500 via-green-500 to-purple-500 flex items-center justify-center">
-                      <Plus className="w-2.5 h-2.5 text-white" />
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Disponibilités */}
-                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30">
-                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Disponibilités</p>
-                  <div className="space-y-1">
-                    {[
-                      { day: 'Lun', hours: '9h-18h', active: true },
-                      { day: 'Sam', hours: 'Fermé', active: false },
-                    ].map((d, i) => (
-                      <div key={i} className="flex items-center gap-1">
-                        <span className="text-[8px] w-5 text-muted-foreground">{d.day}</span>
-                        <span className={`text-[8px] flex-1 ${d.active ? 'text-foreground' : 'text-muted-foreground'}`}>{d.hours}</span>
-                        <div className={`w-5 h-2.5 rounded-full ${d.active ? 'bg-emerald-500' : 'bg-secondary'}`} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Texte */}
-                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30 flex items-center gap-2">
-                  <div className="w-6 h-6 bg-primary/10 rounded-lg flex items-center justify-center">
-                    <Type className="w-3 h-3 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-[9px] text-muted-foreground">Texte</p>
-                    <p className="text-[10px] font-medium text-foreground">Ajouter</p>
-                  </div>
-                </div>
-                
-                {/* Galerie */}
-                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30">
-                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Galerie</p>
-                  <div className="flex gap-1">
-                    <div className="w-7 h-7 bg-secondary rounded overflow-hidden">
-                      <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
-                    </div>
-                    <div className="w-7 h-7 bg-secondary rounded overflow-hidden">
-                      <img src={sofaBanner} alt="" className="w-full h-full object-cover" />
-                    </div>
-                    <div className="w-7 h-7 bg-secondary/60 rounded flex items-center justify-center border border-dashed border-border">
-                      <Plus className="w-3 h-3 text-muted-foreground" />
-                    </div>
                   </div>
                 </div>
               </div>
@@ -601,7 +605,7 @@ export default function Index() {
                   className="absolute top-12 lg:top-16 left-4 lg:left-12 z-30 animate-float"
                   style={{ animationDelay: '0s' }}
                 >
-                  <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
+                  <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm relative">
                     <p className="text-[10px] text-muted-foreground mb-2 font-medium">Couleurs</p>
                     <div className="flex gap-2">
                       {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500'].map((bg, i) => (
@@ -611,6 +615,10 @@ export default function Index() {
                       <div className="w-7 h-7 rounded-full bg-gradient-to-br from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 shadow-sm flex items-center justify-center">
                         <Plus className="w-3.5 h-3.5 text-white drop-shadow-md" />
                       </div>
+                    </div>
+                    {/* Cursor icon */}
+                    <div className="absolute -bottom-2 -right-2 animate-pulse">
+                      <MousePointer2 className="w-6 h-6 text-foreground drop-shadow-lg" />
                     </div>
                   </div>
                 </div>
