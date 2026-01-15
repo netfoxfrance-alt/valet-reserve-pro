@@ -16,7 +16,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Index() {
-  const [dashboardTab, setDashboardTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings'>('mypage');
+  const [dashboardTab, setDashboardTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings'>('reservations');
   const [mobileTab, setMobileTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings' | 'dispo'>('mypage');
   const [mockupTab, setMockupTab] = useState<'design' | 'formules' | 'elements' | 'seo'>('design');
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
@@ -340,251 +340,436 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Deux espaces, un seul outil */}
+      {/* Section 1: Personnalisez votre page */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/30">
-        <div className="max-w-5xl mx-auto text-center">
-          <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-tight">
-            Deux espaces,
-            <br />
-            <span className="text-muted-foreground">un seul outil.</span>
-          </h2>
-          <p className="opacity-0 animate-fade-in-up stagger-1 text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Une <span className="text-foreground font-medium">page web publique</span> pour vos clients, un <span className="text-foreground font-medium">espace privé</span> pour tout gérer.
-          </p>
-        </div>
-      </section>
-
-      {/* Section: Page Publique */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Section Label */}
           <div className="flex items-center gap-2 text-muted-foreground mb-4 opacity-0 animate-fade-in-up">
-            <Globe className="w-4 h-4" />
-            <span className="text-xs font-medium uppercase tracking-wider">Page publique</span>
+            <Palette className="w-4 h-4" />
+            <span className="text-xs font-medium uppercase tracking-wider">Personnalisation</span>
           </div>
           
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left: Premium Phone Mockup - Apple Style */}
-            <div className="flex justify-center lg:justify-start order-2 lg:order-1">
-              <div className="animate-float relative">
-                {/* Subtle glow effect */}
-                <div className="absolute inset-0 bg-primary/8 blur-[80px] scale-125" />
-                
-                {/* Phone Frame - Zinc/Black like iPhone */}
-                <div className="relative bg-zinc-900 rounded-[2.5rem] p-[6px] shadow-2xl">
-                  {/* Dynamic Island */}
-                  <div className="absolute top-[10px] left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-full z-20" />
-                  
-                  <div className="relative bg-card rounded-[2.2rem] overflow-hidden w-[280px] sm:w-[300px]">
-                    {/* Status Bar */}
-                    <div className="px-6 pt-2.5 pb-0.5 flex items-center justify-between relative z-10">
-                      <span className="text-[10px] font-semibold text-foreground">9:41</span>
-                      <div className="flex items-center gap-1">
-                        <div className="flex gap-[2px]">
-                          <div className="w-[2px] h-[8px] bg-foreground rounded-full" />
-                          <div className="w-[2px] h-[6px] bg-foreground rounded-full" />
-                          <div className="w-[2px] h-[5px] bg-foreground rounded-full" />
-                          <div className="w-[2px] h-[3px] bg-foreground/40 rounded-full" />
+          <h2 className="opacity-0 animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+            Personnalisez votre page à l'image de votre entreprise
+          </h2>
+          <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-base sm:text-lg mb-10 max-w-2xl leading-relaxed">
+            Couleurs, bannière, logo, formules... Tout est modifiable pour refléter votre identité.
+          </p>
+
+          {/* Dashboard Browser Mockup - Ma Page */}
+          <div className="opacity-0 animate-fade-in-up stagger-3">
+            <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60 max-w-4xl mx-auto">
+              {/* Browser Bar */}
+              <div className="bg-secondary/50 px-4 py-3 flex items-center gap-3 border-b border-border/40">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-400" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                  <div className="w-3 h-3 rounded-full bg-green-400" />
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <div className="flex items-center gap-2 bg-background rounded-full px-4 py-1.5 text-xs text-muted-foreground">
+                    <Shield className="w-3 h-3" />
+                    cleaningpage.com/<span className="text-foreground font-medium">dashboard</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dashboard Content - Ma Page */}
+              <div className="flex min-h-[420px]">
+                {/* Sidebar */}
+                <div className="w-56 bg-secondary/30 border-r border-border/40 p-4 flex-shrink-0 hidden md:block">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Logo size="md" />
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-6 truncate">clean-auto-pro</p>
+
+                  <nav className="space-y-1">
+                    {[
+                      { icon: Globe, label: 'Ma Page', active: true },
+                      { icon: Calendar, label: 'Réservations', badge: '3' },
+                      { icon: BarChart3, label: 'Statistiques' },
+                      { icon: Droplets, label: 'Formules' },
+                      { icon: Settings, label: 'Paramètres' },
+                    ].map((item) => (
+                      <div
+                        key={item.label}
+                        className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm transition-all ${
+                          item.active 
+                            ? 'bg-foreground text-background font-medium' 
+                            : 'text-muted-foreground'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <item.icon className="w-4 h-4" />
+                          {item.label}
                         </div>
-                        <div className="w-4 h-[8px] bg-foreground rounded-[2px] ml-0.5" />
+                        {item.badge && (
+                          <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                            {item.badge}
+                          </span>
+                        )}
                       </div>
+                    ))}
+                  </nav>
+
+                  {/* Link at bottom */}
+                  <div className="mt-8 pt-4 border-t border-border/40">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Link2 className="w-4 h-4" />
+                      <span className="text-xs">Votre lien</span>
                     </div>
+                    <p className="text-[10px] text-muted-foreground mt-1 truncate">cleaningpage.com/clean-auto...</p>
+                  </div>
+                </div>
 
-                    {/* Banner Image */}
-                    <div className="h-28 relative">
-                      <img 
-                        src={sofaBanner} 
-                        alt="Nettoyage canapé professionnel" 
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
-                      
-                      {/* Camera/Instagram icon top right */}
-                      <div className="absolute top-2 right-2">
-                        <div className="w-7 h-7 bg-card/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm">
-                          <Instagram className="w-3.5 h-3.5 text-foreground" />
-                        </div>
-                      </div>
-                      
-                      {/* Logo - overlapping banner */}
-                      <div className="absolute -bottom-5 left-4">
-                        <div className="w-12 h-12 bg-foreground rounded-xl shadow-lg flex items-center justify-center border-[3px] border-card">
-                          <span className="text-background font-bold text-sm">SC</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="px-4 pb-4 pt-7">
-                      {/* Header */}
-                      <div className="mb-3">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <h3 className="text-base font-bold text-foreground tracking-tight">SofaClean</h3>
-                          <span className="text-[8px] bg-emerald-500/15 text-emerald-600 px-2 py-0.5 rounded-full font-semibold">Ouvert</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                          <span>Nettoyage textile</span>
-                          <span>•</span>
-                          <div className="flex items-center gap-0.5">
-                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                            <span className="font-semibold text-foreground">4.9</span>
-                          </div>
-                          <span className="text-muted-foreground">(234)</span>
-                        </div>
-                      </div>
-
-                      {/* Action buttons row - Apple style */}
-                      <div className="flex gap-2 mb-3">
-                        <button className="flex-1 flex items-center justify-center gap-1.5 bg-foreground text-background rounded-xl py-2.5 text-[11px] font-semibold transition-transform hover:scale-[0.98]">
-                          <Phone className="w-3.5 h-3.5" />
-                          Appeler
-                        </button>
-                        <button className="flex-1 flex items-center justify-center gap-1.5 bg-secondary text-foreground rounded-xl py-2.5 text-[11px] font-medium">
-                          <MapPin className="w-3.5 h-3.5" />
-                          Y aller
-                        </button>
-                        <button className="w-10 flex items-center justify-center bg-secondary text-foreground rounded-xl">
-                          <Share2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-
-                      {/* Info cards row - Clean pills */}
-                      <div className="flex gap-2 mb-3">
-                        <div className="flex-1 bg-secondary/60 rounded-xl p-2.5">
-                          <div className="flex items-center gap-1 text-muted-foreground mb-0.5">
-                            <Clock className="w-3 h-3" />
-                            <span className="text-[8px] uppercase tracking-wide font-medium">Horaires</span>
-                          </div>
-                          <p className="text-[11px] font-semibold text-foreground">8h - 19h</p>
-                        </div>
-                        <div className="flex-1 bg-secondary/60 rounded-xl p-2.5">
-                          <div className="flex items-center gap-1 text-muted-foreground mb-0.5">
-                            <MapPin className="w-3 h-3" />
-                            <span className="text-[8px] uppercase tracking-wide font-medium">Adresse</span>
-                          </div>
-                          <p className="text-[11px] font-semibold text-foreground">Lyon 3e</p>
-                        </div>
-                      </div>
-
-                      {/* Services - Clean list */}
-                      <div className="space-y-1.5 mb-3">
-                        {[
-                          { name: 'Canapé 2 places', price: '49€' },
-                          { name: 'Canapé 3 places', price: '69€' },
-                          { name: 'Canapé d\'angle', price: '99€' },
-                        ].map((item) => (
-                          <div 
-                            key={item.name} 
-                            className="flex items-center justify-between py-2 border-b border-border/40 last:border-0"
-                          >
-                            <span className="text-[11px] font-medium text-foreground">{item.name}</span>
-                            <span className="text-[11px] font-bold text-foreground">{item.price}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Mini calendar preview */}
-                      <div className="bg-secondary/40 rounded-xl p-2.5 mb-3">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-[8px] text-muted-foreground uppercase tracking-wider font-medium">Prochain créneau</span>
-                          <span className="text-[9px] text-primary font-medium">Voir l'agenda</span>
-                        </div>
-                        <div className="flex gap-1">
-                          {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven'].map((day, i) => (
-                            <div 
-                              key={day}
-                              className={`flex-1 text-center py-1.5 rounded-lg text-[9px] transition-all ${
-                                i === 1 
-                                  ? 'bg-foreground text-background font-semibold' 
-                                  : 'bg-background text-foreground'
-                              }`}
-                            >
-                              <div className="font-medium">{day}</div>
-                              <div className={i === 1 ? 'text-background/70' : 'text-muted-foreground'}>{7 + i}</div>
+                {/* Main Content Area - Ma Page view */}
+                <div className="flex-1 p-3 sm:p-6">
+                  <div className="h-full flex flex-col">
+                    {/* Main content grid - Preview left, Controls right */}
+                    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                      {/* Left: Live Preview */}
+                      <div className="flex flex-col min-h-[300px] sm:min-h-[400px] order-2 lg:order-1">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-xs sm:text-sm font-medium text-foreground">Aperçu</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 bg-foreground rounded-md flex items-center justify-center">
+                              <Phone className="w-3 h-3 text-background" />
                             </div>
-                          ))}
+                            <div className="w-6 h-6 bg-secondary/60 rounded-md flex items-center justify-center">
+                              <svg className="w-3 h-3 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" />
+                                <path d="M8 21h8" />
+                                <path d="M12 17v4" />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Preview Container */}
+                        <div className="flex-1 bg-secondary/30 rounded-2xl overflow-hidden">
+                          <div className="bg-card h-full overflow-y-auto">
+                            {/* Banner with logo overlay */}
+                            <div className="h-32 relative">
+                              <img 
+                                src={mockupBanner} 
+                                alt="Preview" 
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute left-1/2 -translate-x-1/2 -bottom-8">
+                                <div className="bg-white/95 rounded-2xl p-2 shadow-lg ring-1 ring-black/5">
+                                  <div className="w-16 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                                    <span className="text-white font-black text-lg tracking-tight">CP</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="px-5 pt-12 pb-4">
+                              <h3 className="text-xl font-bold text-foreground text-center mb-2">Clean Premium</h3>
+                              <p className="text-sm text-muted-foreground text-center leading-relaxed mb-4">
+                                Nettoyage automobile premium à domicile, 7j/7. Qualité professionnelle garantie.
+                              </p>
+                              
+                              <div className="flex justify-center mb-4">
+                                <span className="inline-flex items-center gap-1.5 text-xs bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full font-medium">
+                                  <span className="w-2 h-2 bg-emerald-500 rounded-full" />
+                                  Ouvert
+                                </span>
+                              </div>
+                              
+                              {/* Social Icons Row */}
+                              <div className="flex justify-center gap-3 mb-5">
+                                {[Instagram, Mail].map((Icon, i) => (
+                                  <div key={i} className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center border border-border/40">
+                                    <Icon className="w-5 h-5 text-foreground" />
+                                  </div>
+                                ))}
+                              </div>
+                              
+                              {/* Info Items */}
+                              <div className="space-y-2.5 mb-5">
+                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                                  <Phone className="w-4 h-4 flex-shrink-0" />
+                                  <span>06 12 34 56 78</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                                  <Clock className="w-4 h-4 flex-shrink-0" />
+                                  <span>Lun - Sam : 9h00 - 19h00</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                                  <MapPin className="w-4 h-4 flex-shrink-0" />
+                                  <span>12 rue de la Paix, 75002 Paris</span>
+                                </div>
+                              </div>
+                              
+                              {/* Formulas */}
+                              <h4 className="text-base font-semibold text-foreground mb-3">Nos formules</h4>
+                              <div className="grid grid-cols-2 gap-3 mb-4">
+                                <div className="bg-card border border-border/40 rounded-xl p-3">
+                                  <h5 className="text-sm font-semibold text-foreground mb-1">Express</h5>
+                                  <p className="text-base font-bold text-muted-foreground">35€</p>
+                                </div>
+                                <div className="bg-card border border-border/40 rounded-xl p-3">
+                                  <h5 className="text-sm font-semibold text-foreground mb-1">Complet</h5>
+                                  <p className="text-base font-bold text-muted-foreground">89€</p>
+                                </div>
+                              </div>
+                              
+                              <button className="w-full bg-neutral-700 hover:bg-neutral-800 text-white py-3.5 rounded-2xl text-sm font-semibold transition-colors">
+                                Réserver maintenant
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
 
-                      {/* CTA Button - Premium style */}
-                      <button className="w-full bg-foreground text-background rounded-xl py-3 text-[12px] font-semibold flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[0.98]">
-                        <Calendar className="w-4 h-4" />
-                        Réserver un créneau
-                      </button>
+                      {/* Right: Customization controls */}
+                      <div className="flex flex-col order-1 lg:order-2">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-xs sm:text-sm font-medium text-foreground">Personnalisation</span>
+                        </div>
+                        
+                        <div className="bg-card rounded-xl border border-border/40 flex-1 overflow-hidden">
+                          {/* Tabs */}
+                          <div className="flex items-center justify-around border-b border-border/40 py-2 px-2">
+                            {[
+                              { id: 'design', icon: Palette, label: 'Design' },
+                              { id: 'formules', icon: Droplets, label: 'Formules' },
+                              { id: 'elements', label: 'Éléments', isCustomIcon: true },
+                              { id: 'seo', label: 'SEO', isCustomIcon: true },
+                            ].map((tab) => (
+                              <div 
+                                key={tab.id}
+                                onClick={() => setMockupTab(tab.id as any)}
+                                className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl cursor-pointer transition-colors ${mockupTab === tab.id ? 'bg-secondary/50 text-foreground' : 'text-muted-foreground hover:text-foreground/70'}`}
+                              >
+                                {tab.isCustomIcon ? (
+                                  tab.id === 'elements' ? (
+                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                                  ) : (
+                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                                  )
+                                ) : (
+                                  <tab.icon className="w-4 h-4" />
+                                )}
+                                <span className="text-[9px] sm:text-[10px] font-medium">{tab.label}</span>
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className="p-3 sm:p-4 space-y-4 overflow-y-auto max-h-[320px]">
+                            {/* Design Tab Content */}
+                            {mockupTab === 'design' && (
+                              <>
+                                <div>
+                                  <p className="text-[10px] sm:text-xs font-medium text-foreground mb-2">Bannière</p>
+                                  <div className="rounded-xl overflow-hidden mb-2">
+                                    <img src={mockupBanner} alt="Banner preview" className="w-full h-20 object-cover"/>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <button className="flex items-center gap-1.5 text-[10px] font-medium text-foreground bg-secondary/50 px-3 py-1.5 rounded-full border border-border/40">
+                                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                                      Changer
+                                    </button>
+                                    <button className="text-red-500 p-1.5">
+                                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <p className="text-[10px] sm:text-xs font-medium text-foreground mb-2">Couleurs</p>
+                                  <div className="grid grid-cols-3 gap-2">
+                                    {[
+                                      { name: 'Bleu', c1: '#3B82F6', c2: '#1E3A5F' },
+                                      { name: 'Rouge', c1: '#EF4444', c2: '#1E1E1E' },
+                                      { name: 'Vert', c1: '#10B981', c2: '#064E3B', selected: true },
+                                      { name: 'Violet', c1: '#8B5CF6', c2: '#1E3A5F' },
+                                      { name: 'Orange', c1: '#F97316', c2: '#7C2D12' },
+                                      { name: 'Rose', c1: '#EC4899', c2: '#4A1942' },
+                                    ].map((color, i) => (
+                                      <div key={i} className={`flex flex-col items-center gap-1 p-2 rounded-xl border cursor-pointer ${color.selected ? 'border-foreground bg-secondary/30' : 'border-border/40'}`}>
+                                        <div className="flex gap-1">
+                                          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: color.c1 }} />
+                                          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: color.c2 }} />
+                                        </div>
+                                        <span className="text-[9px] text-muted-foreground">{color.name}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </>
+                            )}
+
+                            {/* Formules Tab Content */}
+                            {mockupTab === 'formules' && (
+                              <>
+                                <p className="text-[10px] sm:text-xs text-muted-foreground mb-2">Choisissez les formules à afficher</p>
+                                <div className="space-y-2">
+                                  {[
+                                    { name: 'Express', price: '35€', visible: true },
+                                    { name: 'Complet', price: '89€', visible: true },
+                                    { name: 'Premium', price: '149€', visible: false },
+                                  ].map((pack, i) => (
+                                    <div key={i} className="flex items-center justify-between bg-secondary/30 rounded-xl p-3 border border-border/30">
+                                      <div className="flex items-center gap-2">
+                                        <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                                          <Droplets className="w-4 h-4 text-primary" />
+                                        </div>
+                                        <div>
+                                          <p className="text-[11px] font-medium text-foreground">{pack.name}</p>
+                                          <p className="text-[10px] text-muted-foreground">{pack.price}</p>
+                                        </div>
+                                      </div>
+                                      <div className={`w-6 h-3 rounded-full relative ${pack.visible ? 'bg-emerald-500' : 'bg-muted'}`}>
+                                        <div className={`absolute top-0.5 w-2 h-2 bg-white rounded-full ${pack.visible ? 'right-0.5' : 'left-0.5'}`} />
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+
+                            {/* Elements Tab Content */}
+                            {mockupTab === 'elements' && (
+                              <>
+                                <p className="text-[10px] sm:text-xs text-muted-foreground mb-2">Éléments de votre page</p>
+                                <div className="space-y-2">
+                                  {[
+                                    { icon: Phone, label: 'Téléphone' },
+                                    { icon: Clock, label: 'Horaires' },
+                                    { icon: MapPin, label: 'Adresse' },
+                                    { icon: Instagram, label: 'Réseaux sociaux' },
+                                  ].map((item, i) => (
+                                    <div key={i} className="flex items-center justify-between bg-secondary/30 rounded-xl p-3 border border-border/30">
+                                      <div className="flex items-center gap-2">
+                                        <item.icon className="w-4 h-4 text-muted-foreground" />
+                                        <span className="text-[11px] font-medium text-foreground">{item.label}</span>
+                                      </div>
+                                      <div className="w-6 h-3 bg-emerald-500 rounded-full relative">
+                                        <div className="absolute right-0.5 top-0.5 w-2 h-2 bg-white rounded-full" />
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+
+                            {/* SEO Tab Content */}
+                            {mockupTab === 'seo' && (
+                              <>
+                                <p className="text-[10px] sm:text-xs text-muted-foreground mb-2">Optimisez votre référencement Google</p>
+                                <div className="space-y-3">
+                                  <div>
+                                    <label className="text-[9px] text-muted-foreground mb-1 block">Titre Google</label>
+                                    <div className="bg-secondary/30 rounded-lg px-3 py-2 border border-border/40">
+                                      <span className="text-[10px] text-foreground">Clean Premium - Nettoyage Auto Paris</span>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <label className="text-[9px] text-muted-foreground mb-1 block">Mots-clés</label>
+                                    <div className="flex flex-wrap gap-1">
+                                      {['nettoyage auto', 'lavage voiture', 'detailing paris'].map((kw, i) => (
+                                        <span key={i} className="text-[9px] bg-secondary/50 px-2 py-1 rounded-full text-foreground">{kw}</span>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* Right: Text + Features */}
-            <div className="order-1 lg:order-2">
-              <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6">
-                Votre vitrine en ligne
-              </h2>
-              <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-base sm:text-lg mb-8 leading-relaxed">
-                Ce que vos clients voient quand ils cherchent vos services de nettoyage.
-              </p>
+      {/* Section 2: Partagez votre lien */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 bg-secondary/30">
+        <div className="max-w-5xl mx-auto text-center">
+          {/* Section Label */}
+          <div className="flex items-center justify-center gap-2 text-muted-foreground mb-4 opacity-0 animate-fade-in-up">
+            <Share2 className="w-4 h-4" />
+            <span className="text-xs font-medium uppercase tracking-wider">Diffusion</span>
+          </div>
+          
+          <h2 className="opacity-0 animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+            Partagez votre lien de partout
+          </h2>
+          <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-base sm:text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
+            Un seul lien à partager sur tous vos canaux : réseaux sociaux, carte de visite, QR code, signature email...
+          </p>
 
-              {/* Link Card */}
-              <div className="opacity-0 animate-fade-in-up stagger-2 bg-secondary/40 rounded-2xl p-5 sm:p-6 mb-6">
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-3">
-                  Un vrai site web pour votre activité
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">Votre lien unique :</p>
-                <div className="flex items-center gap-2 bg-background rounded-xl px-4 py-3 border border-border/60 mb-4">
-                  <Globe className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">cleaningpage.com/</span>
-                  <span className="text-sm text-primary font-semibold">votre-centre</span>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Partagez-le partout : réseaux sociaux, carte de visite, QR code...
-                </p>
+          {/* Link Preview Card */}
+          <div className="opacity-0 animate-fade-in-up stagger-3 max-w-md mx-auto">
+            <div className="bg-card rounded-2xl p-6 border border-border/60 shadow-xl">
+              <div className="flex items-center gap-3 bg-secondary/40 rounded-xl px-4 py-3 mb-6">
+                <Globe className="w-5 h-5 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">cleaningpage.com/</span>
+                <span className="text-sm text-primary font-semibold">votre-centre</span>
+                <button className="ml-auto p-2 bg-foreground text-background rounded-lg">
+                  <ExternalLink className="w-4 h-4" />
+                </button>
               </div>
-
-              {/* Features Pills */}
-              <div className="opacity-0 animate-fade-in-up stagger-3">
-                <p className="text-sm text-muted-foreground mb-3">Dedans, vos clients trouvent tout ce dont ils ont besoin :</p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { icon: Car, label: 'Vos formules' },
-                    { icon: Calendar, label: 'Réservations' },
-                    { icon: Star, label: 'Avis clients' },
-                    { icon: MapPin, label: 'Localisation' },
-                    { icon: Phone, label: 'Contact direct' },
-                    { icon: Clock, label: 'Horaires' },
-                  ].map((item) => (
-                    <div key={item.label} className="flex items-center gap-2 bg-background border border-border/60 rounded-full px-4 py-2">
-                      <item.icon className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm text-foreground">{item.label}</span>
+              
+              {/* Share options */}
+              <div className="grid grid-cols-4 gap-3">
+                {[
+                  { icon: Instagram, label: 'Instagram', color: 'bg-gradient-to-br from-purple-500 to-pink-500' },
+                  { icon: MessageCircle, label: 'WhatsApp', color: 'bg-emerald-500' },
+                  { label: 'TikTok', color: 'bg-black', isCustomIcon: true },
+                  { label: 'QR Code', color: 'bg-foreground', isCustomIcon: true },
+                ].map((item, i) => (
+                  <div key={i} className="flex flex-col items-center gap-2">
+                    <div className={`w-12 h-12 ${item.color} rounded-xl flex items-center justify-center`}>
+                      {item.isCustomIcon ? (
+                        item.label === 'TikTok' ? (
+                          <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                          </svg>
+                        ) : (
+                          <svg className="w-6 h-6 text-background" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 7h.01M7 12h.01M7 17h.01M12 7h.01M12 12h.01M12 17h.01M17 7h.01M17 12h.01M17 17h.01"/>
+                          </svg>
+                        )
+                      ) : (
+                        <item.icon className="w-6 h-6 text-white" />
+                      )}
                     </div>
-                  ))}
-                </div>
+                    <span className="text-[10px] text-muted-foreground">{item.label}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Section: Espace Privé */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 bg-secondary/30">
+      {/* Section 3: Gérez votre activité */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Section Label */}
           <div className="flex items-center gap-2 text-muted-foreground mb-4 opacity-0 animate-fade-in-up">
             <Shield className="w-4 h-4" />
-            <span className="text-xs font-medium uppercase tracking-wider">Espace privé</span>
+            <span className="text-xs font-medium uppercase tracking-wider">Gestion</span>
           </div>
           
           <h2 className="opacity-0 animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
-            Votre outil de gestion
+            Gérez votre activité
           </h2>
           <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-base sm:text-lg mb-8 max-w-2xl leading-relaxed">
-            Simple et complet pour gérer réservations, formules, et personnaliser votre page.
+            Réservations, statistiques, formules, paramètres... Tout est centralisé dans votre tableau de bord.
           </p>
 
-          {/* Dashboard Tabs Preview - Interactive */}
+          {/* Dashboard Tabs Preview - Interactive (sans Ma Page) */}
           <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-wrap gap-2 sm:gap-3 mb-10 justify-center">
             {[
-              { icon: Globe, label: 'Ma Page', tab: 'mypage' as const, badge: null },
               { icon: Calendar, label: 'Réservations', tab: 'reservations' as const, badge: '3' },
               { icon: BarChart3, label: 'Statistiques', tab: 'stats' as const, badge: null },
               { icon: Droplets, label: 'Formules', tab: 'formules' as const, badge: null },
@@ -639,7 +824,6 @@ export default function Index() {
 
                   <nav className="space-y-1">
                     {[
-                      { icon: Globe, label: 'Ma Page', tab: 'mypage' as const },
                       { icon: Calendar, label: 'Réservations', tab: 'reservations' as const, badge: '3' },
                       { icon: BarChart3, label: 'Statistiques', tab: 'stats' as const },
                       { icon: Droplets, label: 'Formules', tab: 'formules' as const },
