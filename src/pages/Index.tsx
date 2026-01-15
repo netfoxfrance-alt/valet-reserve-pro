@@ -7,7 +7,8 @@ import {
   ArrowRight, Calendar, Users, BarChart3, Link2, 
   Shield, Clock, Check, Car, Droplets, MapPin, Phone, 
   Star, Settings, LogOut, ChevronRight, Globe, Palette, Eye,
-  Instagram, MessageCircle, Share2, ExternalLink, Sparkles, Mail, Loader2
+  Instagram, MessageCircle, Share2, ExternalLink, Sparkles, Mail, Loader2,
+  Zap, Crown, ImagePlus, Upload, Tag, CalendarDays, Plus, Facebook, Type
 } from 'lucide-react';
 import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 import sofaBanner from '@/assets/sofa-cleaning-banner.jpg';
@@ -341,183 +342,288 @@ export default function Index() {
       </section>
 
       {/* Section 1: Personnalisez votre page - Apple Style Visual */}
-      <section className="py-20 sm:py-32 px-4 sm:px-6 border-t border-border/30 overflow-hidden">
-        <div className="max-w-5xl mx-auto">
+      <section className="py-20 sm:py-32 px-4 sm:px-6 border-t border-border/30 overflow-hidden bg-gradient-to-b from-background via-secondary/20 to-background">
+        <div className="max-w-6xl mx-auto">
           {/* Section Header - Centered */}
-          <div className="text-center mb-12 sm:mb-20">
-            <div className="flex items-center justify-center gap-2 text-muted-foreground mb-4 opacity-0 animate-fade-in-up">
-              <Palette className="w-4 h-4" />
-              <span className="text-xs font-medium uppercase tracking-wider">Personnalisation</span>
+          <div className="text-center mb-16 sm:mb-24">
+            <div className="flex items-center justify-center gap-2 text-primary mb-4 opacity-0 animate-fade-in-up">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-xs font-medium uppercase tracking-wider">Votre vitrine</span>
             </div>
             
-            <h2 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl font-semibold text-foreground tracking-tight mb-6">
-              Créez votre page.<br />
-              <span className="text-muted-foreground">Comme vous le sentez.</span>
+            <h2 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-6">
+              Personnalisez votre page<br />
+              <span className="bg-gradient-to-r from-emerald-500 via-primary to-emerald-400 bg-clip-text text-transparent">à l'image de votre entreprise</span>
             </h2>
-            <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-lg sm:text-xl max-w-xl mx-auto leading-relaxed">
-              Glissez. Personnalisez. Publiez. Votre vitrine professionnelle en quelques clics.
+            <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed">
+              Couleurs, images, formules, disponibilités... Tout est personnalisable en quelques clics.
             </p>
           </div>
 
           {/* Visual Composition - Apple Style */}
           <div className="opacity-0 animate-fade-in-up stagger-3 relative">
-            {/* Main Container with perspective */}
-            <div className="relative max-w-3xl mx-auto">
+            {/* Main Container */}
+            <div className="relative max-w-5xl mx-auto">
               
-              {/* Central Page Preview - The "canvas" */}
-              <div className="relative mx-auto w-[280px] sm:w-[320px] md:w-[360px]">
+              {/* Central Page Preview - Premium Mockup */}
+              <div className="relative mx-auto w-[300px] sm:w-[340px] md:w-[380px]">
+                {/* Glow effect behind */}
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-primary/10 to-blue-500/20 blur-3xl scale-150 -z-10" />
+                
                 <div 
-                  className="bg-card rounded-[2.5rem] overflow-hidden shadow-2xl shadow-black/20 ring-1 ring-border/40"
-                  style={{ transform: 'perspective(1000px) rotateY(-2deg)' }}
+                  className="bg-card rounded-[2.5rem] overflow-hidden shadow-2xl shadow-black/25 ring-1 ring-white/20"
+                  style={{ transform: 'perspective(1200px) rotateY(-3deg) rotateX(2deg)' }}
                 >
-                  {/* Page Content */}
-                  <div className="h-20 sm:h-24 bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-600 relative">
-                    {/* Subtle pattern overlay */}
-                    <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '16px 16px' }} />
+                  {/* Banner with gradient */}
+                  <div className="h-24 sm:h-28 bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-600 relative overflow-hidden">
+                    {/* Sparkle pattern */}
+                    <div className="absolute inset-0 opacity-30">
+                      <div className="absolute top-4 left-8 w-2 h-2 bg-white rounded-full animate-pulse" />
+                      <div className="absolute top-8 right-12 w-1.5 h-1.5 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
+                      <div className="absolute bottom-6 left-16 w-1 h-1 bg-white rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+                    </div>
                     
-                    {/* Logo floating in */}
-                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 z-20">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-2xl shadow-xl flex items-center justify-center ring-4 ring-white">
-                        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                          <Car className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                    {/* Logo */}
+                    <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 z-20">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-3xl shadow-2xl flex items-center justify-center ring-4 ring-white">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center">
+                          <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="px-5 sm:px-6 pt-12 pb-6 text-center">
-                    <h3 className="text-lg sm:text-xl font-bold text-foreground mb-1">Votre Entreprise</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground mb-4">Nettoyage premium à domicile</p>
+                  <div className="px-6 pt-14 pb-6 text-center">
+                    <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-1">Clean & Shine</h3>
+                    <p className="text-sm text-muted-foreground mb-4">Nettoyage auto premium</p>
                     
-                    {/* Status badge */}
-                    <div className="flex justify-center mb-4">
-                      <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-full font-medium">
-                        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse" />
+                    {/* Status + Rating */}
+                    <div className="flex justify-center items-center gap-4 mb-5">
+                      <span className="inline-flex items-center gap-1.5 text-xs bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-full font-medium">
+                        <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                         Ouvert
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        4.9
                       </span>
                     </div>
                     
-                    {/* Social icons */}
-                    <div className="flex justify-center gap-2 mb-5">
-                      {[Instagram, MessageCircle, Phone].map((Icon, i) => (
-                        <div key={i} className="w-9 h-9 sm:w-10 sm:h-10 bg-secondary/60 rounded-xl flex items-center justify-center">
-                          <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />
+                    {/* Social + Contact */}
+                    <div className="flex justify-center gap-2.5 mb-6">
+                      {[Instagram, Phone, MapPin, Clock].map((Icon, i) => (
+                        <div key={i} className="w-11 h-11 bg-secondary/60 hover:bg-secondary rounded-xl flex items-center justify-center transition-colors cursor-pointer">
+                          <Icon className="w-5 h-5 text-foreground" />
                         </div>
                       ))}
                     </div>
                     
-                    {/* Service cards */}
-                    <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-5">
-                      <div className="bg-secondary/40 rounded-xl p-3 text-left border border-border/30">
-                        <p className="text-xs sm:text-sm font-semibold text-foreground">Express</p>
-                        <p className="text-sm sm:text-base font-bold text-primary">35€</p>
+                    {/* Service cards - Grid */}
+                    <div className="grid grid-cols-2 gap-3 mb-6">
+                      <div className="bg-gradient-to-br from-secondary/60 to-secondary/30 rounded-2xl p-4 text-left border border-border/30">
+                        <div className="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center mb-2">
+                          <Zap className="w-4 h-4 text-emerald-600" />
+                        </div>
+                        <p className="text-sm font-semibold text-foreground">Express</p>
+                        <p className="text-xs text-muted-foreground mb-1">30 min</p>
+                        <p className="text-lg font-bold text-primary">35€</p>
                       </div>
-                      <div className="bg-secondary/40 rounded-xl p-3 text-left border border-border/30">
-                        <p className="text-xs sm:text-sm font-semibold text-foreground">Complet</p>
-                        <p className="text-sm sm:text-base font-bold text-primary">89€</p>
+                      <div className="bg-gradient-to-br from-secondary/60 to-secondary/30 rounded-2xl p-4 text-left border border-border/30">
+                        <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center mb-2">
+                          <Crown className="w-4 h-4 text-blue-600" />
+                        </div>
+                        <p className="text-sm font-semibold text-foreground">Premium</p>
+                        <p className="text-xs text-muted-foreground mb-1">2h</p>
+                        <p className="text-lg font-bold text-primary">129€</p>
                       </div>
                     </div>
                     
+                    {/* Gallery preview */}
+                    <div className="flex gap-2 mb-6 overflow-hidden rounded-xl">
+                      <div className="flex-1 h-16 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 rounded-lg" />
+                      <div className="flex-1 h-16 bg-gradient-to-br from-slate-300 to-slate-200 dark:from-slate-600 dark:to-slate-700 rounded-lg" />
+                      <div className="flex-1 h-16 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 rounded-lg" />
+                    </div>
+                    
                     {/* CTA */}
-                    <button className="w-full bg-foreground text-background py-3 sm:py-3.5 rounded-2xl text-sm font-semibold">
-                      Réserver
+                    <button className="w-full bg-foreground text-background py-4 rounded-2xl text-sm font-semibold shadow-lg">
+                      Réserver maintenant
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Floating UI Elements - The "magic" */}
+              {/* Floating UI Elements - The "magic" customization tools */}
               
               {/* Color Palette - Top Left */}
               <div 
-                className="absolute -top-4 sm:top-4 -left-4 sm:left-8 lg:left-16 z-30 animate-float"
+                className="absolute -top-2 sm:top-8 left-0 sm:left-4 lg:left-20 z-30 animate-float"
                 style={{ animationDelay: '0s' }}
               >
-                <div className="bg-card rounded-2xl p-3 sm:p-4 shadow-xl ring-1 ring-border/40">
-                  <p className="text-[9px] sm:text-[10px] font-medium text-muted-foreground mb-2 sm:mb-3">Couleurs</p>
-                  <div className="flex gap-2 sm:gap-2.5">
-                    {['#10B981', '#3B82F6', '#8B5CF6', '#F97316'].map((color, i) => (
+                <div className="bg-card/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl ring-1 ring-border/50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Palette className="w-4 h-4 text-muted-foreground" />
+                    <p className="text-xs font-medium text-foreground">Couleurs</p>
+                  </div>
+                  <div className="flex gap-2">
+                    {[
+                      { bg: 'bg-emerald-500', ring: true },
+                      { bg: 'bg-blue-500' },
+                      { bg: 'bg-purple-500' },
+                      { bg: 'bg-orange-500' },
+                      { bg: 'bg-pink-500' },
+                    ].map((color, i) => (
                       <div 
                         key={i} 
-                        className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full cursor-pointer transition-transform hover:scale-110 ${i === 0 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''}`}
-                        style={{ backgroundColor: color }}
+                        className={`w-8 h-8 ${color.bg} rounded-full cursor-pointer transition-all hover:scale-110 ${color.ring ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''}`}
                       />
                     ))}
                   </div>
                 </div>
               </div>
               
-              {/* Cursor + Action - Top Right */}
+              {/* Image Upload - Top Right */}
               <div 
-                className="absolute top-8 sm:top-12 -right-2 sm:right-4 lg:right-12 z-30"
+                className="absolute top-0 sm:top-4 right-0 sm:right-4 lg:right-16 z-30 animate-float"
+                style={{ animationDelay: '0.15s' }}
+              >
+                <div className="bg-card/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl ring-1 ring-border/50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <ImagePlus className="w-4 h-4 text-muted-foreground" />
+                    <p className="text-xs font-medium text-foreground">Bannière</p>
+                  </div>
+                  <div className="w-24 h-14 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center">
+                    <Upload className="w-5 h-5 text-white/80" />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Formules Editor - Left Side */}
+              <div 
+                className="absolute top-1/3 -left-2 sm:left-0 lg:left-8 z-30 animate-float hidden sm:block"
+                style={{ animationDelay: '0.3s' }}
+              >
+                <div className="bg-card/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl ring-1 ring-border/50 w-48">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Tag className="w-4 h-4 text-muted-foreground" />
+                    <p className="text-xs font-medium text-foreground">Vos formules</p>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between bg-secondary/50 rounded-lg px-3 py-2">
+                      <span className="text-xs font-medium">Express</span>
+                      <span className="text-xs text-primary font-bold">35€</span>
+                    </div>
+                    <div className="flex items-center justify-between bg-secondary/50 rounded-lg px-3 py-2">
+                      <span className="text-xs font-medium">Premium</span>
+                      <span className="text-xs text-primary font-bold">129€</span>
+                    </div>
+                    <button className="w-full text-[10px] text-primary font-medium py-1.5 border border-dashed border-primary/40 rounded-lg">
+                      + Ajouter une formule
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Availability Calendar - Right Side */}
+              <div 
+                className="absolute top-1/3 -right-2 sm:right-0 lg:right-4 z-30 animate-float hidden sm:block"
+                style={{ animationDelay: '0.4s' }}
+              >
+                <div className="bg-card/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl ring-1 ring-border/50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <CalendarDays className="w-4 h-4 text-muted-foreground" />
+                    <p className="text-xs font-medium text-foreground">Disponibilités</p>
+                  </div>
+                  <div className="grid grid-cols-7 gap-1 text-center">
+                    {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
+                      <span key={i} className="text-[9px] text-muted-foreground font-medium">{d}</span>
+                    ))}
+                    {[1, 2, 3, 4, 5, 6, 7].map((d) => (
+                      <div 
+                        key={d} 
+                        className={`w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-medium ${d <= 5 ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : 'bg-secondary/50 text-muted-foreground'}`}
+                      >
+                        {d}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[9px] text-muted-foreground text-center mt-2">9h - 19h</p>
+                </div>
+              </div>
+              
+              {/* Add Content Block - Bottom Left */}
+              <div 
+                className="absolute -bottom-4 sm:bottom-4 left-2 sm:left-8 lg:left-24 z-30 animate-float"
+                style={{ animationDelay: '0.5s' }}
+              >
+                <div className="bg-card/95 backdrop-blur-xl rounded-2xl p-3 shadow-2xl ring-1 ring-border/50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl flex items-center justify-center">
+                      <Plus className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-foreground">Ajouter un bloc</p>
+                      <p className="text-[10px] text-muted-foreground">Texte, galerie, liens...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Social Links - Bottom Right */}
+              <div 
+                className="absolute -bottom-6 sm:bottom-0 right-2 sm:right-8 lg:right-20 z-30 animate-float"
+                style={{ animationDelay: '0.6s' }}
+              >
+                <div className="bg-card/95 backdrop-blur-xl rounded-2xl p-3 shadow-2xl ring-1 ring-border/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Link2 className="w-3 h-3 text-muted-foreground" />
+                    <p className="text-[10px] font-medium text-foreground">Vos liens</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-orange-500 rounded-lg flex items-center justify-center">
+                      <Instagram className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-500 rounded-lg flex items-center justify-center">
+                      <Facebook className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="w-8 h-8 bg-gradient-to-br from-foreground to-foreground/80 rounded-lg flex items-center justify-center">
+                      <Globe className="w-4 h-4 text-background" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Cursor with action hint */}
+              <div 
+                className="absolute top-16 right-20 sm:right-32 z-40 hidden lg:block"
                 style={{ animationDelay: '0.2s' }}
               >
                 <div className="relative">
-                  {/* Cursor SVG */}
-                  <svg className="w-6 h-6 sm:w-8 sm:h-8 text-foreground drop-shadow-lg animate-pulse" viewBox="0 0 24 24" fill="currentColor">
+                  <svg className="w-7 h-7 text-foreground drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M4 4l16 8-8 3-3 8-5-19z"/>
                   </svg>
-                  {/* Click ripple effect */}
-                  <div className="absolute -bottom-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-primary/30 rounded-full animate-ping" />
-                </div>
-              </div>
-              
-              {/* Drag Handle Element - Left Side */}
-              <div 
-                className="absolute top-1/2 -left-2 sm:left-0 lg:left-8 -translate-y-1/2 z-30 animate-float hidden sm:block"
-                style={{ animationDelay: '0.3s' }}
-              >
-                <div className="bg-card rounded-xl px-3 py-2 shadow-xl ring-1 ring-border/40 flex items-center gap-2">
-                  <div className="flex flex-col gap-0.5">
-                    <div className="w-4 h-0.5 bg-muted-foreground/40 rounded-full" />
-                    <div className="w-4 h-0.5 bg-muted-foreground/40 rounded-full" />
-                    <div className="w-4 h-0.5 bg-muted-foreground/40 rounded-full" />
-                  </div>
-                  <span className="text-[10px] font-medium text-foreground">Galerie</span>
-                </div>
-              </div>
-              
-              {/* Add Element Button - Right Side */}
-              <div 
-                className="absolute top-1/3 -right-2 sm:right-0 lg:right-8 z-30 animate-float"
-                style={{ animationDelay: '0.5s' }}
-              >
-                <div className="bg-card rounded-xl p-2.5 sm:p-3 shadow-xl ring-1 ring-border/40">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-1.5 sm:mb-2">
-                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                  </div>
-                  <p className="text-[9px] sm:text-[10px] font-medium text-foreground text-center">Ajouter</p>
-                </div>
-              </div>
-              
-              {/* Text Editing Tooltip - Bottom Left */}
-              <div 
-                className="absolute -bottom-4 sm:bottom-8 -left-2 sm:left-4 lg:left-16 z-30 animate-float"
-                style={{ animationDelay: '0.4s' }}
-              >
-                <div className="bg-foreground text-background rounded-xl px-3 py-2 shadow-xl flex items-center gap-2">
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                  </svg>
-                  <span className="text-[10px] sm:text-xs font-medium">Modifier le texte</span>
-                </div>
-              </div>
-              
-              {/* Toggle Switch - Bottom Right */}
-              <div 
-                className="absolute -bottom-2 sm:bottom-16 -right-2 sm:right-4 lg:right-16 z-30 animate-float"
-                style={{ animationDelay: '0.6s' }}
-              >
-                <div className="bg-card rounded-xl p-3 shadow-xl ring-1 ring-border/40 flex items-center gap-3">
-                  <span className="text-[10px] sm:text-xs font-medium text-foreground">Horaires</span>
-                  <div className="w-9 sm:w-10 h-5 sm:h-6 bg-emerald-500 rounded-full relative">
-                    <div className="absolute right-0.5 top-0.5 w-4 sm:w-5 h-4 sm:h-5 bg-white rounded-full shadow-sm" />
-                  </div>
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-primary/40 rounded-full animate-ping" />
                 </div>
               </div>
               
             </div>
+          </div>
+          
+          {/* Feature pills */}
+          <div className="opacity-0 animate-fade-in-up stagger-4 flex flex-wrap justify-center gap-3 mt-12 sm:mt-16">
+            {[
+              { icon: Palette, label: 'Couleurs' },
+              { icon: ImagePlus, label: 'Images' },
+              { icon: Tag, label: 'Formules' },
+              { icon: CalendarDays, label: 'Disponibilités' },
+              { icon: Link2, label: 'Liens' },
+              { icon: Type, label: 'Textes' },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-2 bg-card/80 backdrop-blur px-4 py-2 rounded-full border border-border/50 shadow-sm">
+                <item.icon className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium text-foreground">{item.label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
