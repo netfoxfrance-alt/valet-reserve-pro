@@ -342,288 +342,170 @@ export default function Index() {
       </section>
 
       {/* Section 1: Personnalisez votre page - Apple Style Visual */}
-      <section className="py-20 sm:py-32 px-4 sm:px-6 border-t border-border/30 overflow-hidden bg-gradient-to-b from-background via-secondary/20 to-background">
-        <div className="max-w-6xl mx-auto">
-          {/* Section Header - Centered */}
-          <div className="text-center mb-16 sm:mb-24">
-            <div className="flex items-center justify-center gap-2 text-primary mb-4 opacity-0 animate-fade-in-up">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-xs font-medium uppercase tracking-wider">Votre vitrine</span>
-            </div>
-            
-            <h2 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-6">
-              Personnalisez votre page<br />
-              <span className="bg-gradient-to-r from-emerald-500 via-primary to-emerald-400 bg-clip-text text-transparent">à l'image de votre entreprise</span>
+      <section className="py-24 sm:py-32 px-4 sm:px-6 border-t border-border/30 overflow-hidden">
+        <div className="max-w-5xl mx-auto">
+          {/* Section Header - Minimal Apple style */}
+          <div className="text-center mb-16 sm:mb-20">
+            <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+              Personnalisez votre page.
             </h2>
-            <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed">
-              Couleurs, images, formules, disponibilités... Tout est personnalisable en quelques clics.
+            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-base sm:text-lg max-w-md mx-auto">
+              Couleurs, formules, disponibilités. Tout est modifiable.
             </p>
           </div>
 
-          {/* Visual Composition - Apple Style */}
-          <div className="opacity-0 animate-fade-in-up stagger-3 relative">
-            {/* Main Container */}
-            <div className="relative max-w-5xl mx-auto">
+          {/* Visual Composition - Clean Apple Style */}
+          <div className="opacity-0 animate-fade-in-up stagger-2 relative">
+            <div className="relative max-w-4xl mx-auto">
               
-              {/* Central Page Preview - Premium Mockup */}
-              <div className="relative mx-auto w-[300px] sm:w-[340px] md:w-[380px]">
-                {/* Glow effect behind */}
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-primary/10 to-blue-500/20 blur-3xl scale-150 -z-10" />
-                
-                <div 
-                  className="bg-card rounded-[2.5rem] overflow-hidden shadow-2xl shadow-black/25 ring-1 ring-white/20"
-                  style={{ transform: 'perspective(1200px) rotateY(-3deg) rotateX(2deg)' }}
-                >
-                  {/* Banner with gradient */}
-                  <div className="h-24 sm:h-28 bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-600 relative overflow-hidden">
-                    {/* Sparkle pattern */}
-                    <div className="absolute inset-0 opacity-30">
-                      <div className="absolute top-4 left-8 w-2 h-2 bg-white rounded-full animate-pulse" />
-                      <div className="absolute top-8 right-12 w-1.5 h-1.5 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
-                      <div className="absolute bottom-6 left-16 w-1 h-1 bg-white rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
-                    </div>
-                    
-                    {/* Logo */}
-                    <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 z-20">
-                      <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-3xl shadow-2xl flex items-center justify-center ring-4 ring-white">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center">
-                          <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+              {/* Central Page Preview */}
+              <div className="relative mx-auto w-[280px] sm:w-[320px]">
+                <div className="bg-card rounded-[2rem] overflow-hidden shadow-xl ring-1 ring-border/30">
+                  {/* Banner */}
+                  <div className="h-20 sm:h-24 bg-gradient-to-br from-emerald-400 to-emerald-600 relative">
+                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 z-20">
+                      <div className="w-16 h-16 sm:w-18 sm:h-18 bg-white rounded-2xl shadow-lg flex items-center justify-center ring-2 ring-white">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                          <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="px-6 pt-14 pb-6 text-center">
-                    <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-1">Clean & Shine</h3>
-                    <p className="text-sm text-muted-foreground mb-4">Nettoyage auto premium</p>
+                  <div className="px-5 pt-12 pb-5 text-center">
+                    <h3 className="text-lg font-semibold text-foreground mb-0.5">Clean & Shine</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Nettoyage auto premium</p>
                     
-                    {/* Status + Rating */}
-                    <div className="flex justify-center items-center gap-4 mb-5">
-                      <span className="inline-flex items-center gap-1.5 text-xs bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-full font-medium">
-                        <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                    <div className="flex justify-center mb-4">
+                      <span className="inline-flex items-center gap-1.5 text-[10px] bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 rounded-full font-medium">
+                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
                         Ouvert
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                        4.9
                       </span>
                     </div>
                     
-                    {/* Social + Contact */}
-                    <div className="flex justify-center gap-2.5 mb-6">
-                      {[Instagram, Phone, MapPin, Clock].map((Icon, i) => (
-                        <div key={i} className="w-11 h-11 bg-secondary/60 hover:bg-secondary rounded-xl flex items-center justify-center transition-colors cursor-pointer">
-                          <Icon className="w-5 h-5 text-foreground" />
+                    {/* Icons row */}
+                    <div className="flex justify-center gap-2 mb-5">
+                      {[Instagram, Phone, MapPin].map((Icon, i) => (
+                        <div key={i} className="w-9 h-9 bg-secondary/50 rounded-lg flex items-center justify-center">
+                          <Icon className="w-4 h-4 text-foreground" />
                         </div>
                       ))}
                     </div>
                     
-                    {/* Service cards - Grid */}
-                    <div className="grid grid-cols-2 gap-3 mb-6">
-                      <div className="bg-gradient-to-br from-secondary/60 to-secondary/30 rounded-2xl p-4 text-left border border-border/30">
-                        <div className="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center mb-2">
-                          <Zap className="w-4 h-4 text-emerald-600" />
-                        </div>
-                        <p className="text-sm font-semibold text-foreground">Express</p>
-                        <p className="text-xs text-muted-foreground mb-1">30 min</p>
-                        <p className="text-lg font-bold text-primary">35€</p>
+                    {/* Services */}
+                    <div className="grid grid-cols-2 gap-2 mb-4">
+                      <div className="bg-secondary/40 rounded-xl p-3 text-left">
+                        <p className="text-xs font-medium text-foreground">Express</p>
+                        <p className="text-sm font-semibold text-primary">35€</p>
                       </div>
-                      <div className="bg-gradient-to-br from-secondary/60 to-secondary/30 rounded-2xl p-4 text-left border border-border/30">
-                        <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center mb-2">
-                          <Crown className="w-4 h-4 text-blue-600" />
-                        </div>
-                        <p className="text-sm font-semibold text-foreground">Premium</p>
-                        <p className="text-xs text-muted-foreground mb-1">2h</p>
-                        <p className="text-lg font-bold text-primary">129€</p>
+                      <div className="bg-secondary/40 rounded-xl p-3 text-left">
+                        <p className="text-xs font-medium text-foreground">Premium</p>
+                        <p className="text-sm font-semibold text-primary">129€</p>
                       </div>
                     </div>
                     
-                    {/* Gallery preview */}
-                    <div className="flex gap-2 mb-6 overflow-hidden rounded-xl">
-                      <div className="flex-1 h-16 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 rounded-lg" />
-                      <div className="flex-1 h-16 bg-gradient-to-br from-slate-300 to-slate-200 dark:from-slate-600 dark:to-slate-700 rounded-lg" />
-                      <div className="flex-1 h-16 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 rounded-lg" />
-                    </div>
-                    
-                    {/* CTA */}
-                    <button className="w-full bg-foreground text-background py-4 rounded-2xl text-sm font-semibold shadow-lg">
-                      Réserver maintenant
+                    <button className="w-full bg-foreground text-background py-3 rounded-xl text-sm font-medium">
+                      Réserver
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Floating UI Elements - The "magic" customization tools */}
+              {/* Floating Elements - Minimal & Elegant */}
               
-              {/* Color Palette - Top Left */}
+              {/* Colors - Top Left */}
               <div 
-                className="absolute -top-2 sm:top-8 left-0 sm:left-4 lg:left-20 z-30 animate-float"
+                className="absolute top-4 sm:top-8 left-0 sm:left-8 lg:left-16 z-30 animate-float"
                 style={{ animationDelay: '0s' }}
               >
-                <div className="bg-card/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl ring-1 ring-border/50">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Palette className="w-4 h-4 text-muted-foreground" />
-                    <p className="text-xs font-medium text-foreground">Couleurs</p>
-                  </div>
-                  <div className="flex gap-2">
-                    {[
-                      { bg: 'bg-emerald-500', ring: true },
-                      { bg: 'bg-blue-500' },
-                      { bg: 'bg-purple-500' },
-                      { bg: 'bg-orange-500' },
-                      { bg: 'bg-pink-500' },
-                    ].map((color, i) => (
-                      <div 
-                        key={i} 
-                        className={`w-8 h-8 ${color.bg} rounded-full cursor-pointer transition-all hover:scale-110 ${color.ring ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''}`}
-                      />
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/40">
+                  <div className="flex gap-1.5">
+                    {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500', 'bg-orange-500'].map((bg, i) => (
+                      <div key={i} className={`w-6 h-6 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-1 ring-offset-card' : ''}`} />
                     ))}
                   </div>
                 </div>
               </div>
               
-              {/* Image Upload - Top Right */}
+              {/* Banner upload - Top Right */}
               <div 
-                className="absolute top-0 sm:top-4 right-0 sm:right-4 lg:right-16 z-30 animate-float"
-                style={{ animationDelay: '0.15s' }}
+                className="absolute top-2 sm:top-6 right-0 sm:right-8 lg:right-20 z-30 animate-float"
+                style={{ animationDelay: '0.2s' }}
               >
-                <div className="bg-card/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl ring-1 ring-border/50">
-                  <div className="flex items-center gap-2 mb-3">
-                    <ImagePlus className="w-4 h-4 text-muted-foreground" />
-                    <p className="text-xs font-medium text-foreground">Bannière</p>
-                  </div>
-                  <div className="w-24 h-14 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center">
-                    <Upload className="w-5 h-5 text-white/80" />
+                <div className="bg-card rounded-xl p-2.5 shadow-lg ring-1 ring-border/40">
+                  <div className="w-20 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center">
+                    <ImagePlus className="w-4 h-4 text-white/90" />
                   </div>
                 </div>
               </div>
               
-              {/* Formules Editor - Left Side */}
+              {/* Calendar - Left Middle */}
               <div 
-                className="absolute top-1/3 -left-2 sm:left-0 lg:left-8 z-30 animate-float hidden sm:block"
+                className="absolute top-1/2 -translate-y-1/2 -left-2 sm:left-0 lg:left-4 z-30 animate-float hidden sm:block"
                 style={{ animationDelay: '0.3s' }}
               >
-                <div className="bg-card/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl ring-1 ring-border/50 w-48">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Tag className="w-4 h-4 text-muted-foreground" />
-                    <p className="text-xs font-medium text-foreground">Vos formules</p>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between bg-secondary/50 rounded-lg px-3 py-2">
-                      <span className="text-xs font-medium">Express</span>
-                      <span className="text-xs text-primary font-bold">35€</span>
-                    </div>
-                    <div className="flex items-center justify-between bg-secondary/50 rounded-lg px-3 py-2">
-                      <span className="text-xs font-medium">Premium</span>
-                      <span className="text-xs text-primary font-bold">129€</span>
-                    </div>
-                    <button className="w-full text-[10px] text-primary font-medium py-1.5 border border-dashed border-primary/40 rounded-lg">
-                      + Ajouter une formule
-                    </button>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Availability Calendar - Right Side */}
-              <div 
-                className="absolute top-1/3 -right-2 sm:right-0 lg:right-4 z-30 animate-float hidden sm:block"
-                style={{ animationDelay: '0.4s' }}
-              >
-                <div className="bg-card/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl ring-1 ring-border/50">
-                  <div className="flex items-center gap-2 mb-3">
-                    <CalendarDays className="w-4 h-4 text-muted-foreground" />
-                    <p className="text-xs font-medium text-foreground">Disponibilités</p>
-                  </div>
-                  <div className="grid grid-cols-7 gap-1 text-center">
-                    {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
-                      <span key={i} className="text-[9px] text-muted-foreground font-medium">{d}</span>
-                    ))}
-                    {[1, 2, 3, 4, 5, 6, 7].map((d) => (
-                      <div 
-                        key={d} 
-                        className={`w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-medium ${d <= 5 ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : 'bg-secondary/50 text-muted-foreground'}`}
-                      >
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/40">
+                  <div className="grid grid-cols-5 gap-1">
+                    {['L', 'M', 'M', 'J', 'V'].map((d, i) => (
+                      <div key={i} className={`w-5 h-5 rounded text-[9px] font-medium flex items-center justify-center ${i < 4 ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : 'bg-secondary/50 text-muted-foreground'}`}>
                         {d}
                       </div>
                     ))}
                   </div>
-                  <p className="text-[9px] text-muted-foreground text-center mt-2">9h - 19h</p>
                 </div>
               </div>
               
-              {/* Add Content Block - Bottom Left */}
+              {/* Formulas - Right Middle */}
               <div 
-                className="absolute -bottom-4 sm:bottom-4 left-2 sm:left-8 lg:left-24 z-30 animate-float"
+                className="absolute top-1/2 -translate-y-1/2 -right-2 sm:right-0 lg:right-4 z-30 animate-float hidden sm:block"
+                style={{ animationDelay: '0.4s' }}
+              >
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/40 w-36">
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-[10px]">
+                      <span className="text-foreground font-medium">Express</span>
+                      <span className="text-primary font-semibold">35€</span>
+                    </div>
+                    <div className="flex justify-between text-[10px]">
+                      <span className="text-foreground font-medium">Premium</span>
+                      <span className="text-primary font-semibold">129€</span>
+                    </div>
+                    <div className="text-[9px] text-primary/70 text-center pt-1 border-t border-dashed border-border/50">
+                      + Ajouter
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Add block - Bottom Left */}
+              <div 
+                className="absolute bottom-0 sm:bottom-8 left-4 sm:left-12 lg:left-20 z-30 animate-float"
                 style={{ animationDelay: '0.5s' }}
               >
-                <div className="bg-card/95 backdrop-blur-xl rounded-2xl p-3 shadow-2xl ring-1 ring-border/50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl flex items-center justify-center">
-                      <Plus className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-foreground">Ajouter un bloc</p>
-                      <p className="text-[10px] text-muted-foreground">Texte, galerie, liens...</p>
-                    </div>
+                <div className="bg-card rounded-xl px-3 py-2 shadow-lg ring-1 ring-border/40 flex items-center gap-2">
+                  <div className="w-6 h-6 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Plus className="w-3.5 h-3.5 text-primary" />
                   </div>
+                  <span className="text-[10px] font-medium text-foreground">Ajouter</span>
                 </div>
               </div>
               
-              {/* Social Links - Bottom Right */}
+              {/* Links - Bottom Right */}
               <div 
-                className="absolute -bottom-6 sm:bottom-0 right-2 sm:right-8 lg:right-20 z-30 animate-float"
+                className="absolute bottom-0 sm:bottom-8 right-4 sm:right-12 lg:right-20 z-30 animate-float"
                 style={{ animationDelay: '0.6s' }}
               >
-                <div className="bg-card/95 backdrop-blur-xl rounded-2xl p-3 shadow-2xl ring-1 ring-border/50">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Link2 className="w-3 h-3 text-muted-foreground" />
-                    <p className="text-[10px] font-medium text-foreground">Vos liens</p>
+                <div className="bg-card rounded-xl p-2.5 shadow-lg ring-1 ring-border/40 flex gap-1.5">
+                  <div className="w-7 h-7 bg-gradient-to-br from-pink-500 to-orange-500 rounded-lg flex items-center justify-center">
+                    <Instagram className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <div className="flex gap-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-orange-500 rounded-lg flex items-center justify-center">
-                      <Instagram className="w-4 h-4 text-white" />
-                    </div>
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-500 rounded-lg flex items-center justify-center">
-                      <Facebook className="w-4 h-4 text-white" />
-                    </div>
-                    <div className="w-8 h-8 bg-gradient-to-br from-foreground to-foreground/80 rounded-lg flex items-center justify-center">
-                      <Globe className="w-4 h-4 text-background" />
-                    </div>
+                  <div className="w-7 h-7 bg-foreground rounded-lg flex items-center justify-center">
+                    <Globe className="w-3.5 h-3.5 text-background" />
                   </div>
-                </div>
-              </div>
-              
-              {/* Cursor with action hint */}
-              <div 
-                className="absolute top-16 right-20 sm:right-32 z-40 hidden lg:block"
-                style={{ animationDelay: '0.2s' }}
-              >
-                <div className="relative">
-                  <svg className="w-7 h-7 text-foreground drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M4 4l16 8-8 3-3 8-5-19z"/>
-                  </svg>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-primary/40 rounded-full animate-ping" />
                 </div>
               </div>
               
             </div>
-          </div>
-          
-          {/* Feature pills */}
-          <div className="opacity-0 animate-fade-in-up stagger-4 flex flex-wrap justify-center gap-3 mt-12 sm:mt-16">
-            {[
-              { icon: Palette, label: 'Couleurs' },
-              { icon: ImagePlus, label: 'Images' },
-              { icon: Tag, label: 'Formules' },
-              { icon: CalendarDays, label: 'Disponibilités' },
-              { icon: Link2, label: 'Liens' },
-              { icon: Type, label: 'Textes' },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-2 bg-card/80 backdrop-blur px-4 py-2 rounded-full border border-border/50 shadow-sm">
-                <item.icon className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-foreground">{item.label}</span>
-              </div>
-            ))}
           </div>
         </div>
       </section>
