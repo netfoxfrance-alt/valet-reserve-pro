@@ -165,10 +165,10 @@ export default function Index() {
 
             {/* Right: Main Page Card + Stats Widgets - Linktree Style */}
             <div className="flex justify-center lg:justify-end mt-8 lg:mt-0">
-              <div className="relative w-[320px] sm:w-[420px] md:w-[520px] h-[480px] sm:h-[540px] md:h-[600px]">
+              <div className="relative w-[280px] sm:w-[420px] md:w-[520px] h-auto sm:h-[540px] md:h-[600px]">
                 
                 {/* Main Page Card - Full CleaningPage profile like the reference */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
+                <div className="relative sm:absolute sm:top-4 sm:left-1/2 sm:-translate-x-1/2 z-20 flex justify-center">
                   <div 
                     className="bg-card rounded-[2rem] overflow-hidden w-[250px] sm:w-[270px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
                     style={{ transform: 'rotate(-3deg)' }}
@@ -263,8 +263,8 @@ export default function Index() {
                   </div>
                 </div>
                 
-                {/* Widget: Revenue Stats - Top Right */}
-                <div className="absolute top-2 right-4 sm:right-10 z-10">
+                {/* Widget: Revenue Stats - Top Right - Hidden on mobile */}
+                <div className="hidden sm:block absolute top-2 right-4 sm:right-10 z-10">
                   <div 
                     className="bg-card rounded-2xl p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
                     style={{ transform: 'rotate(5deg)' }}
@@ -281,8 +281,8 @@ export default function Index() {
                   </div>
                 </div>
                 
-                {/* Widget: Reservations Stats - Bottom Left */}
-                <div className="absolute bottom-20 sm:bottom-24 -left-2 sm:left-6 z-10">
+                {/* Widget: Reservations Stats - Bottom Left - Hidden on mobile */}
+                <div className="hidden sm:block absolute bottom-20 sm:bottom-24 -left-2 sm:left-6 z-10">
                   <div 
                     className="bg-card rounded-2xl p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
                     style={{ transform: 'rotate(-7deg)' }}
@@ -299,8 +299,8 @@ export default function Index() {
                   </div>
                 </div>
                 
-                {/* Widget: Views Stats - Bottom Right */}
-                <div className="absolute bottom-8 sm:bottom-12 right-2 sm:right-12 z-10">
+                {/* Widget: Views Stats - Bottom Right - Hidden on mobile */}
+                <div className="hidden sm:block absolute bottom-8 sm:bottom-12 right-2 sm:right-12 z-10">
                   <div 
                     className="bg-card rounded-2xl p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
                     style={{ transform: 'rotate(4deg)' }}
@@ -317,8 +317,8 @@ export default function Index() {
                   </div>
                 </div>
                 
-                {/* Widget: Rating - Top Left */}
-                <div className="absolute top-16 sm:top-20 -left-1 sm:left-4 z-10">
+                {/* Widget: Rating - Top Left - Hidden on mobile */}
+                <div className="hidden sm:block absolute top-16 sm:top-20 -left-1 sm:left-4 z-10">
                   <div 
                     className="bg-card rounded-xl px-3 py-2.5 shadow-lg shadow-black/10 ring-1 ring-border/30"
                     style={{ transform: 'rotate(-4deg)' }}
