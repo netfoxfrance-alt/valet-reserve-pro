@@ -344,27 +344,27 @@ export default function Index() {
       </section>
 
       {/* Section 1: Personnalisez votre page - Apple Style Visual */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 border-t border-border/30 overflow-hidden">
+      <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 border-t border-border/30 overflow-hidden">
         <div className="max-w-6xl mx-auto">
           {/* Section Header - Minimal Apple style */}
-          <div className="text-center mb-16 sm:mb-20">
-            <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+          <div className="text-center mb-10 sm:mb-16 lg:mb-20">
+            <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4">
               Personnalisez votre page.
             </h2>
-            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-base sm:text-lg max-w-md mx-auto">
+            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base lg:text-lg max-w-md mx-auto">
               Couleurs, formules, disponibilités. Tout est modifiable.
             </p>
           </div>
 
           {/* Visual Composition - Premium Mockup */}
-          <div className="opacity-0 animate-fade-in-up stagger-2 relative">
-            <div className="relative max-w-5xl mx-auto">
-              
-              {/* Central Page Preview - Premium & Complete */}
-              <div className="relative mx-auto w-[300px] sm:w-[340px]">
-                <div className="bg-card rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
+          <div className="opacity-0 animate-fade-in-up stagger-2">
+            {/* Mobile Layout */}
+            <div className="sm:hidden">
+              {/* Central Page Preview - Mobile */}
+              <div className="relative mx-auto w-[280px] mb-8">
+                <div className="bg-card rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
                   {/* Banner with real car cleaning image */}
-                  <div className="h-28 sm:h-32 relative overflow-hidden rounded-t-[2.5rem]">
+                  <div className="h-24 relative overflow-hidden rounded-t-[2rem]">
                     <img 
                       src={mockupCarCleaning} 
                       alt="Nettoyage automobile professionnel" 
@@ -373,9 +373,9 @@ export default function Index() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                   </div>
                   
-                  {/* Logo - Prominent, outside banner */}
-                  <div className="flex justify-center -mt-12 relative z-30 mb-4">
-                    <div className="w-24 h-24 bg-white rounded-2xl shadow-2xl flex items-center justify-center ring-4 ring-white overflow-hidden">
+                  {/* Logo - Prominent */}
+                  <div className="flex justify-center -mt-10 relative z-30 mb-3">
+                    <div className="w-20 h-20 bg-white rounded-2xl shadow-2xl flex items-center justify-center ring-4 ring-white overflow-hidden">
                       <img 
                         src={mockupLogoClean} 
                         alt="Clean Premium logo" 
@@ -384,189 +384,328 @@ export default function Index() {
                     </div>
                   </div>
                   
-                  <div className="px-6 pb-6 text-center">
-                    <h3 className="text-xl font-bold text-foreground mb-1">Clean Premium</h3>
-                    <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+                  <div className="px-5 pb-5 text-center">
+                    <h3 className="text-lg font-bold text-foreground mb-1">Clean Premium</h3>
+                    <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
                       Nettoyage premium à domicile, 7j/7.
                     </p>
                     
                     {/* Open badge */}
-                    <div className="flex justify-center mb-5">
-                      <span className="inline-flex items-center gap-2 text-xs bg-white dark:bg-card border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 px-4 py-1.5 rounded-full font-medium shadow-sm">
-                        <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                    <div className="flex justify-center mb-4">
+                      <span className="inline-flex items-center gap-1.5 text-[10px] bg-white dark:bg-card border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full font-medium shadow-sm">
+                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                         Ouvert
                       </span>
                     </div>
                     
                     {/* Social icons row */}
-                    <div className="flex justify-center gap-3 mb-6">
-                      {[
-                        { icon: Instagram, style: 'border-2 border-foreground/20' },
-                        { icon: null, isTiktok: true, style: 'border-2 border-foreground/20' },
-                        { icon: Facebook, style: 'border-2 border-foreground/20' },
-                        { icon: Mail, style: 'border-2 border-foreground/20' },
-                      ].map((item, i) => (
-                        <div key={i} className={`w-11 h-11 rounded-full flex items-center justify-center bg-card ${item.style}`}>
-                          {item.isTiktok ? (
-                            <svg className="w-5 h-5 text-foreground" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                            </svg>
-                          ) : item.icon && (
-                            <item.icon className="w-5 h-5 text-foreground" />
-                          )}
+                    <div className="flex justify-center gap-2 mb-4">
+                      {[Instagram, Facebook, Mail].map((Icon, i) => (
+                        <div key={i} className="w-9 h-9 rounded-full flex items-center justify-center bg-card border-2 border-foreground/20">
+                          <Icon className="w-4 h-4 text-foreground" />
                         </div>
                       ))}
                     </div>
                     
-                    {/* Contact info - Simplified */}
-                    <div className="space-y-3 mb-6 text-left">
-                      <div className="flex items-center gap-3 text-sm text-foreground">
-                        <Phone className="w-4 h-4 text-muted-foreground" />
-                        <span>06 12 34 56 78</span>
+                    {/* Formules section */}
+                    <div className="text-left mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-sm font-semibold text-foreground">Nos formules</h4>
+                        <span className="text-[10px] text-primary font-medium">Voir tout →</span>
                       </div>
-                      <div className="flex items-center gap-3 text-sm text-primary">
-                        <Droplets className="w-4 h-4 text-primary" />
-                        <span className="font-medium">Voir nos produits utilisés →</span>
-                      </div>
-                    </div>
-                    
-                    {/* Formules section - "Voir toutes" style */}
-                    <div className="text-left mb-5">
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-base font-semibold text-foreground">Nos formules</h4>
-                        <span className="text-xs text-primary font-medium">Voir tout →</span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-card border border-border/60 rounded-xl p-4">
-                          <p className="text-sm font-semibold text-foreground mb-1">Express</p>
-                          <p className="text-lg font-bold text-muted-foreground">35€</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-card border border-border/60 rounded-lg p-3">
+                          <p className="text-xs font-semibold text-foreground mb-0.5">Express</p>
+                          <p className="text-base font-bold text-muted-foreground">35€</p>
                         </div>
-                        <div className="bg-card border border-border/60 rounded-xl p-4">
-                          <p className="text-sm font-semibold text-foreground mb-1">Complet</p>
-                          <p className="text-lg font-bold text-muted-foreground">89€</p>
+                        <div className="bg-card border border-border/60 rounded-lg p-3">
+                          <p className="text-xs font-semibold text-foreground mb-0.5">Complet</p>
+                          <p className="text-base font-bold text-muted-foreground">89€</p>
                         </div>
                       </div>
                     </div>
                     
                     {/* CTA Button */}
-                    <button className="w-full bg-neutral-800 dark:bg-neutral-700 text-white py-4 rounded-2xl text-base font-semibold shadow-lg">
+                    <button className="w-full bg-neutral-800 dark:bg-neutral-700 text-white py-3 rounded-xl text-sm font-semibold shadow-lg">
                       Réserver maintenant
                     </button>
                   </div>
                 </div>
               </div>
-
-              {/* Floating Elements - Subtle & Premium */}
               
-              {/* Colors palette with color picker - Top Left */}
-              <div 
-                className="absolute top-8 sm:top-16 left-0 sm:left-4 lg:left-12 z-30 animate-float"
-                style={{ animationDelay: '0s' }}
-              >
-                <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
-                  <p className="text-[10px] text-muted-foreground mb-2 font-medium">Couleurs</p>
-                  <div className="flex gap-2">
+              {/* Mobile Widgets Grid */}
+              <div className="grid grid-cols-2 gap-3 max-w-[280px] mx-auto">
+                {/* Colors */}
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30">
+                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Couleurs</p>
+                  <div className="flex gap-1.5">
                     {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500'].map((bg, i) => (
-                      <div key={i} className={`w-7 h-7 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''} shadow-sm`} />
+                      <div key={i} className={`w-5 h-5 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-1 ring-offset-card' : ''}`} />
                     ))}
-                    {/* Color picker button */}
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 shadow-sm flex items-center justify-center">
-                      <Plus className="w-3.5 h-3.5 text-white drop-shadow-md" />
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-red-500 via-green-500 to-purple-500 flex items-center justify-center">
+                      <Plus className="w-2.5 h-2.5 text-white" />
                     </div>
                   </div>
                 </div>
-              </div>
-              
-              {/* Calendar / Availability with hours - Top Right */}
-              <div 
-                className="absolute top-4 sm:top-12 right-0 sm:right-4 lg:right-12 z-30 animate-float"
-                style={{ animationDelay: '0.15s' }}
-              >
-                <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
-                  <p className="text-[10px] text-muted-foreground mb-2 font-medium">Disponibilités</p>
-                  <div className="space-y-1.5">
+                
+                {/* Disponibilités */}
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30">
+                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Disponibilités</p>
+                  <div className="space-y-1">
                     {[
                       { day: 'Lun', hours: '9h-18h', active: true },
-                      { day: 'Mar', hours: '9h-18h', active: true },
-                      { day: 'Mer', hours: '14h-18h', active: true },
                       { day: 'Sam', hours: 'Fermé', active: false },
                     ].map((d, i) => (
-                      <div key={i} className="flex items-center gap-2">
-                        <span className="text-[9px] w-6 text-muted-foreground">{d.day}</span>
-                        <span className={`text-[9px] w-12 ${d.active ? 'text-foreground' : 'text-muted-foreground'}`}>{d.hours}</span>
-                        <div className={`w-6 h-3 rounded-full ${d.active ? 'bg-emerald-500' : 'bg-secondary'} relative transition-colors`}>
-                          <div className={`absolute w-2 h-2 bg-white rounded-full top-0.5 shadow-sm transition-all ${d.active ? 'right-0.5' : 'left-0.5'}`} />
-                        </div>
+                      <div key={i} className="flex items-center gap-1">
+                        <span className="text-[8px] w-5 text-muted-foreground">{d.day}</span>
+                        <span className={`text-[8px] flex-1 ${d.active ? 'text-foreground' : 'text-muted-foreground'}`}>{d.hours}</span>
+                        <div className={`w-5 h-2.5 rounded-full ${d.active ? 'bg-emerald-500' : 'bg-secondary'}`} />
                       </div>
                     ))}
                   </div>
                 </div>
-              </div>
-              
-              {/* Formulas editor - Left Middle */}
-              <div 
-                className="absolute top-1/2 -translate-y-1/2 -left-4 sm:left-0 lg:left-4 z-30 animate-float hidden sm:block"
-                style={{ animationDelay: '0.25s' }}
-              >
-                <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm w-40">
-                  <p className="text-[10px] text-muted-foreground mb-2 font-medium">Formules</p>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-foreground font-medium">Express</span>
-                      <span className="text-primary font-bold">35€</span>
-                    </div>
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-foreground font-medium">Complet</span>
-                      <span className="text-primary font-bold">89€</span>
-                    </div>
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-foreground font-medium">Premium</span>
-                      <span className="text-primary font-bold">129€</span>
-                    </div>
-                    <button className="w-full text-[10px] text-primary font-medium py-1.5 border border-dashed border-primary/40 rounded-lg mt-1 hover:bg-primary/5 transition-colors">
-                      + Ajouter
-                    </button>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Text block - Bottom Left */}
-              <div 
-                className="absolute bottom-4 sm:bottom-12 left-2 sm:left-8 lg:left-16 z-30 animate-float"
-                style={{ animationDelay: '0.4s' }}
-              >
-                <div className="bg-card rounded-2xl px-4 py-3 shadow-xl ring-1 ring-border/30 backdrop-blur-sm flex items-center gap-3">
-                  <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center">
-                    <Type className="w-4 h-4 text-primary" />
+                
+                {/* Texte */}
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30 flex items-center gap-2">
+                  <div className="w-6 h-6 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Type className="w-3 h-3 text-primary" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-muted-foreground">Texte</p>
-                    <p className="text-xs font-medium text-foreground">Ajouter du contenu</p>
+                    <p className="text-[9px] text-muted-foreground">Texte</p>
+                    <p className="text-[10px] font-medium text-foreground">Ajouter</p>
                   </div>
                 </div>
-              </div>
-              
-              {/* Images/Gallery - Bottom Right */}
-              <div 
-                className="absolute bottom-4 sm:bottom-12 right-2 sm:right-8 lg:right-16 z-30 animate-float"
-                style={{ animationDelay: '0.5s' }}
-              >
-                <div className="bg-card rounded-2xl p-3 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
-                  <p className="text-[10px] text-muted-foreground mb-2 font-medium">Galerie</p>
-                  <div className="flex gap-1.5">
-                    <div className="w-10 h-10 bg-secondary rounded-lg overflow-hidden">
+                
+                {/* Galerie */}
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30">
+                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Galerie</p>
+                  <div className="flex gap-1">
+                    <div className="w-7 h-7 bg-secondary rounded overflow-hidden">
                       <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
                     </div>
-                    <div className="w-10 h-10 bg-secondary rounded-lg overflow-hidden">
+                    <div className="w-7 h-7 bg-secondary rounded overflow-hidden">
                       <img src={sofaBanner} alt="" className="w-full h-full object-cover" />
                     </div>
-                    <div className="w-10 h-10 bg-secondary/60 rounded-lg flex items-center justify-center border-2 border-dashed border-border">
-                      <Plus className="w-4 h-4 text-muted-foreground" />
+                    <div className="w-7 h-7 bg-secondary/60 rounded flex items-center justify-center border border-dashed border-border">
+                      <Plus className="w-3 h-3 text-muted-foreground" />
                     </div>
                   </div>
                 </div>
               </div>
-              
+            </div>
+            
+            {/* Desktop Layout */}
+            <div className="hidden sm:block relative">
+              <div className="relative max-w-5xl mx-auto">
+                
+                {/* Central Page Preview - Premium & Complete */}
+                <div className="relative mx-auto w-[320px] lg:w-[340px]">
+                  <div className="bg-card rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
+                    {/* Banner with real car cleaning image */}
+                    <div className="h-28 lg:h-32 relative overflow-hidden rounded-t-[2.5rem]">
+                      <img 
+                        src={mockupCarCleaning} 
+                        alt="Nettoyage automobile professionnel" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                    </div>
+                    
+                    {/* Logo - Prominent, outside banner */}
+                    <div className="flex justify-center -mt-12 relative z-30 mb-4">
+                      <div className="w-24 h-24 bg-white rounded-2xl shadow-2xl flex items-center justify-center ring-4 ring-white overflow-hidden">
+                        <img 
+                          src={mockupLogoClean} 
+                          alt="Clean Premium logo" 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="px-6 pb-6 text-center">
+                      <h3 className="text-xl font-bold text-foreground mb-1">Clean Premium</h3>
+                      <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+                        Nettoyage premium à domicile, 7j/7.
+                      </p>
+                      
+                      {/* Open badge */}
+                      <div className="flex justify-center mb-5">
+                        <span className="inline-flex items-center gap-2 text-xs bg-white dark:bg-card border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 px-4 py-1.5 rounded-full font-medium shadow-sm">
+                          <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                          Ouvert
+                        </span>
+                      </div>
+                      
+                      {/* Social icons row */}
+                      <div className="flex justify-center gap-3 mb-6">
+                        {[
+                          { icon: Instagram, style: 'border-2 border-foreground/20' },
+                          { icon: null, isTiktok: true, style: 'border-2 border-foreground/20' },
+                          { icon: Facebook, style: 'border-2 border-foreground/20' },
+                          { icon: Mail, style: 'border-2 border-foreground/20' },
+                        ].map((item, i) => (
+                          <div key={i} className={`w-11 h-11 rounded-full flex items-center justify-center bg-card ${item.style}`}>
+                            {item.isTiktok ? (
+                              <svg className="w-5 h-5 text-foreground" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                              </svg>
+                            ) : item.icon && (
+                              <item.icon className="w-5 h-5 text-foreground" />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Contact info - Simplified */}
+                      <div className="space-y-3 mb-6 text-left">
+                        <div className="flex items-center gap-3 text-sm text-foreground">
+                          <Phone className="w-4 h-4 text-muted-foreground" />
+                          <span>06 12 34 56 78</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-primary">
+                          <Droplets className="w-4 h-4 text-primary" />
+                          <span className="font-medium">Voir nos produits utilisés →</span>
+                        </div>
+                      </div>
+                      
+                      {/* Formules section - "Voir toutes" style */}
+                      <div className="text-left mb-5">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="text-base font-semibold text-foreground">Nos formules</h4>
+                          <span className="text-xs text-primary font-medium">Voir tout →</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="bg-card border border-border/60 rounded-xl p-4">
+                            <p className="text-sm font-semibold text-foreground mb-1">Express</p>
+                            <p className="text-lg font-bold text-muted-foreground">35€</p>
+                          </div>
+                          <div className="bg-card border border-border/60 rounded-xl p-4">
+                            <p className="text-sm font-semibold text-foreground mb-1">Complet</p>
+                            <p className="text-lg font-bold text-muted-foreground">89€</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* CTA Button */}
+                      <button className="w-full bg-neutral-800 dark:bg-neutral-700 text-white py-4 rounded-2xl text-base font-semibold shadow-lg">
+                        Réserver maintenant
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating Elements - Desktop only */}
+                
+                {/* Colors palette with color picker - Top Left */}
+                <div 
+                  className="absolute top-12 lg:top-16 left-4 lg:left-12 z-30 animate-float"
+                  style={{ animationDelay: '0s' }}
+                >
+                  <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">Couleurs</p>
+                    <div className="flex gap-2">
+                      {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500'].map((bg, i) => (
+                        <div key={i} className={`w-7 h-7 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''} shadow-sm`} />
+                      ))}
+                      {/* Color picker button */}
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 shadow-sm flex items-center justify-center">
+                        <Plus className="w-3.5 h-3.5 text-white drop-shadow-md" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Calendar / Availability with hours - Top Right */}
+                <div 
+                  className="absolute top-8 lg:top-12 right-4 lg:right-12 z-30 animate-float"
+                  style={{ animationDelay: '0.15s' }}
+                >
+                  <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">Disponibilités</p>
+                    <div className="space-y-1.5">
+                      {[
+                        { day: 'Lun', hours: '9h-18h', active: true },
+                        { day: 'Mar', hours: '9h-18h', active: true },
+                        { day: 'Mer', hours: '14h-18h', active: true },
+                        { day: 'Sam', hours: 'Fermé', active: false },
+                      ].map((d, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <span className="text-[9px] w-6 text-muted-foreground">{d.day}</span>
+                          <span className={`text-[9px] w-12 ${d.active ? 'text-foreground' : 'text-muted-foreground'}`}>{d.hours}</span>
+                          <div className={`w-6 h-3 rounded-full ${d.active ? 'bg-emerald-500' : 'bg-secondary'} relative transition-colors`}>
+                            <div className={`absolute w-2 h-2 bg-white rounded-full top-0.5 shadow-sm transition-all ${d.active ? 'right-0.5' : 'left-0.5'}`} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Formulas editor - Left Middle */}
+                <div 
+                  className="absolute top-1/2 -translate-y-1/2 left-0 lg:left-4 z-30 animate-float hidden lg:block"
+                  style={{ animationDelay: '0.25s' }}
+                >
+                  <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm w-40">
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">Formules</p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-foreground font-medium">Express</span>
+                        <span className="text-primary font-bold">35€</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-foreground font-medium">Complet</span>
+                        <span className="text-primary font-bold">89€</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-foreground font-medium">Premium</span>
+                        <span className="text-primary font-bold">129€</span>
+                      </div>
+                      <button className="w-full text-[10px] text-primary font-medium py-1.5 border border-dashed border-primary/40 rounded-lg mt-1 hover:bg-primary/5 transition-colors">
+                        + Ajouter
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Text block - Bottom Left */}
+                <div 
+                  className="absolute bottom-8 lg:bottom-12 left-8 lg:left-16 z-30 animate-float"
+                  style={{ animationDelay: '0.4s' }}
+                >
+                  <div className="bg-card rounded-2xl px-4 py-3 shadow-xl ring-1 ring-border/30 backdrop-blur-sm flex items-center gap-3">
+                    <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center">
+                      <Type className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-muted-foreground">Texte</p>
+                      <p className="text-xs font-medium text-foreground">Ajouter du contenu</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Images/Gallery - Bottom Right */}
+                <div 
+                  className="absolute bottom-8 lg:bottom-12 right-8 lg:right-16 z-30 animate-float"
+                  style={{ animationDelay: '0.5s' }}
+                >
+                  <div className="bg-card rounded-2xl p-3 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">Galerie</p>
+                    <div className="flex gap-1.5">
+                      <div className="w-10 h-10 bg-secondary rounded-lg overflow-hidden">
+                        <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="w-10 h-10 bg-secondary rounded-lg overflow-hidden">
+                        <img src={sofaBanner} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="w-10 h-10 bg-secondary/60 rounded-lg flex items-center justify-center border-2 border-dashed border-border">
+                        <Plus className="w-4 h-4 text-muted-foreground" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+              </div>
             </div>
           </div>
         </div>
