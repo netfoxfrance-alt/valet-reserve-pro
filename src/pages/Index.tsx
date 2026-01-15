@@ -165,10 +165,10 @@ export default function Index() {
 
             {/* Right: Main Page Card + Stats Widgets - Linktree Style */}
             <div className="flex justify-center lg:justify-end mt-8 lg:mt-0">
-              <div className="relative w-[280px] sm:w-[420px] md:w-[520px] h-auto sm:h-[540px] md:h-[600px]">
+              <div className="relative w-[340px] sm:w-[420px] md:w-[520px] h-[580px] sm:h-[540px] md:h-[600px]">
                 
                 {/* Main Page Card - Full CleaningPage profile like the reference */}
-                <div className="relative sm:absolute sm:top-4 sm:left-1/2 sm:-translate-x-1/2 z-20 flex justify-center">
+                <div className="absolute top-8 sm:top-4 left-1/2 -translate-x-1/2 z-20">
                   <div 
                     className="bg-card rounded-[2rem] overflow-hidden w-[250px] sm:w-[270px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
                     style={{ transform: 'rotate(-3deg)' }}
@@ -263,71 +263,71 @@ export default function Index() {
                   </div>
                 </div>
                 
-                {/* Widget: Revenue Stats - Top Right - Hidden on mobile */}
-                <div className="hidden sm:block absolute top-2 right-4 sm:right-10 z-10">
+                {/* Widget: Revenue Stats - Top Right */}
+                <div className="absolute -top-2 sm:top-2 right-0 sm:right-10 z-10">
                   <div 
-                    className="bg-card rounded-2xl p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
+                    className="bg-card rounded-2xl p-2.5 sm:p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
                     style={{ transform: 'rotate(5deg)' }}
                   >
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 bg-emerald-500/10 rounded-xl flex items-center justify-center">
-                        <BarChart3 className="w-4 h-4 text-emerald-600" />
+                    <div className="flex items-center gap-2 sm:gap-2.5">
+                      <div className="w-7 h-7 sm:w-9 sm:h-9 bg-emerald-500/10 rounded-xl flex items-center justify-center">
+                        <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
                       </div>
                       <div>
-                        <p className="text-lg font-bold text-foreground">4 280€</p>
-                        <p className="text-[9px] text-muted-foreground">ce mois-ci</p>
+                        <p className="text-sm sm:text-lg font-bold text-foreground">4 280€</p>
+                        <p className="text-[8px] sm:text-[9px] text-muted-foreground">ce mois-ci</p>
                       </div>
                     </div>
                   </div>
                 </div>
                 
-                {/* Widget: Reservations Stats - Bottom Left - Hidden on mobile */}
-                <div className="hidden sm:block absolute bottom-20 sm:bottom-24 -left-2 sm:left-6 z-10">
+                {/* Widget: Reservations Stats - Bottom Left */}
+                <div className="absolute bottom-2 sm:bottom-24 left-0 sm:left-6 z-10">
                   <div 
-                    className="bg-card rounded-2xl p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
+                    className="bg-card rounded-2xl p-2.5 sm:p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
                     style={{ transform: 'rotate(-7deg)' }}
                   >
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center">
-                        <Calendar className="w-4 h-4 text-primary" />
+                    <div className="flex items-center gap-2 sm:gap-2.5">
+                      <div className="w-7 h-7 sm:w-9 sm:h-9 bg-primary/10 rounded-xl flex items-center justify-center">
+                        <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
                       </div>
                       <div>
-                        <p className="text-lg font-bold text-foreground">47</p>
-                        <p className="text-[9px] text-muted-foreground">réservations</p>
+                        <p className="text-sm sm:text-lg font-bold text-foreground">47</p>
+                        <p className="text-[8px] sm:text-[9px] text-muted-foreground">réservations</p>
                       </div>
                     </div>
                   </div>
                 </div>
                 
-                {/* Widget: Views Stats - Bottom Right - Hidden on mobile */}
-                <div className="hidden sm:block absolute bottom-8 sm:bottom-12 right-2 sm:right-12 z-10">
+                {/* Widget: Views Stats - Bottom Right */}
+                <div className="absolute bottom-2 sm:bottom-12 right-0 sm:right-12 z-10">
                   <div 
-                    className="bg-card rounded-2xl p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
+                    className="bg-card rounded-2xl p-2.5 sm:p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
                     style={{ transform: 'rotate(4deg)' }}
                   >
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 bg-amber-500/10 rounded-xl flex items-center justify-center">
-                        <Eye className="w-4 h-4 text-amber-600" />
+                    <div className="flex items-center gap-2 sm:gap-2.5">
+                      <div className="w-7 h-7 sm:w-9 sm:h-9 bg-amber-500/10 rounded-xl flex items-center justify-center">
+                        <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600" />
                       </div>
                       <div>
-                        <p className="text-lg font-bold text-foreground">1.2k</p>
-                        <p className="text-[9px] text-muted-foreground">vues ce mois</p>
+                        <p className="text-sm sm:text-lg font-bold text-foreground">1.2k</p>
+                        <p className="text-[8px] sm:text-[9px] text-muted-foreground">vues ce mois</p>
                       </div>
                     </div>
                   </div>
                 </div>
                 
-                {/* Widget: Rating - Top Left - Hidden on mobile */}
-                <div className="hidden sm:block absolute top-16 sm:top-20 -left-1 sm:left-4 z-10">
+                {/* Widget: Rating - Top Left */}
+                <div className="absolute top-0 sm:top-20 left-0 sm:left-4 z-10">
                   <div 
-                    className="bg-card rounded-xl px-3 py-2.5 shadow-lg shadow-black/10 ring-1 ring-border/30"
+                    className="bg-card rounded-xl px-2.5 py-2 sm:px-3 sm:py-2.5 shadow-lg shadow-black/10 ring-1 ring-border/30"
                     style={{ transform: 'rotate(-4deg)' }}
                   >
-                    <div className="flex items-center gap-2">
-                      <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-amber-400 text-amber-400" />
                       <div>
-                        <p className="text-sm font-bold text-foreground">4.9</p>
-                        <p className="text-[8px] text-muted-foreground">312 avis</p>
+                        <p className="text-xs sm:text-sm font-bold text-foreground">4.9</p>
+                        <p className="text-[7px] sm:text-[8px] text-muted-foreground">312 avis</p>
                       </div>
                     </div>
                   </div>
