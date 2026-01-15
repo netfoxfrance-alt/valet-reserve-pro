@@ -13,6 +13,7 @@ import {
 import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 import sofaBanner from '@/assets/sofa-cleaning-banner.jpg';
 import gocleanLogo from '@/assets/gocleaning-logo.png';
+import mockupCarCleaning from '@/assets/mockup-car-cleaning.jpg';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -361,29 +362,26 @@ export default function Index() {
               {/* Central Page Preview - Premium & Complete */}
               <div className="relative mx-auto w-[300px] sm:w-[340px]">
                 <div className="bg-card rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
-                  {/* Banner with realistic car cleaning image */}
-                  <div className="h-28 sm:h-36 bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
-                    {/* Simulated car cleaning scene */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-transparent to-slate-900/60" />
-                    <div className="absolute top-4 right-4 w-24 h-14 rounded-lg bg-slate-700/50 backdrop-blur-sm flex items-center justify-center">
-                      <div className="w-16 h-8 bg-gradient-to-r from-slate-600 to-slate-500 rounded" />
-                    </div>
-                    <div className="absolute bottom-4 left-4 flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-amber-500/80" />
-                      <div className="w-12 h-3 bg-slate-600/80 rounded" />
-                    </div>
+                  {/* Banner with real car cleaning image */}
+                  <div className="h-32 sm:h-40 relative overflow-hidden">
+                    <img 
+                      src={mockupCarCleaning} 
+                      alt="Nettoyage automobile professionnel" 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                     
-                    {/* Logo overlay */}
-                    <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 z-20">
-                      <div className="w-20 h-20 bg-white rounded-2xl shadow-xl flex items-center justify-center ring-4 ring-white">
-                        <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-                          <span className="text-white font-bold text-xl">CP</span>
+                    {/* Logo overlay - More prominent */}
+                    <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 z-30">
+                      <div className="w-24 h-24 bg-white rounded-2xl shadow-2xl flex items-center justify-center ring-4 ring-white p-2">
+                        <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-inner">
+                          <span className="text-white font-bold text-2xl tracking-tight">CP</span>
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="px-6 pt-14 pb-6 text-center">
+                  <div className="px-6 pt-16 pb-6 text-center">
                     <h3 className="text-xl font-bold text-foreground mb-1">Clean Premium</h3>
                     <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
                       Nettoyage automobile premium à<br />domicile, 7j/7. Qualité professionnelle<br />garantie.
