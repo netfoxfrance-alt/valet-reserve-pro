@@ -340,350 +340,183 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Section 1: Personnalisez votre page */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/30">
-        <div className="max-w-6xl mx-auto">
-          {/* Section Label */}
-          <div className="flex items-center gap-2 text-muted-foreground mb-4 opacity-0 animate-fade-in-up">
-            <Palette className="w-4 h-4" />
-            <span className="text-xs font-medium uppercase tracking-wider">Personnalisation</span>
+      {/* Section 1: Personnalisez votre page - Apple Style Visual */}
+      <section className="py-20 sm:py-32 px-4 sm:px-6 border-t border-border/30 overflow-hidden">
+        <div className="max-w-5xl mx-auto">
+          {/* Section Header - Centered */}
+          <div className="text-center mb-12 sm:mb-20">
+            <div className="flex items-center justify-center gap-2 text-muted-foreground mb-4 opacity-0 animate-fade-in-up">
+              <Palette className="w-4 h-4" />
+              <span className="text-xs font-medium uppercase tracking-wider">Personnalisation</span>
+            </div>
+            
+            <h2 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl font-semibold text-foreground tracking-tight mb-6">
+              Créez votre page.<br />
+              <span className="text-muted-foreground">Comme vous le sentez.</span>
+            </h2>
+            <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-lg sm:text-xl max-w-xl mx-auto leading-relaxed">
+              Glissez. Personnalisez. Publiez. Votre vitrine professionnelle en quelques clics.
+            </p>
           </div>
-          
-          <h2 className="opacity-0 animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
-            Personnalisez votre page à l'image de votre entreprise
-          </h2>
-          <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-base sm:text-lg mb-10 max-w-2xl leading-relaxed">
-            Couleurs, bannière, logo, formules... Tout est modifiable pour refléter votre identité.
-          </p>
 
-          {/* Dashboard Browser Mockup - Ma Page */}
-          <div className="opacity-0 animate-fade-in-up stagger-3">
-            <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60 max-w-4xl mx-auto">
-              {/* Browser Bar */}
-              <div className="bg-secondary/50 px-4 py-3 flex items-center gap-3 border-b border-border/40">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-400" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                  <div className="w-3 h-3 rounded-full bg-green-400" />
-                </div>
-                <div className="flex-1 flex justify-center">
-                  <div className="flex items-center gap-2 bg-background rounded-full px-4 py-1.5 text-xs text-muted-foreground">
-                    <Shield className="w-3 h-3" />
-                    cleaningpage.com/<span className="text-foreground font-medium">dashboard</span>
+          {/* Visual Composition - Apple Style */}
+          <div className="opacity-0 animate-fade-in-up stagger-3 relative">
+            {/* Main Container with perspective */}
+            <div className="relative max-w-3xl mx-auto">
+              
+              {/* Central Page Preview - The "canvas" */}
+              <div className="relative mx-auto w-[280px] sm:w-[320px] md:w-[360px]">
+                <div 
+                  className="bg-card rounded-[2.5rem] overflow-hidden shadow-2xl shadow-black/20 ring-1 ring-border/40"
+                  style={{ transform: 'perspective(1000px) rotateY(-2deg)' }}
+                >
+                  {/* Page Content */}
+                  <div className="h-20 sm:h-24 bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-600 relative">
+                    {/* Subtle pattern overlay */}
+                    <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '16px 16px' }} />
+                    
+                    {/* Logo floating in */}
+                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 z-20">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-2xl shadow-xl flex items-center justify-center ring-4 ring-white">
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                          <Car className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="px-5 sm:px-6 pt-12 pb-6 text-center">
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground mb-1">Votre Entreprise</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-4">Nettoyage premium à domicile</p>
+                    
+                    {/* Status badge */}
+                    <div className="flex justify-center mb-4">
+                      <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-full font-medium">
+                        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse" />
+                        Ouvert
+                      </span>
+                    </div>
+                    
+                    {/* Social icons */}
+                    <div className="flex justify-center gap-2 mb-5">
+                      {[Instagram, MessageCircle, Phone].map((Icon, i) => (
+                        <div key={i} className="w-9 h-9 sm:w-10 sm:h-10 bg-secondary/60 rounded-xl flex items-center justify-center">
+                          <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {/* Service cards */}
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-5">
+                      <div className="bg-secondary/40 rounded-xl p-3 text-left border border-border/30">
+                        <p className="text-xs sm:text-sm font-semibold text-foreground">Express</p>
+                        <p className="text-sm sm:text-base font-bold text-primary">35€</p>
+                      </div>
+                      <div className="bg-secondary/40 rounded-xl p-3 text-left border border-border/30">
+                        <p className="text-xs sm:text-sm font-semibold text-foreground">Complet</p>
+                        <p className="text-sm sm:text-base font-bold text-primary">89€</p>
+                      </div>
+                    </div>
+                    
+                    {/* CTA */}
+                    <button className="w-full bg-foreground text-background py-3 sm:py-3.5 rounded-2xl text-sm font-semibold">
+                      Réserver
+                    </button>
                   </div>
                 </div>
               </div>
 
-              {/* Dashboard Content - Ma Page */}
-              <div className="flex min-h-[420px]">
-                {/* Sidebar */}
-                <div className="w-56 bg-secondary/30 border-r border-border/40 p-4 flex-shrink-0 hidden md:block">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Logo size="md" />
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-6 truncate">clean-auto-pro</p>
-
-                  <nav className="space-y-1">
-                    {[
-                      { icon: Globe, label: 'Ma Page', active: true },
-                      { icon: Calendar, label: 'Réservations', badge: '3' },
-                      { icon: BarChart3, label: 'Statistiques' },
-                      { icon: Droplets, label: 'Formules' },
-                      { icon: Settings, label: 'Paramètres' },
-                    ].map((item) => (
-                      <div
-                        key={item.label}
-                        className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm transition-all ${
-                          item.active 
-                            ? 'bg-foreground text-background font-medium' 
-                            : 'text-muted-foreground'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <item.icon className="w-4 h-4" />
-                          {item.label}
-                        </div>
-                        {item.badge && (
-                          <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                            {item.badge}
-                          </span>
-                        )}
-                      </div>
+              {/* Floating UI Elements - The "magic" */}
+              
+              {/* Color Palette - Top Left */}
+              <div 
+                className="absolute -top-4 sm:top-4 -left-4 sm:left-8 lg:left-16 z-30 animate-float"
+                style={{ animationDelay: '0s' }}
+              >
+                <div className="bg-card rounded-2xl p-3 sm:p-4 shadow-xl ring-1 ring-border/40">
+                  <p className="text-[9px] sm:text-[10px] font-medium text-muted-foreground mb-2 sm:mb-3">Couleurs</p>
+                  <div className="flex gap-2 sm:gap-2.5">
+                    {['#10B981', '#3B82F6', '#8B5CF6', '#F97316'].map((color, i) => (
+                      <div 
+                        key={i} 
+                        className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full cursor-pointer transition-transform hover:scale-110 ${i === 0 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''}`}
+                        style={{ backgroundColor: color }}
+                      />
                     ))}
-                  </nav>
-
-                  {/* Link at bottom */}
-                  <div className="mt-8 pt-4 border-t border-border/40">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Link2 className="w-4 h-4" />
-                      <span className="text-xs">Votre lien</span>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground mt-1 truncate">cleaningpage.com/clean-auto...</p>
-                  </div>
-                </div>
-
-                {/* Main Content Area - Ma Page view */}
-                <div className="flex-1 p-3 sm:p-6">
-                  <div className="h-full flex flex-col">
-                    {/* Main content grid - Preview left, Controls right */}
-                    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                      {/* Left: Live Preview */}
-                      <div className="flex flex-col min-h-[300px] sm:min-h-[400px] order-2 lg:order-1">
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-xs sm:text-sm font-medium text-foreground">Aperçu</span>
-                          <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 bg-foreground rounded-md flex items-center justify-center">
-                              <Phone className="w-3 h-3 text-background" />
-                            </div>
-                            <div className="w-6 h-6 bg-secondary/60 rounded-md flex items-center justify-center">
-                              <svg className="w-3 h-3 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <rect x="2" y="3" width="20" height="14" rx="2" />
-                                <path d="M8 21h8" />
-                                <path d="M12 17v4" />
-                              </svg>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Preview Container */}
-                        <div className="flex-1 bg-secondary/30 rounded-2xl overflow-hidden">
-                          <div className="bg-card h-full overflow-y-auto">
-                            {/* Banner with logo overlay */}
-                            <div className="h-32 relative">
-                              <img 
-                                src={mockupBanner} 
-                                alt="Preview" 
-                                className="w-full h-full object-cover"
-                              />
-                              <div className="absolute left-1/2 -translate-x-1/2 -bottom-8">
-                                <div className="bg-white/95 rounded-2xl p-2 shadow-lg ring-1 ring-black/5">
-                                  <div className="w-16 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                                    <span className="text-white font-black text-lg tracking-tight">CP</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div className="px-5 pt-12 pb-4">
-                              <h3 className="text-xl font-bold text-foreground text-center mb-2">Clean Premium</h3>
-                              <p className="text-sm text-muted-foreground text-center leading-relaxed mb-4">
-                                Nettoyage automobile premium à domicile, 7j/7. Qualité professionnelle garantie.
-                              </p>
-                              
-                              <div className="flex justify-center mb-4">
-                                <span className="inline-flex items-center gap-1.5 text-xs bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full font-medium">
-                                  <span className="w-2 h-2 bg-emerald-500 rounded-full" />
-                                  Ouvert
-                                </span>
-                              </div>
-                              
-                              {/* Social Icons Row */}
-                              <div className="flex justify-center gap-3 mb-5">
-                                {[Instagram, Mail].map((Icon, i) => (
-                                  <div key={i} className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center border border-border/40">
-                                    <Icon className="w-5 h-5 text-foreground" />
-                                  </div>
-                                ))}
-                              </div>
-                              
-                              {/* Info Items */}
-                              <div className="space-y-2.5 mb-5">
-                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                                  <Phone className="w-4 h-4 flex-shrink-0" />
-                                  <span>06 12 34 56 78</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                                  <Clock className="w-4 h-4 flex-shrink-0" />
-                                  <span>Lun - Sam : 9h00 - 19h00</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                                  <MapPin className="w-4 h-4 flex-shrink-0" />
-                                  <span>12 rue de la Paix, 75002 Paris</span>
-                                </div>
-                              </div>
-                              
-                              {/* Formulas */}
-                              <h4 className="text-base font-semibold text-foreground mb-3">Nos formules</h4>
-                              <div className="grid grid-cols-2 gap-3 mb-4">
-                                <div className="bg-card border border-border/40 rounded-xl p-3">
-                                  <h5 className="text-sm font-semibold text-foreground mb-1">Express</h5>
-                                  <p className="text-base font-bold text-muted-foreground">35€</p>
-                                </div>
-                                <div className="bg-card border border-border/40 rounded-xl p-3">
-                                  <h5 className="text-sm font-semibold text-foreground mb-1">Complet</h5>
-                                  <p className="text-base font-bold text-muted-foreground">89€</p>
-                                </div>
-                              </div>
-                              
-                              <button className="w-full bg-neutral-700 hover:bg-neutral-800 text-white py-3.5 rounded-2xl text-sm font-semibold transition-colors">
-                                Réserver maintenant
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Right: Customization controls */}
-                      <div className="flex flex-col order-1 lg:order-2">
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-xs sm:text-sm font-medium text-foreground">Personnalisation</span>
-                        </div>
-                        
-                        <div className="bg-card rounded-xl border border-border/40 flex-1 overflow-hidden">
-                          {/* Tabs */}
-                          <div className="flex items-center justify-around border-b border-border/40 py-2 px-2">
-                            {[
-                              { id: 'design', icon: Palette, label: 'Design' },
-                              { id: 'formules', icon: Droplets, label: 'Formules' },
-                              { id: 'elements', label: 'Éléments', isCustomIcon: true },
-                              { id: 'seo', label: 'SEO', isCustomIcon: true },
-                            ].map((tab) => (
-                              <div 
-                                key={tab.id}
-                                onClick={() => setMockupTab(tab.id as any)}
-                                className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl cursor-pointer transition-colors ${mockupTab === tab.id ? 'bg-secondary/50 text-foreground' : 'text-muted-foreground hover:text-foreground/70'}`}
-                              >
-                                {tab.isCustomIcon ? (
-                                  tab.id === 'elements' ? (
-                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-                                  ) : (
-                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                                  )
-                                ) : (
-                                  <tab.icon className="w-4 h-4" />
-                                )}
-                                <span className="text-[9px] sm:text-[10px] font-medium">{tab.label}</span>
-                              </div>
-                            ))}
-                          </div>
-
-                          <div className="p-3 sm:p-4 space-y-4 overflow-y-auto max-h-[320px]">
-                            {/* Design Tab Content */}
-                            {mockupTab === 'design' && (
-                              <>
-                                <div>
-                                  <p className="text-[10px] sm:text-xs font-medium text-foreground mb-2">Bannière</p>
-                                  <div className="rounded-xl overflow-hidden mb-2">
-                                    <img src={mockupBanner} alt="Banner preview" className="w-full h-20 object-cover"/>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <button className="flex items-center gap-1.5 text-[10px] font-medium text-foreground bg-secondary/50 px-3 py-1.5 rounded-full border border-border/40">
-                                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-                                      Changer
-                                    </button>
-                                    <button className="text-red-500 p-1.5">
-                                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                                    </button>
-                                  </div>
-                                </div>
-
-                                <div>
-                                  <p className="text-[10px] sm:text-xs font-medium text-foreground mb-2">Couleurs</p>
-                                  <div className="grid grid-cols-3 gap-2">
-                                    {[
-                                      { name: 'Bleu', c1: '#3B82F6', c2: '#1E3A5F' },
-                                      { name: 'Rouge', c1: '#EF4444', c2: '#1E1E1E' },
-                                      { name: 'Vert', c1: '#10B981', c2: '#064E3B', selected: true },
-                                      { name: 'Violet', c1: '#8B5CF6', c2: '#1E3A5F' },
-                                      { name: 'Orange', c1: '#F97316', c2: '#7C2D12' },
-                                      { name: 'Rose', c1: '#EC4899', c2: '#4A1942' },
-                                    ].map((color, i) => (
-                                      <div key={i} className={`flex flex-col items-center gap-1 p-2 rounded-xl border cursor-pointer ${color.selected ? 'border-foreground bg-secondary/30' : 'border-border/40'}`}>
-                                        <div className="flex gap-1">
-                                          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: color.c1 }} />
-                                          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: color.c2 }} />
-                                        </div>
-                                        <span className="text-[9px] text-muted-foreground">{color.name}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </>
-                            )}
-
-                            {/* Formules Tab Content */}
-                            {mockupTab === 'formules' && (
-                              <>
-                                <p className="text-[10px] sm:text-xs text-muted-foreground mb-2">Choisissez les formules à afficher</p>
-                                <div className="space-y-2">
-                                  {[
-                                    { name: 'Express', price: '35€', visible: true },
-                                    { name: 'Complet', price: '89€', visible: true },
-                                    { name: 'Premium', price: '149€', visible: false },
-                                  ].map((pack, i) => (
-                                    <div key={i} className="flex items-center justify-between bg-secondary/30 rounded-xl p-3 border border-border/30">
-                                      <div className="flex items-center gap-2">
-                                        <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
-                                          <Droplets className="w-4 h-4 text-primary" />
-                                        </div>
-                                        <div>
-                                          <p className="text-[11px] font-medium text-foreground">{pack.name}</p>
-                                          <p className="text-[10px] text-muted-foreground">{pack.price}</p>
-                                        </div>
-                                      </div>
-                                      <div className={`w-6 h-3 rounded-full relative ${pack.visible ? 'bg-emerald-500' : 'bg-muted'}`}>
-                                        <div className={`absolute top-0.5 w-2 h-2 bg-white rounded-full ${pack.visible ? 'right-0.5' : 'left-0.5'}`} />
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </>
-                            )}
-
-                            {/* Elements Tab Content */}
-                            {mockupTab === 'elements' && (
-                              <>
-                                <p className="text-[10px] sm:text-xs text-muted-foreground mb-2">Éléments de votre page</p>
-                                <div className="space-y-2">
-                                  {[
-                                    { icon: Phone, label: 'Téléphone' },
-                                    { icon: Clock, label: 'Horaires' },
-                                    { icon: MapPin, label: 'Adresse' },
-                                    { icon: Instagram, label: 'Réseaux sociaux' },
-                                  ].map((item, i) => (
-                                    <div key={i} className="flex items-center justify-between bg-secondary/30 rounded-xl p-3 border border-border/30">
-                                      <div className="flex items-center gap-2">
-                                        <item.icon className="w-4 h-4 text-muted-foreground" />
-                                        <span className="text-[11px] font-medium text-foreground">{item.label}</span>
-                                      </div>
-                                      <div className="w-6 h-3 bg-emerald-500 rounded-full relative">
-                                        <div className="absolute right-0.5 top-0.5 w-2 h-2 bg-white rounded-full" />
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </>
-                            )}
-
-                            {/* SEO Tab Content */}
-                            {mockupTab === 'seo' && (
-                              <>
-                                <p className="text-[10px] sm:text-xs text-muted-foreground mb-2">Optimisez votre référencement Google</p>
-                                <div className="space-y-3">
-                                  <div>
-                                    <label className="text-[9px] text-muted-foreground mb-1 block">Titre Google</label>
-                                    <div className="bg-secondary/30 rounded-lg px-3 py-2 border border-border/40">
-                                      <span className="text-[10px] text-foreground">Clean Premium - Nettoyage Auto Paris</span>
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <label className="text-[9px] text-muted-foreground mb-1 block">Mots-clés</label>
-                                    <div className="flex flex-wrap gap-1">
-                                      {['nettoyage auto', 'lavage voiture', 'detailing paris'].map((kw, i) => (
-                                        <span key={i} className="text-[9px] bg-secondary/50 px-2 py-1 rounded-full text-foreground">{kw}</span>
-                                      ))}
-                                    </div>
-                                  </div>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
+              
+              {/* Cursor + Action - Top Right */}
+              <div 
+                className="absolute top-8 sm:top-12 -right-2 sm:right-4 lg:right-12 z-30"
+                style={{ animationDelay: '0.2s' }}
+              >
+                <div className="relative">
+                  {/* Cursor SVG */}
+                  <svg className="w-6 h-6 sm:w-8 sm:h-8 text-foreground drop-shadow-lg animate-pulse" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4 4l16 8-8 3-3 8-5-19z"/>
+                  </svg>
+                  {/* Click ripple effect */}
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-primary/30 rounded-full animate-ping" />
+                </div>
+              </div>
+              
+              {/* Drag Handle Element - Left Side */}
+              <div 
+                className="absolute top-1/2 -left-2 sm:left-0 lg:left-8 -translate-y-1/2 z-30 animate-float hidden sm:block"
+                style={{ animationDelay: '0.3s' }}
+              >
+                <div className="bg-card rounded-xl px-3 py-2 shadow-xl ring-1 ring-border/40 flex items-center gap-2">
+                  <div className="flex flex-col gap-0.5">
+                    <div className="w-4 h-0.5 bg-muted-foreground/40 rounded-full" />
+                    <div className="w-4 h-0.5 bg-muted-foreground/40 rounded-full" />
+                    <div className="w-4 h-0.5 bg-muted-foreground/40 rounded-full" />
+                  </div>
+                  <span className="text-[10px] font-medium text-foreground">Galerie</span>
+                </div>
+              </div>
+              
+              {/* Add Element Button - Right Side */}
+              <div 
+                className="absolute top-1/3 -right-2 sm:right-0 lg:right-8 z-30 animate-float"
+                style={{ animationDelay: '0.5s' }}
+              >
+                <div className="bg-card rounded-xl p-2.5 sm:p-3 shadow-xl ring-1 ring-border/40">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-1.5 sm:mb-2">
+                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                  </div>
+                  <p className="text-[9px] sm:text-[10px] font-medium text-foreground text-center">Ajouter</p>
+                </div>
+              </div>
+              
+              {/* Text Editing Tooltip - Bottom Left */}
+              <div 
+                className="absolute -bottom-4 sm:bottom-8 -left-2 sm:left-4 lg:left-16 z-30 animate-float"
+                style={{ animationDelay: '0.4s' }}
+              >
+                <div className="bg-foreground text-background rounded-xl px-3 py-2 shadow-xl flex items-center gap-2">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                  <span className="text-[10px] sm:text-xs font-medium">Modifier le texte</span>
+                </div>
+              </div>
+              
+              {/* Toggle Switch - Bottom Right */}
+              <div 
+                className="absolute -bottom-2 sm:bottom-16 -right-2 sm:right-4 lg:right-16 z-30 animate-float"
+                style={{ animationDelay: '0.6s' }}
+              >
+                <div className="bg-card rounded-xl p-3 shadow-xl ring-1 ring-border/40 flex items-center gap-3">
+                  <span className="text-[10px] sm:text-xs font-medium text-foreground">Horaires</span>
+                  <div className="w-9 sm:w-10 h-5 sm:h-6 bg-emerald-500 rounded-full relative">
+                    <div className="absolute right-0.5 top-0.5 w-4 sm:w-5 h-4 sm:h-5 bg-white rounded-full shadow-sm" />
+                  </div>
+                </div>
+              </div>
+              
             </div>
           </div>
         </div>
