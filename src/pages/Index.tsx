@@ -165,7 +165,7 @@ export default function Index() {
 
             {/* Right: Main Page Card + Stats Widgets - Linktree Style */}
             <div className="flex justify-center lg:justify-end mt-8 lg:mt-0">
-              <div className="relative w-[340px] sm:w-[420px] md:w-[520px] h-[580px] sm:h-[540px] md:h-[600px]">
+              <div className="relative w-[340px] sm:w-[420px] md:w-[520px] h-[640px] sm:h-[540px] md:h-[600px]">
                 
                 {/* Main Page Card - Full CleaningPage profile like the reference */}
                 <div className="absolute top-8 sm:top-4 left-1/2 -translate-x-1/2 z-20">
@@ -282,7 +282,7 @@ export default function Index() {
                 </div>
                 
                 {/* Widget: Reservations Stats - Bottom Left */}
-                <div className="absolute bottom-2 sm:bottom-24 left-0 sm:left-6 z-10">
+                <div className="absolute -bottom-6 sm:bottom-24 -left-2 sm:left-6 z-30">
                   <div 
                     className="bg-card rounded-2xl p-2.5 sm:p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
                     style={{ transform: 'rotate(-7deg)' }}
@@ -300,7 +300,7 @@ export default function Index() {
                 </div>
                 
                 {/* Widget: Views Stats - Bottom Right */}
-                <div className="absolute bottom-2 sm:bottom-12 right-0 sm:right-12 z-10">
+                <div className="absolute -bottom-6 sm:bottom-12 -right-2 sm:right-12 z-30">
                   <div 
                     className="bg-card rounded-2xl p-2.5 sm:p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
                     style={{ transform: 'rotate(4deg)' }}
