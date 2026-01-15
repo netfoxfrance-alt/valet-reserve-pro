@@ -363,28 +363,30 @@ export default function Index() {
               <div className="relative mx-auto w-[300px] sm:w-[340px]">
                 <div className="bg-card rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
                   {/* Banner with real car cleaning image */}
-                  <div className="h-32 sm:h-40 relative overflow-hidden">
+                  <div className="h-28 sm:h-32 relative overflow-hidden rounded-t-[2.5rem]">
                     <img 
                       src={mockupCarCleaning} 
                       alt="Nettoyage automobile professionnel" 
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                    
-                    {/* Logo overlay - More prominent */}
-                    <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 z-30">
-                      <div className="w-24 h-24 bg-white rounded-2xl shadow-2xl flex items-center justify-center ring-4 ring-white p-2">
-                        <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-inner">
-                          <span className="text-white font-bold text-2xl tracking-tight">CP</span>
-                        </div>
-                      </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  </div>
+                  
+                  {/* Logo - Prominent, outside banner */}
+                  <div className="flex justify-center -mt-12 relative z-30 mb-4">
+                    <div className="w-24 h-24 bg-white rounded-2xl shadow-2xl flex items-center justify-center ring-4 ring-white p-1.5">
+                      <img 
+                        src={gocleanLogo} 
+                        alt="Clean Premium logo" 
+                        className="w-full h-full object-contain rounded-xl"
+                      />
                     </div>
                   </div>
                   
-                  <div className="px-6 pt-16 pb-6 text-center">
+                  <div className="px-6 pb-6 text-center">
                     <h3 className="text-xl font-bold text-foreground mb-1">Clean Premium</h3>
                     <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                      Nettoyage automobile premium à<br />domicile, 7j/7. Qualité professionnelle<br />garantie.
+                      Nettoyage automobile premium à domicile, 7j/7.
                     </p>
                     
                     {/* Open badge */}
@@ -415,25 +417,24 @@ export default function Index() {
                       ))}
                     </div>
                     
-                    {/* Contact info */}
+                    {/* Contact info - Simplified */}
                     <div className="space-y-3 mb-6 text-left">
                       <div className="flex items-center gap-3 text-sm text-foreground">
                         <Phone className="w-4 h-4 text-muted-foreground" />
                         <span>06 12 34 56 78</span>
                       </div>
-                      <div className="flex items-center gap-3 text-sm text-foreground">
-                        <Clock className="w-4 h-4 text-muted-foreground" />
-                        <span>Lun - Sam : 9h00 - 19h00</span>
-                      </div>
-                      <div className="flex items-center gap-3 text-sm text-foreground">
-                        <MapPin className="w-4 h-4 text-muted-foreground" />
-                        <span>12 rue de la Paix, 75002 Paris</span>
+                      <div className="flex items-center gap-3 text-sm text-primary">
+                        <Droplets className="w-4 h-4 text-primary" />
+                        <span className="font-medium">Voir nos produits utilisés →</span>
                       </div>
                     </div>
                     
-                    {/* Formules section */}
+                    {/* Formules section - "Voir toutes" style */}
                     <div className="text-left mb-5">
-                      <h4 className="text-base font-semibold text-foreground mb-3">Nos formules</h4>
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-base font-semibold text-foreground">Nos formules</h4>
+                        <span className="text-xs text-primary font-medium">Voir tout →</span>
+                      </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="bg-card border border-border/60 rounded-xl p-4">
                           <p className="text-sm font-semibold text-foreground mb-1">Express</p>
