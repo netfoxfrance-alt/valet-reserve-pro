@@ -720,7 +720,7 @@ export default function Index() {
               Partagez votre lien de partout.
             </h2>
             <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-md mx-auto">
-              Bio Instagram, TikTok, Google, flyers, cartes de visite...
+              et convertissez vos visiteurs en réservations.
             </p>
           </div>
 
