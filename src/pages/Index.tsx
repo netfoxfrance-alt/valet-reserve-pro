@@ -349,10 +349,10 @@ export default function Index() {
           {/* Section Header - Minimal Apple style */}
           <div className="text-center mb-10 sm:mb-16 lg:mb-20">
             <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4">
-              Personnalisez votre page.
+              Personnalisez votre page en quelques clics.
             </h2>
-            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base lg:text-lg max-w-md mx-auto">
-              Couleurs, formules, disponibilités. Tout est modifiable.
+            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base lg:text-lg max-w-lg mx-auto">
+              Modifiez visuellement votre page à votre image et ajoutez facilement vos informations, liens et disponibilités...
             </p>
           </div>
 
