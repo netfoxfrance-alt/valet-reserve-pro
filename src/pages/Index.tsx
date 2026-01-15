@@ -14,6 +14,7 @@ import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 import sofaBanner from '@/assets/sofa-cleaning-banner.jpg';
 import gocleanLogo from '@/assets/gocleaning-logo.png';
 import mockupCarCleaning from '@/assets/mockup-car-cleaning.jpg';
+import mockupLogoClean from '@/assets/mockup-logo-cleaning.png';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -374,11 +375,11 @@ export default function Index() {
                   
                   {/* Logo - Prominent, outside banner */}
                   <div className="flex justify-center -mt-12 relative z-30 mb-4">
-                    <div className="w-24 h-24 bg-white rounded-2xl shadow-2xl flex items-center justify-center ring-4 ring-white p-1.5">
+                    <div className="w-24 h-24 bg-white rounded-2xl shadow-2xl flex items-center justify-center ring-4 ring-white overflow-hidden">
                       <img 
-                        src={gocleanLogo} 
+                        src={mockupLogoClean} 
                         alt="Clean Premium logo" 
-                        className="w-full h-full object-contain rounded-xl"
+                        className="w-full h-full object-cover"
                       />
                     </div>
                   </div>
@@ -386,7 +387,7 @@ export default function Index() {
                   <div className="px-6 pb-6 text-center">
                     <h3 className="text-xl font-bold text-foreground mb-1">Clean Premium</h3>
                     <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                      Nettoyage automobile premium à domicile, 7j/7.
+                      Nettoyage premium à domicile, 7j/7.
                     </p>
                     
                     {/* Open badge */}
@@ -457,7 +458,7 @@ export default function Index() {
 
               {/* Floating Elements - Subtle & Premium */}
               
-              {/* Colors palette - Top Left */}
+              {/* Colors palette with color picker - Top Left */}
               <div 
                 className="absolute top-8 sm:top-16 left-0 sm:left-4 lg:left-12 z-30 animate-float"
                 style={{ animationDelay: '0s' }}
@@ -465,48 +466,36 @@ export default function Index() {
                 <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
                   <p className="text-[10px] text-muted-foreground mb-2 font-medium">Couleurs</p>
                   <div className="flex gap-2">
-                    {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500', 'bg-rose-500'].map((bg, i) => (
+                    {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500'].map((bg, i) => (
                       <div key={i} className={`w-7 h-7 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''} shadow-sm`} />
                     ))}
-                  </div>
-                </div>
-              </div>
-              
-              {/* Banner upload - Top Right */}
-              <div 
-                className="absolute top-4 sm:top-12 right-0 sm:right-4 lg:right-16 z-30 animate-float"
-                style={{ animationDelay: '0.15s' }}
-              >
-                <div className="bg-card rounded-2xl p-3 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
-                  <p className="text-[10px] text-muted-foreground mb-2 font-medium">Bannière</p>
-                  <div className="w-24 h-14 bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl flex items-center justify-center overflow-hidden relative">
-                    <ImagePlus className="w-5 h-5 text-white/60" />
-                    <div className="absolute bottom-1 right-1 w-4 h-4 bg-primary rounded-full flex items-center justify-center">
-                      <Plus className="w-2.5 h-2.5 text-white" />
+                    {/* Color picker button */}
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 shadow-sm flex items-center justify-center">
+                      <Plus className="w-3.5 h-3.5 text-white drop-shadow-md" />
                     </div>
                   </div>
                 </div>
               </div>
               
-              {/* Calendar / Availability - Left Middle */}
+              {/* Calendar / Availability with hours - Top Right */}
               <div 
-                className="absolute top-1/2 -translate-y-1/2 -left-4 sm:left-0 lg:left-0 z-30 animate-float hidden sm:block"
-                style={{ animationDelay: '0.3s' }}
+                className="absolute top-4 sm:top-12 right-0 sm:right-4 lg:right-12 z-30 animate-float"
+                style={{ animationDelay: '0.15s' }}
               >
                 <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
                   <p className="text-[10px] text-muted-foreground mb-2 font-medium">Disponibilités</p>
                   <div className="space-y-1.5">
                     {[
-                      { day: 'Lun', active: true },
-                      { day: 'Mar', active: true },
-                      { day: 'Mer', active: true },
-                      { day: 'Jeu', active: true },
-                      { day: 'Ven', active: false },
+                      { day: 'Lun', hours: '9h-18h', active: true },
+                      { day: 'Mar', hours: '9h-18h', active: true },
+                      { day: 'Mer', hours: '14h-18h', active: true },
+                      { day: 'Sam', hours: 'Fermé', active: false },
                     ].map((d, i) => (
                       <div key={i} className="flex items-center gap-2">
                         <span className="text-[9px] w-6 text-muted-foreground">{d.day}</span>
-                        <div className={`w-8 h-4 rounded-full ${d.active ? 'bg-emerald-500' : 'bg-secondary'} relative transition-colors`}>
-                          <div className={`absolute w-3 h-3 bg-white rounded-full top-0.5 shadow-sm transition-all ${d.active ? 'right-0.5' : 'left-0.5'}`} />
+                        <span className={`text-[9px] w-12 ${d.active ? 'text-foreground' : 'text-muted-foreground'}`}>{d.hours}</span>
+                        <div className={`w-6 h-3 rounded-full ${d.active ? 'bg-emerald-500' : 'bg-secondary'} relative transition-colors`}>
+                          <div className={`absolute w-2 h-2 bg-white rounded-full top-0.5 shadow-sm transition-all ${d.active ? 'right-0.5' : 'left-0.5'}`} />
                         </div>
                       </div>
                     ))}
@@ -514,9 +503,9 @@ export default function Index() {
                 </div>
               </div>
               
-              {/* Formulas editor - Right Middle */}
+              {/* Formulas editor - Left Middle */}
               <div 
-                className="absolute top-1/2 -translate-y-1/2 -right-4 sm:right-0 lg:right-0 z-30 animate-float hidden sm:block"
+                className="absolute top-1/2 -translate-y-1/2 -left-4 sm:left-0 lg:left-4 z-30 animate-float hidden sm:block"
                 style={{ animationDelay: '0.25s' }}
               >
                 <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm w-40">
@@ -557,24 +546,22 @@ export default function Index() {
                 </div>
               </div>
               
-              {/* Social links - Bottom Right */}
+              {/* Images/Gallery - Bottom Right */}
               <div 
                 className="absolute bottom-4 sm:bottom-12 right-2 sm:right-8 lg:right-16 z-30 animate-float"
                 style={{ animationDelay: '0.5s' }}
               >
                 <div className="bg-card rounded-2xl p-3 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
-                  <p className="text-[10px] text-muted-foreground mb-2 font-medium">Réseaux</p>
-                  <div className="flex gap-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-                      <Instagram className="w-4 h-4 text-white" />
+                  <p className="text-[10px] text-muted-foreground mb-2 font-medium">Galerie</p>
+                  <div className="flex gap-1.5">
+                    <div className="w-10 h-10 bg-secondary rounded-lg overflow-hidden">
+                      <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
                     </div>
-                    <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center">
-                      <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                      </svg>
+                    <div className="w-10 h-10 bg-secondary rounded-lg overflow-hidden">
+                      <img src={sofaBanner} alt="" className="w-full h-full object-cover" />
                     </div>
-                    <div className="w-8 h-8 bg-emerald-500 rounded-xl flex items-center justify-center">
-                      <MessageCircle className="w-4 h-4 text-white" />
+                    <div className="w-10 h-10 bg-secondary/60 rounded-lg flex items-center justify-center border-2 border-dashed border-border">
+                      <Plus className="w-4 h-4 text-muted-foreground" />
                     </div>
                   </div>
                 </div>
