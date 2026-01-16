@@ -83,6 +83,12 @@ serve(async (req) => {
     if (!session_id || !password) {
       throw new Error("Missing session_id or password");
     }
+    
+    // Server-side password validation
+    if (password.length < 8) {
+      throw new Error("Password must be at least 8 characters");
+    }
+    
     logStep("Received request", { session_id, business_name });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
@@ -196,9 +202,15 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in complete-signup", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    
+    // Return generic error message to client, keep details in logs
+    const isUserError = errorMessage.includes("Password must be") || 
+                        errorMessage.includes("Missing session_id");
+    return new Response(JSON.stringify({ 
+      error: isUserError ? errorMessage : "Une erreur est survenue. Veuillez réessayer." 
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
+      status: isUserError ? 400 : 500,
     });
   }
 });
