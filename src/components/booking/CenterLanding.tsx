@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { MapPin, Phone, Clock, User, MessageSquare, Send, CheckCircle, Instagram, Mail, Link2, ShoppingBag, BookOpen, Video, Calendar, FileText, ExternalLink, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { MapPin, Phone, Clock, User, MessageSquare, Send, CheckCircle, Instagram, Mail, Link2, ShoppingBag, BookOpen, Video, Calendar, FileText, ExternalLink, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { Center, Pack } from '@/hooks/useCenter';
 import { CenterCustomization, CustomLink, defaultCustomization, PageBlock, defaultBlocks, migrateToBlocks } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,6 +23,20 @@ interface CenterLandingProps {
   isPreview?: boolean;
 }
 
+// Days in French
+const DAYS_FR = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+
+// Default hours for display
+const DEFAULT_HOURS = [
+  { day: 1, start: '09:00', end: '19:00', enabled: true },
+  { day: 2, start: '09:00', end: '19:00', enabled: true },
+  { day: 3, start: '09:00', end: '19:00', enabled: true },
+  { day: 4, start: '09:00', end: '19:00', enabled: true },
+  { day: 5, start: '09:00', end: '19:00', enabled: true },
+  { day: 6, start: '09:00', end: '19:00', enabled: true },
+  { day: 0, start: '09:00', end: '19:00', enabled: false },
+];
+
 export function CenterLanding({ center, packs, onStartBooking, onSelectPack, hasPacks, isPro, isPreview = false }: CenterLandingProps) {
   const { toast } = useToast();
   const [contactName, setContactName] = useState('');
@@ -32,11 +47,38 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxImages, setLightboxImages] = useState<string[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [hoursOpen, setHoursOpen] = useState(false);
 
   // Check if center is currently open
   const now = new Date();
+  const currentDay = now.getDay();
   const currentHour = now.getHours();
-  const isOpen = currentHour >= 9 && currentHour < 19;
+  const currentMinutes = now.getMinutes();
+  const currentTimeString = `${currentHour.toString().padStart(2, '0')}:${currentMinutes.toString().padStart(2, '0')}`;
+
+  // Get today's hours
+  const todayHours = DEFAULT_HOURS.find(h => h.day === currentDay);
+  const isOpen = todayHours?.enabled && currentTimeString >= todayHours.start && currentTimeString < todayHours.end;
+
+  // Get next opening info
+  const getNextOpeningInfo = () => {
+    if (isOpen && todayHours) {
+      return { type: 'closing', time: todayHours.end };
+    }
+    
+    // Find next open day
+    for (let i = 1; i <= 7; i++) {
+      const nextDay = (currentDay + i) % 7;
+      const nextHours = DEFAULT_HOURS.find(h => h.day === nextDay);
+      if (nextHours?.enabled) {
+        const dayName = i === 1 ? 'Demain' : DAYS_FR[nextDay];
+        return { type: 'opening', day: dayName, time: nextHours.start };
+      }
+    }
+    return null;
+  };
+
+  const nextInfo = getNextOpeningInfo();
 
   // Get customization with fallback to defaults
   const customization: CenterCustomization = useMemo(() => {
@@ -62,6 +104,22 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
       .sort((a, b) => a.order - b.order);
   }, [customization.blocks]);
 
+  // Separate blocks into info vs content for desktop layout
+  const { infoBlocks, contentBlocks } = useMemo(() => {
+    const info: PageBlock[] = [];
+    const content: PageBlock[] = [];
+    
+    activeBlocks.forEach(block => {
+      if (['hours', 'address', 'phone', 'reviews', 'links'].includes(block.type)) {
+        info.push(block);
+      } else {
+        content.push(block);
+      }
+    });
+    
+    return { infoBlocks: info, contentBlocks: content };
+  }, [activeBlocks]);
+
   // Get text colors based on dark mode
   const textColors = useMemo(() => ({
     primary: customization.layout.dark_mode ? '#ffffff' : (customization.colors.text_primary || '#111827'),
@@ -85,7 +143,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     if (validLinks.length === 0) return null;
 
     return (
-      <div className="grid grid-cols-1 gap-2 mb-8">
+      <div className="grid grid-cols-1 gap-2">
         {validLinks.map((link) => {
           const IconComponent = {
             link: Link2,
@@ -267,9 +325,9 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
   // Links block renderer
   const renderLinks = (block: PageBlock) => {
     return (
-      <div key={block.id} className="mb-10">
+      <div key={block.id} className="mb-6">
         <h2 
-          className="text-xl font-semibold mb-5 tracking-tight"
+          className="text-lg font-semibold mb-4 tracking-tight"
           style={{ color: textColors.primary }}
         >
           {block.title}
@@ -404,30 +462,6 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     );
   };
 
-  // Compact info items renderer (for phone, address, hours - inline style)
-  const renderInfoItem = (icon: React.ReactNode, content: React.ReactNode, href?: string) => {
-    const Wrapper = href ? 'a' : 'div';
-    return (
-      <Wrapper
-        {...(href ? { href } : {})}
-        className="flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-black/5 dark:hover:bg-white/5"
-        style={{
-          backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
-        }}
-      >
-        <div 
-          className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-          style={{ backgroundColor: customization.colors.primary + '15' }}
-        >
-          {icon}
-        </div>
-        <div className="flex-1 min-w-0">
-          {content}
-        </div>
-      </Wrapper>
-    );
-  };
-
   // Render individual info block with its own style
   const renderInfoBlock = (block: PageBlock, content: string | null, icon: React.ReactNode, href?: string) => {
     if (!content) return null;
@@ -524,15 +558,77 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     );
   };
 
-  // Render hours block
+  // Render collapsible hours block (Google Maps style)
   const renderHours = (block: PageBlock) => {
+    const formatTime = (time: string) => time.replace(':', 'h');
+
     return (
       <div key={block.id} className="mb-4">
-        {renderInfoBlock(
-          block,
-          'Lun - Sam : 9h00 - 19h00',
-          <Clock className="w-4 h-4" />
-        )}
+        <Collapsible open={hoursOpen} onOpenChange={setHoursOpen}>
+          <CollapsibleTrigger asChild>
+            <button 
+              className="flex items-center gap-2 text-sm transition-opacity hover:opacity-70 w-full text-left"
+              style={{ color: textColors.secondary }}
+            >
+              <span className="w-5 h-5 flex items-center justify-center" style={{ color: customization.colors.primary }}>
+                <Clock className="w-4 h-4" />
+              </span>
+              <span className="flex-1">
+                <span className={cn("font-medium", isOpen ? "text-green-600" : "text-red-500")}>
+                  {isOpen ? 'Ouvert' : 'Fermé'}
+                </span>
+                {nextInfo && (
+                  <span className="ml-1" style={{ color: textColors.secondary }}>
+                    {isOpen 
+                      ? `· Ferme à ${formatTime(nextInfo.time)}`
+                      : `· Ouvre ${nextInfo.day} à ${formatTime(nextInfo.time!)}`
+                    }
+                  </span>
+                )}
+              </span>
+              <ChevronDown 
+                className={cn(
+                  "w-4 h-4 transition-transform duration-200",
+                  hoursOpen && "rotate-180"
+                )} 
+                style={{ color: textColors.secondary }}
+              />
+            </button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="overflow-hidden data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up">
+            <div 
+              className="mt-3 p-4 rounded-xl space-y-2"
+              style={{ 
+                backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+              }}
+            >
+              {/* Reorder: Monday first */}
+              {[1, 2, 3, 4, 5, 6, 0].map(dayNum => {
+                const dayHours = DEFAULT_HOURS.find(h => h.day === dayNum);
+                const isToday = dayNum === currentDay;
+                
+                return (
+                  <div 
+                    key={dayNum}
+                    className={cn(
+                      "flex justify-between text-sm py-1",
+                      isToday && "font-semibold"
+                    )}
+                    style={{ color: isToday ? textColors.primary : textColors.secondary }}
+                  >
+                    <span>{DAYS_FR[dayNum]}</span>
+                    <span className={!dayHours?.enabled ? "text-red-500" : ""}>
+                      {dayHours?.enabled 
+                        ? `${formatTime(dayHours.start)} - ${formatTime(dayHours.end)}`
+                        : 'Fermé'
+                      }
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
     );
   };
@@ -687,6 +783,9 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     { key: 'email', url: customization.social.email ? `mailto:${customization.social.email}` : null, icon: Mail },
   ].filter(s => s.url);
 
+  // Check if there's a cover image
+  const hasCover = Boolean(customization.cover_url);
+
   return (
     <div 
       className="min-h-screen transition-colors duration-300 pb-24"
@@ -695,97 +794,147 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
         backgroundColor: customization.layout.dark_mode ? '#0f0f0f' : '#fafafa',
       }}
     >
-      <div className="max-w-lg mx-auto px-4 pb-8">
-        {/* Fixed CTA Bar - Apple Premium Style (sticky in preview mode to stay within container) */}
-        {hasPacks && isPro && (
-          <div 
-            className={cn(
-              "bottom-0 left-0 right-0 z-50 border-t backdrop-blur-xl safe-area-pb",
-              isPreview ? "sticky" : "fixed"
-            )}
-            style={{ 
-              backgroundColor: customization.layout.dark_mode 
-                ? 'rgba(15, 15, 15, 0.85)' 
-                : 'rgba(255, 255, 255, 0.85)',
-              borderColor: customization.layout.dark_mode 
-                ? 'rgba(255, 255, 255, 0.1)' 
-                : 'rgba(0, 0, 0, 0.06)',
-            }}
-          >
-            <div className="max-w-lg mx-auto px-4 py-3">
-              <Button
-                onClick={onStartBooking}
-                className="w-full h-12 text-base font-semibold rounded-xl transition-all duration-300 hover:opacity-90 active:scale-[0.98]"
-                style={{ 
-                  backgroundColor: customization.colors.primary,
-                  color: 'white',
-                }}
-              >
-                {customization.texts.cta_button || 'Réserver'}
-              </Button>
-            </div>
-          </div>
-        )}
-        {/* Cover Image */}
-        {customization.cover_url && (
-          <div className="relative -mx-4 mb-6">
-            <img
-              src={customization.cover_url}
-              alt="Cover"
-              className="w-full h-48 sm:h-56 object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-          </div>
-        )}
-
-        {/* Header */}
-        <div className={cn("text-center", customization.cover_url ? "-mt-16 relative z-10 mb-6" : "pt-8 mb-6")}>
-          {center.logo_url && (
-            <div 
-              className={cn(
-                "mx-auto mb-4 inline-flex items-center justify-center rounded-xl overflow-hidden",
-                customization.cover_url && "bg-white/95 p-1.5 shadow-md"
-              )}
-            >
-              <img
-                src={center.logo_url}
-                alt={center.name}
-                className="max-w-[140px] max-h-[70px] w-auto h-auto object-contain"
-              />
-            </div>
+      {/* Fixed CTA Bar - Apple Premium Style (sticky in preview mode to stay within container) */}
+      {hasPacks && isPro && (
+        <div 
+          className={cn(
+            "bottom-0 left-0 right-0 z-50 border-t backdrop-blur-xl safe-area-pb",
+            isPreview ? "sticky" : "fixed"
           )}
-          
-          <h1 
-            className="text-2xl font-bold tracking-tight mb-1"
-            style={{ color: textColors.primary }}
-          >
-            {center.name}
-          </h1>
-          
-          {customization.texts.tagline && (
-            <p 
-              className="text-sm mb-4"
-              style={{ color: textColors.secondary }}
+          style={{ 
+            backgroundColor: customization.layout.dark_mode 
+              ? 'rgba(15, 15, 15, 0.85)' 
+              : 'rgba(255, 255, 255, 0.85)',
+            borderColor: customization.layout.dark_mode 
+              ? 'rgba(255, 255, 255, 0.1)' 
+              : 'rgba(0, 0, 0, 0.06)',
+          }}
+        >
+          <div className="max-w-5xl mx-auto px-4 py-3">
+            <Button
+              onClick={onStartBooking}
+              className="w-full lg:w-auto lg:min-w-[200px] lg:mx-auto lg:block h-12 text-base font-semibold rounded-xl transition-all duration-300 hover:opacity-90 active:scale-[0.98]"
+              style={{ 
+                backgroundColor: customization.colors.primary,
+                color: 'white',
+              }}
             >
-              {customization.texts.tagline}
-            </p>
-          )}
-
-          {/* Open Status */}
-          <div 
-            className={cn(
-              "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium",
-              isOpen ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-500"
-            )}
-          >
-            <span className={cn("w-2 h-2 rounded-full", isOpen ? "bg-green-500" : "bg-red-500")} />
-            {isOpen ? 'Ouvert' : 'Fermé'}
+              {customization.texts.cta_button || 'Réserver'}
+            </Button>
           </div>
         </div>
+      )}
+
+      {/* Header Section */}
+      {hasCover ? (
+        // With cover image
+        <div className="relative mb-6">
+          <img
+            src={customization.cover_url!}
+            alt="Cover"
+            className="w-full h-48 sm:h-56 lg:h-72 object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          
+          {/* Overlay header content */}
+          <div className="absolute bottom-0 left-0 right-0 pb-6">
+            <div className="max-w-5xl mx-auto px-4 lg:px-8">
+              <div className="flex items-end gap-4">
+                {center.logo_url && (
+                  <div className="bg-white/95 p-2 rounded-xl shadow-md flex-shrink-0">
+                    <img
+                      src={center.logo_url}
+                      alt={center.name}
+                      className="max-w-[100px] max-h-[50px] lg:max-w-[140px] lg:max-h-[70px] w-auto h-auto object-contain"
+                    />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-xl lg:text-2xl font-bold text-white tracking-tight truncate">
+                    {center.name}
+                  </h1>
+                  {customization.texts.tagline && (
+                    <p className="text-sm text-white/80 truncate">
+                      {customization.texts.tagline}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        // Without cover image - Clean minimal header
+        <div 
+          className="pt-8 pb-6 mb-6"
+          style={{
+            background: customization.layout.dark_mode 
+              ? 'linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%)'
+              : 'linear-gradient(180deg, rgba(0,0,0,0.02) 0%, transparent 100%)',
+          }}
+        >
+          <div className="max-w-5xl mx-auto px-4 lg:px-8">
+            <div className="flex flex-col items-center text-center lg:flex-row lg:text-left lg:items-center lg:gap-6">
+              {center.logo_url && (
+                <div className="mb-4 lg:mb-0">
+                  <img
+                    src={center.logo_url}
+                    alt={center.name}
+                    className="max-w-[160px] max-h-[80px] lg:max-w-[180px] lg:max-h-[90px] w-auto h-auto object-contain"
+                  />
+                </div>
+              )}
+              <div className="flex-1">
+                <h1 
+                  className="text-2xl lg:text-3xl font-bold tracking-tight mb-1"
+                  style={{ color: textColors.primary }}
+                >
+                  {center.name}
+                </h1>
+                {customization.texts.tagline && (
+                  <p 
+                    className="text-sm lg:text-base mb-3"
+                    style={{ color: textColors.secondary }}
+                  >
+                    {customization.texts.tagline}
+                  </p>
+                )}
+                {/* Open Status */}
+                <div 
+                  className={cn(
+                    "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium",
+                    isOpen ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-500"
+                  )}
+                >
+                  <span className={cn("w-2 h-2 rounded-full", isOpen ? "bg-green-500" : "bg-red-500")} />
+                  {isOpen ? 'Ouvert' : 'Fermé'}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content Area */}
+      <div className="max-w-5xl mx-auto px-4 lg:px-8">
+        {/* Open status badge (when cover exists) */}
+        {hasCover && (
+          <div className="flex justify-center lg:justify-start mb-4">
+            <div 
+              className={cn(
+                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium",
+                isOpen ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-500"
+              )}
+            >
+              <span className={cn("w-2 h-2 rounded-full", isOpen ? "bg-green-500" : "bg-red-500")} />
+              {isOpen ? 'Ouvert' : 'Fermé'}
+            </div>
+          </div>
+        )}
 
         {/* Social Icons */}
         {socialLinks.length > 0 && (
-          <div className="flex justify-center gap-3 mb-6">
+          <div className="flex justify-center lg:justify-start gap-3 mb-6">
             {socialLinks.map(({ key, url, icon: Icon }) => (
               <a
                 key={key}
@@ -804,11 +953,29 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
           </div>
         )}
 
-        {/* Dynamic Blocks */}
-        {activeBlocks.map(block => renderBlock(block))}
+        {/* Two-column layout for desktop */}
+        <div className="lg:grid lg:grid-cols-[320px_1fr] lg:gap-10">
+          {/* Left column - Info blocks (desktop only) */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-6 space-y-2">
+              {infoBlocks.map(block => renderBlock(block))}
+            </div>
+          </aside>
+
+          {/* Right column - Content blocks */}
+          <main className="min-w-0">
+            {/* Info blocks on mobile (shown above content) */}
+            <div className="lg:hidden mb-8 space-y-2">
+              {infoBlocks.map(block => renderBlock(block))}
+            </div>
+            
+            {/* Content blocks */}
+            {contentBlocks.map(block => renderBlock(block))}
+          </main>
+        </div>
 
         {/* Footer */}
-        <div className="text-center pt-8 border-t" style={{ borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)' }}>
+        <div className="text-center pt-8 mt-8 border-t" style={{ borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)' }}>
           <p className="text-xs" style={{ color: textColors.secondary }}>
             Propulsé par <span className="font-medium">CleaningPage</span>
           </p>
