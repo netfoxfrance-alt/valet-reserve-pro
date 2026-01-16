@@ -537,6 +537,86 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     );
   };
 
+  // Render reviews block (Google / TripAdvisor)
+  const renderReviews = (block: PageBlock) => {
+    const isGoogle = block.reviewPlatform === 'google';
+    const rating = block.reviewRating || 5;
+    const count = block.reviewCount || 0;
+    const url = block.reviewUrl;
+
+    const absoluteUrl = url?.startsWith('http://') || url?.startsWith('https://') 
+      ? url 
+      : url ? `https://${url}` : null;
+
+    const Wrapper = absoluteUrl ? 'a' : 'div';
+    const wrapperProps = absoluteUrl ? { 
+      href: absoluteUrl, 
+      target: '_blank', 
+      rel: 'noopener noreferrer' 
+    } : {};
+
+    return (
+      <div key={block.id} className="mb-4">
+        <Wrapper
+          {...wrapperProps}
+          className="flex items-center gap-3 p-4 rounded-2xl border transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group cursor-pointer"
+          style={{
+            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
+            borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
+          }}
+        >
+          {/* Platform icon */}
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 bg-white shadow-sm">
+            {isGoogle ? (
+              <svg className="w-6 h-6" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#00AF87">
+                <path d="M12.006 4.295c-2.67 0-5.338.784-7.645 2.353H0l1.963 2.135a5.997 5.997 0 0 0 4.04 10.43 5.976 5.976 0 0 0 4.075-1.6L12 19.705l1.922-2.09a5.972 5.972 0 0 0 4.072 1.598 5.997 5.997 0 0 0 4.04-10.43L24 6.647h-4.35a13.573 13.573 0 0 0-7.644-2.352zM12 6.255a11.31 11.31 0 0 1 4.786 1.058 5.976 5.976 0 0 0-9.573 0A11.31 11.31 0 0 1 12 6.255zm-6.003 3.088a4.008 4.008 0 1 1 0 8.017 4.008 4.008 0 0 1 0-8.017zm12.006 0a4.008 4.008 0 1 1 0 8.017 4.008 4.008 0 0 1 0-8.017zM5.997 11.21a2.143 2.143 0 1 0 0 4.286 2.143 2.143 0 0 0 0-4.286zm12.006 0a2.143 2.143 0 1 0 0 4.286 2.143 2.143 0 0 0 0-4.286z"/>
+              </svg>
+            )}
+          </div>
+          
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            <p className="font-medium text-sm" style={{ color: textColors.primary }}>
+              {isGoogle ? 'Voir nos avis Google' : 'Voir nos avis TripAdvisor'}
+            </p>
+            <div className="flex items-center gap-1.5 mt-1">
+              {/* Stars */}
+              <div className="flex items-center gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <svg
+                    key={i}
+                    className={cn(
+                      "w-3.5 h-3.5",
+                      i < Math.floor(rating) ? "text-yellow-400" : "text-gray-300"
+                    )}
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                  </svg>
+                ))}
+              </div>
+              <span className="font-semibold text-sm" style={{ color: textColors.primary }}>{rating}</span>
+              <span className="text-xs" style={{ color: textColors.secondary }}>({count} avis)</span>
+            </div>
+          </div>
+          
+          {/* External link icon */}
+          {absoluteUrl && (
+            <ExternalLink className="w-4 h-4 opacity-40 group-hover:opacity-70 transition-opacity flex-shrink-0" style={{ color: textColors.secondary }} />
+          )}
+        </Wrapper>
+      </div>
+    );
+  };
+
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!contactName.trim() || !contactPhone.trim()) return;
@@ -583,6 +663,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
         return renderAddress(block);
       case 'phone':
         return renderPhone(block);
+      case 'reviews':
+        return renderReviews(block);
       default:
         return null;
     }

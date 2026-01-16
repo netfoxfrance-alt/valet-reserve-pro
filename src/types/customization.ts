@@ -14,7 +14,11 @@ export type BlockType =
   | 'contact'       // Contact form
   | 'hours'         // Business hours
   | 'address'       // Address display
-  | 'phone';        // Phone display
+  | 'phone'         // Phone display
+  | 'reviews';      // Review badges (Google, TripAdvisor)
+
+// Review platform type
+export type ReviewPlatform = 'google' | 'tripadvisor';
 
 // Display style for info blocks (phone, address, hours)
 export type InfoBlockStyle = 'minimal' | 'pill' | 'card';
@@ -30,6 +34,11 @@ export interface PageBlock {
   images?: string[];          // For gallery
   galleryType?: 'gallery' | 'realizations' | 'before_after';  // Subtype for gallery
   infoStyle?: InfoBlockStyle; // For phone, address, hours - display style
+  // Review block properties
+  reviewPlatform?: ReviewPlatform;  // google or tripadvisor
+  reviewUrl?: string;               // URL to the review page
+  reviewRating?: number;            // Rating (1-5, e.g. 4.8)
+  reviewCount?: number;             // Number of reviews
 }
 
 export interface CenterCustomization {
