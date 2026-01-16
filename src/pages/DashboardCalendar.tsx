@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter } from '@/hooks/useCenter';
+import { useBlockedPeriods } from '@/hooks/useAvailability';
 import { 
   format, 
   addMonths, 
@@ -68,7 +69,6 @@ export default function DashboardCalendar() {
   const [appointmentToReschedule, setAppointmentToReschedule] = useState<Appointment | null>(null);
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [blockForm, setBlockForm] = useState({ start_date: '', end_date: '', reason: '' });
-  const [blockedPeriods, setBlockedPeriods] = useState<BlockedPeriod[]>([]);
   const [loadingBlock, setLoadingBlock] = useState(false);
   const [rescheduleForm, setRescheduleForm] = useState({ date: '', time: '' });
   const [loadingReschedule, setLoadingReschedule] = useState(false);
@@ -76,6 +76,7 @@ export default function DashboardCalendar() {
   
   const { appointments, loading, updateStatus, deleteAppointment } = useMyAppointments();
   const { center } = useMyCenter();
+  const { blockedPeriods, addBlockedPeriod, removeBlockedPeriod: deleteBlockedPeriod } = useBlockedPeriods(center?.id);
 
   // Calendar navigation
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
@@ -144,44 +145,26 @@ export default function DashboardCalendar() {
     if (!center || !blockForm.start_date || !blockForm.end_date) return;
     
     setLoadingBlock(true);
-    // For now, we'll store in localStorage as we don't have a blocked_periods table
-    // In production, this should be a database table
-    const newPeriod: BlockedPeriod = {
-      id: crypto.randomUUID(),
-      center_id: center.id,
-      start_date: blockForm.start_date,
-      end_date: blockForm.end_date,
-      reason: blockForm.reason || null,
-      created_at: new Date().toISOString()
-    };
-    
-    setBlockedPeriods(prev => [...prev, newPeriod]);
-    localStorage.setItem(`blocked_periods_${center.id}`, JSON.stringify([...blockedPeriods, newPeriod]));
-    
+    const { error } = await addBlockedPeriod(blockForm.start_date, blockForm.end_date, blockForm.reason);
     setLoadingBlock(false);
-    toast.success('Période bloquée');
-    setShowBlockDialog(false);
-    setBlockForm({ start_date: '', end_date: '', reason: '' });
+    
+    if (error) {
+      toast.error('Erreur lors du blocage');
+    } else {
+      toast.success('Période bloquée');
+      setShowBlockDialog(false);
+      setBlockForm({ start_date: '', end_date: '', reason: '' });
+    }
   };
 
-  // Load blocked periods from localStorage
-  useState(() => {
-    if (center) {
-      const stored = localStorage.getItem(`blocked_periods_${center.id}`);
-      if (stored) {
-        setBlockedPeriods(JSON.parse(stored));
-      }
-    }
-  });
-
   // Remove blocked period
-  const removeBlockedPeriod = (id: string) => {
-    const updated = blockedPeriods.filter(p => p.id !== id);
-    setBlockedPeriods(updated);
-    if (center) {
-      localStorage.setItem(`blocked_periods_${center.id}`, JSON.stringify(updated));
+  const removeBlockedPeriod = async (id: string) => {
+    const { error } = await deleteBlockedPeriod(id);
+    if (error) {
+      toast.error('Erreur lors de la suppression');
+    } else {
+      toast.success('Période débloquée');
     }
-    toast.success('Période débloquée');
   };
 
   // Get selected day appointments

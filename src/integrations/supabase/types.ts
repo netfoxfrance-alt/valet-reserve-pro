@@ -129,6 +129,48 @@ export type Database = {
           },
         ]
       }
+      blocked_periods: {
+        Row: {
+          center_id: string
+          created_at: string
+          end_date: string
+          id: string
+          reason: string | null
+          start_date: string
+        }
+        Insert: {
+          center_id: string
+          created_at?: string
+          end_date: string
+          id?: string
+          reason?: string | null
+          start_date: string
+        }
+        Update: {
+          center_id?: string
+          created_at?: string
+          end_date?: string
+          id?: string
+          reason?: string | null
+          start_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocked_periods_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blocked_periods_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "public_centers_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       centers: {
         Row: {
           address: string | null

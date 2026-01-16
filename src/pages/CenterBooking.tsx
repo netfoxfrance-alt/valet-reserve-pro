@@ -524,7 +524,7 @@ export default function CenterBooking() {
                   {` • ${packData.price}€`}
                 </p>
               </div>
-              <CalendarPicker duration={packData.duration} onSelect={handleDateSelect} />
+              <CalendarPicker duration={packData.duration} onSelect={handleDateSelect} centerId={center?.id} />
             </div>
           )}
           
