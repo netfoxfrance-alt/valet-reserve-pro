@@ -104,20 +104,23 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
       .sort((a, b) => a.order - b.order);
   }, [customization.blocks]);
 
-  // Separate blocks into info vs content for desktop layout
-  const { infoBlocks, contentBlocks } = useMemo(() => {
-    const info: PageBlock[] = [];
-    const content: PageBlock[] = [];
+  // Separate blocks into categories for Apple-style desktop layout
+  const { quickActions, infoBlocks, contentBlocks } = useMemo(() => {
+    const quick: PageBlock[] = []; // Phone, address - action items
+    const info: PageBlock[] = [];  // Hours, reviews, links - info sidebar
+    const content: PageBlock[] = []; // Formules, gallery, text, contact
     
     activeBlocks.forEach(block => {
-      if (['hours', 'address', 'phone', 'reviews', 'links'].includes(block.type)) {
+      if (['phone', 'address'].includes(block.type)) {
+        quick.push(block);
+      } else if (['hours', 'reviews', 'links'].includes(block.type)) {
         info.push(block);
       } else {
         content.push(block);
       }
     });
     
-    return { infoBlocks: info, contentBlocks: content };
+    return { quickActions: quick, infoBlocks: info, contentBlocks: content };
   }, [activeBlocks]);
 
   // Get text colors based on dark mode
@@ -528,32 +531,48 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     );
   };
 
-  // Render phone block
+  // Render phone block - Always as a nice button
   const renderPhone = (block: PageBlock) => {
     if (!center.phone) return null;
+    
     return (
       <div key={block.id} className="mb-4">
-        {renderInfoBlock(
-          block,
-          center.phone,
-          <Phone className="w-4 h-4" />,
-          `tel:${center.phone}`
-        )}
+        <a
+          href={`tel:${center.phone}`}
+          className="flex items-center justify-center gap-3 w-full py-3.5 px-5 rounded-2xl font-medium text-sm transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] hover:shadow-lg"
+          style={{ 
+            backgroundColor: customization.colors.primary + '12',
+            color: customization.colors.primary,
+            border: `1px solid ${customization.colors.primary}25`,
+          }}
+        >
+          <Phone className="w-5 h-5" />
+          <span>Appeler · {center.phone}</span>
+        </a>
       </div>
     );
   };
 
-  // Render address block
+  // Render address block - Nice button style
   const renderAddress = (block: PageBlock) => {
     if (!center.address) return null;
+    
     return (
       <div key={block.id} className="mb-4">
-        {renderInfoBlock(
-          block,
-          center.address,
-          <MapPin className="w-4 h-4" />,
-          `https://maps.google.com/?q=${encodeURIComponent(center.address)}`
-        )}
+        <a
+          href={`https://maps.google.com/?q=${encodeURIComponent(center.address)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-3 w-full py-3.5 px-5 rounded-2xl font-medium text-sm transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] hover:shadow-lg"
+          style={{ 
+            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)',
+            color: textColors.primary,
+            border: `1px solid ${customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'}`,
+          }}
+        >
+          <MapPin className="w-5 h-5" style={{ color: customization.colors.primary }} />
+          <span className="truncate">{center.address}</span>
+        </a>
       </div>
     );
   };
@@ -953,25 +972,45 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
           </div>
         )}
 
-        {/* Two-column layout for desktop */}
-        <div className="lg:grid lg:grid-cols-[320px_1fr] lg:gap-10">
-          {/* Left column - Info blocks (desktop only) */}
-          <aside className="hidden lg:block">
-            <div className="sticky top-6 space-y-2">
-              {infoBlocks.map(block => renderBlock(block))}
-            </div>
-          </aside>
+        {/* Quick Action Buttons (Phone, Address) - Horizontal on desktop */}
+        {quickActions.length > 0 && (
+          <div className="flex flex-col lg:flex-row gap-3 mb-8">
+            {quickActions.map(block => (
+              <div key={block.id} className="lg:flex-1">
+                {renderBlock(block)}
+              </div>
+            ))}
+          </div>
+        )}
 
-          {/* Right column - Content blocks */}
-          <main className="min-w-0">
-            {/* Info blocks on mobile (shown above content) */}
-            <div className="lg:hidden mb-8 space-y-2">
+        {/* Two-column layout for desktop - Apple style */}
+        <div className="lg:grid lg:grid-cols-[1fr_340px] lg:gap-12">
+          {/* Left column - Main content (formules, gallery, etc.) */}
+          <main className="min-w-0 order-2 lg:order-1">
+            {/* Info blocks on mobile only (shown above content) */}
+            <div className="lg:hidden mb-8 space-y-3">
               {infoBlocks.map(block => renderBlock(block))}
             </div>
             
             {/* Content blocks */}
             {contentBlocks.map(block => renderBlock(block))}
           </main>
+
+          {/* Right column - Info sidebar (desktop only) */}
+          <aside className="hidden lg:block order-1 lg:order-2">
+            <div className="sticky top-6">
+              <Card 
+                className="p-5 rounded-2xl space-y-4"
+                style={{
+                  backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.03)' : 'white',
+                  border: `1px solid ${customization.layout.dark_mode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
+                  boxShadow: customization.layout.dark_mode ? 'none' : '0 2px 12px rgba(0,0,0,0.04)',
+                }}
+              >
+                {infoBlocks.map(block => renderBlock(block))}
+              </Card>
+            </div>
+          </aside>
         </div>
 
         {/* Footer */}
