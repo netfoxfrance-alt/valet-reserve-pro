@@ -49,6 +49,11 @@ const BLOCK_ICONS: Record<BlockType, React.ElementType> = {
   hours: Clock,
   address: MapPin,
   phone: Phone,
+  reviews: () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+    </svg>
+  ),
 };
 
 const BLOCK_LABELS: Record<BlockType, string> = {
@@ -60,6 +65,7 @@ const BLOCK_LABELS: Record<BlockType, string> = {
   hours: 'Horaires',
   address: 'Adresse',
   phone: 'Téléphone',
+  reviews: 'Avis',
 };
 
 const GALLERY_TYPES = [
@@ -90,6 +96,23 @@ const INDIVIDUAL_LINK_OPTIONS = [
   { id: 'other', label: 'Autre lien', placeholder: 'Tout autre lien', icon: FileText, customLink: true },
 ];
 
+// Google icon component
+const GoogleIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24">
+    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+  </svg>
+);
+
+// TripAdvisor icon component
+const TripAdvisorIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="#00AF87">
+    <path d="M12.006 4.295c-2.67 0-5.338.784-7.645 2.353H0l1.963 2.135a5.997 5.997 0 0 0 4.04 10.43 5.976 5.976 0 0 0 4.075-1.6L12 19.705l1.922-2.09a5.972 5.972 0 0 0 4.072 1.598 5.997 5.997 0 0 0 4.04-10.43L24 6.647h-4.35a13.573 13.573 0 0 0-7.644-2.352zM12 6.255a11.31 11.31 0 0 1 4.786 1.058 5.976 5.976 0 0 0-9.573 0A11.31 11.31 0 0 1 12 6.255zm-6.003 3.088a4.008 4.008 0 1 1 0 8.017 4.008 4.008 0 0 1 0-8.017zm12.006 0a4.008 4.008 0 1 1 0 8.017 4.008 4.008 0 0 1 0-8.017zM5.997 11.21a2.143 2.143 0 1 0 0 4.286 2.143 2.143 0 0 0 0-4.286zm12.006 0a2.143 2.143 0 1 0 0 4.286 2.143 2.143 0 0 0 0-4.286z"/>
+  </svg>
+);
+
 // Categories for the add dialog
 const ELEMENT_CATEGORIES = [
   {
@@ -107,6 +130,14 @@ const ELEMENT_CATEGORIES = [
     items: [
       { type: 'gallery' as BlockType, label: 'Images', description: 'Galerie, réalisations, avant/après', icon: ImageIcon, multiple: true },
       { type: 'text_block' as BlockType, label: 'Texte', description: 'Bloc de texte personnalisé', icon: Type, multiple: true },
+    ],
+  },
+  {
+    title: 'Avis clients',
+    description: 'Affichez vos notes',
+    items: [
+      { type: 'reviews' as BlockType, label: 'Avis Google', description: 'Votre note Google', icon: GoogleIcon, multiple: false, reviewPlatform: 'google' as const },
+      { type: 'reviews' as BlockType, label: 'Avis TripAdvisor', description: 'Votre note TripAdvisor', icon: TripAdvisorIcon, multiple: false, reviewPlatform: 'tripadvisor' as const },
     ],
   },
   {
@@ -160,8 +191,10 @@ export function BlocksEditor({
   const hasAddress = blocks.some(b => b.type === 'address');
   const hasPhone = blocks.some(b => b.type === 'phone');
   const hasLinks = blocks.some(b => b.type === 'links');
+  const hasGoogleReviews = blocks.some(b => b.type === 'reviews' && b.reviewPlatform === 'google');
+  const hasTripAdvisorReviews = blocks.some(b => b.type === 'reviews' && b.reviewPlatform === 'tripadvisor');
 
-  const isBlockAvailable = (type: BlockType, multiple: boolean) => {
+  const isBlockAvailable = (type: BlockType, multiple: boolean, reviewPlatform?: 'google' | 'tripadvisor') => {
     if (multiple) return true;
     switch (type) {
       case 'contact': return !hasContact;
@@ -169,6 +202,10 @@ export function BlocksEditor({
       case 'address': return !hasAddress;
       case 'phone': return !hasPhone;
       case 'links': return !hasLinks;
+      case 'reviews':
+        if (reviewPlatform === 'google') return !hasGoogleReviews;
+        if (reviewPlatform === 'tripadvisor') return !hasTripAdvisorReviews;
+        return true;
       default: return true;
     }
   };
@@ -216,6 +253,13 @@ export function BlocksEditor({
     ));
   };
 
+  // Update review block properties
+  const updateReviewBlock = (id: string, updates: { reviewUrl?: string; reviewRating?: number; reviewCount?: number }) => {
+    onUpdateBlocks(blocks.map(b => 
+      b.id === id ? { ...b, ...updates } : b
+    ));
+  };
+
   // Style selector for info blocks (phone, address, hours)
   const INFO_STYLES: { value: InfoBlockStyle; label: string; preview: string }[] = [
     { value: 'minimal', label: 'Minimal', preview: 'Discret' },
@@ -245,12 +289,12 @@ export function BlocksEditor({
     </div>
   );
 
-  const addBlock = (type: BlockType) => {
+  const addBlock = (type: BlockType, reviewPlatform?: 'google' | 'tripadvisor') => {
     const maxOrder = Math.max(...blocks.map(b => b.order), 0);
     const newBlock: PageBlock = {
-      id: `${type}_${Date.now()}`,
+      id: `${type}_${reviewPlatform || ''}_${Date.now()}`,
       type,
-      title: BLOCK_LABELS[type],
+      title: reviewPlatform === 'google' ? 'Avis Google' : reviewPlatform === 'tripadvisor' ? 'Avis TripAdvisor' : BLOCK_LABELS[type],
       enabled: true,
       order: maxOrder + 1,
     };
@@ -260,11 +304,16 @@ export function BlocksEditor({
       newBlock.galleryType = 'gallery';
     } else if (type === 'text_block') {
       newBlock.content = '';
+    } else if (type === 'reviews' && reviewPlatform) {
+      newBlock.reviewPlatform = reviewPlatform;
+      newBlock.reviewUrl = '';
+      newBlock.reviewRating = 5;
+      newBlock.reviewCount = 0;
     }
     
     onUpdateBlocks([...blocks, newBlock]);
     setAddDialogOpen(false);
-    toast({ title: `${BLOCK_LABELS[type]} ajouté` });
+    toast({ title: reviewPlatform === 'google' ? 'Avis Google ajouté' : reviewPlatform === 'tripadvisor' ? 'Avis TripAdvisor ajouté' : `${BLOCK_LABELS[type]} ajouté` });
   };
 
   const removeBlock = (id: string) => {
@@ -638,6 +687,82 @@ export function BlocksEditor({
           </div>
         );
 
+      case 'reviews':
+        const isGoogle = block.reviewPlatform === 'google';
+        return (
+          <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-3">
+            {/* Platform indicator */}
+            <div className="flex items-center gap-2 text-sm">
+              {isGoogle ? <GoogleIcon /> : <TripAdvisorIcon />}
+              <span className="font-medium text-foreground">{isGoogle ? 'Google' : 'TripAdvisor'}</span>
+            </div>
+            
+            {/* URL */}
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Lien vers votre fiche</Label>
+              <Input
+                value={block.reviewUrl || ''}
+                onChange={(e) => updateReviewBlock(block.id, { reviewUrl: e.target.value })}
+                placeholder={isGoogle ? 'https://g.page/...' : 'https://tripadvisor.com/...'}
+                className="h-9 text-sm"
+              />
+            </div>
+            
+            {/* Rating */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Note (sur 5)</Label>
+                <Input
+                  type="number"
+                  min="1"
+                  max="5"
+                  step="0.1"
+                  value={block.reviewRating || 5}
+                  onChange={(e) => updateReviewBlock(block.id, { reviewRating: parseFloat(e.target.value) || 5 })}
+                  className="h-9 text-sm"
+                />
+              </div>
+              
+              {/* Review count */}
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Nombre d'avis</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  value={block.reviewCount || 0}
+                  onChange={(e) => updateReviewBlock(block.id, { reviewCount: parseInt(e.target.value) || 0 })}
+                  className="h-9 text-sm"
+                />
+              </div>
+            </div>
+            
+            {/* Preview */}
+            <div className="mt-2 p-3 rounded-xl bg-muted/30 border">
+              <p className="text-xs text-muted-foreground mb-1">Aperçu</p>
+              <div className="flex items-center gap-2">
+                {isGoogle ? <GoogleIcon /> : <TripAdvisorIcon />}
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <svg
+                      key={i}
+                      className={cn(
+                        "w-3.5 h-3.5",
+                        i < Math.floor(block.reviewRating || 5) ? "text-yellow-400" : "text-gray-300"
+                      )}
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                  ))}
+                  <span className="text-sm font-medium ml-1">{block.reviewRating || 5}</span>
+                  <span className="text-xs text-muted-foreground">({block.reviewCount || 0} avis)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
       default:
         return null;
     }
@@ -767,18 +892,20 @@ export function BlocksEditor({
                     </div>
                     <div className="grid gap-2">
                       {category.items.map((item) => {
-                        const available = isBlockAvailable(item.type, item.multiple);
+                        const reviewPlatform = 'reviewPlatform' in item ? item.reviewPlatform : undefined;
+                        const available = isBlockAvailable(item.type, item.multiple, reviewPlatform);
                         const hasSubmenu = 'hasSubmenu' in item && item.hasSubmenu;
+                        const itemKey = reviewPlatform ? `${item.type}_${reviewPlatform}` : item.type;
                         
                         return (
                           <button
-                            key={item.type}
+                            key={itemKey}
                             onClick={() => {
                               if (!available) return;
                               if (hasSubmenu) {
                                 setLinksSubmenuOpen(true);
                               } else {
-                                addBlock(item.type);
+                                addBlock(item.type, reviewPlatform);
                               }
                             }}
                             disabled={!available}
