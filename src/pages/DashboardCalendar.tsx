@@ -18,7 +18,9 @@ import {
   User,
   Ban,
   Loader2,
-  GripVertical
+  GripVertical,
+  Trash2,
+  ArrowRight
 } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter } from '@/hooks/useCenter';
@@ -71,7 +73,9 @@ export default function DashboardCalendar() {
   const [rescheduleForm, setRescheduleForm] = useState({ date: '', time: '' });
   const [loadingReschedule, setLoadingReschedule] = useState(false);
   
-  const { appointments, loading, updateStatus } = useMyAppointments();
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  
+  const { appointments, loading, updateStatus, deleteAppointment } = useMyAppointments();
   const { center } = useMyCenter();
 
   // Calendar navigation
@@ -446,7 +450,7 @@ export default function DashboardCalendar() {
         </main>
       </div>
 
-      {/* Reschedule Dialog */}
+      {/* Appointment Details Dialog */}
       <Dialog open={showRescheduleDialog || !!selectedAppointment} onOpenChange={(open) => {
         if (!open) {
           setShowRescheduleDialog(false);
@@ -461,9 +465,15 @@ export default function DashboardCalendar() {
           {selectedAppointment && (
             <div className="space-y-4">
               <div className="p-4 bg-secondary/50 rounded-xl space-y-2">
-                <div className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-medium">{selectedAppointment.client_name}</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-muted-foreground" />
+                    <span className="font-medium">{selectedAppointment.client_name}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Clock className="w-3.5 h-3.5" />
+                    {format(parseISO(selectedAppointment.appointment_date), "d MMM", { locale: fr })} à {selectedAppointment.appointment_time.slice(0, 5)}
+                  </div>
                 </div>
                 <p className="text-sm text-muted-foreground ml-6">{selectedAppointment.client_phone}</p>
                 {selectedAppointment.pack && (
@@ -473,69 +483,102 @@ export default function DashboardCalendar() {
                 )}
               </div>
               
-              <div className="space-y-3">
-                <Label>Nouvelle date</Label>
-                <Input
-                  type="date"
-                  value={rescheduleForm.date}
-                  onChange={(e) => setRescheduleForm(prev => ({ ...prev, date: e.target.value }))}
-                  className="h-11 rounded-xl"
-                />
+              {/* Reschedule section */}
+              <div className="p-4 border border-border rounded-xl space-y-3">
+                <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                  <ArrowRight className="w-4 h-4" />
+                  Déplacer à une autre date
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs">Date</Label>
+                    <Input
+                      type="date"
+                      value={rescheduleForm.date}
+                      onChange={(e) => setRescheduleForm(prev => ({ ...prev, date: e.target.value }))}
+                      className="h-10 rounded-lg text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Heure</Label>
+                    <Input
+                      type="time"
+                      value={rescheduleForm.time}
+                      onChange={(e) => setRescheduleForm(prev => ({ ...prev, time: e.target.value }))}
+                      className="h-10 rounded-lg text-sm"
+                    />
+                  </div>
+                </div>
+                <Button 
+                  onClick={handleReschedule}
+                  disabled={loadingReschedule}
+                  className="w-full rounded-xl"
+                  size="sm"
+                >
+                  {loadingReschedule ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Déplacer le rendez-vous'}
+                </Button>
               </div>
               
-              <div className="space-y-3">
-                <Label>Nouvelle heure</Label>
-                <Input
-                  type="time"
-                  value={rescheduleForm.time}
-                  onChange={(e) => setRescheduleForm(prev => ({ ...prev, time: e.target.value }))}
-                  className="h-11 rounded-xl"
-                />
-              </div>
+              {/* Status actions */}
+              {selectedAppointment.status === 'pending' && (
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1 rounded-xl text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+                    onClick={() => {
+                      handleUpdateStatus(selectedAppointment.id, 'confirmed');
+                      setSelectedAppointment(null);
+                    }}
+                  >
+                    Confirmer
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1 rounded-xl text-amber-600 border-amber-200 hover:bg-amber-50"
+                    onClick={() => {
+                      handleUpdateStatus(selectedAppointment.id, 'cancelled');
+                      setSelectedAppointment(null);
+                    }}
+                  >
+                    Annuler
+                  </Button>
+                </div>
+              )}
               
-              <div className="flex gap-2 pt-2">
-                {selectedAppointment.status === 'pending' && (
-                  <>
-                    <Button
-                      variant="outline"
-                      className="flex-1 rounded-xl text-emerald-600 border-emerald-200 hover:bg-emerald-50"
-                      onClick={() => {
-                        handleUpdateStatus(selectedAppointment.id, 'confirmed');
+              {/* Delete button */}
+              <div className="pt-2 border-t border-border">
+                <Button
+                  variant="ghost"
+                  className="w-full rounded-xl text-red-500 hover:text-red-600 hover:bg-red-50"
+                  disabled={loadingDelete}
+                  onClick={async () => {
+                    if (confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?')) {
+                      setLoadingDelete(true);
+                      const { error } = await deleteAppointment(selectedAppointment.id);
+                      setLoadingDelete(false);
+                      if (error) {
+                        toast.error('Erreur lors de la suppression');
+                      } else {
+                        toast.success('Rendez-vous supprimé');
                         setSelectedAppointment(null);
-                      }}
-                    >
-                      Confirmer
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="flex-1 rounded-xl text-red-500 border-red-200 hover:bg-red-50"
-                      onClick={() => {
-                        handleUpdateStatus(selectedAppointment.id, 'cancelled');
-                        setSelectedAppointment(null);
-                      }}
-                    >
-                      Annuler
-                    </Button>
-                  </>
-                )}
+                      }
+                    }
+                  }}
+                >
+                  {loadingDelete ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                  Supprimer le rendez-vous
+                </Button>
               </div>
             </div>
           )}
           
-          <DialogFooter className="gap-2">
+          <DialogFooter>
             <Button 
               variant="ghost" 
               onClick={() => setSelectedAppointment(null)}
               className="rounded-xl"
             >
               Fermer
-            </Button>
-            <Button 
-              onClick={handleReschedule}
-              disabled={loadingReschedule}
-              className="rounded-xl"
-            >
-              {loadingReschedule ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Déplacer'}
             </Button>
           </DialogFooter>
         </DialogContent>
