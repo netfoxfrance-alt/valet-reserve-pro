@@ -53,6 +53,7 @@ export interface Pack {
   price: number;
   features: string[];
   price_variants: PriceVariant[];
+  image_url: string | null;
   sort_order: number;
   active: boolean;
   created_at: string;

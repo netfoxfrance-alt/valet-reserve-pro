@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -7,11 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useMyPacks, Pack } from '@/hooks/useCenter';
-import { Pencil, Clock, Plus, Trash2, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
+import { useMyPacks, Pack, useMyCenter } from '@/hooks/useCenter';
+import { Pencil, Clock, Plus, Trash2, Loader2, ChevronDown, ChevronUp, Image as ImageIcon, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { VariantsEditor } from '@/components/dashboard/VariantsEditor';
 import { FeaturesEditor } from '@/components/dashboard/FeaturesEditor';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PriceVariant {
   name: string;
@@ -20,11 +21,13 @@ interface PriceVariant {
 
 export default function DashboardPacks() {
   const { packs, loading, createPack, updatePack, deletePack } = useMyPacks();
+  const { center } = useMyCenter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [editForm, setEditForm] = useState<Partial<Pack> & { price_variants?: PriceVariant[] }>({});
+  const [uploadingImage, setUploadingImage] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Partial<Pack> & { price_variants?: PriceVariant[]; image_url?: string | null }>({});
   const [newPack, setNewPack] = useState({
     name: '',
     description: '',
@@ -34,7 +37,10 @@ export default function DashboardPacks() {
     sort_order: 0,
     active: true,
     price_variants: [] as PriceVariant[],
+    image_url: null as string | null,
   });
+  const newImageInputRef = useRef<HTMLInputElement>(null);
+  const editImageInputRef = useRef<HTMLInputElement>(null);
 
   const handleEdit = (pack: Pack) => {
     setEditingId(pack.id);
@@ -45,6 +51,7 @@ export default function DashboardPacks() {
       duration: pack.duration,
       features: pack.features,
       price_variants: (pack as any).price_variants || [],
+      image_url: (pack as any).image_url || null,
     });
   };
 
@@ -82,6 +89,7 @@ export default function DashboardPacks() {
         sort_order: 0,
         active: true,
         price_variants: [],
+        image_url: null,
       });
     }
   };
@@ -175,6 +183,41 @@ export default function DashboardPacks() {
     setEditForm(prev => ({ ...prev, features: (prev.features || []).filter((_, i) => i !== index) }));
   }, []);
 
+  // Image upload handler
+  const handleImageUpload = async (file: File, target: 'new' | 'edit') => {
+    if (!center) return;
+    
+    const targetId = target === 'edit' && editingId ? editingId : 'new';
+    setUploadingImage(targetId);
+    
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${center.id}/${targetId}-${Date.now()}.${fileExt}`;
+    
+    const { error: uploadError } = await supabase.storage
+      .from('center-gallery')
+      .upload(fileName, file, { upsert: true });
+    
+    if (uploadError) {
+      toast.error('Erreur lors du téléchargement');
+      setUploadingImage(null);
+      return;
+    }
+    
+    const { data: urlData } = supabase.storage
+      .from('center-gallery')
+      .getPublicUrl(fileName);
+    
+    const imageUrl = urlData.publicUrl;
+    
+    if (target === 'new') {
+      setNewPack(prev => ({ ...prev, image_url: imageUrl }));
+    } else {
+      setEditForm(prev => ({ ...prev, image_url: imageUrl }));
+    }
+    
+    setUploadingImage(null);
+    toast.success('Image ajoutée');
+  };
 
   if (loading) {
     return (
@@ -273,6 +316,53 @@ export default function DashboardPacks() {
                   onRemove={handleRemoveNewFeature}
                 />
 
+                {/* Image upload for new pack */}
+                <div className="space-y-2">
+                  <Label>Image (optionnel)</Label>
+                  <input
+                    ref={newImageInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleImageUpload(file, 'new');
+                    }}
+                  />
+                  {newPack.image_url ? (
+                    <div className="relative inline-block">
+                      <img 
+                        src={newPack.image_url} 
+                        alt="Pack image" 
+                        className="w-32 h-24 object-cover rounded-lg"
+                      />
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                        onClick={() => setNewPack({ ...newPack, image_url: null })}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full sm:w-auto"
+                      disabled={uploadingImage === 'new'}
+                      onClick={() => newImageInputRef.current?.click()}
+                    >
+                      {uploadingImage === 'new' ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <ImageIcon className="w-4 h-4 mr-2" />
+                      )}
+                      Ajouter une image
+                    </Button>
+                  )}
+                </div>
+
                 <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
                   <Button variant="ghost" onClick={() => setIsCreating(false)} className="w-full sm:w-auto">
                     Annuler
@@ -361,6 +451,53 @@ export default function DashboardPacks() {
                           onRemove={handleRemoveEditFeature}
                         />
 
+                        {/* Image upload for edit */}
+                        <div className="space-y-2">
+                          <Label>Image (optionnel)</Label>
+                          <input
+                            ref={editImageInputRef}
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleImageUpload(file, 'edit');
+                            }}
+                          />
+                          {editForm.image_url ? (
+                            <div className="relative inline-block">
+                              <img 
+                                src={editForm.image_url} 
+                                alt="Pack image" 
+                                className="w-32 h-24 object-cover rounded-lg"
+                              />
+                              <Button
+                                variant="destructive"
+                                size="icon"
+                                className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                                onClick={() => setEditForm({ ...editForm, image_url: null })}
+                              >
+                                <X className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="w-full sm:w-auto"
+                              disabled={uploadingImage === editingId}
+                              onClick={() => editImageInputRef.current?.click()}
+                            >
+                              {uploadingImage === editingId ? (
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              ) : (
+                                <ImageIcon className="w-4 h-4 mr-2" />
+                              )}
+                              Ajouter une image
+                            </Button>
+                          )}
+                        </div>
+
                         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
                           <Button variant="ghost" onClick={() => setEditingId(null)} className="w-full sm:w-auto">
                             Annuler
@@ -372,10 +509,20 @@ export default function DashboardPacks() {
                       </div>
                     ) : (
                       <div>
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-lg text-foreground truncate">{pack.name}</h3>
-                            <p className="text-sm text-muted-foreground line-clamp-2">{pack.description}</p>
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                          {/* Image + Info */}
+                          <div className="flex gap-4 flex-1 min-w-0">
+                            {(pack as any).image_url && (
+                              <img 
+                                src={(pack as any).image_url} 
+                                alt={pack.name}
+                                className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-xl flex-shrink-0"
+                              />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-lg text-foreground truncate">{pack.name}</h3>
+                              <p className="text-sm text-muted-foreground line-clamp-2">{pack.description}</p>
+                            </div>
                           </div>
                           <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6">
                             <div className="text-left sm:text-right">
