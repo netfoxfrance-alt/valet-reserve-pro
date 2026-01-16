@@ -542,11 +542,12 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     const isGoogle = block.reviewPlatform === 'google';
     const rating = block.reviewRating || 5;
     const count = block.reviewCount || 0;
-    const url = block.reviewUrl;
+    const url = block.reviewUrl?.trim();
 
-    const absoluteUrl = url?.startsWith('http://') || url?.startsWith('https://') 
-      ? url 
-      : url ? `https://${url}` : null;
+    // Use URL directly - only add https:// if no protocol specified
+    const absoluteUrl = !url ? null 
+      : (url.startsWith('http://') || url.startsWith('https://')) ? url 
+      : `https://${url}`;
 
     const Wrapper = absoluteUrl ? 'a' : 'div';
     const wrapperProps = absoluteUrl ? { 
