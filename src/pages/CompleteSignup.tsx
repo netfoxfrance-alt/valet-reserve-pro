@@ -86,8 +86,8 @@ export default function CompleteSignup() {
       return;
     }
 
-    if (password.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères');
+    if (password.length < 8) {
+      setError('Le mot de passe doit contenir au moins 8 caractères');
       return;
     }
 
@@ -253,10 +253,10 @@ export default function CompleteSignup() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-12 h-12 rounded-xl"
                   required
-                  minLength={6}
+                  minLength={8}
                 />
               </div>
-              <p className="text-xs text-muted-foreground">Minimum 6 caractères</p>
+              <p className="text-xs text-muted-foreground">Minimum 8 caractères</p>
             </div>
 
             <div className="space-y-2">
@@ -271,7 +271,7 @@ export default function CompleteSignup() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="pl-12 h-12 rounded-xl"
                   required
-                  minLength={6}
+                  minLength={8}
                 />
               </div>
             </div>
@@ -280,7 +280,7 @@ export default function CompleteSignup() {
               type="submit"
               size="lg"
               className="w-full bg-emerald-500 hover:bg-emerald-600 text-white h-12"
-              disabled={isLoading || !sessionId || password.length < 6 || password !== confirmPassword}
+              disabled={isLoading || !sessionId || password.length < 8 || password !== confirmPassword}
             >
               {isLoading ? (
                 <>

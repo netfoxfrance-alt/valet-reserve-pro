@@ -36,8 +36,8 @@ export default function Auth() {
     setIsLoading(true);
     setError(null);
     
-    if (password.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères');
+    if (password.length < 8) {
+      setError('Le mot de passe doit contenir au moins 8 caractères');
       setIsLoading(false);
       return;
     }
@@ -153,11 +153,11 @@ export default function Auth() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-12 h-12 rounded-xl"
                   required
-                  minLength={6}
+                  minLength={8}
                 />
               </div>
               {isSignUp && (
-                <p className="text-xs text-muted-foreground">Minimum 6 caractères</p>
+                <p className="text-xs text-muted-foreground">Minimum 8 caractères</p>
               )}
             </div>
             

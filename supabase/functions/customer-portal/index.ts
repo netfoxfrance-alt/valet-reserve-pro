@@ -65,9 +65,16 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in customer-portal", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    
+    // Return generic error for security
+    const isNoCustomer = errorMessage.includes("No Stripe customer");
+    return new Response(JSON.stringify({ 
+      error: isNoCustomer 
+        ? "Aucun abonnement trouvé. Veuillez d'abord souscrire un forfait." 
+        : "Impossible d'accéder au portail. Veuillez réessayer." 
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
+      status: isNoCustomer ? 404 : 500,
     });
   }
 });
