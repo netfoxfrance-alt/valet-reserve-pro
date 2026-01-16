@@ -171,7 +171,8 @@ export default function CenterBooking() {
       client_email: data.email,
       client_phone: data.phone,
       vehicle_type: selectedVariant?.name || 'berline',
-      appointment_date: selectedDate.toISOString().split('T')[0],
+      // IMPORTANT: avoid UTC shift from toISOString(); keep local date
+      appointment_date: `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`,
       appointment_time: selectedTime,
       notes: data.notes,
       // Additional data for email notifications
