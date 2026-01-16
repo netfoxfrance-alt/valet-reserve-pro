@@ -30,8 +30,8 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <TawkTo />
         <BrowserRouter>
+          <TawkTo />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/booking" element={<Booking />} />
