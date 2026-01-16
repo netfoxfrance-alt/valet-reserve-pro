@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, CalendarDays, Settings, Package, Clock, LogOut, Share2, Copy, Check, MessageSquare, BarChart3, Globe, Crown, AlertCircle } from 'lucide-react';
+import { Calendar, CalendarDays, Settings, Package, Clock, LogOut, Share2, Copy, Check, MessageSquare, BarChart3, Globe, Crown, AlertCircle, Headphones } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { useMyCenter } from '@/hooks/useCenter';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useTawkTo } from '@/components/TawkTo';
 
 const navigation = [
   { name: 'Réservations', href: '/dashboard', icon: Calendar },
@@ -25,6 +26,7 @@ export function DashboardSidebar() {
   const { signOut, subscription } = useAuth();
   const { center } = useMyCenter();
   const { toast } = useToast();
+  const { openChat } = useTawkTo();
   const [copied, setCopied] = useState(false);
   
   const isPro = subscription.subscribed;
@@ -140,7 +142,14 @@ export function DashboardSidebar() {
         })}
       </nav>
       
-      <div className="px-4 py-6 border-t border-border">
+      <div className="px-4 py-6 border-t border-border space-y-1">
+        <button 
+          onClick={openChat}
+          className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-all w-full"
+        >
+          <Headphones className="w-5 h-5" />
+          Support
+        </button>
         <button 
           onClick={handleLogout}
           className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-all w-full"
