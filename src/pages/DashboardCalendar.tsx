@@ -65,14 +65,13 @@ export default function DashboardCalendar() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [appointmentToReschedule, setAppointmentToReschedule] = useState<Appointment | null>(null);
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [blockForm, setBlockForm] = useState({ start_date: '', end_date: '', reason: '' });
   const [blockedPeriods, setBlockedPeriods] = useState<BlockedPeriod[]>([]);
   const [loadingBlock, setLoadingBlock] = useState(false);
-  const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
   const [rescheduleForm, setRescheduleForm] = useState({ date: '', time: '' });
   const [loadingReschedule, setLoadingReschedule] = useState(false);
-  
   const [loadingDelete, setLoadingDelete] = useState(false);
   
   const { appointments, loading, updateStatus, deleteAppointment } = useMyAppointments();
@@ -117,7 +116,7 @@ export default function DashboardCalendar() {
 
   // Handle reschedule
   const handleReschedule = async () => {
-    if (!selectedAppointment || !rescheduleForm.date || !rescheduleForm.time) return;
+    if (!appointmentToReschedule || !rescheduleForm.date || !rescheduleForm.time) return;
     
     setLoadingReschedule(true);
     const { error } = await supabase
@@ -126,7 +125,7 @@ export default function DashboardCalendar() {
         appointment_date: rescheduleForm.date,
         appointment_time: rescheduleForm.time
       })
-      .eq('id', selectedAppointment.id);
+      .eq('id', appointmentToReschedule.id);
     
     setLoadingReschedule(false);
     
@@ -134,7 +133,7 @@ export default function DashboardCalendar() {
       toast.error('Erreur lors du déplacement');
     } else {
       toast.success('Rendez-vous déplacé');
-      setShowRescheduleDialog(false);
+      setAppointmentToReschedule(null);
       setSelectedAppointment(null);
       // Refetch will happen via hook
     }
@@ -451,9 +450,8 @@ export default function DashboardCalendar() {
       </div>
 
       {/* Appointment Details Dialog */}
-      <Dialog open={showRescheduleDialog || !!selectedAppointment} onOpenChange={(open) => {
+      <Dialog open={!!selectedAppointment && !appointmentToReschedule} onOpenChange={(open) => {
         if (!open) {
-          setShowRescheduleDialog(false);
           setSelectedAppointment(null);
         }
       }}>
@@ -483,48 +481,27 @@ export default function DashboardCalendar() {
                 )}
               </div>
               
-              {/* Reschedule section */}
-              <div className="p-4 border border-border rounded-xl space-y-3">
-                <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                  <ArrowRight className="w-4 h-4" />
-                  Déplacer à une autre date
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <Label className="text-xs">Date</Label>
-                    <Input
-                      type="date"
-                      value={rescheduleForm.date}
-                      onChange={(e) => setRescheduleForm(prev => ({ ...prev, date: e.target.value }))}
-                      className="h-10 rounded-lg text-sm"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs">Heure</Label>
-                    <Input
-                      type="time"
-                      value={rescheduleForm.time}
-                      onChange={(e) => setRescheduleForm(prev => ({ ...prev, time: e.target.value }))}
-                      className="h-10 rounded-lg text-sm"
-                    />
-                  </div>
-                </div>
-                <Button 
-                  onClick={handleReschedule}
-                  disabled={loadingReschedule}
-                  className="w-full rounded-xl"
-                  size="sm"
+              {/* Actions grid */}
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  variant="outline"
+                  className="rounded-xl"
+                  onClick={() => {
+                    setRescheduleForm({
+                      date: selectedAppointment.appointment_date,
+                      time: selectedAppointment.appointment_time.slice(0, 5)
+                    });
+                    setAppointmentToReschedule(selectedAppointment);
+                  }}
                 >
-                  {loadingReschedule ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Déplacer le rendez-vous'}
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Déplacer
                 </Button>
-              </div>
-              
-              {/* Status actions */}
-              {selectedAppointment.status === 'pending' && (
-                <div className="flex gap-2">
+                
+                {selectedAppointment.status === 'pending' && (
                   <Button
                     variant="outline"
-                    className="flex-1 rounded-xl text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+                    className="rounded-xl text-emerald-600 border-emerald-200 hover:bg-emerald-50"
                     onClick={() => {
                       handleUpdateStatus(selectedAppointment.id, 'confirmed');
                       setSelectedAppointment(null);
@@ -532,17 +509,33 @@ export default function DashboardCalendar() {
                   >
                     Confirmer
                   </Button>
+                )}
+                
+                {selectedAppointment.status === 'confirmed' && (
                   <Button
                     variant="outline"
-                    className="flex-1 rounded-xl text-amber-600 border-amber-200 hover:bg-amber-50"
+                    className="rounded-xl"
                     onClick={() => {
-                      handleUpdateStatus(selectedAppointment.id, 'cancelled');
+                      handleUpdateStatus(selectedAppointment.id, 'completed');
                       setSelectedAppointment(null);
                     }}
                   >
-                    Annuler
+                    Terminer
                   </Button>
-                </div>
+                )}
+              </div>
+              
+              {selectedAppointment.status === 'pending' && (
+                <Button
+                  variant="outline"
+                  className="w-full rounded-xl text-amber-600 border-amber-200 hover:bg-amber-50"
+                  onClick={() => {
+                    handleUpdateStatus(selectedAppointment.id, 'cancelled');
+                    setSelectedAppointment(null);
+                  }}
+                >
+                  Annuler le rendez-vous
+                </Button>
               )}
               
               {/* Delete button */}
@@ -566,19 +559,66 @@ export default function DashboardCalendar() {
                   }}
                 >
                   {loadingDelete ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
-                  Supprimer le rendez-vous
+                  Supprimer
                 </Button>
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Reschedule Dialog - Clean dedicated dialog */}
+      <Dialog open={!!appointmentToReschedule} onOpenChange={(open) => {
+        if (!open) {
+          setAppointmentToReschedule(null);
+        }
+      }}>
+        <DialogContent className="max-w-md rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl">Déplacer la réservation</DialogTitle>
+            {appointmentToReschedule && (
+              <p className="text-sm text-muted-foreground mt-1">
+                Déplacer la réservation de {appointmentToReschedule.client_name}
+              </p>
+            )}
+          </DialogHeader>
           
-          <DialogFooter>
+          <div className="space-y-5 py-2">
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Nouvelle date</Label>
+              <Input
+                type="date"
+                value={rescheduleForm.date}
+                onChange={(e) => setRescheduleForm(prev => ({ ...prev, date: e.target.value }))}
+                className="h-12 rounded-xl text-base"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Nouvelle heure</Label>
+              <Input
+                type="time"
+                value={rescheduleForm.time}
+                onChange={(e) => setRescheduleForm(prev => ({ ...prev, time: e.target.value }))}
+                className="h-12 rounded-xl text-base"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter className="gap-2 sm:gap-2">
             <Button 
-              variant="ghost" 
-              onClick={() => setSelectedAppointment(null)}
-              className="rounded-xl"
+              variant="outline" 
+              onClick={() => setAppointmentToReschedule(null)}
+              className="rounded-xl flex-1 sm:flex-none"
             >
-              Fermer
+              Annuler
+            </Button>
+            <Button 
+              onClick={handleReschedule}
+              disabled={loadingReschedule || !rescheduleForm.date || !rescheduleForm.time}
+              className="rounded-xl flex-1 sm:flex-none min-w-[120px]"
+            >
+              {loadingReschedule ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Déplacer'}
             </Button>
           </DialogFooter>
         </DialogContent>
