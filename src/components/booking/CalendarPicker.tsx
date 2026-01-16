@@ -1,19 +1,14 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, addDays, startOfWeek, addWeeks, isSameDay, isToday, isBefore } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useCenterAvailability } from '@/hooks/useAvailability';
 
-interface CalendarPickerProps {
-  onSelect: (date: Date, time: string) => void;
-  duration: string;
-}
-
-const timeSlots = [
-  '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'
-];
+// Créneaux par défaut pour la page demo (sans centerId)
+const defaultTimeSlots = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
 
 // Helper to check if a time slot has passed for today
 const isTimeSlotPast = (time: string, date: Date): boolean => {
@@ -24,15 +19,22 @@ const isTimeSlotPast = (time: string, date: Date): boolean => {
   const slotTime = new Date();
   slotTime.setHours(hours, minutes, 0, 0);
   
-  // Add 30 min buffer - can't book a slot starting in less than 30 min
   const bufferTime = new Date(now.getTime() + 30 * 60 * 1000);
   return slotTime <= bufferTime;
 };
 
-export function CalendarPicker({ onSelect, duration }: CalendarPickerProps) {
+interface CalendarPickerProps {
+  onSelect: (date: Date, time: string) => void;
+  duration: string;
+  centerId?: string; // Optionnel - si absent, utilise les créneaux par défaut
+}
+
+export function CalendarPicker({ onSelect, duration, centerId }: CalendarPickerProps) {
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  
+  const { loading, getAvailableSlotsForDate, isDayAvailable } = useCenterAvailability(centerId);
   
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
   
@@ -44,8 +46,21 @@ export function CalendarPicker({ onSelect, duration }: CalendarPickerProps) {
     setCurrentWeekStart(prev => addWeeks(prev, 1));
   };
   
+  // Fallback logic for demo page (no centerId)
+  const checkDayAvailable = (date: Date): boolean => {
+    if (centerId) return isDayAvailable(date);
+    // Sans centerId: jours passés désactivés seulement
+    return !isBefore(date, new Date()) || isToday(date);
+  };
+  
+  const getSlotsForDate = (date: Date): string[] => {
+    if (centerId) return getAvailableSlotsForDate(date);
+    // Sans centerId: utiliser les créneaux par défaut
+    return defaultTimeSlots.filter(time => !isTimeSlotPast(time, date));
+  };
+  
   const handleDateSelect = (date: Date) => {
-    if (isBefore(date, new Date()) && !isToday(date)) return;
+    if (!checkDayAvailable(date)) return;
     setSelectedDate(date);
     setSelectedTime(null);
   };
@@ -60,9 +75,18 @@ export function CalendarPicker({ onSelect, duration }: CalendarPickerProps) {
     }
   };
   
-  const isDateDisabled = (date: Date) => {
-    return isBefore(date, new Date()) && !isToday(date);
-  };
+  // Get available time slots for selected date
+  const availableSlots = selectedDate ? getSlotsForDate(selectedDate) : [];
+  
+  if (centerId && loading) {
+    return (
+      <div className="w-full max-w-lg mx-auto animate-fade-in-up">
+        <Card variant="elevated" className="p-6 flex items-center justify-center min-h-[300px]">
+          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+        </Card>
+      </div>
+    );
+  }
   
   return (
     <div className="w-full max-w-lg mx-auto animate-fade-in-up">
@@ -83,18 +107,18 @@ export function CalendarPicker({ onSelect, duration }: CalendarPickerProps) {
         {/* Days grid */}
         <div className="grid grid-cols-7 gap-2 mb-6">
           {weekDays.map((day) => {
-            const disabled = isDateDisabled(day);
+            const available = isDayAvailable(day);
             const selected = selectedDate && isSameDay(day, selectedDate);
             
             return (
               <button
                 key={day.toISOString()}
                 onClick={() => handleDateSelect(day)}
-                disabled={disabled}
+                disabled={!available}
                 className={cn(
                   "flex flex-col items-center p-3 rounded-xl transition-all",
-                  disabled && "opacity-40 cursor-not-allowed",
-                  !disabled && !selected && "hover:bg-secondary",
+                  !available && "opacity-40 cursor-not-allowed",
+                  available && !selected && "hover:bg-secondary",
                   selected && "bg-primary text-primary-foreground"
                 )}
               >
@@ -115,27 +139,28 @@ export function CalendarPicker({ onSelect, duration }: CalendarPickerProps) {
             <p className="text-sm text-muted-foreground mb-4">
               Créneaux disponibles le {format(selectedDate, "d MMMM", { locale: fr })}
             </p>
-            <div className="grid grid-cols-3 gap-2 mb-6">
-              {timeSlots.map((time) => {
-                const isPast = isTimeSlotPast(time, selectedDate);
-                return (
+            {availableSlots.length > 0 ? (
+              <div className="grid grid-cols-3 gap-2 mb-6">
+                {availableSlots.map((time) => (
                   <button
                     key={time}
-                    onClick={() => !isPast && handleTimeSelect(time)}
-                    disabled={isPast}
+                    onClick={() => handleTimeSelect(time)}
                     className={cn(
                       "py-3 px-4 rounded-xl font-medium transition-all",
-                      isPast && "opacity-40 cursor-not-allowed line-through text-muted-foreground",
-                      !isPast && selectedTime === time
+                      selectedTime === time
                         ? "bg-primary text-primary-foreground"
-                        : !isPast && "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                     )}
                   >
                     {time}
                   </button>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6 mb-6 bg-secondary/50 rounded-xl">
+                <p className="text-muted-foreground text-sm">Aucun créneau disponible ce jour</p>
+              </div>
+            )}
           </div>
         )}
         
