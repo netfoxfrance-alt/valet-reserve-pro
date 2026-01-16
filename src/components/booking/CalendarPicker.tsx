@@ -15,6 +15,20 @@ const timeSlots = [
   '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'
 ];
 
+// Helper to check if a time slot has passed for today
+const isTimeSlotPast = (time: string, date: Date): boolean => {
+  if (!isToday(date)) return false;
+  
+  const now = new Date();
+  const [hours, minutes] = time.split(':').map(Number);
+  const slotTime = new Date();
+  slotTime.setHours(hours, minutes, 0, 0);
+  
+  // Add 30 min buffer - can't book a slot starting in less than 30 min
+  const bufferTime = new Date(now.getTime() + 30 * 60 * 1000);
+  return slotTime <= bufferTime;
+};
+
 export function CalendarPicker({ onSelect, duration }: CalendarPickerProps) {
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -102,20 +116,25 @@ export function CalendarPicker({ onSelect, duration }: CalendarPickerProps) {
               Créneaux disponibles le {format(selectedDate, "d MMMM", { locale: fr })}
             </p>
             <div className="grid grid-cols-3 gap-2 mb-6">
-              {timeSlots.map((time) => (
-                <button
-                  key={time}
-                  onClick={() => handleTimeSelect(time)}
-                  className={cn(
-                    "py-3 px-4 rounded-xl font-medium transition-all",
-                    selectedTime === time
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                  )}
-                >
-                  {time}
-                </button>
-              ))}
+              {timeSlots.map((time) => {
+                const isPast = isTimeSlotPast(time, selectedDate);
+                return (
+                  <button
+                    key={time}
+                    onClick={() => !isPast && handleTimeSelect(time)}
+                    disabled={isPast}
+                    className={cn(
+                      "py-3 px-4 rounded-xl font-medium transition-all",
+                      isPast && "opacity-40 cursor-not-allowed line-through text-muted-foreground",
+                      !isPast && selectedTime === time
+                        ? "bg-primary text-primary-foreground"
+                        : !isPast && "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                    )}
+                  >
+                    {time}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}

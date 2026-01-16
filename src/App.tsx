@@ -9,6 +9,7 @@ import CenterBooking from "./pages/CenterBooking";
 import Booking from "./pages/Booking";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import DashboardCalendar from "./pages/DashboardCalendar";
 import DashboardAvailability from "./pages/DashboardAvailability";
 import DashboardPacks from "./pages/DashboardPacks";
 import DashboardSettings from "./pages/DashboardSettings";
@@ -38,6 +39,11 @@ const App = () => (
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/calendar" element={
+              <ProtectedRoute>
+                <DashboardCalendar />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/availability" element={
