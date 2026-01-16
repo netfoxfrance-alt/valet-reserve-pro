@@ -66,10 +66,16 @@ const handler = async (req: Request): Promise<Response> => {
       ? `${data.pack_name} - ${data.variant_name}` 
       : data.pack_name;
 
-    // Generate Google Calendar link for client
-    const startDate = new Date(`${data.appointment_date}T${data.appointment_time}`);
-    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // +1h
-    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`RDV ${center.name} - ${serviceInfo}`)}&dates=${startDate.toISOString().replace(/[-:]/g, '').replace('.000', '')}/${endDate.toISOString().replace(/[-:]/g, '').replace('.000', '')}&details=${encodeURIComponent(`Prestation: ${serviceInfo}\nPrix: ${data.price}€\n${data.notes ? `Notes: ${data.notes}` : ''}`)}&location=${encodeURIComponent(center.address || '')}`;
+    // Generate Google Calendar link for client (use Paris timezone)
+    // Format dates for Google Calendar: YYYYMMDDTHHmmss
+    const [year, month, day] = data.appointment_date.split('-');
+    const [hours, minutes] = data.appointment_time.split(':');
+    const startDateTime = `${year}${month}${day}T${hours}${minutes}00`;
+    // End time: +1 hour
+    const endHour = (parseInt(hours) + 1).toString().padStart(2, '0');
+    const endDateTime = `${year}${month}${day}T${endHour}${minutes}00`;
+    
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`RDV ${center.name} - ${serviceInfo}`)}&dates=${startDateTime}/${endDateTime}&ctz=Europe/Paris&details=${encodeURIComponent(`Prestation: ${serviceInfo}\nPrix: ${data.price}€\n${data.notes ? `Notes: ${data.notes}` : ''}`)}&location=${encodeURIComponent(center.address || '')}`;
 
     // 1. Send confirmation email to client
     const clientEmailHtml = `
