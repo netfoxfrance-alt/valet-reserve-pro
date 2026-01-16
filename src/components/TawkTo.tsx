@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useCallback } from 'react';
 
 declare global {
   interface Window {
@@ -8,41 +7,41 @@ declare global {
   }
 }
 
-const TawkTo = () => {
-  const location = useLocation();
+// Load Tawk.to script once
+const loadTawkScript = () => {
+  if (window.Tawk_LoadStart) return;
   
-  // Only show on home page and dashboard pages
-  const shouldShow = location.pathname === '/' || location.pathname.startsWith('/dashboard');
+  window.Tawk_API = window.Tawk_API || {};
+  window.Tawk_LoadStart = new Date();
 
+  // Hide widget by default
+  window.Tawk_API.onLoad = function() {
+    window.Tawk_API.hideWidget?.();
+  };
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = 'https://embed.tawk.to/696aa37e895de4198b90486a/1jf48t9sv';
+  script.charset = 'UTF-8';
+  script.setAttribute('crossorigin', '*');
+
+  const firstScript = document.getElementsByTagName('script')[0];
+  firstScript?.parentNode?.insertBefore(script, firstScript);
+};
+
+export const useTawkTo = () => {
   useEffect(() => {
-    // Load script only once
-    if (!window.Tawk_LoadStart) {
-      window.Tawk_API = window.Tawk_API || {};
-      window.Tawk_LoadStart = new Date();
+    loadTawkScript();
+  }, []);
 
-      const script = document.createElement('script');
-      script.async = true;
-      script.src = 'https://embed.tawk.to/696aa37e895de4198b90486a/1jf48t9sv';
-      script.charset = 'UTF-8';
-      script.setAttribute('crossorigin', '*');
-
-      const firstScript = document.getElementsByTagName('script')[0];
-      firstScript?.parentNode?.insertBefore(script, firstScript);
+  const openChat = useCallback(() => {
+    if (window.Tawk_API) {
+      window.Tawk_API.showWidget?.();
+      window.Tawk_API.maximize?.();
     }
   }, []);
 
-  // Show/hide widget based on route
-  useEffect(() => {
-    if (window.Tawk_API) {
-      if (shouldShow) {
-        window.Tawk_API.showWidget?.();
-      } else {
-        window.Tawk_API.hideWidget?.();
-      }
-    }
-  }, [shouldShow]);
-
-  return null;
+  return { openChat };
 };
 
-export default TawkTo;
+export default useTawkTo;
