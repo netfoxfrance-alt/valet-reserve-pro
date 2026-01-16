@@ -24,7 +24,10 @@ interface BookingEmailRequest {
 }
 
 const formatDate = (dateStr: string): string => {
-  const date = new Date(dateStr);
+  // Parse date manually to avoid timezone issues
+  // dateStr format: "YYYY-MM-DD"
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const date = new Date(year, month - 1, day); // month is 0-indexed
   return date.toLocaleDateString('fr-FR', { 
     weekday: 'long', 
     day: 'numeric', 
