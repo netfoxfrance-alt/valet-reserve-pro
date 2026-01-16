@@ -291,6 +291,7 @@ export type Database = {
           duration: string | null
           features: string[] | null
           id: string
+          image_url: string | null
           name: string
           price: number
           price_variants: Json | null
@@ -305,6 +306,7 @@ export type Database = {
           duration?: string | null
           features?: string[] | null
           id?: string
+          image_url?: string | null
           name: string
           price: number
           price_variants?: Json | null
@@ -319,6 +321,7 @@ export type Database = {
           duration?: string | null
           features?: string[] | null
           id?: string
+          image_url?: string | null
           name?: string
           price?: number
           price_variants?: Json | null
