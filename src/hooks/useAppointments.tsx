@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useMyCenter } from './useCenter';
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
 export interface Appointment {
   id: string;
   center_id: string;
@@ -130,12 +133,53 @@ export function useCreateAppointment() {
     appointment_date: string;
     appointment_time: string;
     notes?: string;
+    // Additional data for email
+    pack_name?: string;
+    variant_name?: string;
+    price?: number;
   }) => {
     setLoading(true);
     
     const { error } = await supabase
       .from('appointments')
-      .insert(data);
+      .insert({
+        center_id: data.center_id,
+        pack_id: data.pack_id,
+        client_name: data.client_name,
+        client_email: data.client_email,
+        client_phone: data.client_phone,
+        vehicle_type: data.vehicle_type,
+        appointment_date: data.appointment_date,
+        appointment_time: data.appointment_time,
+        notes: data.notes,
+      });
+
+    // Send confirmation emails (don't block on failure)
+    if (!error && data.pack_name && data.price !== undefined) {
+      try {
+        await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+          },
+          body: JSON.stringify({
+            center_id: data.center_id,
+            client_name: data.client_name,
+            client_email: data.client_email,
+            client_phone: data.client_phone,
+            pack_name: data.pack_name,
+            variant_name: data.variant_name,
+            price: data.price,
+            appointment_date: data.appointment_date,
+            appointment_time: data.appointment_time,
+            notes: data.notes,
+          }),
+        });
+      } catch (emailError) {
+        console.error('Failed to send booking emails:', emailError);
+      }
+    }
 
     setLoading(false);
     return { error: error?.message || null };
