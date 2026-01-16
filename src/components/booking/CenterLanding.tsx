@@ -97,30 +97,21 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     };
   }, [center.customization]);
 
-  // Get sorted, enabled blocks
+  // Get sorted, enabled blocks - respects user-defined order
   const activeBlocks = useMemo(() => {
     return [...customization.blocks]
       .filter(b => b.enabled)
       .sort((a, b) => a.order - b.order);
   }, [customization.blocks]);
 
-  // Separate blocks into categories for Apple-style desktop layout
-  const { quickActions, infoBlocks, contentBlocks } = useMemo(() => {
-    const quick: PageBlock[] = []; // Phone, address - action items
-    const info: PageBlock[] = [];  // Hours, reviews, links - info sidebar
-    const content: PageBlock[] = []; // Formules, gallery, text, contact
-    
-    activeBlocks.forEach(block => {
-      if (['phone', 'address'].includes(block.type)) {
-        quick.push(block);
-      } else if (['hours', 'reviews', 'links'].includes(block.type)) {
-        info.push(block);
-      } else {
-        content.push(block);
-      }
-    });
-    
-    return { quickActions: quick, infoBlocks: info, contentBlocks: content };
+  // Quick action blocks (phone, address) - displayed at the top
+  const quickActions = useMemo(() => {
+    return activeBlocks.filter(b => ['phone', 'address'].includes(b.type));
+  }, [activeBlocks]);
+
+  // All other blocks in user-defined order (excluding quick actions)
+  const orderedBlocks = useMemo(() => {
+    return activeBlocks.filter(b => !['phone', 'address'].includes(b.type));
   }, [activeBlocks]);
 
   // Get text colors based on dark mode
@@ -983,34 +974,9 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
           </div>
         )}
 
-        {/* Two-column layout for desktop - Apple style */}
-        <div className="lg:grid lg:grid-cols-[1fr_340px] lg:gap-12">
-          {/* Left column - Main content (formules, gallery, etc.) */}
-          <main className="min-w-0 order-2 lg:order-1">
-            {/* Info blocks on mobile only (shown above content) */}
-            <div className="lg:hidden mb-8 space-y-3">
-              {infoBlocks.map(block => renderBlock(block))}
-            </div>
-            
-            {/* Content blocks */}
-            {contentBlocks.map(block => renderBlock(block))}
-          </main>
-
-          {/* Right column - Info sidebar (desktop only) */}
-          <aside className="hidden lg:block order-1 lg:order-2">
-            <div className="sticky top-6">
-              <Card 
-                className="p-5 rounded-2xl space-y-4"
-                style={{
-                  backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.03)' : 'white',
-                  border: `1px solid ${customization.layout.dark_mode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
-                  boxShadow: customization.layout.dark_mode ? 'none' : '0 2px 12px rgba(0,0,0,0.04)',
-                }}
-              >
-                {infoBlocks.map(block => renderBlock(block))}
-              </Card>
-            </div>
-          </aside>
+        {/* All blocks in user-defined order */}
+        <div className="space-y-6">
+          {orderedBlocks.map(block => renderBlock(block))}
         </div>
 
         {/* Footer */}
