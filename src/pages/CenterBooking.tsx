@@ -162,6 +162,8 @@ export default function CenterBooking() {
     
     setClientData(data);
     
+    const finalPrice = selectedVariant?.price || selectedPack.price;
+    
     const { error } = await createAppointment({
       center_id: center.id,
       pack_id: selectedPack.id,
@@ -172,6 +174,10 @@ export default function CenterBooking() {
       appointment_date: selectedDate.toISOString().split('T')[0],
       appointment_time: selectedTime,
       notes: data.notes,
+      // Additional data for email notifications
+      pack_name: selectedPack.name,
+      variant_name: selectedVariant?.name,
+      price: finalPrice,
     });
     
     if (error) {
