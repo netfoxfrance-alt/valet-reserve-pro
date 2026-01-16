@@ -63,17 +63,6 @@ export function useMyAppointments() {
       setAppointments(appointments.map(a => 
         a.id === id ? { ...a, status } : a
       ));
-
-      // Envoyer email de confirmation au client quand le RDV est confirmé
-      if (status === 'confirmed') {
-        try {
-          await supabase.functions.invoke('send-confirmation-to-client', {
-            body: { appointment_id: id }
-          });
-        } catch (emailError) {
-          console.error('Confirmation email failed:', emailError);
-        }
-      }
     }
     return { error: error?.message || null };
   };
@@ -144,23 +133,9 @@ export function useCreateAppointment() {
   }) => {
     setLoading(true);
     
-    const { data: newAppointment, error } = await supabase
+    const { error } = await supabase
       .from('appointments')
-      .insert(data)
-      .select('id')
-      .single();
-
-    // Envoyer la notification par email au propriétaire
-    if (!error && newAppointment) {
-      try {
-        await supabase.functions.invoke('send-booking-notification', {
-          body: { appointment_id: newAppointment.id }
-        });
-      } catch (emailError) {
-        console.error('Email notification failed:', emailError);
-        // On ne bloque pas la réservation si l'email échoue
-      }
-    }
+      .insert(data);
 
     setLoading(false);
     return { error: error?.message || null };
