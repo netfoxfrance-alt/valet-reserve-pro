@@ -573,71 +573,84 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     const formatTime = (time: string) => time.replace(':', 'h');
 
     return (
-      <div key={block.id} className="mb-4">
+      <div key={block.id} className="mb-6 relative z-10">
         <Collapsible open={hoursOpen} onOpenChange={setHoursOpen}>
-          <CollapsibleTrigger asChild>
-            <button 
-              className="flex items-center gap-2 text-sm transition-opacity hover:opacity-70 w-full text-left"
-              style={{ color: textColors.secondary }}
-            >
-              <span className="w-5 h-5 flex items-center justify-center" style={{ color: customization.colors.primary }}>
-                <Clock className="w-4 h-4" />
-              </span>
-              <span className="flex-1">
-                <span className={cn("font-medium", isOpen ? "text-green-600" : "text-red-500")}>
-                  {isOpen ? 'Ouvert' : 'Fermé'}
-                </span>
-                {nextInfo && (
-                  <span className="ml-1" style={{ color: textColors.secondary }}>
-                    {isOpen 
-                      ? `· Ferme à ${formatTime(nextInfo.time)}`
-                      : `· Ouvre ${nextInfo.day} à ${formatTime(nextInfo.time!)}`
-                    }
-                  </span>
-                )}
-              </span>
-              <ChevronDown 
-                className={cn(
-                  "w-4 h-4 transition-transform duration-200",
-                  hoursOpen && "rotate-180"
-                )} 
+          <div 
+            className="rounded-2xl overflow-hidden"
+            style={{
+              backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
+              border: `1px solid ${customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'}`,
+            }}
+          >
+            <CollapsibleTrigger asChild>
+              <button 
+                className="flex items-center gap-3 w-full text-left p-4 transition-colors hover:bg-black/5"
                 style={{ color: textColors.secondary }}
-              />
-            </button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="overflow-hidden data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up">
-            <div 
-              className="mt-3 p-4 rounded-xl space-y-2"
-              style={{ 
-                backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
-              }}
-            >
-              {/* Reorder: Monday first */}
-              {[1, 2, 3, 4, 5, 6, 0].map(dayNum => {
-                const dayHours = DEFAULT_HOURS.find(h => h.day === dayNum);
-                const isToday = dayNum === currentDay;
-                
-                return (
-                  <div 
-                    key={dayNum}
-                    className={cn(
-                      "flex justify-between text-sm py-1",
-                      isToday && "font-semibold"
-                    )}
-                    style={{ color: isToday ? textColors.primary : textColors.secondary }}
-                  >
-                    <span>{DAYS_FR[dayNum]}</span>
-                    <span className={!dayHours?.enabled ? "text-red-500" : ""}>
-                      {dayHours?.enabled 
-                        ? `${formatTime(dayHours.start)} - ${formatTime(dayHours.end)}`
-                        : 'Fermé'
+              >
+                <span 
+                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: customization.colors.primary + '15' }}
+                >
+                  <Clock className="w-5 h-5" style={{ color: customization.colors.primary }} />
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className={cn("font-medium", isOpen ? "text-green-600" : "text-red-500")}>
+                    {isOpen ? 'Ouvert' : 'Fermé'}
+                  </span>
+                  {nextInfo && (
+                    <span className="ml-1.5" style={{ color: textColors.secondary }}>
+                      {isOpen 
+                        ? `· Ferme à ${formatTime(nextInfo.time)}`
+                        : `· Ouvre ${nextInfo.day} à ${formatTime(nextInfo.time!)}`
                       }
                     </span>
-                  </div>
-                );
-              })}
-            </div>
-          </CollapsibleContent>
+                  )}
+                </span>
+                <ChevronDown 
+                  className={cn(
+                    "w-5 h-5 flex-shrink-0 transition-transform duration-200",
+                    hoursOpen && "rotate-180"
+                  )} 
+                  style={{ color: textColors.secondary }}
+                />
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div 
+                className="px-4 pb-4 space-y-2 border-t"
+                style={{ 
+                  borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+                }}
+              >
+                <div className="pt-3">
+                  {/* Reorder: Monday first */}
+                  {[1, 2, 3, 4, 5, 6, 0].map(dayNum => {
+                    const dayHours = DEFAULT_HOURS.find(h => h.day === dayNum);
+                    const isToday = dayNum === currentDay;
+                    
+                    return (
+                      <div 
+                        key={dayNum}
+                        className={cn(
+                          "flex justify-between text-sm py-1.5",
+                          isToday && "font-semibold"
+                        )}
+                        style={{ color: isToday ? textColors.primary : textColors.secondary }}
+                      >
+                        <span>{DAYS_FR[dayNum]}</span>
+                        <span className={!dayHours?.enabled ? "text-red-500" : ""}>
+                          {dayHours?.enabled 
+                            ? `${formatTime(dayHours.start)} - ${formatTime(dayHours.end)}`
+                            : 'Fermé'
+                          }
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </CollapsibleContent>
+          </div>
         </Collapsible>
       </div>
     );
