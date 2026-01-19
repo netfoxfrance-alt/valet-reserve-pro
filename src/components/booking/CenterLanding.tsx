@@ -798,42 +798,12 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
 
   return (
     <div 
-      className="min-h-screen transition-colors duration-300 pb-24"
+      className="min-h-screen transition-colors duration-300"
       style={{ 
         ...customStyles,
         backgroundColor: customization.layout.dark_mode ? '#0f0f0f' : '#fafafa',
       }}
     >
-      {/* Fixed CTA Bar - Apple Premium Style (sticky in preview mode to stay within container) */}
-      {hasPacks && isPro && (
-        <div 
-          className={cn(
-            "bottom-0 left-0 right-0 z-50 border-t backdrop-blur-xl safe-area-pb",
-            isPreview ? "sticky" : "fixed"
-          )}
-          style={{ 
-            backgroundColor: customization.layout.dark_mode 
-              ? 'rgba(15, 15, 15, 0.85)' 
-              : 'rgba(255, 255, 255, 0.85)',
-            borderColor: customization.layout.dark_mode 
-              ? 'rgba(255, 255, 255, 0.1)' 
-              : 'rgba(0, 0, 0, 0.06)',
-          }}
-        >
-          <div className="max-w-5xl mx-auto px-4 py-3">
-            <Button
-              onClick={onStartBooking}
-              className="w-full lg:w-auto lg:min-w-[200px] lg:mx-auto lg:block h-12 text-base font-semibold rounded-xl transition-all duration-300 hover:opacity-90 active:scale-[0.98]"
-              style={{ 
-                backgroundColor: customization.colors.primary,
-                color: 'white',
-              }}
-            >
-              {customization.texts.cta_button || 'Réserver'}
-            </Button>
-          </div>
-        </div>
-      )}
 
       {/* Header Section */}
       {hasCover ? (
@@ -980,12 +950,43 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
         </div>
 
         {/* Footer */}
-        <div className="text-center pt-8 mt-8 border-t" style={{ borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)' }}>
+        <div className="text-center pt-8 mt-8 pb-24 border-t" style={{ borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)' }}>
           <p className="text-xs" style={{ color: textColors.secondary }}>
             Propulsé par <span className="font-medium">CleaningPage</span>
           </p>
         </div>
       </div>
+
+      {/* Fixed CTA Bar - Apple Premium Style */}
+      {hasPacks && isPro && (
+        <div 
+          className={cn(
+            "bottom-0 left-0 right-0 z-50 border-t backdrop-blur-xl safe-area-pb",
+            isPreview ? "sticky" : "fixed"
+          )}
+          style={{ 
+            backgroundColor: customization.layout.dark_mode 
+              ? 'rgba(15, 15, 15, 0.85)' 
+              : 'rgba(255, 255, 255, 0.85)',
+            borderColor: customization.layout.dark_mode 
+              ? 'rgba(255, 255, 255, 0.1)' 
+              : 'rgba(0, 0, 0, 0.06)',
+          }}
+        >
+          <div className="max-w-5xl mx-auto px-4 py-3">
+            <Button
+              onClick={onStartBooking}
+              className="w-full lg:w-auto lg:min-w-[200px] lg:mx-auto lg:block h-12 text-base font-semibold rounded-xl transition-all duration-300 hover:opacity-90 active:scale-[0.98]"
+              style={{ 
+                backgroundColor: customization.colors.primary,
+                color: 'white',
+              }}
+            >
+              {customization.texts.cta_button || 'Réserver'}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Lightbox */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
