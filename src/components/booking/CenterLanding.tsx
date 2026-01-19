@@ -866,27 +866,36 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
               : 'linear-gradient(180deg, rgba(0,0,0,0.02) 0%, transparent 100%)',
           }}
         >
-          <div className="max-w-5xl mx-auto px-4 lg:px-8">
-            <div className="flex flex-col items-center text-center lg:flex-row lg:text-left lg:items-center lg:gap-6">
+          <div className={cn("max-w-5xl mx-auto px-4", !isPreview && "lg:px-8")}>
+            <div className={cn(
+              "flex flex-col items-center text-center",
+              !isPreview && "lg:flex-row lg:text-left lg:items-center lg:gap-6"
+            )}>
               {center.logo_url && (
-                <div className="mb-4 lg:mb-0">
+                <div className={cn("mb-4", !isPreview && "lg:mb-0")}>
                   <img
                     src={center.logo_url}
                     alt={center.name}
-                    className="max-w-[160px] max-h-[80px] lg:max-w-[180px] lg:max-h-[90px] w-auto h-auto object-contain"
+                    className={cn(
+                      "max-w-[160px] max-h-[80px] w-auto h-auto object-contain",
+                      !isPreview && "lg:max-w-[180px] lg:max-h-[90px]"
+                    )}
                   />
                 </div>
               )}
               <div className="flex-1">
                 <h1 
-                  className="text-2xl lg:text-3xl font-bold tracking-tight mb-1"
+                  className={cn(
+                    "text-2xl font-bold tracking-tight mb-1",
+                    !isPreview && "lg:text-3xl"
+                  )}
                   style={{ color: textColors.primary }}
                 >
                   {center.name}
                 </h1>
                 {customization.texts.tagline && (
                   <p 
-                    className="text-sm lg:text-base mb-3"
+                    className={cn("text-sm mb-3", !isPreview && "lg:text-base")}
                     style={{ color: textColors.secondary }}
                   >
                     {customization.texts.tagline}
@@ -909,10 +918,10 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
       )}
 
       {/* Main Content Area */}
-      <div className="max-w-5xl mx-auto px-4 lg:px-8">
+      <div className={cn("max-w-5xl mx-auto px-4", !isPreview && "lg:px-8")}>
         {/* Open status badge (when cover exists) */}
         {hasCover && (
-          <div className="flex justify-center lg:justify-start mb-4">
+          <div className={cn("flex justify-center mb-4", !isPreview && "lg:justify-start")}>
             <div 
               className={cn(
                 "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium",
@@ -927,7 +936,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
 
         {/* Social Icons */}
         {socialLinks.length > 0 && (
-          <div className="flex justify-center lg:justify-start gap-3 mb-6">
+          <div className={cn("flex justify-center gap-3 mb-6", !isPreview && "lg:justify-start")}>
             {socialLinks.map(({ key, url, icon: Icon }) => (
               <a
                 key={key}
@@ -946,11 +955,11 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
           </div>
         )}
 
-        {/* Quick Action Buttons (Phone, Address) - Horizontal on desktop */}
+        {/* Quick Action Buttons (Phone, Address) */}
         {quickActions.length > 0 && (
-          <div className="flex flex-col lg:flex-row gap-3 mb-8">
+          <div className={cn("flex flex-col gap-3 mb-8", !isPreview && "lg:flex-row")}>
             {quickActions.map(block => (
-              <div key={block.id} className="lg:flex-1">
+              <div key={block.id} className={cn(!isPreview && "lg:flex-1")}>
                 {renderBlock(block)}
               </div>
             ))}
