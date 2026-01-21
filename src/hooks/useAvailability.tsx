@@ -20,6 +20,7 @@ interface BlockedPeriod {
 interface ExistingAppointment {
   appointment_date: string;
   appointment_time: string;
+  duration_minutes: number | null;
 }
 
 interface CenterSettings {
@@ -89,7 +90,7 @@ export function useCenterAvailability(centerId: string | null | undefined) {
           .eq('center_id', centerId),
         supabase
           .from('appointments')
-          .select('appointment_date, appointment_time')
+          .select('appointment_date, appointment_time, duration_minutes')
           .eq('center_id', centerId)
           .neq('status', 'cancelled')
           .gte('appointment_date', format(new Date(), 'yyyy-MM-dd')),
@@ -151,35 +152,35 @@ export function useCenterAvailability(centerId: string | null | undefined) {
     // 6. Filtrer les créneaux passés pour aujourd'hui
     allSlots = allSlots.filter(time => !isTimeSlotPast(time, date));
 
-    // 7. Filtrer les créneaux déjà pris ET appliquer le buffer de déplacement
+    // 7. Filtrer les créneaux bloqués par les RDV existants + temps de déplacement
     const dateStr = format(date, 'yyyy-MM-dd');
-    const bookedTimes = appointments
-      .filter(apt => apt.appointment_date === dateStr)
-      .map(apt => apt.appointment_time.slice(0, 5)); // "09:00:00" -> "09:00"
+    const dayAppointments = appointments.filter(apt => apt.appointment_date === dateStr);
 
-    // Créer un set de tous les créneaux bloqués (rendez-vous + buffer avant chaque rdv)
+    // Créer un set de tous les créneaux bloqués
     const blockedSlots = new Set<string>();
     
-    bookedTimes.forEach(bookedTime => {
-      blockedSlots.add(bookedTime);
+    dayAppointments.forEach(apt => {
+      const aptTime = apt.appointment_time.slice(0, 5); // "09:00:00" -> "09:00"
+      const [aptHours, aptMinutes] = aptTime.split(':').map(Number);
+      const aptStartMinutes = aptHours * 60 + aptMinutes;
       
-      // Si buffer > 0, bloquer aussi le créneau précédent
-      if (bufferMinutes > 0) {
-        const [hours, minutes] = bookedTime.split(':').map(Number);
-        const bookedMinutes = hours * 60 + minutes;
-        const bufferStartMinutes = bookedMinutes - bufferMinutes;
+      // Durée du RDV (défaut 60 min si pas renseigné)
+      const duration = apt.duration_minutes || 60;
+      
+      // Fin du RDV + temps de déplacement = moment où le pro est à nouveau disponible
+      const aptEndWithBuffer = aptStartMinutes + duration + bufferMinutes;
+      
+      // Bloquer tous les créneaux qui chevauchent la période [début RDV → fin + buffer]
+      allSlots.forEach(slot => {
+        const [slotH, slotM] = slot.split(':').map(Number);
+        const slotStartMinutes = slotH * 60 + slotM;
         
-        // Bloquer tous les créneaux qui tomberaient dans le buffer
-        allSlots.forEach(slot => {
-          const [slotH, slotM] = slot.split(':').map(Number);
-          const slotMinutes = slotH * 60 + slotM;
-          // Un créneau de 1h qui commence à slotMinutes se termine à slotMinutes + 60
-          // Il est bloqué si sa fin empiète sur le buffer avant le rdv
-          if (slotMinutes + 60 > bufferStartMinutes && slotMinutes < bookedMinutes) {
-            blockedSlots.add(slot);
-          }
-        });
-      }
+        // Un créneau est bloqué si son début tombe avant la fin du RDV + buffer
+        // ET si le RDV commence avant la fin de ce créneau (overlap)
+        if (slotStartMinutes < aptEndWithBuffer && slotStartMinutes + 60 > aptStartMinutes) {
+          blockedSlots.add(slot);
+        }
+      });
     });
 
     allSlots = allSlots.filter(time => !blockedSlots.has(time));
