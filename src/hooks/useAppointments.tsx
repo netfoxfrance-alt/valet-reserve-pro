@@ -156,31 +156,43 @@ export function useCreateAppointment() {
         notes: data.notes,
       });
 
-    // Send confirmation emails (don't block on failure)
+    // Send confirmation emails in background (fire-and-forget)
+    // The appointment is already created - email failure should NOT affect the user experience
     if (!error && data.pack_name && data.price !== undefined) {
-      try {
-        await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-          },
-          body: JSON.stringify({
-            center_id: data.center_id,
-            client_name: data.client_name,
-            client_email: data.client_email,
-            client_phone: data.client_phone,
-            pack_name: data.pack_name,
-            variant_name: data.variant_name,
-            price: data.price,
-            appointment_date: data.appointment_date,
-            appointment_time: data.appointment_time,
-            notes: data.notes,
-          }),
-        });
-      } catch (emailError) {
-        console.error('Failed to send booking emails:', emailError);
-      }
+      // Use fire-and-forget pattern - no await, wrapped in IIFE
+      (async () => {
+        try {
+          const response = await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+            },
+            body: JSON.stringify({
+              center_id: data.center_id,
+              client_name: data.client_name,
+              client_email: data.client_email,
+              client_phone: data.client_phone,
+              pack_name: data.pack_name,
+              variant_name: data.variant_name,
+              price: data.price,
+              appointment_date: data.appointment_date,
+              appointment_time: data.appointment_time,
+              notes: data.notes,
+            }),
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.warn('[Booking Email] Failed to send:', response.status, errorData);
+          } else {
+            console.log('[Booking Email] Confirmation emails sent successfully');
+          }
+        } catch (emailError) {
+          // Log error but don't affect the booking flow
+          console.warn('[Booking Email] Network error:', emailError);
+        }
+      })();
     }
 
     setLoading(false);
