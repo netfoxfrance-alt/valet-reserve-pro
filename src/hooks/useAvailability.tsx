@@ -22,6 +22,10 @@ interface ExistingAppointment {
   appointment_time: string;
 }
 
+interface CenterSettings {
+  appointment_buffer: number; // en minutes
+}
+
 // Génère les créneaux horaires d'une heure entre start et end
 function generateTimeSlots(startTime: string, endTime: string): string[] {
   const slots: string[] = [];
@@ -60,6 +64,7 @@ export function useCenterAvailability(centerId: string | null | undefined) {
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
   const [blockedPeriods, setBlockedPeriods] = useState<BlockedPeriod[]>([]);
   const [appointments, setAppointments] = useState<ExistingAppointment[]>([]);
+  const [bufferMinutes, setBufferMinutes] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -71,8 +76,8 @@ export function useCenterAvailability(centerId: string | null | undefined) {
     const fetchData = async () => {
       setLoading(true);
       
-      // Fetch all data in parallel
-      const [availabilityRes, blockedRes, appointmentsRes] = await Promise.all([
+      // Fetch all data in parallel including center settings
+      const [availabilityRes, blockedRes, appointmentsRes, centerRes] = await Promise.all([
         supabase
           .from('availability')
           .select('*')
@@ -87,12 +92,23 @@ export function useCenterAvailability(centerId: string | null | undefined) {
           .select('appointment_date, appointment_time')
           .eq('center_id', centerId)
           .neq('status', 'cancelled')
-          .gte('appointment_date', format(new Date(), 'yyyy-MM-dd'))
+          .gte('appointment_date', format(new Date(), 'yyyy-MM-dd')),
+        supabase
+          .from('public_centers_view')
+          .select('customization')
+          .eq('id', centerId)
+          .single()
       ]);
 
       if (availabilityRes.data) setAvailability(availabilityRes.data);
       if (blockedRes.data) setBlockedPeriods(blockedRes.data);
       if (appointmentsRes.data) setAppointments(appointmentsRes.data);
+      
+      // Extract buffer from center customization
+      if (centerRes.data?.customization) {
+        const customization = centerRes.data.customization as { settings?: CenterSettings };
+        setBufferMinutes(customization.settings?.appointment_buffer || 0);
+      }
       
       setLoading(false);
     };
@@ -135,13 +151,38 @@ export function useCenterAvailability(centerId: string | null | undefined) {
     // 6. Filtrer les créneaux passés pour aujourd'hui
     allSlots = allSlots.filter(time => !isTimeSlotPast(time, date));
 
-    // 7. Filtrer les créneaux déjà pris
+    // 7. Filtrer les créneaux déjà pris ET appliquer le buffer de déplacement
     const dateStr = format(date, 'yyyy-MM-dd');
     const bookedTimes = appointments
       .filter(apt => apt.appointment_date === dateStr)
       .map(apt => apt.appointment_time.slice(0, 5)); // "09:00:00" -> "09:00"
 
-    allSlots = allSlots.filter(time => !bookedTimes.includes(time));
+    // Créer un set de tous les créneaux bloqués (rendez-vous + buffer avant chaque rdv)
+    const blockedSlots = new Set<string>();
+    
+    bookedTimes.forEach(bookedTime => {
+      blockedSlots.add(bookedTime);
+      
+      // Si buffer > 0, bloquer aussi le créneau précédent
+      if (bufferMinutes > 0) {
+        const [hours, minutes] = bookedTime.split(':').map(Number);
+        const bookedMinutes = hours * 60 + minutes;
+        const bufferStartMinutes = bookedMinutes - bufferMinutes;
+        
+        // Bloquer tous les créneaux qui tomberaient dans le buffer
+        allSlots.forEach(slot => {
+          const [slotH, slotM] = slot.split(':').map(Number);
+          const slotMinutes = slotH * 60 + slotM;
+          // Un créneau de 1h qui commence à slotMinutes se termine à slotMinutes + 60
+          // Il est bloqué si sa fin empiète sur le buffer avant le rdv
+          if (slotMinutes + 60 > bufferStartMinutes && slotMinutes < bookedMinutes) {
+            blockedSlots.add(slot);
+          }
+        });
+      }
+    });
+
+    allSlots = allSlots.filter(time => !blockedSlots.has(time));
 
     return allSlots;
   };
