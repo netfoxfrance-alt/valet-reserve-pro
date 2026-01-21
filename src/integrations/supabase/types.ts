@@ -324,6 +324,147 @@ export type Database = {
           },
         ]
       }
+      invoice_items: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          invoice_id: string
+          quantity: number
+          sort_order: number
+          subtotal: number
+          total: number
+          unit_price: number
+          vat_amount: number
+          vat_rate: number
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          invoice_id: string
+          quantity?: number
+          sort_order?: number
+          subtotal?: number
+          total?: number
+          unit_price: number
+          vat_amount?: number
+          vat_rate?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          invoice_id?: string
+          quantity?: number
+          sort_order?: number
+          subtotal?: number
+          total?: number
+          unit_price?: number
+          vat_amount?: number
+          vat_rate?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          center_id: string
+          client_address: string | null
+          client_email: string | null
+          client_name: string
+          client_phone: string | null
+          converted_from_quote_id: string | null
+          created_at: string
+          due_date: string | null
+          id: string
+          issue_date: string
+          notes: string | null
+          number: string
+          status: string
+          subtotal: number
+          terms: string | null
+          total: number
+          total_vat: number
+          type: string
+          updated_at: string
+          valid_until: string | null
+        }
+        Insert: {
+          center_id: string
+          client_address?: string | null
+          client_email?: string | null
+          client_name: string
+          client_phone?: string | null
+          converted_from_quote_id?: string | null
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          issue_date?: string
+          notes?: string | null
+          number: string
+          status?: string
+          subtotal?: number
+          terms?: string | null
+          total?: number
+          total_vat?: number
+          type: string
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Update: {
+          center_id?: string
+          client_address?: string | null
+          client_email?: string | null
+          client_name?: string
+          client_phone?: string | null
+          converted_from_quote_id?: string | null
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          issue_date?: string
+          notes?: string | null
+          number?: string
+          status?: string
+          subtotal?: number
+          terms?: string | null
+          total?: number
+          total_vat?: number
+          type?: string
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "public_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_converted_from_quote_id_fkey"
+            columns: ["converted_from_quote_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       packs: {
         Row: {
           active: boolean | null
@@ -404,6 +545,48 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      vat_rates: {
+        Row: {
+          center_id: string
+          created_at: string
+          id: string
+          is_default: boolean | null
+          label: string
+          rate: number
+        }
+        Insert: {
+          center_id: string
+          created_at?: string
+          id?: string
+          is_default?: boolean | null
+          label: string
+          rate: number
+        }
+        Update: {
+          center_id?: string
+          created_at?: string
+          id?: string
+          is_default?: boolean | null
+          label?: string
+          rate?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vat_rates_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vat_rates_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "public_centers_view"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

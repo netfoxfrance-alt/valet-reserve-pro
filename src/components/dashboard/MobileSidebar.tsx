@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, CalendarDays, Settings, Package, Clock, LogOut, Share2, Copy, Check, MessageSquare, BarChart3, Globe, Crown, AlertCircle, Headphones } from 'lucide-react';
+import { Calendar, CalendarDays, Settings, Package, Clock, LogOut, Share2, Copy, Check, MessageSquare, BarChart3, Globe, Crown, AlertCircle, Headphones, FileText } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -14,6 +14,7 @@ const navigation = [
   { name: 'Réservations', href: '/dashboard', icon: Calendar },
   { name: 'Calendrier', href: '/dashboard/calendar', icon: CalendarDays },
   { name: 'Demandes', href: '/dashboard/requests', icon: MessageSquare },
+  { name: 'Facturation', href: '/dashboard/invoices', icon: FileText },
   { name: 'Ma Page', href: '/dashboard/my-page', icon: Globe },
   { name: 'Formules', href: '/dashboard/packs', icon: Package },
   { name: 'Statistiques', href: '/dashboard/stats', icon: BarChart3 },
