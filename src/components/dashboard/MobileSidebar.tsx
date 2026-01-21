@@ -83,7 +83,7 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
   
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="w-[280px] p-0 bg-surface-subtle">
+      <SheetContent side="left" className="w-[280px] p-0 bg-surface-subtle flex flex-col">
         <SheetHeader className="px-4 h-16 border-b border-border flex flex-row items-center">
           <Logo size="lg" />
           <SheetTitle className="sr-only">CleaningPage</SheetTitle>
@@ -139,7 +139,7 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
           </div>
         )}
         
-        <nav className="flex-1 px-4 py-4 space-y-6 overflow-y-auto">
+        <nav className="flex-1 px-4 py-4 space-y-6 overflow-y-auto min-h-0">
           {navigationGroups.map((group) => (
             <div key={group.label}>
               <div className="px-4 pb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground/60">
