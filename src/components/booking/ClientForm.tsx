@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { User, Phone, Mail, MessageSquare } from 'lucide-react';
+import { User, Phone, Mail, MessageSquare, MapPin } from 'lucide-react';
 
 interface ClientFormProps {
   onSubmit: (data: ClientData) => void;
@@ -15,6 +15,7 @@ export interface ClientData {
   name: string;
   phone: string;
   email: string;
+  address: string;
   notes: string;
 }
 
@@ -23,6 +24,7 @@ export function ClientForm({ onSubmit, isSubmitting = false }: ClientFormProps) 
     name: '',
     phone: '',
     email: '',
+    address: '',
     notes: '',
   });
   
@@ -94,6 +96,24 @@ export function ClientForm({ onSubmit, isSubmitting = false }: ClientFormProps) 
                 placeholder="jean@exemple.fr"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="pl-12 h-12 rounded-xl"
+                required
+              />
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="address" className="text-sm font-medium">
+              Adresse d'intervention
+            </Label>
+            <div className="relative">
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Input
+                id="address"
+                type="text"
+                placeholder="12 rue de Paris, 75001 Paris"
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 className="pl-12 h-12 rounded-xl"
                 required
               />

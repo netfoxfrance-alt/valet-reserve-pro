@@ -129,6 +129,7 @@ export function useCreateAppointment() {
     client_name: string;
     client_email: string;
     client_phone: string;
+    client_address?: string;
     vehicle_type: string;
     appointment_date: string;
     appointment_time: string;
@@ -148,6 +149,7 @@ export function useCreateAppointment() {
         client_name: data.client_name,
         client_email: data.client_email,
         client_phone: data.client_phone,
+        client_address: data.client_address,
         vehicle_type: data.vehicle_type,
         appointment_date: data.appointment_date,
         appointment_time: data.appointment_time,

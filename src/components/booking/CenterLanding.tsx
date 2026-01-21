@@ -89,6 +89,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
       layout: { ...defaultCustomization.layout, ...(c.layout || {}) },
       social: { ...defaultCustomization.social, ...(c.social || {}) },
       seo: { ...defaultCustomization.seo, ...(c.seo || {}) },
+      settings: { ...defaultCustomization.settings, ...(c.settings || {}) },
       cover_url: c.cover_url ?? null,
       gallery_images: c.gallery_images ?? [],
       visible_pack_ids: c.visible_pack_ids ?? [],

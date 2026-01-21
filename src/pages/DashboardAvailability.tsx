@@ -4,10 +4,13 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { Plus, X, Coffee, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { Plus, X, Coffee, Loader2, Car } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { useScheduleAvailability } from '@/hooks/useScheduleAvailability';
+import { useMyCenter } from '@/hooks/useCenter';
 
 const dayLabels: { [key: string]: string } = {
   lundi: 'Lundi',
@@ -31,8 +34,21 @@ const dayLabelsShort: { [key: string]: string } = {
 
 const dayOrder = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
 
+const bufferOptions = [
+  { value: '0', label: 'Aucun' },
+  { value: '15', label: '15 minutes' },
+  { value: '30', label: '30 minutes' },
+  { value: '45', label: '45 minutes' },
+  { value: '60', label: '1 heure' },
+  { value: '90', label: '1h30' },
+  { value: '120', label: '2 heures' },
+];
+
 export default function DashboardAvailability() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { center, updateCenter } = useMyCenter();
+  const [appointmentBuffer, setAppointmentBuffer] = useState('0');
+  const [bufferSaving, setBufferSaving] = useState(false);
   const {
     schedule,
     loading,
@@ -44,6 +60,33 @@ export default function DashboardAvailability() {
     removeSlot,
     saveSchedule,
   } = useScheduleAvailability();
+  
+  // Load buffer from center customization
+  useEffect(() => {
+    if (center?.customization?.settings?.appointment_buffer !== undefined) {
+      setAppointmentBuffer(String(center.customization.settings.appointment_buffer));
+    }
+  }, [center]);
+  
+  const handleBufferChange = async (value: string) => {
+    if (!center) return;
+    setAppointmentBuffer(value);
+    setBufferSaving(true);
+    
+    const currentCustomization = center.customization;
+    
+    await updateCenter({
+      customization: {
+        ...currentCustomization,
+        settings: {
+          ...currentCustomization.settings,
+          appointment_buffer: parseInt(value, 10),
+        },
+      },
+    });
+    
+    setBufferSaving(false);
+  };
 
   // Format slots for display
   const formatSlotsPreview = (slots: { start: string; end: string }[]) => {
@@ -83,6 +126,33 @@ export default function DashboardAvailability() {
         />
         
         <main className="p-4 lg:p-8 max-w-3xl">
+          {/* Buffer setting */}
+          <Card variant="elevated" className="p-5 mb-6">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                <Car className="w-5 h-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <Label htmlFor="buffer" className="text-base font-medium">
+                  Temps de déplacement
+                </Label>
+                <p className="text-sm text-muted-foreground mt-0.5 mb-3">
+                  Temps minimum entre chaque rendez-vous pour vos trajets
+                </p>
+                <Select value={appointmentBuffer} onValueChange={handleBufferChange} disabled={bufferSaving}>
+                  <SelectTrigger id="buffer" className="w-48">
+                    <SelectValue placeholder="Sélectionner..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {bufferOptions.map(opt => (
+                      <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </Card>
+          
           <div className="mb-6 sm:mb-8">
             <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Horaires d'ouverture</h2>
             <p className="text-sm text-muted-foreground">Définissez vos plages horaires disponibles pour les réservations. Ajoutez des pauses si nécessaire.</p>

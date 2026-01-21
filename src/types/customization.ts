@@ -69,6 +69,9 @@ export interface CenterCustomization {
     keywords: string;
     city: string;
   };
+  settings: {
+    appointment_buffer: number; // Buffer time in minutes between appointments
+  };
   cover_url: string | null;
   gallery_images: string[]; // Legacy - kept for backward compatibility
   visible_pack_ids: string[];
@@ -126,6 +129,9 @@ export const defaultCustomization: CenterCustomization = {
     description: '',
     keywords: '',
     city: '',
+  },
+  settings: {
+    appointment_buffer: 0,
   },
   cover_url: null,
   gallery_images: [],

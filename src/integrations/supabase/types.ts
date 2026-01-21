@@ -19,6 +19,7 @@ export type Database = {
           appointment_date: string
           appointment_time: string
           center_id: string
+          client_address: string | null
           client_email: string
           client_name: string
           client_phone: string
@@ -34,6 +35,7 @@ export type Database = {
           appointment_date: string
           appointment_time: string
           center_id: string
+          client_address?: string | null
           client_email: string
           client_name: string
           client_phone: string
@@ -49,6 +51,7 @@ export type Database = {
           appointment_date?: string
           appointment_time?: string
           center_id?: string
+          client_address?: string | null
           client_email?: string
           client_name?: string
           client_phone?: string
