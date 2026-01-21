@@ -5,15 +5,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useInvoices, Invoice, InvoiceItem, useVatRates } from '@/hooks/useInvoices';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useInvoices, Invoice, useVatRates } from '@/hooks/useInvoices';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Trash2, X } from 'lucide-react';
+import { Plus, Trash2, FileText, FileCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface InvoiceFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  type: 'invoice' | 'quote';
+  type?: 'invoice' | 'quote';
   invoice?: Invoice | null;
 }
 
@@ -25,13 +26,14 @@ interface FormItem {
   vat_rate: number;
 }
 
-export function InvoiceFormDialog({ open, onOpenChange, type, invoice }: InvoiceFormDialogProps) {
+export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoice }: InvoiceFormDialogProps) {
   const { createInvoice, updateInvoice, getInvoiceWithItems } = useInvoices();
   const { vatRates } = useVatRates();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   
   // Form state
+  const [selectedType, setSelectedType] = useState<'invoice' | 'quote'>(initialType || 'invoice');
   const [clientName, setClientName] = useState('');
   const [clientEmail, setClientEmail] = useState('');
   const [clientPhone, setClientPhone] = useState('');
@@ -42,11 +44,19 @@ export function InvoiceFormDialog({ open, onOpenChange, type, invoice }: Invoice
   const [status, setStatus] = useState<Invoice['status']>('draft');
   const [notes, setNotes] = useState('');
   const [terms, setTerms] = useState('');
+  const [includeInStats, setIncludeInStats] = useState(true);
   const [items, setItems] = useState<FormItem[]>([
     { id: crypto.randomUUID(), description: '', quantity: 1, unit_price: 0, vat_rate: 20 }
   ]);
 
   const defaultVatRate = vatRates.find(r => r.is_default)?.rate || 20;
+
+  // Update selectedType when initialType changes
+  useEffect(() => {
+    if (initialType) {
+      setSelectedType(initialType);
+    }
+  }, [initialType]);
 
   // Load invoice data when editing
   useEffect(() => {
@@ -54,6 +64,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type, invoice }: Invoice
       setLoading(true);
       getInvoiceWithItems(invoice.id).then(({ data }) => {
         if (data) {
+          setSelectedType(data.type);
           setClientName(data.client_name);
           setClientEmail(data.client_email || '');
           setClientPhone(data.client_phone || '');
@@ -64,6 +75,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type, invoice }: Invoice
           setStatus(data.status);
           setNotes(data.notes || '');
           setTerms(data.terms || '');
+          setIncludeInStats(data.include_in_stats);
           
           if (data.items && data.items.length > 0) {
             setItems(data.items.map(item => ({
@@ -79,25 +91,27 @@ export function InvoiceFormDialog({ open, onOpenChange, type, invoice }: Invoice
       });
     } else if (!invoice && open) {
       // Reset form for new invoice
+      setSelectedType(initialType || 'invoice');
       setClientName('');
       setClientEmail('');
       setClientPhone('');
       setClientAddress('');
       setIssueDate(new Date().toISOString().split('T')[0]);
-      setDueDate(type === 'invoice' 
+      setDueDate(selectedType === 'invoice' 
         ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
         : ''
       );
-      setValidUntil(type === 'quote' 
+      setValidUntil(selectedType === 'quote' 
         ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
         : ''
       );
       setStatus('draft');
       setNotes('');
       setTerms('');
+      setIncludeInStats(true);
       setItems([{ id: crypto.randomUUID(), description: '', quantity: 1, unit_price: 0, vat_rate: defaultVatRate }]);
     }
-  }, [invoice, open, type]);
+  }, [invoice, open, initialType]);
 
   const addItem = () => {
     setItems([...items, { 
@@ -161,7 +175,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type, invoice }: Invoice
     setLoading(true);
 
     const invoiceData = {
-      type,
+      type: selectedType,
       client_name: clientName,
       client_email: clientEmail || null,
       client_phone: clientPhone || null,
@@ -176,6 +190,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type, invoice }: Invoice
       notes: notes || null,
       terms: terms || null,
       converted_from_quote_id: null,
+      include_in_stats: includeInStats,
     };
 
     const itemsData = items.map(item => ({
@@ -207,7 +222,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type, invoice }: Invoice
     } else {
       toast({
         title: invoice ? 'Modifié' : 'Créé',
-        description: `${type === 'invoice' ? 'Facture' : 'Devis'} ${invoice ? 'modifié' : 'créé'} avec succès.`,
+        description: `${selectedType === 'invoice' ? 'Facture' : 'Devis'} ${invoice ? 'modifié' : 'créé'} avec succès.`,
       });
       onOpenChange(false);
     }
@@ -218,11 +233,80 @@ export function InvoiceFormDialog({ open, onOpenChange, type, invoice }: Invoice
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {invoice ? 'Modifier' : 'Nouveau'} {type === 'invoice' ? 'facture' : 'devis'}
+            {invoice ? 'Modifier' : 'Créer'} {selectedType === 'invoice' ? 'une facture' : 'un devis'}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Type Selection - Only for new documents */}
+          {!invoice && (
+            <div className="space-y-4">
+              <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
+                Type de document
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  onClick={() => setSelectedType('invoice')}
+                  className={cn(
+                    "flex items-center gap-3 p-4 rounded-xl border-2 transition-all",
+                    selectedType === 'invoice'
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-muted-foreground/30"
+                  )}
+                >
+                  <div className={cn(
+                    "p-2 rounded-lg",
+                    selectedType === 'invoice' 
+                      ? "bg-primary/10" 
+                      : "bg-muted"
+                  )}>
+                    <FileText className={cn(
+                      "w-5 h-5",
+                      selectedType === 'invoice' ? "text-primary" : "text-muted-foreground"
+                    )} />
+                  </div>
+                  <div className="text-left">
+                    <p className={cn(
+                      "font-medium",
+                      selectedType === 'invoice' ? "text-primary" : "text-foreground"
+                    )}>Facture</p>
+                    <p className="text-xs text-muted-foreground">Document de paiement</p>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedType('quote')}
+                  className={cn(
+                    "flex items-center gap-3 p-4 rounded-xl border-2 transition-all",
+                    selectedType === 'quote'
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-muted-foreground/30"
+                  )}
+                >
+                  <div className={cn(
+                    "p-2 rounded-lg",
+                    selectedType === 'quote' 
+                      ? "bg-primary/10" 
+                      : "bg-muted"
+                  )}>
+                    <FileCheck className={cn(
+                      "w-5 h-5",
+                      selectedType === 'quote' ? "text-primary" : "text-muted-foreground"
+                    )} />
+                  </div>
+                  <div className="text-left">
+                    <p className={cn(
+                      "font-medium",
+                      selectedType === 'quote' ? "text-primary" : "text-foreground"
+                    )}>Devis</p>
+                    <p className="text-xs text-muted-foreground">Estimation de prix</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Client Info */}
           <div className="space-y-4">
             <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
@@ -285,7 +369,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type, invoice }: Invoice
                   onChange={(e) => setIssueDate(e.target.value)}
                 />
               </div>
-              {type === 'invoice' ? (
+              {selectedType === 'invoice' ? (
                 <div className="space-y-2">
                   <Label htmlFor="dueDate">Date d'échéance</Label>
                   <Input
@@ -315,13 +399,13 @@ export function InvoiceFormDialog({ open, onOpenChange, type, invoice }: Invoice
                   <SelectContent>
                     <SelectItem value="draft">Brouillon</SelectItem>
                     <SelectItem value="sent">Envoyé</SelectItem>
-                    {type === 'quote' && (
+                    {selectedType === 'quote' && (
                       <>
                         <SelectItem value="accepted">Accepté</SelectItem>
                         <SelectItem value="rejected">Refusé</SelectItem>
                       </>
                     )}
-                    {type === 'invoice' && (
+                    {selectedType === 'invoice' && (
                       <SelectItem value="paid">Payé</SelectItem>
                     )}
                     <SelectItem value="cancelled">Annulé</SelectItem>
@@ -344,7 +428,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type, invoice }: Invoice
             </div>
             
             <div className="space-y-3">
-              {items.map((item, index) => (
+              {items.map((item) => (
                 <div 
                   key={item.id}
                   className="grid grid-cols-12 gap-2 items-start p-3 rounded-lg border bg-muted/30"
@@ -429,6 +513,30 @@ export function InvoiceFormDialog({ open, onOpenChange, type, invoice }: Invoice
               </div>
             </div>
           </div>
+
+          {/* Options */}
+          {selectedType === 'invoice' && (
+            <div className="space-y-4">
+              <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
+                Options
+              </h3>
+              <div className="flex items-center space-x-3 p-4 rounded-lg border bg-muted/30">
+                <Checkbox
+                  id="includeInStats"
+                  checked={includeInStats}
+                  onCheckedChange={(checked) => setIncludeInStats(checked === true)}
+                />
+                <div className="space-y-0.5">
+                  <Label htmlFor="includeInStats" className="font-medium cursor-pointer">
+                    Comptabiliser dans les statistiques
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Décochez si cette facture correspond à une réservation déjà comptée
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Notes */}
           <div className="space-y-4">

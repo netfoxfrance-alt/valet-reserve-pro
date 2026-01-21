@@ -34,6 +34,7 @@ export interface Invoice {
   notes: string | null;
   terms: string | null;
   converted_from_quote_id: string | null;
+  include_in_stats: boolean;
   created_at: string;
   updated_at: string;
   items?: InvoiceItem[];
@@ -152,6 +153,7 @@ export function useInvoices() {
         notes: invoice.notes,
         terms: invoice.terms,
         converted_from_quote_id: invoice.converted_from_quote_id,
+        include_in_stats: invoice.include_in_stats,
       })
       .select()
       .single();
@@ -340,6 +342,7 @@ export function useInvoices() {
         notes: quote.notes,
         terms: quote.terms,
         converted_from_quote_id: quoteId,
+        include_in_stats: true,
       },
       (quote.items || []).map(item => ({
         description: item.description,

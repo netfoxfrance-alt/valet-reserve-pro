@@ -385,6 +385,7 @@ export type Database = {
           created_at: string
           due_date: string | null
           id: string
+          include_in_stats: boolean
           issue_date: string
           notes: string | null
           number: string
@@ -407,6 +408,7 @@ export type Database = {
           created_at?: string
           due_date?: string | null
           id?: string
+          include_in_stats?: boolean
           issue_date?: string
           notes?: string | null
           number: string
@@ -429,6 +431,7 @@ export type Database = {
           created_at?: string
           due_date?: string | null
           id?: string
+          include_in_stats?: boolean
           issue_date?: string
           notes?: string | null
           number?: string

@@ -95,8 +95,8 @@ export default function DashboardInvoices() {
       .reduce((sum, i) => sum + i.total, 0),
   };
 
-  const handleCreate = (type: 'invoice' | 'quote') => {
-    setFormType(type);
+  const handleCreate = (type?: 'invoice' | 'quote') => {
+    setFormType(type || 'invoice');
     setEditingInvoice(null);
     setFormOpen(true);
   };
@@ -169,7 +169,7 @@ export default function DashboardInvoices() {
         <DashboardSidebar />
         <MobileSidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
         <div className="lg:pl-64">
-          <DashboardHeader title="Facturation" onMenuClick={() => setSidebarOpen(true)} />
+          <DashboardHeader title="Factures & Devis" onMenuClick={() => setSidebarOpen(true)} />
           <main className="p-6">
             <Skeleton className="h-8 w-48 mb-6" />
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -190,32 +190,22 @@ export default function DashboardInvoices() {
       <MobileSidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
       
       <div className="lg:pl-64">
-        <DashboardHeader title="Facturation" onMenuClick={() => setSidebarOpen(true)} />
+        <DashboardHeader title="Factures & Devis" onMenuClick={() => setSidebarOpen(true)} />
         
         <main className="p-4 md:p-6 space-y-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold">Facturation</h1>
+              <h1 className="text-2xl font-bold">Factures & Devis</h1>
               <p className="text-muted-foreground">Gérez vos factures et devis</p>
             </div>
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                onClick={() => handleCreate('quote')}
-                className="flex items-center gap-2"
-              >
-                <FileCheck className="w-4 h-4" />
-                Nouveau devis
-              </Button>
-              <Button 
-                onClick={() => handleCreate('invoice')}
-                className="flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Nouvelle facture
-              </Button>
-            </div>
+            <Button 
+              onClick={() => handleCreate()}
+              className="flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Créer
+            </Button>
           </div>
 
           {/* Stats */}
