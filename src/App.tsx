@@ -17,6 +17,7 @@ import DashboardRequests from "./pages/DashboardRequests";
 import DashboardStats from "./pages/DashboardStats";
 import DashboardMyPage from "./pages/DashboardMyPage";
 import DashboardInvoices from "./pages/DashboardInvoices";
+import DashboardClients from "./pages/DashboardClients";
 
 import CompleteSignup from "./pages/CompleteSignup";
 import NotFound from "./pages/NotFound";
@@ -80,6 +81,11 @@ const App = () => (
             <Route path="/dashboard/invoices" element={
               <ProtectedRoute>
                 <DashboardInvoices />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/clients" element={
+              <ProtectedRoute>
+                <DashboardClients />
               </ProtectedRoute>
             } />
             
