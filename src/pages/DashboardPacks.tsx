@@ -7,12 +7,29 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useMyPacks, Pack, useMyCenter } from '@/hooks/useCenter';
 import { Pencil, Clock, Plus, Trash2, Loader2, ChevronDown, ChevronUp, Image as ImageIcon, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { VariantsEditor } from '@/components/dashboard/VariantsEditor';
 import { FeaturesEditor } from '@/components/dashboard/FeaturesEditor';
 import { supabase } from '@/integrations/supabase/client';
+
+const DURATION_OPTIONS = [
+  { value: '30min', label: '30 minutes' },
+  { value: '45min', label: '45 minutes' },
+  { value: '1h', label: '1 heure' },
+  { value: '1h15', label: '1h15' },
+  { value: '1h30', label: '1h30' },
+  { value: '1h45', label: '1h45' },
+  { value: '2h', label: '2 heures' },
+  { value: '2h30', label: '2h30' },
+  { value: '3h', label: '3 heures' },
+  { value: '3h30', label: '3h30' },
+  { value: '4h', label: '4 heures' },
+  { value: '5h', label: '5 heures' },
+  { value: '6h', label: '6 heures' },
+];
 
 interface PriceVariant {
   name: string;
@@ -266,12 +283,21 @@ export default function DashboardPacks() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="new-duration">Durée estimée</Label>
-                    <Input
-                      id="new-duration"
+                    <Select
                       value={newPack.duration}
-                      onChange={(e) => setNewPack({ ...newPack, duration: e.target.value })}
-                      placeholder="1h30"
-                    />
+                      onValueChange={(value) => setNewPack({ ...newPack, duration: value })}
+                    >
+                      <SelectTrigger id="new-duration">
+                        <SelectValue placeholder="Choisir une durée" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border border-border z-50">
+                        {DURATION_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
@@ -407,11 +433,21 @@ export default function DashboardPacks() {
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor={`duration-${pack.id}`}>Durée</Label>
-                            <Input
-                              id={`duration-${pack.id}`}
-                              value={editForm.duration || ''}
-                              onChange={(e) => setEditForm({ ...editForm, duration: e.target.value })}
-                            />
+                            <Select
+                              value={editForm.duration || '1h'}
+                              onValueChange={(value) => setEditForm({ ...editForm, duration: value })}
+                            >
+                              <SelectTrigger id={`duration-${pack.id}`}>
+                                <SelectValue placeholder="Choisir une durée" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-background border border-border z-50">
+                                {DURATION_OPTIONS.map((option) => (
+                                  <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           </div>
                         </div>
 
