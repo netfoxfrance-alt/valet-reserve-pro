@@ -102,12 +102,12 @@ export function useInvoices() {
   };
 
   const createInvoice = async (
-    invoice: Omit<Invoice, 'id' | 'center_id' | 'created_at' | 'updated_at' | 'number'>,
+    invoice: Omit<Invoice, 'id' | 'center_id' | 'created_at' | 'updated_at' | 'number'> & { number?: string },
     items: Omit<InvoiceItem, 'id' | 'invoice_id'>[]
   ): Promise<{ data: Invoice | null; error: string | null }> => {
     if (!center) return { data: null, error: 'No center found' };
 
-    const number = await generateNumber(invoice.type);
+    const number = invoice.number || await generateNumber(invoice.type);
 
     // Calculate totals
     let subtotal = 0;
@@ -367,6 +367,7 @@ export function useInvoices() {
     deleteInvoice,
     getInvoiceWithItems,
     convertQuoteToInvoice,
+    generateNextNumber: generateNumber,
     refetch: fetchInvoices,
   };
 }
