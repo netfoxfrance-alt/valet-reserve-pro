@@ -134,12 +134,26 @@ export function useCreateAppointment() {
     appointment_date: string;
     appointment_time: string;
     notes?: string;
+    // Duration in text format like "1h", "1h30", "2h" - will be converted to minutes
+    duration?: string;
     // Additional data for email
     pack_name?: string;
     variant_name?: string;
     price?: number;
   }) => {
     setLoading(true);
+    
+    // Convert duration string to minutes (e.g., "1h30" → 90, "2h" → 120)
+    const parseDurationToMinutes = (duration?: string): number => {
+      if (!duration) return 60; // default 1h
+      const hoursMatch = duration.match(/(\d+)h/);
+      const minutesMatch = duration.match(/(\d+)(?:min|m(?!h))/);
+      const hours = hoursMatch ? parseInt(hoursMatch[1], 10) : 0;
+      const minutes = minutesMatch ? parseInt(minutesMatch[1], 10) : 0;
+      return hours * 60 + minutes || 60; // fallback to 60 if parsing fails
+    };
+    
+    const duration_minutes = parseDurationToMinutes(data.duration);
     
     const { error } = await supabase
       .from('appointments')
@@ -154,6 +168,7 @@ export function useCreateAppointment() {
         appointment_date: data.appointment_date,
         appointment_time: data.appointment_time,
         notes: data.notes,
+        duration_minutes,
       });
 
     // Send confirmation emails in background (fire-and-forget)

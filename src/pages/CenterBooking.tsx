@@ -176,6 +176,8 @@ export default function CenterBooking() {
       appointment_date: `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`,
       appointment_time: selectedTime,
       notes: data.notes,
+      // Duration for availability calculation
+      duration: selectedPack.duration || '1h',
       // Additional data for email notifications
       pack_name: selectedPack.name,
       variant_name: selectedVariant?.name,
