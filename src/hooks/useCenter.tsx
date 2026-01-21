@@ -31,6 +31,7 @@ const parseCustomization = (data: unknown): CenterCustomization => {
     layout: { ...defaultCustomization.layout, ...(parsed.layout || {}) },
     social: { ...defaultCustomization.social, ...(parsed.social || {}) },
     seo: { ...defaultCustomization.seo, ...(parsed.seo || {}) },
+    settings: { ...defaultCustomization.settings, ...(parsed.settings || {}) },
     cover_url: parsed.cover_url ?? null,
     gallery_images: parsed.gallery_images ?? [],
     visible_pack_ids: parsed.visible_pack_ids ?? [],

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, CalendarDays, Settings, Package, Clock, LogOut, Share2, Copy, Check, MessageSquare, BarChart3, Globe, Crown, AlertCircle, Headphones, FileText, Users } from 'lucide-react';
+import { Calendar, CalendarDays, Settings, Package, Clock, LogOut, Share2, Copy, Check, MessageSquare, BarChart3, Globe, Crown, AlertCircle, Headphones, FileText, Users, ChevronDown } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -50,20 +50,35 @@ export function DashboardSidebar() {
   const { openChat } = useTawkTo();
   const [copied, setCopied] = useState(false);
   
-  const isPro = subscription.subscribed;
-  const bookingUrl = center ? `${window.location.origin}/${center.slug}` : '';
-  
-  // Calculate trial days remaining
-  const getTrialDaysRemaining = () => {
-    if (!subscription.subscriptionEnd) return null;
-    const endDate = new Date(subscription.subscriptionEnd);
-    const now = new Date();
-    const diffTime = endDate.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays > 0 ? diffDays : 0;
+  // Find which group has the active route
+  const getActiveGroupIndex = () => {
+    return navigationGroups.findIndex(group => 
+      group.items.some(item => 
+        location.pathname === item.href || 
+        (item.href !== '/dashboard' && location.pathname.startsWith(item.href))
+      )
+    );
   };
   
-  const trialDays = getTrialDaysRemaining();
+  const [openGroups, setOpenGroups] = useState<Set<number>>(() => {
+    const activeIndex = getActiveGroupIndex();
+    return new Set(activeIndex >= 0 ? [activeIndex] : [0]);
+  });
+  
+  const toggleGroup = (index: number) => {
+    setOpenGroups(prev => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
+  };
+  
+  const isPro = subscription.subscribed;
+  const bookingUrl = center ? `${window.location.origin}/${center.slug}` : '';
   
   const handleCopyLink = () => {
     if (bookingUrl) {
@@ -140,36 +155,62 @@ export function DashboardSidebar() {
         </div>
       )}
       
-      <nav className="flex-1 px-4 py-4 space-y-6 overflow-y-auto">
-        {navigationGroups.map((group) => (
-          <div key={group.label}>
-            <div className="px-4 pb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground/60">
-              {group.label}
+      <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+        {navigationGroups.map((group, groupIndex) => {
+          const isOpen = openGroups.has(groupIndex);
+          const hasActiveItem = group.items.some(item => 
+            location.pathname === item.href || 
+            (item.href !== '/dashboard' && location.pathname.startsWith(item.href))
+          );
+          
+          return (
+            <div key={group.label}>
+              <button
+                onClick={() => toggleGroup(groupIndex)}
+                className={cn(
+                  "w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-all",
+                  hasActiveItem 
+                    ? "text-foreground bg-secondary/50" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
+                )}
+              >
+                <span className="uppercase tracking-wider text-xs">{group.label}</span>
+                <ChevronDown className={cn(
+                  "w-4 h-4 transition-transform",
+                  isOpen && "rotate-180"
+                )} />
+              </button>
+              
+              <div className={cn(
+                "overflow-hidden transition-all",
+                isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+              )}>
+                <div className="mt-1 space-y-0.5 pl-2">
+                  {group.items.map((item) => {
+                    const isActive = location.pathname === item.href || 
+                      (item.href !== '/dashboard' && location.pathname.startsWith(item.href));
+                    
+                    return (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className={cn(
+                          "flex items-center gap-3 px-4 py-2 rounded-xl text-sm font-medium transition-all",
+                          isActive
+                            ? "bg-primary text-primary-foreground"
+                            : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                        )}
+                      >
+                        <item.icon className="w-4 h-4" />
+                        {item.name}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
-            <div className="space-y-1">
-              {group.items.map((item) => {
-                const isActive = location.pathname === item.href || 
-                  (item.href !== '/dashboard' && location.pathname.startsWith(item.href));
-                
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={cn(
-                      "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all",
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                    )}
-                  >
-                    <item.icon className="w-5 h-5" />
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
       
       <div className="px-4 py-4 border-t border-border space-y-1">
