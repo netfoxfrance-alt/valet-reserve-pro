@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Invoice, InvoiceItem, useInvoices } from '@/hooks/useInvoices';
 import { Center } from '@/hooks/useCenter';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Printer, Download, Send, FileCheck } from 'lucide-react';
+import { Printer, Send, Mail, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface InvoicePreviewDialogProps {
   open: boolean;
@@ -20,11 +23,16 @@ export function InvoicePreviewDialog({ open, onOpenChange, invoice, center }: In
   const { toast } = useToast();
   const [fullInvoice, setFullInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [showEmailInput, setShowEmailInput] = useState(false);
+  const [emailToSend, setEmailToSend] = useState('');
   const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (invoice && open) {
       setLoading(true);
+      setShowEmailInput(false);
+      setEmailToSend(invoice.client_email || '');
       getInvoiceWithItems(invoice.id).then(({ data }) => {
         setFullInvoice(data);
         setLoading(false);
@@ -55,6 +63,45 @@ export function InvoicePreviewDialog({ open, onOpenChange, invoice, center }: In
     }
   };
 
+  const handleSendEmail = async () => {
+    if (!invoice || !emailToSend.trim()) {
+      toast({
+        title: 'Erreur',
+        description: 'Veuillez entrer une adresse email valide',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setSendingEmail(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-invoice-email', {
+        body: {
+          invoiceId: invoice.id,
+          recipientEmail: emailToSend.trim(),
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Envoyé !',
+        description: `${fullInvoice?.type === 'invoice' ? 'Facture' : 'Devis'} envoyé à ${emailToSend}`,
+      });
+      setShowEmailInput(false);
+      setFullInvoice(prev => prev ? { ...prev, status: 'sent' } : null);
+    } catch (error: any) {
+      console.error('Error sending email:', error);
+      toast({
+        title: 'Erreur',
+        description: error.message || 'Impossible d\'envoyer l\'email',
+        variant: 'destructive',
+      });
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   if (!invoice || loading || !fullInvoice) {
     return null;
   }
@@ -66,22 +113,64 @@ export function InvoicePreviewDialog({ open, onOpenChange, invoice, center }: In
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto p-0">
         {/* Actions Bar */}
-        <div className="sticky top-0 z-10 bg-background border-b p-4 flex items-center justify-between">
-          <DialogTitle className="text-lg font-semibold">
-            {title} {fullInvoice.number}
-          </DialogTitle>
-          <div className="flex gap-2">
-            {fullInvoice.status === 'draft' && (
-              <Button variant="outline" size="sm" onClick={handleMarkSent}>
-                <Send className="w-4 h-4 mr-2" />
-                Marquer envoyé
+        <div className="sticky top-0 z-10 bg-background border-b p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-lg font-semibold">
+              {title} {fullInvoice.number}
+            </DialogTitle>
+            <div className="flex gap-2">
+              {fullInvoice.status === 'draft' && (
+                <Button variant="outline" size="sm" onClick={handleMarkSent}>
+                  <Send className="w-4 h-4 mr-2" />
+                  Marquer envoyé
+                </Button>
+              )}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setShowEmailInput(!showEmailInput)}
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                Envoyer par email
               </Button>
-            )}
-            <Button variant="outline" size="sm" onClick={handlePrint}>
-              <Printer className="w-4 h-4 mr-2" />
-              Imprimer
-            </Button>
+              <Button variant="outline" size="sm" onClick={handlePrint}>
+                <Printer className="w-4 h-4 mr-2" />
+                Imprimer
+              </Button>
+            </div>
           </div>
+          
+          {/* Email Input */}
+          {showEmailInput && (
+            <div className="flex gap-2 items-end p-3 rounded-lg bg-muted/50">
+              <div className="flex-1 space-y-1.5">
+                <Label htmlFor="emailToSend" className="text-xs">Adresse email du destinataire</Label>
+                <Input
+                  id="emailToSend"
+                  type="email"
+                  value={emailToSend}
+                  onChange={(e) => setEmailToSend(e.target.value)}
+                  placeholder="email@exemple.com"
+                  className="h-9"
+                />
+              </div>
+              <Button 
+                size="sm" 
+                onClick={handleSendEmail} 
+                disabled={sendingEmail || !emailToSend.trim()}
+                className="h-9"
+              >
+                {sendingEmail ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 mr-1" />
+                    Envoyer
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Invoice Content - Print-friendly */}

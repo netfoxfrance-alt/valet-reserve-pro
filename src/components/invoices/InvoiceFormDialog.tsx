@@ -27,13 +27,14 @@ interface FormItem {
 }
 
 export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoice }: InvoiceFormDialogProps) {
-  const { createInvoice, updateInvoice, getInvoiceWithItems } = useInvoices();
+  const { createInvoice, updateInvoice, getInvoiceWithItems, generateNextNumber } = useInvoices();
   const { vatRates } = useVatRates();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   
   // Form state
   const [selectedType, setSelectedType] = useState<'invoice' | 'quote'>(initialType || 'invoice');
+  const [documentNumber, setDocumentNumber] = useState('');
   const [clientName, setClientName] = useState('');
   const [clientEmail, setClientEmail] = useState('');
   const [clientPhone, setClientPhone] = useState('');
@@ -65,6 +66,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
       getInvoiceWithItems(invoice.id).then(({ data }) => {
         if (data) {
           setSelectedType(data.type);
+          setDocumentNumber(data.number);
           setClientName(data.client_name);
           setClientEmail(data.client_email || '');
           setClientPhone(data.client_phone || '');
@@ -90,18 +92,20 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
         setLoading(false);
       });
     } else if (!invoice && open) {
-      // Reset form for new invoice
-      setSelectedType(initialType || 'invoice');
+      // Reset form and generate number for new invoice
+      const type = initialType || 'invoice';
+      setSelectedType(type);
+      generateNextNumber(type).then(num => setDocumentNumber(num));
       setClientName('');
       setClientEmail('');
       setClientPhone('');
       setClientAddress('');
       setIssueDate(new Date().toISOString().split('T')[0]);
-      setDueDate(selectedType === 'invoice' 
+      setDueDate(type === 'invoice' 
         ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
         : ''
       );
-      setValidUntil(selectedType === 'quote' 
+      setValidUntil(type === 'quote' 
         ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
         : ''
       );
@@ -112,6 +116,13 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
       setItems([{ id: crypto.randomUUID(), description: '', quantity: 1, unit_price: 0, vat_rate: defaultVatRate }]);
     }
   }, [invoice, open, initialType]);
+
+  // Update number when type changes for new documents
+  useEffect(() => {
+    if (!invoice && open) {
+      generateNextNumber(selectedType).then(num => setDocumentNumber(num));
+    }
+  }, [selectedType]);
 
   const addItem = () => {
     setItems([...items, { 
@@ -176,6 +187,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
 
     const invoiceData = {
       type: selectedType,
+      number: documentNumber,
       client_name: clientName,
       client_email: clientEmail || null,
       client_phone: clientPhone || null,
@@ -306,6 +318,25 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
               </div>
             </div>
           )}
+
+          {/* Document Number */}
+          <div className="space-y-4">
+            <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
+              Numéro de document
+            </h3>
+            <div className="space-y-2">
+              <Label htmlFor="documentNumber">N° {selectedType === 'invoice' ? 'Facture' : 'Devis'}</Label>
+              <Input
+                id="documentNumber"
+                value={documentNumber}
+                onChange={(e) => setDocumentNumber(e.target.value)}
+                placeholder={selectedType === 'invoice' ? 'FAC-2026-001' : 'DEV-2026-001'}
+              />
+              <p className="text-xs text-muted-foreground">
+                Numéro auto-généré, modifiable si besoin
+              </p>
+            </div>
+          </div>
 
           {/* Client Info */}
           <div className="space-y-4">

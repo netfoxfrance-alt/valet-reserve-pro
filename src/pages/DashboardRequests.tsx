@@ -29,7 +29,7 @@ export default function DashboardRequests() {
       case 'contacted':
         return <Badge variant="secondary">Contacté</Badge>;
       case 'converted':
-        return <Badge className="bg-green-500 hover:bg-green-600">Converti</Badge>;
+        return <Badge className="bg-green-500 hover:bg-green-600">Répondu</Badge>;
       case 'closed':
         return <Badge variant="outline">Fermé</Badge>;
       default:
@@ -149,7 +149,7 @@ export default function DashboardRequests() {
                               className="flex-1 sm:flex-none"
                             >
                               <CheckCircle className="w-4 h-4 mr-1" />
-                              Converti
+                              Répondu
                             </Button>
                             <Button
                               variant="ghost"
