@@ -10,17 +10,36 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { useState } from 'react';
 import { useTawkTo } from '@/components/TawkTo';
 
-const navigation = [
-  { name: 'Réservations', href: '/dashboard', icon: Calendar },
-  { name: 'Calendrier', href: '/dashboard/calendar', icon: CalendarDays },
-  { name: 'Demandes', href: '/dashboard/requests', icon: MessageSquare },
-  { name: 'Clients', href: '/dashboard/clients', icon: Users },
-  { name: 'Factures & Devis', href: '/dashboard/invoices', icon: FileText },
-  { name: 'Ma Page', href: '/dashboard/my-page', icon: Globe },
-  { name: 'Formules', href: '/dashboard/packs', icon: Package },
-  { name: 'Statistiques', href: '/dashboard/stats', icon: BarChart3 },
-  { name: 'Disponibilités', href: '/dashboard/availability', icon: Clock },
-  { name: 'Paramètres', href: '/dashboard/settings', icon: Settings },
+const navigationGroups = [
+  {
+    label: 'Activité',
+    items: [
+      { name: 'Réservations', href: '/dashboard', icon: Calendar },
+      { name: 'Calendrier', href: '/dashboard/calendar', icon: CalendarDays },
+      { name: 'Disponibilités', href: '/dashboard/availability', icon: Clock },
+    ]
+  },
+  {
+    label: 'Clients',
+    items: [
+      { name: 'Demandes', href: '/dashboard/requests', icon: MessageSquare },
+      { name: 'Clients', href: '/dashboard/clients', icon: Users },
+      { name: 'Factures & Devis', href: '/dashboard/invoices', icon: FileText },
+    ]
+  },
+  {
+    label: 'Configuration',
+    items: [
+      { name: 'Ma Page', href: '/dashboard/my-page', icon: Globe },
+      { name: 'Formules', href: '/dashboard/packs', icon: Package },
+    ]
+  },
+  {
+    label: 'Insights',
+    items: [
+      { name: 'Statistiques', href: '/dashboard/stats', icon: BarChart3 },
+    ]
+  },
 ];
 
 interface MobileSidebarProps {
@@ -120,41 +139,63 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
           </div>
         )}
         
-        <nav className="flex-1 px-4 py-6 space-y-1">
-          {navigation.map((item) => {
-            const isActive = location.pathname === item.href || 
-              (item.href !== '/dashboard' && location.pathname.startsWith(item.href));
-            
-            return (
-              <Link
-                key={item.name}
-                to={item.href}
-                onClick={handleNavClick}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                  isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                )}
-              >
-                <item.icon className="w-5 h-5" />
-                {item.name}
-              </Link>
-            );
-          })}
+        <nav className="flex-1 px-4 py-4 space-y-6 overflow-y-auto">
+          {navigationGroups.map((group) => (
+            <div key={group.label}>
+              <div className="px-4 pb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground/60">
+                {group.label}
+              </div>
+              <div className="space-y-1">
+                {group.items.map((item) => {
+                  const isActive = location.pathname === item.href || 
+                    (item.href !== '/dashboard' && location.pathname.startsWith(item.href));
+                  
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      onClick={handleNavClick}
+                      className={cn(
+                        "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all",
+                        isActive
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      )}
+                    >
+                      <item.icon className="w-5 h-5" />
+                      {item.name}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
         
-        <div className="px-4 py-6 border-t border-border mt-auto space-y-1">
+        <div className="px-4 py-4 border-t border-border mt-auto space-y-1">
+          <Link
+            to="/dashboard/settings"
+            onClick={handleNavClick}
+            className={cn(
+              "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all w-full",
+              location.pathname === '/dashboard/settings'
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            )}
+          >
+            <Settings className="w-5 h-5" />
+            Paramètres
+          </Link>
           <button 
             onClick={openChat}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-all w-full"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-all w-full"
           >
             <Headphones className="w-5 h-5" />
             Support
           </button>
           <button 
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-all w-full"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-all w-full"
           >
             <LogOut className="w-5 h-5" />
             Déconnexion
