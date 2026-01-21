@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 import { useMyPacks, Pack, useMyCenter } from '@/hooks/useCenter';
 import { Pencil, Clock, Plus, Trash2, Loader2, ChevronDown, ChevronUp, Image as ImageIcon, X } from 'lucide-react';
 import { toast } from 'sonner';
@@ -15,21 +15,23 @@ import { VariantsEditor } from '@/components/dashboard/VariantsEditor';
 import { FeaturesEditor } from '@/components/dashboard/FeaturesEditor';
 import { supabase } from '@/integrations/supabase/client';
 
-const DURATION_OPTIONS = [
-  { value: '30min', label: '30 minutes' },
-  { value: '45min', label: '45 minutes' },
-  { value: '1h', label: '1 heure' },
-  { value: '1h15', label: '1h15' },
-  { value: '1h30', label: '1h30' },
-  { value: '1h45', label: '1h45' },
-  { value: '2h', label: '2 heures' },
-  { value: '2h30', label: '2h30' },
-  { value: '3h', label: '3 heures' },
-  { value: '3h30', label: '3h30' },
-  { value: '4h', label: '4 heures' },
-  { value: '5h', label: '5 heures' },
-  { value: '6h', label: '6 heures' },
-];
+// Helper to parse duration string to { hours, minutes }
+const parseDuration = (duration: string): { hours: number; minutes: number } => {
+  const hoursMatch = duration.match(/(\d+)h/);
+  const minutesMatch = duration.match(/(\d+)(?:min|m(?!h))/);
+  return {
+    hours: hoursMatch ? parseInt(hoursMatch[1], 10) : 0,
+    minutes: minutesMatch ? parseInt(minutesMatch[1], 10) : 0,
+  };
+};
+
+// Helper to format { hours, minutes } to duration string
+const formatDuration = (hours: number, minutes: number): string => {
+  if (hours === 0 && minutes === 0) return '1h';
+  if (hours === 0) return `${minutes}min`;
+  if (minutes === 0) return `${hours}h`;
+  return `${hours}h${minutes.toString().padStart(2, '0')}`;
+};
 
 interface PriceVariant {
   name: string;
@@ -282,22 +284,39 @@ export default function DashboardPacks() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="new-duration">Durée estimée</Label>
-                    <Select
-                      value={newPack.duration}
-                      onValueChange={(value) => setNewPack({ ...newPack, duration: value })}
-                    >
-                      <SelectTrigger id="new-duration">
-                        <SelectValue placeholder="Choisir une durée" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-background border border-border z-50">
-                        {DURATION_OPTIONS.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label>Durée estimée</Label>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        <Input
+                          type="number"
+                          min="0"
+                          max="23"
+                          className="w-16 text-center"
+                          value={parseDuration(newPack.duration).hours}
+                          onChange={(e) => {
+                            const hours = Math.max(0, Math.min(23, parseInt(e.target.value) || 0));
+                            const { minutes } = parseDuration(newPack.duration);
+                            setNewPack({ ...newPack, duration: formatDuration(hours, minutes) });
+                          }}
+                        />
+                        <span className="text-sm text-muted-foreground">h</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Input
+                          type="number"
+                          min="0"
+                          max="59"
+                          className="w-16 text-center"
+                          value={parseDuration(newPack.duration).minutes}
+                          onChange={(e) => {
+                            const minutes = Math.max(0, Math.min(59, parseInt(e.target.value) || 0));
+                            const { hours } = parseDuration(newPack.duration);
+                            setNewPack({ ...newPack, duration: formatDuration(hours, minutes) });
+                          }}
+                        />
+                        <span className="text-sm text-muted-foreground">min</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -432,22 +451,39 @@ export default function DashboardPacks() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor={`duration-${pack.id}`}>Durée</Label>
-                            <Select
-                              value={editForm.duration || '1h'}
-                              onValueChange={(value) => setEditForm({ ...editForm, duration: value })}
-                            >
-                              <SelectTrigger id={`duration-${pack.id}`}>
-                                <SelectValue placeholder="Choisir une durée" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-background border border-border z-50">
-                                {DURATION_OPTIONS.map((option) => (
-                                  <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                            <Label>Durée</Label>
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1">
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  max="23"
+                                  className="w-16 text-center"
+                                  value={parseDuration(editForm.duration || '1h').hours}
+                                  onChange={(e) => {
+                                    const hours = Math.max(0, Math.min(23, parseInt(e.target.value) || 0));
+                                    const { minutes } = parseDuration(editForm.duration || '1h');
+                                    setEditForm({ ...editForm, duration: formatDuration(hours, minutes) });
+                                  }}
+                                />
+                                <span className="text-sm text-muted-foreground">h</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  max="59"
+                                  className="w-16 text-center"
+                                  value={parseDuration(editForm.duration || '1h').minutes}
+                                  onChange={(e) => {
+                                    const minutes = Math.max(0, Math.min(59, parseInt(e.target.value) || 0));
+                                    const { hours } = parseDuration(editForm.duration || '1h');
+                                    setEditForm({ ...editForm, duration: formatDuration(hours, minutes) });
+                                  }}
+                                />
+                                <span className="text-sm text-muted-foreground">min</span>
+                              </div>
+                            </div>
                           </div>
                         </div>
 
