@@ -68,6 +68,13 @@ export type Database = {
             foreignKeyName: "appointments_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
             referencedRelation: "centers"
             referencedColumns: ["id"]
           },
@@ -120,6 +127,13 @@ export type Database = {
             foreignKeyName: "availability_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "availability_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
             referencedRelation: "centers"
             referencedColumns: ["id"]
           },
@@ -158,6 +172,13 @@ export type Database = {
           start_date?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "blocked_periods_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "blocked_periods_center_id_fkey"
             columns: ["center_id"]
@@ -267,6 +288,13 @@ export type Database = {
             foreignKeyName: "contact_requests_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_requests_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
             referencedRelation: "centers"
             referencedColumns: ["id"]
           },
@@ -311,6 +339,13 @@ export type Database = {
           status?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "custom_requests_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "custom_requests_center_id_fkey"
             columns: ["center_id"]
@@ -452,6 +487,13 @@ export type Database = {
             foreignKeyName: "invoices_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
             referencedRelation: "centers"
             referencedColumns: ["id"]
           },
@@ -522,6 +564,13 @@ export type Database = {
             foreignKeyName: "packs_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "packs_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
             referencedRelation: "centers"
             referencedColumns: ["id"]
           },
@@ -582,6 +631,13 @@ export type Database = {
             foreignKeyName: "vat_rates_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vat_rates_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
             referencedRelation: "centers"
             referencedColumns: ["id"]
           },
@@ -609,6 +665,32 @@ export type Database = {
           RDV: number | null
           "Stripe ID": string | null
           Tel: string | null
+        }
+        Insert: {
+          Abo?: Database["public"]["Enums"]["subscription_plan"] | null
+          Business?: string | null
+          Email?: string | null
+          "Fin Abo"?: string | null
+          id?: string | null
+          Inscription?: string | null
+          Lien?: string | null
+          owner_id?: string | null
+          RDV?: never
+          "Stripe ID"?: string | null
+          Tel?: string | null
+        }
+        Update: {
+          Abo?: Database["public"]["Enums"]["subscription_plan"] | null
+          Business?: string | null
+          Email?: string | null
+          "Fin Abo"?: string | null
+          id?: string | null
+          Inscription?: string | null
+          Lien?: string | null
+          owner_id?: string | null
+          RDV?: never
+          "Stripe ID"?: string | null
+          Tel?: string | null
         }
         Relationships: []
       }
