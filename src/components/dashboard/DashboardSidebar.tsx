@@ -13,7 +13,7 @@ const navigation = [
   { name: 'Réservations', href: '/dashboard', icon: Calendar },
   { name: 'Calendrier', href: '/dashboard/calendar', icon: CalendarDays },
   { name: 'Demandes', href: '/dashboard/requests', icon: MessageSquare },
-  { name: 'Facturation', href: '/dashboard/invoices', icon: FileText },
+  { name: 'Factures & Devis', href: '/dashboard/invoices', icon: FileText },
   { name: 'Ma Page', href: '/dashboard/my-page', icon: Globe },
   { name: 'Formules', href: '/dashboard/packs', icon: Package },
   { name: 'Statistiques', href: '/dashboard/stats', icon: BarChart3 },
