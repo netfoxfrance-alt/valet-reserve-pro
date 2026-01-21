@@ -4,12 +4,11 @@ import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useMyAppointments } from '@/hooks/useAppointments';
 import { useMyCenter } from '@/hooks/useCenter';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BarChart3, Users, TrendingUp, Euro, Search, Phone, Mail, Calendar, ChevronRight, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { BarChart3, TrendingUp, Euro, Calendar, ArrowUpRight, ArrowDownRight, Users } from 'lucide-react';
 import { format, parseISO, startOfMonth, endOfMonth, subMonths, isWithinInterval, startOfWeek, endOfWeek, subWeeks, eachWeekOfInterval, eachMonthOfInterval, subDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
@@ -18,7 +17,6 @@ const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', '#10b981', '#f59e0b
 
 export default function DashboardStats() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchClient, setSearchClient] = useState('');
   const { appointments, loading } = useMyAppointments();
   const { center } = useMyCenter();
 
@@ -138,44 +136,10 @@ export default function DashboardStats() {
       .sort((a, b) => b.value - a.value);
   }, [appointments]);
 
-  // Client database
-  const clients = useMemo(() => {
-    const clientMap: Record<string, {
-      name: string;
-      phone: string;
-      email: string;
-      appointments: number;
-      totalSpent: number;
-      lastVisit: string;
-    }> = {};
-
-    appointments.filter(a => a.status !== 'cancelled').forEach(a => {
-      const key = a.client_phone;
-      if (!clientMap[key]) {
-        clientMap[key] = {
-          name: a.client_name,
-          phone: a.client_phone,
-          email: a.client_email,
-          appointments: 0,
-          totalSpent: 0,
-          lastVisit: a.appointment_date,
-        };
-      }
-      clientMap[key].appointments++;
-      clientMap[key].totalSpent += a.pack?.price || 0;
-      if (a.appointment_date > clientMap[key].lastVisit) {
-        clientMap[key].lastVisit = a.appointment_date;
-      }
-    });
-
-    return Object.values(clientMap)
-      .sort((a, b) => b.totalSpent - a.totalSpent);
+  // Unique clients count
+  const uniqueClientsCount = useMemo(() => {
+    return new Set(appointments.filter(a => a.status !== 'cancelled').map(a => a.client_phone)).size;
   }, [appointments]);
-
-  const filteredClients = clients.filter(c => 
-    c.name.toLowerCase().includes(searchClient.toLowerCase()) ||
-    c.phone.includes(searchClient)
-  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -254,7 +218,6 @@ export default function DashboardStats() {
                 <TabsList className="w-full sm:w-auto">
                   <TabsTrigger value="evolution" className="flex-1 sm:flex-none">Évolution</TabsTrigger>
                   <TabsTrigger value="formules" className="flex-1 sm:flex-none">Formules</TabsTrigger>
-                  <TabsTrigger value="clients" className="flex-1 sm:flex-none">Clients</TabsTrigger>
                 </TabsList>
 
                 {/* Evolution Tab */}
@@ -336,7 +299,7 @@ export default function DashboardStats() {
                       </div>
                       <div className="text-center p-4 bg-secondary/30 rounded-xl">
                         <p className="text-2xl sm:text-3xl font-bold text-foreground">
-                          {clients.length > 0 ? Math.round(appointments.filter(a => a.status !== 'cancelled').length / clients.length * 10) / 10 : 0}
+                          {uniqueClientsCount > 0 ? Math.round(appointments.filter(a => a.status !== 'cancelled').length / uniqueClientsCount * 10) / 10 : 0}
                         </p>
                         <p className="text-sm text-muted-foreground">Visites/client</p>
                       </div>
@@ -426,84 +389,6 @@ export default function DashboardStats() {
                       )}
                     </Card>
                   </div>
-                </TabsContent>
-
-                {/* Clients Tab */}
-                <TabsContent value="clients" className="space-y-4">
-                  <Card variant="elevated" className="p-4 sm:p-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                      <div>
-                        <h3 className="font-semibold text-foreground">Base clients</h3>
-                        <p className="text-sm text-muted-foreground">{clients.length} clients enregistrés</p>
-                      </div>
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                        <Input 
-                          placeholder="Rechercher un client..."
-                          value={searchClient}
-                          onChange={(e) => setSearchClient(e.target.value)}
-                          className="pl-9 w-full sm:w-64"
-                        />
-                      </div>
-                    </div>
-
-                    {filteredClients.length === 0 ? (
-                      <div className="text-center py-8">
-                        <Users className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                        <p className="text-muted-foreground">
-                          {searchClient ? 'Aucun client trouvé' : 'Aucun client pour le moment'}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        {filteredClients.map((client) => (
-                          <div 
-                            key={client.phone}
-                            className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-secondary/20 rounded-xl hover:bg-secondary/40 transition-colors"
-                          >
-                            <div className="flex items-center gap-3 flex-1">
-                              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                <span className="text-sm font-semibold text-primary">
-                                  {client.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
-                                </span>
-                              </div>
-                              <div className="min-w-0">
-                                <p className="font-medium text-foreground truncate">{client.name}</p>
-                                <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-                                  <span className="flex items-center gap-1">
-                                    <Phone className="w-3 h-3" />
-                                    {client.phone}
-                                  </span>
-                                  {client.email && client.email !== 'non-fourni@example.com' && (
-                                    <span className="flex items-center gap-1">
-                                      <Mail className="w-3 h-3" />
-                                      {client.email}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-6 sm:gap-8 pl-13 sm:pl-0">
-                              <div className="text-center">
-                                <p className="font-semibold text-foreground">{client.appointments}</p>
-                                <p className="text-xs text-muted-foreground">Visites</p>
-                              </div>
-                              <div className="text-center">
-                                <p className="font-semibold text-foreground">{client.totalSpent}€</p>
-                                <p className="text-xs text-muted-foreground">Total</p>
-                              </div>
-                              <div className="text-center hidden sm:block">
-                                <p className="font-semibold text-foreground">
-                                  {format(parseISO(client.lastVisit), 'd MMM yyyy', { locale: fr })}
-                                </p>
-                                <p className="text-xs text-muted-foreground">Dernière visite</p>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </Card>
                 </TabsContent>
               </Tabs>
             </>
