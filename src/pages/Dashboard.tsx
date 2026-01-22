@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Calendar, Users, TrendingUp, Clock, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
@@ -249,6 +249,9 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
       <DialogContent className="max-w-lg rounded-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">Ajouter une réservation</DialogTitle>
+          <DialogDescription className="sr-only">
+            Formulaire pour créer une nouvelle réservation
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-5 mt-4">
           {/* Client selection - if we have registered clients */}

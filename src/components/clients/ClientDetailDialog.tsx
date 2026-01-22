@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -47,6 +47,9 @@ export function ClientDetailDialog({ client, open, onOpenChange }: ClientDetailD
               </span>
             </div>
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Détails et historique des prestations pour {client.name}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 pt-4">
