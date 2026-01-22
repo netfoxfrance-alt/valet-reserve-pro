@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import DashboardCalendar from "./pages/DashboardCalendar";
 import DashboardAvailability from "./pages/DashboardAvailability";
 import DashboardPacks from "./pages/DashboardPacks";
+import DashboardCustomServices from "./pages/DashboardCustomServices";
 import DashboardSettings from "./pages/DashboardSettings";
 import DashboardRequests from "./pages/DashboardRequests";
 import DashboardStats from "./pages/DashboardStats";
@@ -56,6 +57,11 @@ const App = () => (
             <Route path="/dashboard/packs" element={
               <ProtectedRoute>
                 <DashboardPacks />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/custom-services" element={
+              <ProtectedRoute>
+                <DashboardCustomServices />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/stats" element={

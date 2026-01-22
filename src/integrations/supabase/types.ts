@@ -21,9 +21,12 @@ export type Database = {
           center_id: string
           client_address: string | null
           client_email: string
+          client_id: string | null
           client_name: string
           client_phone: string
           created_at: string | null
+          custom_price: number | null
+          custom_service_id: string | null
           duration_minutes: number | null
           id: string
           notes: string | null
@@ -38,9 +41,12 @@ export type Database = {
           center_id: string
           client_address?: string | null
           client_email: string
+          client_id?: string | null
           client_name: string
           client_phone: string
           created_at?: string | null
+          custom_price?: number | null
+          custom_service_id?: string | null
           duration_minutes?: number | null
           id?: string
           notes?: string | null
@@ -55,9 +61,12 @@ export type Database = {
           center_id?: string
           client_address?: string | null
           client_email?: string
+          client_id?: string | null
           client_name?: string
           client_phone?: string
           created_at?: string | null
+          custom_price?: number | null
+          custom_service_id?: string | null
           duration_minutes?: number | null
           id?: string
           notes?: string | null
@@ -86,6 +95,20 @@ export type Database = {
             columns: ["center_id"]
             isOneToOne: false
             referencedRelation: "public_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_custom_service_id_fkey"
+            columns: ["custom_service_id"]
+            isOneToOne: false
+            referencedRelation: "custom_services"
             referencedColumns: ["id"]
           },
           {
@@ -258,6 +281,74 @@ export type Database = {
         }
         Relationships: []
       }
+      clients: {
+        Row: {
+          address: string | null
+          center_id: string
+          created_at: string
+          default_service_id: string | null
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          center_id: string
+          created_at?: string
+          default_service_id?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          center_id?: string
+          created_at?: string
+          default_service_id?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clients_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clients_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clients_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "public_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clients_default_service_id_fkey"
+            columns: ["default_service_id"]
+            isOneToOne: false
+            referencedRelation: "custom_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_requests: {
         Row: {
           center_id: string
@@ -358,6 +449,64 @@ export type Database = {
           },
           {
             foreignKeyName: "custom_requests_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "public_centers_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custom_services: {
+        Row: {
+          active: boolean
+          center_id: string
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          id: string
+          name: string
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          center_id: string
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          name: string
+          price?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          center_id?: string
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          name?: string
+          price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_services_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custom_services_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custom_services_center_id_fkey"
             columns: ["center_id"]
             isOneToOne: false
             referencedRelation: "public_centers_view"
