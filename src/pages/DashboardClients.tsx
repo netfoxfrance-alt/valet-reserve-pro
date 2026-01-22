@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useMyAppointments } from '@/hooks/useAppointments';
@@ -16,14 +15,23 @@ import { useMyClients, Client } from '@/hooks/useClients';
 import { useMyCustomServices, formatDuration } from '@/hooks/useCustomServices';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { Users, Search, Phone, Mail, Calendar, TrendingUp, Plus, Pencil, Trash2, CalendarPlus, Loader2, UserCheck } from 'lucide-react';
+import { Users, Search, Phone, Mail, Calendar, TrendingUp, Plus, Pencil, Trash2, Loader2, UserCheck, Sparkles } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
+
+interface ExtractedClient {
+  name: string;
+  phone: string;
+  email: string;
+  appointments: number;
+  totalSpent: number;
+  lastVisit: string;
+  firstVisit: string;
+}
 
 export default function DashboardClients() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchClient, setSearchClient] = useState('');
-  const [activeTab, setActiveTab] = useState('registered');
   const { appointments, loading: loadingAppointments } = useMyAppointments();
   const { center } = useMyCenter();
   const { clients: registeredClients, loading: loadingClients, createClient, updateClient, deleteClient } = useMyClients();
@@ -54,20 +62,20 @@ export default function DashboardClients() {
   });
   const [saving, setSaving] = useState(false);
 
-  // Clients extracted from appointments (non-registered)
+  // Build a set of registered client phones for quick lookup
+  const registeredPhones = useMemo(() => {
+    return new Set(registeredClients.map(c => c.phone).filter(Boolean));
+  }, [registeredClients]);
+
+  // Clients extracted from appointments (non-registered only)
   const extractedClients = useMemo(() => {
-    const clientMap: Record<string, {
-      name: string;
-      phone: string;
-      email: string;
-      appointments: number;
-      totalSpent: number;
-      lastVisit: string;
-      firstVisit: string;
-    }> = {};
+    const clientMap: Record<string, ExtractedClient> = {};
 
     appointments.filter(a => a.status !== 'cancelled').forEach(a => {
       const key = a.client_phone;
+      // Skip if this phone is already registered
+      if (registeredPhones.has(key)) return;
+      
       if (!clientMap[key]) {
         clientMap[key] = {
           name: a.client_name,
@@ -89,27 +97,36 @@ export default function DashboardClients() {
       }
     });
 
-    return Object.values(clientMap)
-      .sort((a, b) => b.totalSpent - a.totalSpent);
-  }, [appointments]);
+    return Object.values(clientMap).sort((a, b) => b.totalSpent - a.totalSpent);
+  }, [appointments, registeredPhones]);
 
-  // Filter registered clients
-  const filteredRegistered = registeredClients.filter(c =>
-    c.name.toLowerCase().includes(searchClient.toLowerCase()) ||
-    (c.phone && c.phone.includes(searchClient)) ||
-    (c.email && c.email.toLowerCase().includes(searchClient.toLowerCase()))
-  );
-
-  // Filter extracted clients
-  const filteredExtracted = extractedClients.filter(c =>
-    c.name.toLowerCase().includes(searchClient.toLowerCase()) ||
-    c.phone.includes(searchClient) ||
-    c.email.toLowerCase().includes(searchClient.toLowerCase())
-  );
+  // Combined and filtered list: registered first, then extracted
+  const allClients = useMemo(() => {
+    const search = searchClient.toLowerCase();
+    
+    const filteredRegistered = registeredClients.filter(c =>
+      c.name.toLowerCase().includes(search) ||
+      (c.phone && c.phone.includes(searchClient)) ||
+      (c.email && c.email.toLowerCase().includes(search))
+    ).map(c => ({ type: 'registered' as const, data: c }));
+    
+    const filteredExtracted = extractedClients.filter(c =>
+      c.name.toLowerCase().includes(search) ||
+      c.phone.includes(searchClient) ||
+      c.email.toLowerCase().includes(search)
+    ).map(c => ({ type: 'extracted' as const, data: c }));
+    
+    return [...filteredRegistered, ...filteredExtracted];
+  }, [registeredClients, extractedClients, searchClient]);
 
   // Stats
-  const totalRevenue = extractedClients.reduce((sum, c) => sum + c.totalSpent, 0);
-  const avgPerClient = extractedClients.length > 0 ? Math.round(totalRevenue / extractedClients.length) : 0;
+  const totalClients = registeredClients.length + extractedClients.length;
+  const totalRevenue = useMemo(() => {
+    return appointments
+      .filter(a => a.status !== 'cancelled')
+      .reduce((sum, a) => sum + (a.pack?.price || 0), 0);
+  }, [appointments]);
+  const avgPerClient = totalClients > 0 ? Math.round(totalRevenue / totalClients) : 0;
   const returningClients = extractedClients.filter(c => c.appointments > 1).length;
 
   const loading = loadingAppointments || loadingClients;
@@ -185,8 +202,8 @@ export default function DashboardClients() {
     }
   };
 
-  // Convert extracted client to registered
-  const handleConvertClient = (extracted: typeof extractedClients[0]) => {
+  // Convert extracted client to registered - opens the dialog with prefilled data
+  const handleConvertClient = (extracted: ExtractedClient) => {
     setNewClient({
       name: extracted.name,
       email: extracted.email !== 'non-fourni@example.com' ? extracted.email : '',
@@ -196,7 +213,6 @@ export default function DashboardClients() {
       notes: ''
     });
     setIsCreateOpen(true);
-    setActiveTab('registered');
   };
 
   return (
@@ -225,18 +241,18 @@ export default function DashboardClients() {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
                 <Card variant="elevated" className="p-4 sm:p-5">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
-                    <UserCheck className="w-5 h-5 text-primary" />
+                    <Users className="w-5 h-5 text-primary" />
                   </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-foreground">{registeredClients.length}</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Clients enregistrés</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-foreground">{totalClients}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Clients total</p>
                 </Card>
 
                 <Card variant="elevated" className="p-4 sm:p-5">
                   <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center mb-2">
-                    <Users className="w-5 h-5 text-muted-foreground" />
+                    <UserCheck className="w-5 h-5 text-muted-foreground" />
                   </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-foreground">{extractedClients.length}</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Clients total (RDV)</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-foreground">{registeredClients.length}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Enregistrés</p>
                 </Card>
 
                 <Card variant="elevated" className="p-4 sm:p-5">
@@ -256,148 +272,140 @@ export default function DashboardClients() {
                 </Card>
               </div>
 
-              {/* Tabs */}
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <TabsList>
-                    <TabsTrigger value="registered">
-                      <UserCheck className="w-4 h-4 mr-2" />
-                      Enregistrés ({registeredClients.length})
-                    </TabsTrigger>
-                    <TabsTrigger value="history">
-                      <Users className="w-4 h-4 mr-2" />
-                      Historique RDV ({extractedClients.length})
-                    </TabsTrigger>
-                  </TabsList>
-
-                  <div className="flex gap-3">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Rechercher..."
-                        value={searchClient}
-                        onChange={(e) => setSearchClient(e.target.value)}
-                        className="pl-9 w-full sm:w-64"
-                      />
-                    </div>
-                    <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-                      <DialogTrigger asChild>
-                        <Button>
-                          <Plus className="w-4 h-4 mr-2" />
-                          Nouveau client
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-lg">
-                        <DialogHeader>
-                          <DialogTitle>Nouveau client</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4 pt-4">
-                          <div className="space-y-2">
-                            <Label>Nom *</Label>
-                            <Input
-                              placeholder="Jean Dupont"
-                              value={newClient.name}
-                              onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
-                            />
-                          </div>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <Label>Téléphone</Label>
-                              <Input
-                                placeholder="06 12 34 56 78"
-                                value={newClient.phone}
-                                onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label>Email</Label>
-                              <Input
-                                type="email"
-                                placeholder="jean@email.com"
-                                value={newClient.email}
-                                onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
-                              />
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Adresse</Label>
-                            <Input
-                              placeholder="123 rue Example, 75000 Paris"
-                              value={newClient.address}
-                              onChange={(e) => setNewClient({ ...newClient, address: e.target.value })}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Prestation par défaut</Label>
-                            <Select
-                              value={newClient.default_service_id || "none"}
-                              onValueChange={(v) => setNewClient({ ...newClient, default_service_id: v === "none" ? "" : v })}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Aucune prestation" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="none">Aucune</SelectItem>
-                                {services.map((s) => (
-                                  <SelectItem key={s.id} value={s.id}>
-                                    {s.name} - {formatDuration(s.duration_minutes)} - {s.price}€
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            {services.length === 0 && (
-                              <p className="text-xs text-muted-foreground">
-                                Créez d'abord une prestation personnalisée dans Configuration → Prestations
-                              </p>
-                            )}
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Notes</Label>
-                            <Textarea
-                              placeholder="Informations supplémentaires..."
-                              value={newClient.notes}
-                              onChange={(e) => setNewClient({ ...newClient, notes: e.target.value })}
-                            />
-                          </div>
-                          <Button onClick={handleCreate} className="w-full" disabled={creating}>
-                            {creating && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            Créer le client
-                          </Button>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
+              {/* Search and New Client Button */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Rechercher un client..."
+                    value={searchClient}
+                    onChange={(e) => setSearchClient(e.target.value)}
+                    className="pl-9 w-full sm:w-80"
+                  />
                 </div>
-
-                {/* Registered Clients Tab */}
-                <TabsContent value="registered">
-                  <Card variant="elevated" className="p-4 sm:p-6">
-                    {filteredRegistered.length === 0 ? (
-                      <div className="text-center py-12">
-                        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-                          <UserCheck className="w-8 h-8 text-muted-foreground" />
-                        </div>
-                        <h4 className="font-medium text-foreground mb-1">
-                          {searchClient ? 'Aucun client trouvé' : 'Aucun client enregistré'}
-                        </h4>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          {searchClient
-                            ? 'Essayez avec un autre terme'
-                            : 'Créez votre premier client avec une prestation personnalisée'}
-                        </p>
-                        {!searchClient && (
-                          <Button onClick={() => setIsCreateOpen(true)}>
-                            <Plus className="w-4 h-4 mr-2" />
-                            Nouveau client
-                          </Button>
-                        )}
-                      </div>
-                    ) : (
+                <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Nouveau client
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-lg">
+                    <DialogHeader>
+                      <DialogTitle>Nouveau client</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 pt-4">
                       <div className="space-y-2">
-                        {filteredRegistered.map((client) => (
+                        <Label>Nom *</Label>
+                        <Input
+                          placeholder="Jean Dupont"
+                          value={newClient.name}
+                          onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Téléphone</Label>
+                          <Input
+                            placeholder="06 12 34 56 78"
+                            value={newClient.phone}
+                            onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Email</Label>
+                          <Input
+                            type="email"
+                            placeholder="jean@email.com"
+                            value={newClient.email}
+                            onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Adresse</Label>
+                        <Input
+                          placeholder="123 rue Example, 75000 Paris"
+                          value={newClient.address}
+                          onChange={(e) => setNewClient({ ...newClient, address: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="flex items-center gap-2">
+                          <Sparkles className="w-4 h-4 text-primary" />
+                          Prestation personnalisée par défaut
+                        </Label>
+                        <Select
+                          value={newClient.default_service_id || "none"}
+                          onValueChange={(v) => setNewClient({ ...newClient, default_service_id: v === "none" ? "" : v })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Aucune prestation" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">Aucune</SelectItem>
+                            {services.map((s) => (
+                              <SelectItem key={s.id} value={s.id}>
+                                {s.name} - {formatDuration(s.duration_minutes)} - {s.price}€
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground">
+                          {services.length === 0 
+                            ? "Créez d'abord une prestation dans Configuration → Prestations personnalisées"
+                            : "Cette prestation sera utilisée par défaut lors des réservations pour ce client"
+                          }
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Notes</Label>
+                        <Textarea
+                          placeholder="Informations supplémentaires..."
+                          value={newClient.notes}
+                          onChange={(e) => setNewClient({ ...newClient, notes: e.target.value })}
+                        />
+                      </div>
+                      <Button onClick={handleCreate} className="w-full" disabled={creating}>
+                        {creating && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                        Créer le client
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
+              {/* Unified Client List */}
+              <Card variant="elevated" className="p-4 sm:p-6">
+                {allClients.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
+                      <Users className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h4 className="font-medium text-foreground mb-1">
+                      {searchClient ? 'Aucun client trouvé' : 'Aucun client pour le moment'}
+                    </h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {searchClient
+                        ? 'Essayez avec un autre terme de recherche'
+                        : 'Vos clients apparaîtront ici après leur première réservation ou ajoutez-en manuellement'}
+                    </p>
+                    {!searchClient && (
+                      <Button onClick={() => setIsCreateOpen(true)}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Nouveau client
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {allClients.map((item) => {
+                      if (item.type === 'registered') {
+                        const client = item.data as Client;
+                        return (
                           <div
                             key={client.id}
-                            className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-secondary/20 rounded-xl hover:bg-secondary/40 transition-colors"
+                            className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-secondary/30 rounded-xl border border-primary/20"
                           >
                             <div className="flex items-center gap-3 flex-1">
                               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -406,7 +414,12 @@ export default function DashboardClients() {
                                 </span>
                               </div>
                               <div className="min-w-0 flex-1">
-                                <p className="font-medium text-foreground truncate">{client.name}</p>
+                                <div className="flex items-center gap-2">
+                                  <p className="font-medium text-foreground truncate">{client.name}</p>
+                                  <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                                    Enregistré
+                                  </span>
+                                </div>
                                 <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
                                   {client.phone && (
                                     <a href={`tel:${client.phone}`} className="flex items-center gap-1 hover:text-primary">
@@ -422,7 +435,8 @@ export default function DashboardClients() {
                                   )}
                                 </div>
                                 {client.default_service && (
-                                  <p className="text-xs text-primary mt-1">
+                                  <p className="text-xs text-primary mt-1 flex items-center gap-1">
+                                    <Sparkles className="w-3 h-3" />
                                     {client.default_service.name} • {formatDuration(client.default_service.duration_minutes)} • {client.default_service.price}€
                                   </p>
                                 )}
@@ -437,35 +451,10 @@ export default function DashboardClients() {
                               </Button>
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    )}
-                  </Card>
-                </TabsContent>
-
-                {/* History Tab */}
-                <TabsContent value="history">
-                  <Card variant="elevated" className="p-4 sm:p-6">
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Clients extraits automatiquement de vos réservations. Cliquez sur "Enregistrer" pour leur attacher une prestation personnalisée.
-                    </p>
-                    {filteredExtracted.length === 0 ? (
-                      <div className="text-center py-12">
-                        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-                          <Users className="w-8 h-8 text-muted-foreground" />
-                        </div>
-                        <h4 className="font-medium text-foreground mb-1">
-                          {searchClient ? 'Aucun client trouvé' : 'Aucun client pour le moment'}
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          {searchClient
-                            ? 'Essayez avec un autre terme de recherche'
-                            : 'Vos clients apparaîtront ici après leur première réservation'}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        {filteredExtracted.map((client) => (
+                        );
+                      } else {
+                        const client = item.data as ExtractedClient;
+                        return (
                           <div
                             key={client.phone}
                             className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-secondary/20 rounded-xl hover:bg-secondary/40 transition-colors"
@@ -513,12 +502,12 @@ export default function DashboardClients() {
                               </Button>
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    )}
-                  </Card>
-                </TabsContent>
-              </Tabs>
+                        );
+                      }
+                    })}
+                  </div>
+                )}
+              </Card>
             </>
           )}
         </main>
@@ -563,7 +552,10 @@ export default function DashboardClients() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Prestation par défaut</Label>
+              <Label className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                Prestation personnalisée par défaut
+              </Label>
               <Select
                 value={editForm.default_service_id || "none"}
                 onValueChange={(v) => setEditForm({ ...editForm, default_service_id: v === "none" ? "" : v })}

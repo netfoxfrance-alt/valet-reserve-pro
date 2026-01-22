@@ -117,7 +117,9 @@ export default function DashboardCustomServices() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold">Prestations personnalisées</h1>
-                <p className="text-muted-foreground">Créez des services sur mesure avec durée et prix libres</p>
+                <p className="text-muted-foreground">
+                  Créez des services sur mesure avec durée et prix libres, puis attribuez-les à vos clients réguliers
+                </p>
               </div>
               <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                 <DialogTrigger asChild>
