@@ -13,6 +13,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Calendar, Users, TrendingUp, Clock, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
+import { useMyClients, Client } from '@/hooks/useClients';
+import { useMyCustomServices, formatDuration, CustomService } from '@/hooks/useCustomServices';
 import { format, isToday, isTomorrow, parseISO, startOfDay, isBefore, addDays, addMonths, startOfMonth, endOfMonth, isSameMonth } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -128,19 +130,61 @@ function AppointmentRow({ appointment, onUpdateStatus }: {
   );
 }
 
-function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }) {
+function AddAppointmentDialog({ onAdd, clients, services }: { 
+  onAdd: (data: any) => Promise<void>;
+  clients: Client[];
+  services: CustomService[];
+}) {
   const { packs } = useMyPacks();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState<'pack' | 'client'>('pack');
+  const [selectedClientId, setSelectedClientId] = useState('');
   const [form, setForm] = useState({
     client_name: '',
     client_email: '',
     client_phone: '',
+    client_address: '',
     pack_id: '',
+    custom_service_id: '',
+    custom_price: '',
     appointment_date: format(new Date(), 'yyyy-MM-dd'),
     appointment_time: '09:00',
     notes: ''
   });
+
+  // When a registered client is selected, pre-fill form with their data
+  const handleClientSelect = (clientId: string) => {
+    setSelectedClientId(clientId);
+    if (clientId) {
+      const client = clients.find(c => c.id === clientId);
+      if (client) {
+        setForm({
+          ...form,
+          client_name: client.name,
+          client_email: client.email || '',
+          client_phone: client.phone || '',
+          client_address: client.address || '',
+          custom_service_id: client.default_service_id || '',
+          custom_price: client.default_service?.price?.toString() || '',
+        });
+        setMode('client');
+      }
+    } else {
+      setForm({
+        ...form,
+        client_name: '',
+        client_email: '',
+        client_phone: '',
+        client_address: '',
+        custom_service_id: '',
+        custom_price: '',
+      });
+    }
+  };
+
+  // Get selected service details
+  const selectedService = services.find(s => s.id === form.custom_service_id);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,19 +193,45 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
       return;
     }
     setLoading(true);
-    await onAdd({
-      ...form,
-      pack_id: form.pack_id || null,
+    
+    const payload: any = {
+      client_name: form.client_name,
       client_email: form.client_email || 'non-fourni@example.com',
-      vehicle_type: 'standard'
-    });
+      client_phone: form.client_phone,
+      client_address: form.client_address || undefined,
+      appointment_date: form.appointment_date,
+      appointment_time: form.appointment_time,
+      notes: form.notes || undefined,
+      vehicle_type: 'standard',
+    };
+
+    // If using a registered client with custom service
+    if (mode === 'client' && selectedClientId) {
+      payload.client_id = selectedClientId;
+      if (form.custom_service_id) {
+        payload.custom_service_id = form.custom_service_id;
+        payload.custom_price = parseFloat(form.custom_price) || selectedService?.price;
+        payload.duration_minutes = selectedService?.duration_minutes;
+      }
+    } else {
+      // Standard pack mode
+      payload.pack_id = form.pack_id || null;
+    }
+
+    await onAdd(payload);
     setLoading(false);
     setOpen(false);
+    // Reset form
+    setSelectedClientId('');
+    setMode('pack');
     setForm({
       client_name: '',
       client_email: '',
       client_phone: '',
+      client_address: '',
       pack_id: '',
+      custom_service_id: '',
+      custom_price: '',
       appointment_date: format(new Date(), 'yyyy-MM-dd'),
       appointment_time: '09:00',
       notes: ''
@@ -176,11 +246,47 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
           Nouvelle réservation
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg rounded-2xl">
+      <DialogContent className="max-w-lg rounded-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">Ajouter une réservation</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-5 mt-4">
+          {/* Client selection - if we have registered clients */}
+          {clients.length > 0 && (
+            <div className="space-y-2">
+              <Label>Client enregistré</Label>
+              <Select value={selectedClientId} onValueChange={handleClientSelect}>
+                <SelectTrigger className="h-11 rounded-xl">
+                  <SelectValue placeholder="Nouveau client ou sélectionner..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Nouveau client</SelectItem>
+                  {clients.map((client) => (
+                    <SelectItem key={client.id} value={client.id}>
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-primary" />
+                        <span>{client.name}</span>
+                        {client.default_service && (
+                          <span className="text-xs text-muted-foreground">
+                            ({client.default_service.name})
+                          </span>
+                        )}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {selectedClientId && selectedService && (
+                <div className="bg-primary/5 rounded-lg p-3 text-sm">
+                  <p className="font-medium text-primary">{selectedService.name}</p>
+                  <p className="text-muted-foreground">
+                    {formatDuration(selectedService.duration_minutes)} • {selectedService.price}€
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="client_name">Nom du client *</Label>
             <Input
@@ -189,6 +295,7 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
               onChange={(e) => setForm({ ...form, client_name: e.target.value })}
               placeholder="Jean Dupont"
               className="h-11 rounded-xl"
+              disabled={!!selectedClientId}
             />
           </div>
           
@@ -201,6 +308,7 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
                 onChange={(e) => setForm({ ...form, client_phone: e.target.value })}
                 placeholder="06 12 34 56 78"
                 className="h-11 rounded-xl"
+                disabled={!!selectedClientId}
               />
             </div>
             <div className="space-y-2">
@@ -212,25 +320,29 @@ function AddAppointmentDialog({ onAdd }: { onAdd: (data: any) => Promise<void> }
                 onChange={(e) => setForm({ ...form, client_email: e.target.value })}
                 placeholder="jean@email.com"
                 className="h-11 rounded-xl"
+                disabled={!!selectedClientId}
               />
             </div>
           </div>
           
-          <div className="space-y-2">
-            <Label>Formule</Label>
-            <Select value={form.pack_id} onValueChange={(v) => setForm({ ...form, pack_id: v })}>
-              <SelectTrigger className="h-11 rounded-xl">
-                <SelectValue placeholder="Sélectionner une formule" />
-              </SelectTrigger>
-              <SelectContent>
-                {packs.map((pack) => (
-                  <SelectItem key={pack.id} value={pack.id}>
-                    {pack.name} - {pack.price}€
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Show pack selection only if NOT using registered client */}
+          {!selectedClientId && (
+            <div className="space-y-2">
+              <Label>Formule</Label>
+              <Select value={form.pack_id} onValueChange={(v) => setForm({ ...form, pack_id: v })}>
+                <SelectTrigger className="h-11 rounded-xl">
+                  <SelectValue placeholder="Sélectionner une formule" />
+                </SelectTrigger>
+                <SelectContent>
+                  {packs.map((pack) => (
+                    <SelectItem key={pack.id} value={pack.id}>
+                      {pack.name} - {pack.price}€
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -289,6 +401,8 @@ export default function Dashboard() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const { appointments, loading, updateStatus, createAppointment } = useMyAppointments();
   const { center } = useMyCenter();
+  const { clients } = useMyClients();
+  const { services } = useMyCustomServices();
   
   const today = startOfDay(new Date());
   const weekEnd = addDays(today, 7);
@@ -417,7 +531,7 @@ export default function Dashboard() {
                   {filter === 'month' && ` en ${format(currentMonth, 'MMMM yyyy', { locale: fr })}`}
                 </p>
               </div>
-              <AddAppointmentDialog onAdd={handleAddAppointment} />
+              <AddAppointmentDialog onAdd={handleAddAppointment} clients={clients} services={services} />
             </div>
             
             {/* Filter tabs */}
