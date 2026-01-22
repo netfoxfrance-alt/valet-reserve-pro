@@ -9,9 +9,11 @@ export interface Appointment {
   id: string;
   center_id: string;
   pack_id: string | null;
+  client_id: string | null;
   client_name: string;
   client_email: string;
   client_phone: string;
+  client_address: string | null;
   vehicle_type: string;
   appointment_date: string;
   appointment_time: string;
@@ -19,6 +21,9 @@ export interface Appointment {
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   created_at: string;
   updated_at: string;
+  duration_minutes: number | null;
+  custom_service_id: string | null;
+  custom_price: number | null;
   pack?: {
     id: string;
     name: string;
@@ -72,21 +77,73 @@ export function useMyAppointments() {
 
   const createAppointment = async (data: {
     pack_id?: string | null;
+    client_id?: string | null;
     client_name: string;
     client_email: string;
     client_phone: string;
+    client_address?: string;
     vehicle_type: string;
     appointment_date: string;
     appointment_time: string;
     notes?: string;
+    custom_service_id?: string | null;
+    custom_price?: number | null;
+    duration_minutes?: number;
   }) => {
     if (!center) return { error: 'Aucun centre trouvé' };
+    
+    // Auto-create or find client (same logic as public booking)
+    let clientId: string | null = data.client_id || null;
+    
+    if (!clientId && data.client_phone) {
+      // Check if client exists by phone
+      const { data: existingClient } = await supabase
+        .from('clients')
+        .select('id')
+        .eq('center_id', center.id)
+        .eq('phone', data.client_phone)
+        .maybeSingle();
+      
+      if (existingClient) {
+        clientId = existingClient.id;
+      } else {
+        // Create new client with source = 'manual'
+        const { data: newClient } = await supabase
+          .from('clients')
+          .insert({
+            center_id: center.id,
+            name: data.client_name,
+            email: data.client_email || null,
+            phone: data.client_phone,
+            address: data.client_address || null,
+            source: 'manual'
+          })
+          .select('id')
+          .single();
+        
+        if (newClient) {
+          clientId = newClient.id;
+        }
+      }
+    }
     
     const { data: newAppointment, error } = await supabase
       .from('appointments')
       .insert({
-        ...data,
         center_id: center.id,
+        pack_id: data.pack_id || null,
+        client_id: clientId,
+        client_name: data.client_name,
+        client_email: data.client_email,
+        client_phone: data.client_phone,
+        client_address: data.client_address || null,
+        vehicle_type: data.vehicle_type,
+        appointment_date: data.appointment_date,
+        appointment_time: data.appointment_time,
+        notes: data.notes || null,
+        custom_service_id: data.custom_service_id || null,
+        custom_price: data.custom_price || null,
+        duration_minutes: data.duration_minutes || 60,
       })
       .select(`
         *,

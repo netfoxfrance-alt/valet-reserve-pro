@@ -12,9 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useMyCenter } from '@/hooks/useCenter';
 import { useMyClients, Client } from '@/hooks/useClients';
 import { useMyCustomServices, formatDuration } from '@/hooks/useCustomServices';
+import { ClientDetailDialog } from '@/components/clients/ClientDetailDialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { Users, Search, Phone, Mail, MapPin, Plus, Pencil, Trash2, Loader2, Sparkles, CalendarCheck, UserPlus } from 'lucide-react';
+import { Users, Search, Phone, Mail, MapPin, Plus, Pencil, Trash2, Loader2, Sparkles, CalendarCheck, UserPlus, Eye } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -49,7 +50,7 @@ export default function DashboardClients() {
     notes: ''
   });
   const [saving, setSaving] = useState(false);
-
+  const [viewingClient, setViewingClient] = useState<Client | null>(null);
   // Filter clients
   const filteredClients = clients.filter(c =>
     c.name.toLowerCase().includes(searchClient.toLowerCase()) ||
@@ -312,7 +313,8 @@ export default function DashboardClients() {
                     {filteredClients.map((client) => (
                       <div
                         key={client.id}
-                        className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-secondary/20 rounded-xl hover:bg-secondary/40 transition-colors"
+                        className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-secondary/20 rounded-xl hover:bg-secondary/40 transition-colors cursor-pointer"
+                        onClick={() => setViewingClient(client)}
                       >
                         <div className="flex items-center gap-3 flex-1">
                           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -363,10 +365,13 @@ export default function DashboardClients() {
                           <span className="text-xs text-muted-foreground hidden sm:block">
                             Ajouté le {format(parseISO(client.created_at), 'd MMM yyyy', { locale: fr })}
                           </span>
-                          <Button variant="outline" size="sm" onClick={() => openEdit(client)}>
+                          <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); setViewingClient(client); }}>
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); openEdit(client); }}>
                             <Pencil className="w-4 h-4" />
                           </Button>
-                          <Button variant="outline" size="sm" onClick={() => handleDelete(client.id)}>
+                          <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); handleDelete(client.id); }}>
                             <Trash2 className="w-4 h-4 text-destructive" />
                           </Button>
                         </div>
@@ -459,6 +464,13 @@ export default function DashboardClients() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Client Detail Dialog */}
+      <ClientDetailDialog 
+        client={viewingClient} 
+        open={!!viewingClient} 
+        onOpenChange={(open) => !open && setViewingClient(null)} 
+      />
     </div>
   );
 }
