@@ -330,14 +330,14 @@ export default function DashboardClients() {
                           <div className="space-y-2">
                             <Label>Prestation par défaut</Label>
                             <Select
-                              value={newClient.default_service_id}
-                              onValueChange={(v) => setNewClient({ ...newClient, default_service_id: v })}
+                              value={newClient.default_service_id || "none"}
+                              onValueChange={(v) => setNewClient({ ...newClient, default_service_id: v === "none" ? "" : v })}
                             >
                               <SelectTrigger>
                                 <SelectValue placeholder="Aucune prestation" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="">Aucune</SelectItem>
+                                <SelectItem value="none">Aucune</SelectItem>
                                 {services.map((s) => (
                                   <SelectItem key={s.id} value={s.id}>
                                     {s.name} - {formatDuration(s.duration_minutes)} - {s.price}€
@@ -565,14 +565,14 @@ export default function DashboardClients() {
             <div className="space-y-2">
               <Label>Prestation par défaut</Label>
               <Select
-                value={editForm.default_service_id}
-                onValueChange={(v) => setEditForm({ ...editForm, default_service_id: v })}
+                value={editForm.default_service_id || "none"}
+                onValueChange={(v) => setEditForm({ ...editForm, default_service_id: v === "none" ? "" : v })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Aucune prestation" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Aucune</SelectItem>
+                  <SelectItem value="none">Aucune</SelectItem>
                   {services.map((s) => (
                     <SelectItem key={s.id} value={s.id}>
                       {s.name} - {formatDuration(s.duration_minutes)} - {s.price}€
