@@ -12,6 +12,7 @@ export interface Client {
   address: string | null;
   default_service_id: string | null;
   notes: string | null;
+  source: 'manual' | 'booking';
   created_at: string;
   updated_at: string;
   // Joined data
