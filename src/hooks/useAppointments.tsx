@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useMyCenter } from './useCenter';
 
@@ -30,36 +30,55 @@ export interface Appointment {
     price: number;
     duration: string | null;
   };
+  custom_service?: {
+    id: string;
+    name: string;
+    price: number;
+    duration_minutes: number;
+  } | null;
 }
 
-export function useMyAppointments() {
+interface UseMyAppointmentsOptions {
+  page?: number;
+  pageSize?: number;
+}
+
+export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
+  const { page = 0, pageSize = 1000 } = options; // Default to 1000 for backwards compatibility
   const { center } = useMyCenter();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchAppointments = useCallback(async () => {
     if (!center) {
       setLoading(false);
       return;
     }
 
-    const fetchAppointments = async () => {
-      const { data } = await supabase
-        .from('appointments')
-        .select(`
-          *,
-          pack:packs(id, name, price, duration)
-        `)
-        .eq('center_id', center.id)
-        .order('appointment_date', { ascending: true })
-        .order('appointment_time', { ascending: true });
+    const from = page * pageSize;
+    const to = from + pageSize - 1;
 
-      setAppointments((data as Appointment[]) || []);
-      setLoading(false);
-    };
+    const { data, count } = await supabase
+      .from('appointments')
+      .select(`
+        *,
+        pack:packs(id, name, price, duration),
+        custom_service:custom_services(id, name, price, duration_minutes)
+      `, { count: 'exact' })
+      .eq('center_id', center.id)
+      .order('appointment_date', { ascending: true })
+      .order('appointment_time', { ascending: true })
+      .range(from, to);
 
+    setAppointments((data as Appointment[]) || []);
+    setTotalCount(count || 0);
+    setLoading(false);
+  }, [center, page, pageSize]);
+
+  useEffect(() => {
     fetchAppointments();
-  }, [center]);
+  }, [fetchAppointments]);
 
   const updateStatus = async (id: string, status: Appointment['status']) => {
     const { error } = await supabase
@@ -147,7 +166,8 @@ export function useMyAppointments() {
       })
       .select(`
         *,
-        pack:packs(id, name, price, duration)
+        pack:packs(id, name, price, duration),
+        custom_service:custom_services(id, name, price, duration_minutes)
       `)
       .single();
 
@@ -173,7 +193,18 @@ export function useMyAppointments() {
     return { error: error?.message || null };
   };
 
-  return { appointments, loading, updateStatus, createAppointment, deleteAppointment };
+  const hasMore = totalCount > (page + 1) * pageSize;
+
+  return { 
+    appointments, 
+    loading, 
+    totalCount,
+    hasMore,
+    updateStatus, 
+    createAppointment, 
+    deleteAppointment,
+    refetch: fetchAppointments 
+  };
 }
 
 // Hook pour créer un rendez-vous (côté client)

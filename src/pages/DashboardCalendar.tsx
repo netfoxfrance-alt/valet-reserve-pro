@@ -5,7 +5,7 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { 
@@ -74,7 +74,7 @@ export default function DashboardCalendar() {
   const [loadingReschedule, setLoadingReschedule] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   
-  const { appointments, loading, updateStatus, deleteAppointment } = useMyAppointments();
+  const { appointments, loading, updateStatus, deleteAppointment, refetch } = useMyAppointments();
   const { center } = useMyCenter();
   const { blockedPeriods, addBlockedPeriod, removeBlockedPeriod: deleteBlockedPeriod } = useBlockedPeriods(center?.id);
 
@@ -136,7 +136,8 @@ export default function DashboardCalendar() {
       toast.success('Rendez-vous déplacé');
       setAppointmentToReschedule(null);
       setSelectedAppointment(null);
-      // Refetch will happen via hook
+      // Refetch to update the calendar with new date/time
+      await refetch();
     }
   };
 
@@ -439,8 +440,11 @@ export default function DashboardCalendar() {
         }
       }}>
         <DialogContent className="max-w-md rounded-2xl">
-          <DialogHeader>
+        <DialogHeader>
             <DialogTitle>Détails du rendez-vous</DialogTitle>
+            <DialogDescription className="sr-only">
+              Voir et gérer les détails de cette réservation
+            </DialogDescription>
           </DialogHeader>
           
           {selectedAppointment && (
@@ -557,13 +561,14 @@ export default function DashboardCalendar() {
         }
       }}>
         <DialogContent className="max-w-md rounded-2xl">
-          <DialogHeader>
+        <DialogHeader>
             <DialogTitle className="text-xl">Déplacer la réservation</DialogTitle>
-            {appointmentToReschedule && (
-              <p className="text-sm text-muted-foreground mt-1">
-                Déplacer la réservation de {appointmentToReschedule.client_name}
-              </p>
-            )}
+            <DialogDescription>
+              {appointmentToReschedule 
+                ? `Déplacer la réservation de ${appointmentToReschedule.client_name}`
+                : 'Choisissez une nouvelle date et heure'
+              }
+            </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-5 py-2">
@@ -610,8 +615,11 @@ export default function DashboardCalendar() {
       {/* Block Period Dialog */}
       <Dialog open={showBlockDialog} onOpenChange={setShowBlockDialog}>
         <DialogContent className="max-w-md rounded-2xl">
-          <DialogHeader>
+        <DialogHeader>
             <DialogTitle>Bloquer une période</DialogTitle>
+            <DialogDescription className="sr-only">
+              Définir une période pendant laquelle aucun rendez-vous ne peut être pris
+            </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">

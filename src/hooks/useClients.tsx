@@ -19,9 +19,16 @@ export interface Client {
   default_service?: CustomService | null;
 }
 
-export function useMyClients() {
+interface UseMyClientsOptions {
+  page?: number;
+  pageSize?: number;
+}
+
+export function useMyClients(options: UseMyClientsOptions = {}) {
+  const { page = 0, pageSize = 1000 } = options; // Default to 1000 for backwards compatibility
   const { center } = useMyCenter();
   const [clients, setClients] = useState<Client[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const fetchClients = useCallback(async () => {
@@ -30,18 +37,23 @@ export function useMyClients() {
       return;
     }
 
-    const { data } = await supabase
+    const from = page * pageSize;
+    const to = from + pageSize - 1;
+
+    const { data, count } = await supabase
       .from('clients' as any)
       .select(`
         *,
         default_service:custom_services(*)
-      `)
+      `, { count: 'exact' })
       .eq('center_id', center.id)
-      .order('name', { ascending: true });
+      .order('name', { ascending: true })
+      .range(from, to);
 
     setClients((data as unknown as Client[]) || []);
+    setTotalCount(count || 0);
     setLoading(false);
-  }, [center]);
+  }, [center, page, pageSize]);
 
   useEffect(() => {
     fetchClients();
@@ -103,5 +115,16 @@ export function useMyClients() {
     return { error: error?.message || null };
   };
 
-  return { clients, loading, createClient, updateClient, deleteClient, refetch: fetchClients };
+  const hasMore = totalCount > (page + 1) * pageSize;
+
+  return { 
+    clients, 
+    loading, 
+    totalCount,
+    hasMore,
+    createClient, 
+    updateClient, 
+    deleteClient, 
+    refetch: fetchClients 
+  };
 }
