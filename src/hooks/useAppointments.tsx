@@ -155,43 +155,11 @@ export function useCreateAppointment() {
     
     const duration_minutes = parseDurationToMinutes(data.duration);
     
-    // Auto-create or update client in the clients table
-    // First check if client exists by phone
-    const { data: existingClient } = await supabase
-      .from('clients')
-      .select('id')
-      .eq('center_id', data.center_id)
-      .eq('phone', data.client_phone)
-      .maybeSingle();
-    
-    let clientId: string | null = existingClient?.id || null;
-    
-    if (!existingClient) {
-      // Create new client with source = 'booking'
-      const { data: newClient } = await supabase
-        .from('clients')
-        .insert({
-          center_id: data.center_id,
-          name: data.client_name,
-          email: data.client_email,
-          phone: data.client_phone,
-          address: data.client_address || null,
-          source: 'booking'
-        })
-        .select('id')
-        .single();
-      
-      if (newClient) {
-        clientId = newClient.id;
-      }
-    }
-    
     const { error } = await supabase
       .from('appointments')
       .insert({
         center_id: data.center_id,
         pack_id: data.pack_id,
-        client_id: clientId,
         client_name: data.client_name,
         client_email: data.client_email,
         client_phone: data.client_phone,
@@ -204,7 +172,9 @@ export function useCreateAppointment() {
       });
 
     // Send confirmation emails in background (fire-and-forget)
+    // The appointment is already created - email failure should NOT affect the user experience
     if (!error && data.pack_name && data.price !== undefined) {
+      // Use fire-and-forget pattern - no await, wrapped in IIFE
       (async () => {
         try {
           const response = await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
@@ -230,8 +200,11 @@ export function useCreateAppointment() {
           if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             console.warn('[Booking Email] Failed to send:', response.status, errorData);
+          } else {
+            console.log('[Booking Email] Confirmation emails sent successfully');
           }
         } catch (emailError) {
+          // Log error but don't affect the booking flow
           console.warn('[Booking Email] Network error:', emailError);
         }
       })();
