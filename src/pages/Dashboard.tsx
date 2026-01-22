@@ -255,12 +255,12 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
           {clients.length > 0 && (
             <div className="space-y-2">
               <Label>Client enregistré</Label>
-              <Select value={selectedClientId} onValueChange={handleClientSelect}>
+              <Select value={selectedClientId || "new"} onValueChange={(v) => handleClientSelect(v === "new" ? "" : v)}>
                 <SelectTrigger className="h-11 rounded-xl">
                   <SelectValue placeholder="Nouveau client ou sélectionner..." />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Nouveau client</SelectItem>
+                  <SelectItem value="new">Nouveau client</SelectItem>
                   {clients.map((client) => (
                     <SelectItem key={client.id} value={client.id}>
                       <div className="flex items-center gap-2">
