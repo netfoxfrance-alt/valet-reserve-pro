@@ -37,8 +37,10 @@ export default function DashboardStats() {
       return isWithinInterval(date, { start: lastMonthStart, end: lastMonthEnd }) && a.status !== 'cancelled';
     });
 
-    const thisMonthRevenue = thisMonthAppointments.reduce((sum, a) => sum + (a.pack?.price || 0), 0);
-    const lastMonthRevenue = lastMonthAppointments.reduce((sum, a) => sum + (a.pack?.price || 0), 0);
+    // Include both pack prices and custom_price for personalized services
+    const getAppointmentPrice = (a: any) => a.custom_price || a.pack?.price || 0;
+    const thisMonthRevenue = thisMonthAppointments.reduce((sum, a) => sum + getAppointmentPrice(a), 0);
+    const lastMonthRevenue = lastMonthAppointments.reduce((sum, a) => sum + getAppointmentPrice(a), 0);
 
     const revenueChange = lastMonthRevenue > 0 
       ? Math.round(((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100)
@@ -51,10 +53,10 @@ export default function DashboardStats() {
     // Unique clients
     const uniqueClients = new Set(appointments.map(a => a.client_phone)).size;
 
-    // Average basket
-    const completedWithPack = appointments.filter(a => a.status === 'completed' && a.pack);
-    const avgBasket = completedWithPack.length > 0
-      ? Math.round(completedWithPack.reduce((sum, a) => sum + (a.pack?.price || 0), 0) / completedWithPack.length)
+    // Average basket - includes both packs and custom services
+    const completedWithPrice = appointments.filter(a => a.status === 'completed' && (a.pack || a.custom_price));
+    const avgBasket = completedWithPrice.length > 0
+      ? Math.round(completedWithPrice.reduce((sum, a) => sum + getAppointmentPrice(a), 0) / completedWithPrice.length)
       : 0;
 
     return {
@@ -64,7 +66,7 @@ export default function DashboardStats() {
       countChange,
       uniqueClients,
       avgBasket,
-      totalRevenue: appointments.filter(a => a.status !== 'cancelled').reduce((sum, a) => sum + (a.pack?.price || 0), 0),
+      totalRevenue: appointments.filter(a => a.status !== 'cancelled').reduce((sum, a) => sum + getAppointmentPrice(a), 0),
     };
   }, [appointments]);
 
@@ -86,7 +88,7 @@ export default function DashboardStats() {
       return {
         name: format(weekStart, 'd MMM', { locale: fr }),
         réservations: weekAppointments.length,
-        revenue: weekAppointments.reduce((sum, a) => sum + (a.pack?.price || 0), 0),
+        revenue: weekAppointments.reduce((sum, a) => sum + ((a as any).custom_price || a.pack?.price || 0), 0),
       };
     });
   }, [appointments]);
@@ -109,7 +111,7 @@ export default function DashboardStats() {
       return {
         name: format(monthStart, 'MMM', { locale: fr }),
         réservations: monthAppointments.length,
-        revenue: monthAppointments.reduce((sum, a) => sum + (a.pack?.price || 0), 0),
+        revenue: monthAppointments.reduce((sum, a) => sum + ((a as any).custom_price || a.pack?.price || 0), 0),
       };
     });
   }, [appointments]);
