@@ -21,6 +21,7 @@ interface BookingEmailRequest {
   appointment_date: string;
   appointment_time: string;
   notes?: string;
+  email_type?: 'confirmation' | 'reminder';
 }
 
 const formatDate = (dateStr: string): string => {
@@ -69,6 +70,14 @@ const handler = async (req: Request): Promise<Response> => {
       ? `${data.pack_name} - ${data.variant_name}` 
       : data.pack_name;
 
+    const emailType = data.email_type || 'confirmation';
+    const isReminder = emailType === 'reminder';
+    const subjectPrefix = isReminder ? '⏰ Rappel' : '✅ Rendez-vous confirmé';
+    const headline = isReminder ? 'Rappel de votre rendez-vous' : 'Réservation confirmée !';
+    const intro = isReminder
+      ? `Petit rappel : votre rendez-vous chez ${center.name} approche.`
+      : `Votre rendez-vous chez ${center.name} est enregistré.`;
+
     // Generate Google Calendar link for client (use Paris timezone)
     // Format dates for Google Calendar: YYYYMMDDTHHmmss
     const [year, month, day] = data.appointment_date.split('-');
@@ -80,7 +89,7 @@ const handler = async (req: Request): Promise<Response> => {
     
     const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`RDV ${center.name} - ${serviceInfo}`)}&dates=${startDateTime}/${endDateTime}&ctz=Europe/Paris&details=${encodeURIComponent(`Prestation: ${serviceInfo}\nPrix: ${data.price}€\n${data.notes ? `Notes: ${data.notes}` : ''}`)}&location=${encodeURIComponent(center.address || '')}`;
 
-    // 1. Send confirmation email to client
+    // 1. Send email to client (confirmation or reminder)
     const clientEmailHtml = `
       <!DOCTYPE html>
       <html>
@@ -100,10 +109,10 @@ const handler = async (req: Request): Promise<Response> => {
             </div>
             
             <h1 style="color: #111; font-size: 24px; font-weight: 600; text-align: center; margin: 0 0 8px 0;">
-              Réservation confirmée !
+              ${headline}
             </h1>
             <p style="color: #666; font-size: 16px; text-align: center; margin: 0 0 32px 0;">
-              Votre rendez-vous chez ${center.name} est enregistré.
+              ${intro}
             </p>
             
             <div style="background: #f9fafb; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
@@ -148,7 +157,7 @@ const handler = async (req: Request): Promise<Response> => {
     await resend.emails.send({
       from: "CleaningPage <notifications@cleaningpage.com>",
       to: [data.client_email],
-      subject: `✅ Rendez-vous confirmé - ${formattedDate}`,
+      subject: `${subjectPrefix} - ${formattedDate}`,
       html: clientEmailHtml,
     });
 
