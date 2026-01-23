@@ -127,10 +127,10 @@ export default function DashboardAvailability() {
         
         <main className="p-4 lg:p-8 max-w-3xl">
           {/* Buffer setting */}
-          <Card variant="elevated" className="p-5 mb-6">
+          <Card variant="elevated" className="p-5 mb-6 rounded-2xl">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                <Car className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 bg-blue-50 dark:bg-blue-950/50 rounded-xl flex items-center justify-center shrink-0">
+                <Car className="w-5 h-5 text-blue-600" />
               </div>
               <div className="flex-1">
                 <Label htmlFor="buffer" className="text-base font-medium">
@@ -140,7 +140,7 @@ export default function DashboardAvailability() {
                   Temps minimum entre chaque rendez-vous pour vos trajets
                 </p>
                 <Select value={appointmentBuffer} onValueChange={handleBufferChange} disabled={bufferSaving}>
-                  <SelectTrigger id="buffer" className="w-48">
+                  <SelectTrigger id="buffer" className="w-48 rounded-xl">
                     <SelectValue placeholder="Sélectionner..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -158,7 +158,7 @@ export default function DashboardAvailability() {
             <p className="text-sm text-muted-foreground">Définissez vos plages horaires disponibles pour les réservations. Ajoutez des pauses si nécessaire.</p>
           </div>
           
-          <Card variant="elevated" className="divide-y divide-border">
+          <Card variant="elevated" className="divide-y divide-border rounded-2xl overflow-hidden">
             {dayOrder.map((day) => {
               const daySchedule = schedule[day];
               if (!daySchedule) return null;
@@ -168,12 +168,25 @@ export default function DashboardAvailability() {
                   {/* Day header with toggle */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <Switch
-                        checked={daySchedule.enabled}
-                        onCheckedChange={() => toggleDay(day)}
-                      />
+                      {/* Apple-style toggle with green checkmark */}
+                      <button
+                        type="button"
+                        onClick={() => toggleDay(day)}
+                        className={cn(
+                          "w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200",
+                          daySchedule.enabled 
+                            ? "bg-emerald-500 text-white shadow-sm" 
+                            : "bg-muted border-2 border-border"
+                        )}
+                      >
+                        {daySchedule.enabled && (
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </button>
                       <span className={cn(
-                        "font-medium text-sm sm:text-base",
+                        "font-medium text-sm sm:text-base transition-colors",
                         daySchedule.enabled ? "text-foreground" : "text-muted-foreground"
                       )}>
                         <span className="sm:hidden">{dayLabelsShort[day]}</span>
@@ -182,7 +195,7 @@ export default function DashboardAvailability() {
                     </div>
                     
                     {daySchedule.enabled && (
-                      <span className="text-xs text-muted-foreground hidden sm:block">
+                      <span className="text-xs text-emerald-600 font-medium hidden sm:block">
                         {formatSlotsPreview(daySchedule.slots)}
                       </span>
                     )}

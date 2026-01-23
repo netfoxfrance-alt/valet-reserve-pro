@@ -20,11 +20,12 @@ import { fr } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 
-const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; color: string }> = {
-  pending: { label: 'En attente', variant: 'secondary', color: 'bg-amber-100 text-amber-700 border-amber-200' },
-  confirmed: { label: 'Confirmé', variant: 'default', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
-  completed: { label: 'Terminé', variant: 'outline', color: 'bg-slate-100 text-slate-600 border-slate-200' },
-  cancelled: { label: 'Annulé', variant: 'destructive', color: 'bg-red-100 text-red-600 border-red-200' },
+// Apple-style status colors - clean and vibrant
+const statusConfig: Record<string, { label: string; color: string }> = {
+  pending: { label: 'En attente', color: 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400' },
+  confirmed: { label: 'Confirmé', color: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400' },
+  completed: { label: 'Terminé', color: 'bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400' },
+  cancelled: { label: 'Annulé', color: 'bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-400' },
 };
 
 const vehicleLabels: Record<string, string> = {
@@ -85,10 +86,10 @@ function AppointmentRow({ appointment, onUpdateStatus }: {
           </div>
         )}
         
-        {/* Status badge */}
-        <Badge className={`${status.color} border font-medium px-3 py-1`}>
+        {/* Status badge - Apple style */}
+        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${status.color}`}>
           {status.label}
-        </Badge>
+        </span>
         
         {/* Actions */}
         <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
