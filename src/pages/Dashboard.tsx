@@ -153,7 +153,7 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
     notes: ''
   });
 
-  // When a registered client is selected, pre-fill form with their data
+  // When a registered client is selected, pre-fill form with their data (but allow changing service)
   const handleClientSelect = (clientId: string) => {
     setSelectedClientId(clientId);
     if (clientId) {
@@ -165,6 +165,7 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
           client_email: client.email || '',
           client_phone: client.phone || '',
           client_address: client.address || '',
+          // Pre-fill with default service but allow override
           custom_service_id: client.default_service_id || '',
           custom_price: client.default_service?.price?.toString() || '',
         });
@@ -181,6 +182,16 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
         custom_price: '',
       });
     }
+  };
+
+  // When service is changed, update price accordingly
+  const handleServiceChange = (serviceId: string) => {
+    const service = services.find(s => s.id === serviceId);
+    setForm({
+      ...form,
+      custom_service_id: serviceId,
+      custom_price: service?.price?.toString() || '',
+    });
   };
 
   // Get selected service details
@@ -279,12 +290,30 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
                   ))}
                 </SelectContent>
               </Select>
-              {selectedClientId && selectedService && (
-                <div className="bg-primary/5 rounded-lg p-3 text-sm">
-                  <p className="font-medium text-primary">{selectedService.name}</p>
-                  <p className="text-muted-foreground">
-                    {formatDuration(selectedService.duration_minutes)} • {selectedService.price}€
-                  </p>
+              {/* Service selector - allows override of default service */}
+              {selectedClientId && services.length > 0 && (
+                <div className="space-y-2 mt-3">
+                  <Label>Prestation</Label>
+                  <Select value={form.custom_service_id} onValueChange={handleServiceChange}>
+                    <SelectTrigger className="h-11 rounded-xl">
+                      <SelectValue placeholder="Sélectionner une prestation" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {services.map((service) => (
+                        <SelectItem key={service.id} value={service.id}>
+                          {service.name} - {service.price}€ ({formatDuration(service.duration_minutes)})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {selectedService && (
+                    <div className="bg-primary/5 rounded-lg p-3 text-sm">
+                      <p className="font-medium text-primary">{selectedService.name}</p>
+                      <p className="text-muted-foreground">
+                        {formatDuration(selectedService.duration_minutes)} • {selectedService.price}€
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

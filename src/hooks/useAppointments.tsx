@@ -274,6 +274,9 @@ export function useCreateAppointment() {
       }
     }
     
+    // Store the final price (variant or base pack price) in custom_price for accurate stats
+    const finalPrice = data.price !== undefined ? data.price : null;
+    
     const { error } = await supabase
       .from('appointments')
       .insert({
@@ -289,6 +292,8 @@ export function useCreateAppointment() {
         appointment_time: data.appointment_time,
         notes: data.notes,
         duration_minutes,
+        // Store final price for accurate revenue stats (handles variants)
+        custom_price: finalPrice,
       });
 
     // Send confirmation emails in background (fire-and-forget)
