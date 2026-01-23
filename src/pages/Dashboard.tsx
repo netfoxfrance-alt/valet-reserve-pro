@@ -509,10 +509,10 @@ export default function Dashboard() {
   };
 
   const stats = [
-    { name: "Aujourd'hui", value: todayAppointments.length },
-    { name: 'En attente', value: pendingAppointments.length },
-    { name: 'Semaine', value: weekAppointments.length },
-    { name: 'À venir', value: upcomingAppointments.length },
+    { name: "Aujourd'hui", value: todayAppointments.length, icon: Calendar },
+    { name: 'En attente', value: pendingAppointments.length, icon: Clock },
+    { name: 'Semaine', value: weekAppointments.length, icon: TrendingUp },
+    { name: 'À venir', value: upcomingAppointments.length, icon: Users },
   ];
 
   const filters: { key: FilterType; label: string }[] = [
@@ -536,12 +536,15 @@ export default function Dashboard() {
         />
         
         <main className="p-4 lg:p-8 max-w-6xl">
-          {/* Stats - Apple minimal style */}
+          {/* Stats - Apple style with subtle icons */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
             {stats.map((stat) => (
               <Card key={stat.name} variant="elevated" className="p-5 rounded-2xl border-0 shadow-sm">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">{stat.name}</p>
-                <p className="text-3xl sm:text-4xl font-semibold text-foreground tracking-tight">{stat.value}</p>
+                <div className="flex items-center gap-2 mb-2">
+                  <stat.icon className="w-4 h-4 text-muted-foreground" />
+                  <p className="text-sm font-medium text-muted-foreground">{stat.name}</p>
+                </div>
+                <p className="text-3xl font-semibold text-foreground tracking-tight">{stat.value}</p>
               </Card>
             ))}
           </div>
