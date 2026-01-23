@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { Calendar, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail, Users, Send } from 'lucide-react';
+import { Calendar, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail, Users, MoreHorizontal, Send } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
 import { useMyClients, Client } from '@/hooks/useClients';
@@ -19,6 +19,13 @@ import { format, isToday, isTomorrow, parseISO, startOfDay, isBefore, addDays, a
 import { fr } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 // Apple-style status colors - clean and vibrant
 const statusConfig: Record<string, { label: string; color: string }> = {
@@ -42,7 +49,7 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 function AppointmentRow({ appointment, onUpdateStatus, onSendEmail }: { 
   appointment: Appointment; 
   onUpdateStatus: (id: string, status: Appointment['status']) => void;
-  onSendEmail: (appointment: Appointment) => void;
+  onSendEmail: (appointment: Appointment, kind: 'confirmation' | 'reminder') => void;
 }) {
   const status = statusConfig[appointment.status] || statusConfig.pending;
   const date = parseISO(appointment.appointment_date);
@@ -51,8 +58,8 @@ function AppointmentRow({ appointment, onUpdateStatus, onSendEmail }: {
   if (isToday(date)) dateLabel = "Aujourd'hui";
   if (isTomorrow(date)) dateLabel = "Demain";
   
-  // Can send email if has email and is custom service or pack
-  const canSendEmail = appointment.client_email && appointment.client_email !== 'non-fourni@example.com';
+  const canSendEmail = Boolean(appointment.client_email && appointment.client_email !== 'non-fourni@example.com');
+  const hasCustomService = Boolean(appointment.custom_service_id);
   const serviceName = appointment.custom_service?.name || appointment.pack?.name;
   const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
 
@@ -102,17 +109,33 @@ function AppointmentRow({ appointment, onUpdateStatus, onSendEmail }: {
         
         {/* Actions */}
         <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
-          {/* Send email button */}
+          {/* Actions menu (manual emails) */}
           {canSendEmail && serviceName && price !== undefined && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 rounded-xl text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-              onClick={() => onSendEmail(appointment)}
-              title="Envoyer confirmation par email"
-            >
-              <Send className="w-4 h-4" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 rounded-xl"
+                  title="Actions"
+                >
+                  <MoreHorizontal className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64">
+                {/* Only show confirmation for custom-service bookings (pack bookings already send automatically at booking time) */}
+                {hasCustomService && (
+                  <DropdownMenuItem onClick={() => onSendEmail(appointment, 'confirmation')}>
+                    <Send className="w-4 h-4 mr-2" />
+                    Envoyer un mail de confirmation
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onClick={() => onSendEmail(appointment, 'reminder')}>
+                  <Mail className="w-4 h-4 mr-2" />
+                  Envoyer un email de rappel
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
           
           {appointment.status === 'pending' && (
@@ -532,7 +555,7 @@ export default function Dashboard() {
     }
   };
 
-  const handleSendEmail = async (appointment: Appointment) => {
+  const handleSendEmail = async (appointment: Appointment, kind: 'confirmation' | 'reminder') => {
     if (!center) return;
     
     const serviceName = appointment.custom_service?.name || appointment.pack?.name;
@@ -542,8 +565,24 @@ export default function Dashboard() {
       toast.error('Informations de prestation manquantes');
       return;
     }
+
+    // Use the latest client email from the client record when available
+    let clientEmail = appointment.client_email;
+    if (appointment.client_id) {
+      const { data: client } = await supabase
+        .from('clients')
+        .select('email')
+        .eq('id', appointment.client_id)
+        .maybeSingle();
+      if (client?.email) clientEmail = client.email;
+    }
+
+    if (!clientEmail || clientEmail === 'non-fourni@example.com') {
+      toast.error("Aucun email client valide");
+      return;
+    }
     
-    toast.loading('Envoi de l\'email...');
+    const toastId = toast.loading(kind === 'reminder' ? 'Envoi du rappel…' : 'Envoi de la confirmation…');
     
     try {
       const response = await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
@@ -555,25 +594,28 @@ export default function Dashboard() {
         body: JSON.stringify({
           center_id: center.id,
           client_name: appointment.client_name,
-          client_email: appointment.client_email,
+          client_email: clientEmail,
           client_phone: appointment.client_phone,
           pack_name: serviceName,
           price: price,
           appointment_date: appointment.appointment_date,
           appointment_time: appointment.appointment_time,
           notes: appointment.notes,
+          email_type: kind,
         }),
       });
-      
-      toast.dismiss();
+
+      const bodyText = await response.text();
+      toast.dismiss(toastId);
       
       if (response.ok) {
-        toast.success('Email de confirmation envoyé');
+        toast.success(kind === 'reminder' ? 'Email de rappel envoyé' : 'Email de confirmation envoyé');
       } else {
-        toast.error('Échec de l\'envoi de l\'email');
+        console.warn('[Send Email] Failed:', response.status, bodyText);
+        toast.error("Échec de l'envoi (voir console)");
       }
     } catch (error) {
-      toast.dismiss();
+      toast.dismiss(toastId);
       toast.error('Erreur réseau');
     }
   };
