@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { Calendar, Users, TrendingUp, Clock, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail } from 'lucide-react';
+import { Calendar, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail, Users } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
 import { useMyClients, Client } from '@/hooks/useClients';
@@ -509,10 +509,10 @@ export default function Dashboard() {
   };
 
   const stats = [
-    { name: "Aujourd'hui", value: todayAppointments.length, icon: Calendar },
-    { name: 'En attente', value: pendingAppointments.length, icon: Clock },
-    { name: 'Semaine', value: weekAppointments.length, icon: TrendingUp },
-    { name: 'À venir', value: upcomingAppointments.length, icon: Users },
+    { name: "Aujourd'hui", value: todayAppointments.length, highlight: todayAppointments.length > 0 },
+    { name: 'En attente', value: pendingAppointments.length, highlight: pendingAppointments.length > 0, isWarning: true },
+    { name: 'Semaine', value: weekAppointments.length, highlight: false },
+    { name: 'À venir', value: upcomingAppointments.length, highlight: false },
   ];
 
   const filters: { key: FilterType; label: string }[] = [
@@ -536,15 +536,21 @@ export default function Dashboard() {
         />
         
         <main className="p-4 lg:p-8 max-w-6xl">
-          {/* Stats - Apple style with subtle icons */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+          {/* Stats - Shopify style: clean, bold numbers, status indicators */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {stats.map((stat) => (
-              <Card key={stat.name} variant="elevated" className="p-5 rounded-2xl border-0 shadow-sm">
-                <div className="flex items-center gap-2 mb-2">
-                  <stat.icon className="w-4 h-4 text-muted-foreground" />
+              <Card 
+                key={stat.name} 
+                variant="elevated" 
+                className="p-5 rounded-2xl hover:shadow-lg transition-all duration-200"
+              >
+                <div className="flex items-center justify-between mb-2">
                   <p className="text-sm font-medium text-muted-foreground">{stat.name}</p>
+                  {stat.highlight && (
+                    <span className={`w-2 h-2 rounded-full ${stat.isWarning ? 'bg-amber-400' : 'bg-emerald-400'} animate-pulse`} />
+                  )}
                 </div>
-                <p className="text-3xl font-semibold text-foreground tracking-tight">{stat.value}</p>
+                <p className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">{stat.value}</p>
               </Card>
             ))}
           </div>
