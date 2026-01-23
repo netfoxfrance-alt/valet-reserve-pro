@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { Calendar, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail, Users } from 'lucide-react';
+import { Calendar, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail, Users, Send } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
 import { useMyClients, Client } from '@/hooks/useClients';
@@ -36,9 +36,13 @@ const vehicleLabels: Record<string, string> = {
   standard: 'Standard',
 };
 
-function AppointmentRow({ appointment, onUpdateStatus }: { 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+function AppointmentRow({ appointment, onUpdateStatus, onSendEmail }: { 
   appointment: Appointment; 
   onUpdateStatus: (id: string, status: Appointment['status']) => void;
+  onSendEmail: (appointment: Appointment) => void;
 }) {
   const status = statusConfig[appointment.status] || statusConfig.pending;
   const date = parseISO(appointment.appointment_date);
@@ -46,6 +50,11 @@ function AppointmentRow({ appointment, onUpdateStatus }: {
   let dateLabel = format(date, "EEE d MMM", { locale: fr });
   if (isToday(date)) dateLabel = "Aujourd'hui";
   if (isTomorrow(date)) dateLabel = "Demain";
+  
+  // Can send email if has email and is custom service or pack
+  const canSendEmail = appointment.client_email && appointment.client_email !== 'non-fourni@example.com';
+  const serviceName = appointment.custom_service?.name || appointment.pack?.name;
+  const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
 
   return (
     <div className="group flex flex-col sm:flex-row sm:items-center gap-4 p-5 bg-card border border-border/50 rounded-2xl hover:border-border hover:shadow-md transition-all duration-200">
@@ -93,6 +102,19 @@ function AppointmentRow({ appointment, onUpdateStatus }: {
         
         {/* Actions */}
         <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+          {/* Send email button */}
+          {canSendEmail && serviceName && price !== undefined && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 rounded-xl text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+              onClick={() => onSendEmail(appointment)}
+              title="Envoyer confirmation par email"
+            >
+              <Send className="w-4 h-4" />
+            </Button>
+          )}
+          
           {appointment.status === 'pending' && (
             <>
               <Button
@@ -224,8 +246,6 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
         payload.custom_service_id = form.custom_service_id;
         payload.custom_price = parseFloat(form.custom_price) || selectedService?.price;
         payload.duration_minutes = selectedService?.duration_minutes;
-        // Send email confirmation for custom services
-        payload.send_email = true;
         payload.service_name = selectedService?.name;
       }
     } else {
@@ -512,6 +532,52 @@ export default function Dashboard() {
     }
   };
 
+  const handleSendEmail = async (appointment: Appointment) => {
+    if (!center) return;
+    
+    const serviceName = appointment.custom_service?.name || appointment.pack?.name;
+    const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
+    
+    if (!serviceName || price === undefined) {
+      toast.error('Informations de prestation manquantes');
+      return;
+    }
+    
+    toast.loading('Envoi de l\'email...');
+    
+    try {
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+        },
+        body: JSON.stringify({
+          center_id: center.id,
+          client_name: appointment.client_name,
+          client_email: appointment.client_email,
+          client_phone: appointment.client_phone,
+          pack_name: serviceName,
+          price: price,
+          appointment_date: appointment.appointment_date,
+          appointment_time: appointment.appointment_time,
+          notes: appointment.notes,
+        }),
+      });
+      
+      toast.dismiss();
+      
+      if (response.ok) {
+        toast.success('Email de confirmation envoyé');
+      } else {
+        toast.error('Échec de l\'envoi de l\'email');
+      }
+    } catch (error) {
+      toast.dismiss();
+      toast.error('Erreur réseau');
+    }
+  };
+
   const stats = [
     { name: "Aujourd'hui", value: todayAppointments.length, highlight: todayAppointments.length > 0 },
     { name: 'En attente', value: pendingAppointments.length, highlight: pendingAppointments.length > 0, isWarning: true },
@@ -655,6 +721,7 @@ export default function Dashboard() {
                           key={appointment.id} 
                           appointment={appointment} 
                           onUpdateStatus={handleUpdateStatus}
+                          onSendEmail={handleSendEmail}
                         />
                       ))}
                     </div>
