@@ -46,13 +46,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-  draft: { label: 'Brouillon', variant: 'secondary' },
-  sent: { label: 'Envoyé', variant: 'default' },
-  accepted: { label: 'Accepté', variant: 'default' },
-  rejected: { label: 'Refusé', variant: 'destructive' },
-  paid: { label: 'Payé', variant: 'default' },
-  cancelled: { label: 'Annulé', variant: 'destructive' },
+const statusConfig: Record<string, { label: string; color: string }> = {
+  draft: { label: 'Brouillon', color: 'bg-muted text-muted-foreground' },
+  sent: { label: 'Envoyé', color: 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400' },
+  accepted: { label: 'Accepté', color: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400' },
+  rejected: { label: 'Refusé', color: 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-400' },
+  paid: { label: 'Payé', color: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400' },
+  cancelled: { label: 'Annulé', color: 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-400' },
 };
 
 export default function DashboardInvoices() {
@@ -208,71 +208,47 @@ export default function DashboardInvoices() {
             </Button>
           </div>
 
-          {/* Stats */}
+          {/* Stats - Apple style: clean, no heavy icons */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                    <FileText className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Factures</p>
-                    <p className="text-2xl font-bold">{stats.totalInvoices}</p>
-                  </div>
-                </div>
-              </CardContent>
+            <Card className="p-5 rounded-2xl">
+              <p className="text-sm font-medium text-muted-foreground mb-1">Factures</p>
+              <p className="text-3xl font-bold tracking-tight">{stats.totalInvoices}</p>
             </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                    <FileCheck className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Devis</p>
-                    <p className="text-2xl font-bold">{stats.totalQuotes}</p>
-                  </div>
-                </div>
-              </CardContent>
+            <Card className="p-5 rounded-2xl">
+              <p className="text-sm font-medium text-muted-foreground mb-1">Devis</p>
+              <p className="text-3xl font-bold tracking-tight">{stats.totalQuotes}</p>
             </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                    <FileText className="w-5 h-5 text-amber-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">En attente</p>
-                    <p className="text-2xl font-bold">{stats.pendingAmount.toFixed(0)}€</p>
-                  </div>
-                </div>
-              </CardContent>
+            <Card className="p-5 rounded-2xl">
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-sm font-medium text-muted-foreground">En attente</p>
+                {stats.pendingAmount > 0 && (
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                )}
+              </div>
+              <p className="text-3xl font-bold tracking-tight">{stats.pendingAmount.toFixed(0)}€</p>
             </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                    <FileText className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Encaissé</p>
-                    <p className="text-2xl font-bold">{stats.paidAmount.toFixed(0)}€</p>
-                  </div>
-                </div>
-              </CardContent>
+            <Card className="p-5 rounded-2xl">
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-sm font-medium text-muted-foreground">Encaissé</p>
+                {stats.paidAmount > 0 && (
+                  <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">
+                    ✓
+                  </span>
+                )}
+              </div>
+              <p className="text-3xl font-bold tracking-tight text-emerald-600">{stats.paidAmount.toFixed(0)}€</p>
             </Card>
           </div>
 
           {/* List */}
-          <Card>
+          <Card className="rounded-2xl overflow-hidden">
             <CardHeader className="pb-3">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-                  <TabsList>
-                    <TabsTrigger value="all">Tout</TabsTrigger>
-                    <TabsTrigger value="invoices">Factures</TabsTrigger>
-                    <TabsTrigger value="quotes">Devis</TabsTrigger>
+                  <TabsList className="rounded-xl">
+                    <TabsTrigger value="all" className="rounded-lg">Tout</TabsTrigger>
+                    <TabsTrigger value="invoices" className="rounded-lg">Factures</TabsTrigger>
+                    <TabsTrigger value="quotes" className="rounded-lg">Devis</TabsTrigger>
                   </TabsList>
                 </Tabs>
                 <div className="relative">
@@ -312,13 +288,13 @@ export default function DashboardInvoices() {
                   {filteredInvoices.map(invoice => (
                     <div 
                       key={invoice.id}
-                      className="flex items-center justify-between p-4 rounded-xl border bg-card hover:bg-accent/50 transition-colors"
+                      className="flex items-center justify-between p-4 rounded-xl bg-card hover:bg-secondary/50 transition-colors"
                     >
                       <div className="flex items-center gap-4">
-                        <div className={`p-2 rounded-lg ${
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                           invoice.type === 'invoice' 
-                            ? 'bg-blue-100 dark:bg-blue-900/30' 
-                            : 'bg-purple-100 dark:bg-purple-900/30'
+                            ? 'bg-blue-50 dark:bg-blue-950/50' 
+                            : 'bg-purple-50 dark:bg-purple-950/50'
                         }`}>
                           {invoice.type === 'invoice' 
                             ? <FileText className="w-5 h-5 text-blue-600" />
@@ -328,9 +304,9 @@ export default function DashboardInvoices() {
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{invoice.number}</span>
-                            <Badge variant={statusConfig[invoice.status]?.variant || 'secondary'}>
+                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusConfig[invoice.status]?.color || 'bg-muted text-muted-foreground'}`}>
                               {statusConfig[invoice.status]?.label || invoice.status}
-                            </Badge>
+                            </span>
                           </div>
                           <p className="text-sm text-muted-foreground">
                             {invoice.client_name} • {format(new Date(invoice.issue_date), 'dd MMM yyyy', { locale: fr })}

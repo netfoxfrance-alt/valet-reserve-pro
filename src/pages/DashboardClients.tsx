@@ -15,7 +15,7 @@ import { useMyCustomServices, formatDuration } from '@/hooks/useCustomServices';
 import { ClientDetailDialog } from '@/components/clients/ClientDetailDialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { Search, Phone, Mail, MapPin, Plus, Pencil, Trash2, Loader2, Eye, Users, UserPlus, CalendarCheck } from 'lucide-react';
+import { Search, Phone, Mail, MapPin, Plus, Pencil, Trash2, Loader2, Eye } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -156,30 +156,21 @@ export default function DashboardClients() {
             </div>
           ) : (
             <>
-              {/* KPI Cards - Apple style with subtle icons */}
+              {/* KPI Cards - Clean Apple style, no icons */}
               <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
-                <Card variant="elevated" className="p-5 border-0 shadow-sm">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Users className="w-4 h-4 text-muted-foreground" />
-                    <p className="text-sm font-medium text-muted-foreground">Total</p>
-                  </div>
-                  <p className="text-3xl font-semibold text-foreground tracking-tight">{totalClients}</p>
+                <Card variant="elevated" className="p-5 rounded-2xl">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Total clients</p>
+                  <p className="text-3xl font-bold text-foreground tracking-tight">{totalClients}</p>
                 </Card>
 
-                <Card variant="elevated" className="p-5 border-0 shadow-sm">
-                  <div className="flex items-center gap-2 mb-2">
-                    <CalendarCheck className="w-4 h-4 text-muted-foreground" />
-                    <p className="text-sm font-medium text-muted-foreground">Réservation</p>
-                  </div>
-                  <p className="text-3xl font-semibold text-foreground tracking-tight">{bookingClients}</p>
+                <Card variant="elevated" className="p-5 rounded-2xl">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Réservation</p>
+                  <p className="text-3xl font-bold text-foreground tracking-tight">{bookingClients}</p>
                 </Card>
 
-                <Card variant="elevated" className="p-5 border-0 shadow-sm">
-                  <div className="flex items-center gap-2 mb-2">
-                    <UserPlus className="w-4 h-4 text-muted-foreground" />
-                    <p className="text-sm font-medium text-muted-foreground">Manuel</p>
-                  </div>
-                  <p className="text-3xl font-semibold text-foreground tracking-tight">{manualClients}</p>
+                <Card variant="elevated" className="p-5 rounded-2xl">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Manuel</p>
+                  <p className="text-3xl font-bold text-foreground tracking-tight">{manualClients}</p>
                 </Card>
               </div>
 

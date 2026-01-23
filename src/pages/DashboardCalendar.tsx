@@ -55,9 +55,9 @@ interface BlockedPeriod {
 }
 
 const statusColors: Record<string, string> = {
-  pending: 'bg-amber-500',
+  pending: 'bg-amber-400',
   confirmed: 'bg-emerald-500',
-  completed: 'bg-slate-400',
+  completed: 'bg-blue-400',
   cancelled: 'bg-red-400',
 };
 
@@ -308,23 +308,23 @@ export default function DashboardCalendar() {
                 })}
               </div>
               
-              {/* Legend */}
-              <div className="flex flex-wrap gap-4 mt-6 pt-4 border-t border-border">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <div className="w-3 h-3 rounded-full bg-amber-500" />
-                  En attente
+              {/* Legend - Apple style minimal */}
+              <div className="flex flex-wrap gap-5 mt-6 pt-4 border-t border-border">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                  <span className="text-xs font-medium text-muted-foreground">En attente</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                  Confirmé
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                  <span className="text-xs font-medium text-muted-foreground">Confirmé</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <div className="w-3 h-3 rounded-full bg-slate-400" />
-                  Terminé
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-blue-400" />
+                  <span className="text-xs font-medium text-muted-foreground">Terminé</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Ban className="w-3 h-3 text-red-400" />
-                  Bloqué
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+                  <span className="text-xs font-medium text-muted-foreground">Bloqué</span>
                 </div>
               </div>
             </Card>

@@ -16,7 +16,8 @@ import { format, parseISO, startOfMonth, endOfMonth, subMonths, addMonths, isWit
 import { fr } from 'date-fns/locale';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
-const COLORS = ['hsl(var(--foreground))', 'hsl(var(--muted-foreground))', 'hsl(var(--primary))', 'hsl(var(--accent))', '#a1a1aa', '#71717a'];
+// Apple-style vibrant chart colors
+const COLORS = ['#34C759', '#007AFF', '#5856D6', '#FF9500', '#AF52DE', '#FF3B30'];
 
 type DetailType = 'reservations' | 'revenue' | 'clients' | 'completed' | null;
 
@@ -347,66 +348,68 @@ export default function DashboardStats() {
               </div>
 
               <Tabs defaultValue="evolution" className="space-y-6">
-                <TabsList className="w-full sm:w-auto">
-                  <TabsTrigger value="evolution" className="flex-1 sm:flex-none">Évolution</TabsTrigger>
-                  <TabsTrigger value="formules" className="flex-1 sm:flex-none">Services</TabsTrigger>
+                <TabsList className="w-full sm:w-auto rounded-xl">
+                  <TabsTrigger value="evolution" className="flex-1 sm:flex-none rounded-lg">Évolution</TabsTrigger>
+                  <TabsTrigger value="formules" className="flex-1 sm:flex-none rounded-lg">Services</TabsTrigger>
                 </TabsList>
 
                 {/* Evolution Tab */}
                 <TabsContent value="evolution" className="space-y-6">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                    {/* Weekly Chart */}
-                    <Card variant="elevated" className="p-4 sm:p-6">
+                    {/* Weekly Chart - Apple blue gradient */}
+                    <Card variant="elevated" className="p-4 sm:p-6 rounded-2xl">
                       <h3 className="font-semibold text-foreground mb-4">Réservations par semaine</h3>
                       <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                           <AreaChart data={weeklyData}>
                             <defs>
                               <linearGradient id="colorReservations" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                                <stop offset="5%" stopColor="#007AFF" stopOpacity={0.3}/>
+                                <stop offset="95%" stopColor="#007AFF" stopOpacity={0.02}/>
                               </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                            <XAxis dataKey="name" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
-                            <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
+                            <XAxis dataKey="name" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} axisLine={false} tickLine={false} />
+                            <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} axisLine={false} tickLine={false} />
                             <Tooltip 
                               contentStyle={{ 
                                 backgroundColor: 'hsl(var(--card))',
                                 border: '1px solid hsl(var(--border))',
-                                borderRadius: '8px'
+                                borderRadius: '12px',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                               }}
                             />
                             <Area 
                               type="monotone" 
                               dataKey="réservations" 
-                              stroke="hsl(var(--primary))" 
+                              stroke="#007AFF" 
                               fill="url(#colorReservations)"
-                              strokeWidth={2}
+                              strokeWidth={2.5}
                             />
                           </AreaChart>
                         </ResponsiveContainer>
                       </div>
                     </Card>
 
-                    {/* Revenue Chart */}
-                    <Card variant="elevated" className="p-4 sm:p-6">
+                    {/* Revenue Chart - Apple green */}
+                    <Card variant="elevated" className="p-4 sm:p-6 rounded-2xl">
                       <h3 className="font-semibold text-foreground mb-4">Chiffre d'affaires par mois</h3>
                       <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                           <BarChart data={monthlyData}>
-                            <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                            <XAxis dataKey="name" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
-                            <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
+                            <XAxis dataKey="name" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} axisLine={false} tickLine={false} />
+                            <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} axisLine={false} tickLine={false} />
                             <Tooltip 
                               formatter={(value: number) => [`${value}€`, 'CA']}
                               contentStyle={{ 
                                 backgroundColor: 'hsl(var(--card))',
                                 border: '1px solid hsl(var(--border))',
-                                borderRadius: '8px'
+                                borderRadius: '12px',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                               }}
                             />
-                            <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="revenue" fill="#34C759" radius={[6, 6, 0, 0]} />
                           </BarChart>
                         </ResponsiveContainer>
                       </div>
