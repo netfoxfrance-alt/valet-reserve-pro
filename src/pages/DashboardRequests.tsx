@@ -74,94 +74,101 @@ export default function DashboardRequests() {
       
       <div className="lg:pl-64">
         <DashboardHeader 
-          title="Demandes de contact" 
+          title="Demandes" 
           onMenuClick={() => setMobileMenuOpen(true)}
         />
-        <main className="p-4 sm:p-6">
+        <main className="p-4 lg:p-8">
           <div className="max-w-4xl">
             {requests.length === 0 ? (
-              <Card variant="elevated" className="p-8 sm:p-12 text-center">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MessageSquare className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground" />
+              <Card variant="elevated" className="p-8 sm:p-12 text-center rounded-2xl">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <MessageSquare className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground/50" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
-                  Aucune demande pour le moment
+                  Aucune demande
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   Les demandes de vos clients apparaîtront ici.
                 </p>
               </Card>
             ) : (
-              <div className="space-y-3 sm:space-y-4">
+              <div className="space-y-3">
                 {requests.map((request) => (
-                  <Card key={request.id} variant="elevated" className="p-4 sm:p-6">
-                    <div className="flex flex-col gap-4">
-                      <div className="flex-1">
-                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3">
-                          <h3 className="font-semibold text-base sm:text-lg text-foreground">
-                            {request.client_name}
-                          </h3>
-                          {getStatusBadge(request.status)}
-                        </div>
-                        
-                        <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                          <Phone className="w-4 h-4 flex-shrink-0" />
-                          <a 
-                            href={`tel:${request.client_phone}`}
-                            className="hover:text-primary transition-colors"
-                          >
-                            {request.client_phone}
-                          </a>
-                        </div>
-                        
-                        {request.message && (
-                          <div className="bg-muted rounded-lg p-3 mt-3">
-                            <p className="text-foreground text-sm whitespace-pre-wrap">
-                              {request.message}
-                            </p>
+                  <Card key={request.id} variant="elevated" className="p-4 sm:p-5 rounded-2xl">
+                    <div className="flex flex-col gap-3 sm:gap-4">
+                      {/* Header */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                            <span className="text-sm font-bold text-primary">
+                              {request.client_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                            </span>
                           </div>
-                        )}
-                        
-                        <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mt-3">
-                          <Clock className="w-4 h-4 flex-shrink-0" />
-                          {format(new Date(request.created_at), "d MMMM yyyy 'à' HH:mm", { locale: fr })}
+                          <div className="min-w-0">
+                            <h3 className="font-semibold text-foreground truncate">
+                              {request.client_name}
+                            </h3>
+                            <a 
+                              href={`tel:${request.client_phone}`}
+                              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                            >
+                              {request.client_phone}
+                            </a>
+                          </div>
                         </div>
+                        {getStatusBadge(request.status)}
                       </div>
                       
-                      <div className="flex flex-wrap gap-2">
-                        {request.status === 'new' && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleMarkContacted(request.id)}
-                            className="flex-1 sm:flex-none"
-                          >
-                            <Phone className="w-4 h-4 mr-1" />
-                            Contacté
-                          </Button>
-                        )}
-                        {(request.status === 'new' || request.status === 'contacted') && (
-                          <>
+                      {/* Message */}
+                      {request.message && (
+                        <div className="bg-muted/50 rounded-xl p-3">
+                          <p className="text-foreground text-sm whitespace-pre-wrap">
+                            {request.message}
+                          </p>
+                        </div>
+                      )}
+                      
+                      {/* Footer */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Clock className="w-3.5 h-3.5" />
+                          {format(new Date(request.created_at), "d MMM yyyy 'à' HH:mm", { locale: fr })}
+                        </div>
+                        
+                        <div className="flex flex-wrap gap-2">
+                          {request.status === 'new' && (
                             <Button
-                              variant="default"
+                              variant="outline"
                               size="sm"
-                              onClick={() => handleMarkConverted(request.id)}
-                              className="flex-1 sm:flex-none"
+                              onClick={() => handleMarkContacted(request.id)}
+                              className="flex-1 sm:flex-none h-9 rounded-xl"
                             >
-                              <CheckCircle className="w-4 h-4 mr-1" />
-                              Répondu
+                              <Phone className="w-4 h-4 mr-1.5" />
+                              Contacté
                             </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleMarkClosed(request.id)}
-                              className="flex-1 sm:flex-none"
-                            >
-                              <XCircle className="w-4 h-4 mr-1" />
-                              Fermer
-                            </Button>
-                          </>
-                        )}
+                          )}
+                          {(request.status === 'new' || request.status === 'contacted') && (
+                            <>
+                              <Button
+                                variant="default"
+                                size="sm"
+                                onClick={() => handleMarkConverted(request.id)}
+                                className="flex-1 sm:flex-none h-9 rounded-xl"
+                              >
+                                <CheckCircle className="w-4 h-4 mr-1.5" />
+                                Répondu
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleMarkClosed(request.id)}
+                                className="h-9 rounded-xl"
+                              >
+                                <XCircle className="w-4 h-4" />
+                              </Button>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </Card>
