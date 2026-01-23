@@ -11,7 +11,7 @@ import { useMyCenter } from '@/hooks/useCenter';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, Calendar, TrendingUp, Users, ShoppingBag } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, parseISO, startOfMonth, endOfMonth, subMonths, addMonths, isWithinInterval, startOfWeek, endOfWeek, subWeeks, eachWeekOfInterval, eachMonthOfInterval } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
@@ -270,64 +270,79 @@ export default function DashboardStats() {
                 </Button>
               </div>
 
-              {/* KPI Cards - Apple style with subtle icons */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+              {/* KPI Cards - Shopify style: clean labels, big numbers, colored variations, action links */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                {/* Réservations */}
                 <Card 
                   variant="elevated" 
-                  className="p-5 sm:p-6 cursor-pointer hover:bg-secondary/30 transition-colors border-0 shadow-sm"
+                  className="p-5 sm:p-6 cursor-pointer group hover:shadow-lg transition-all duration-200"
                   onClick={() => setDetailDialog('reservations')}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
+                  <div className="flex items-start justify-between mb-1">
                     <p className="text-sm font-medium text-muted-foreground">Réservations</p>
+                    <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                      Voir le détail →
+                    </span>
                   </div>
-                  <div className="flex items-baseline gap-2">
-                    <p className="text-3xl font-semibold text-foreground tracking-tight">{stats.thisMonthCount}</p>
+                  <div className="flex items-baseline gap-3 mt-2">
+                    <p className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">{stats.thisMonthCount}</p>
                     {stats.countChange !== 0 && (
-                      <span className={`text-sm ${stats.countChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                        {stats.countChange > 0 ? '+' : ''}{stats.countChange}%
+                      <span className={`text-sm font-semibold px-2 py-0.5 rounded-full ${
+                        stats.countChange > 0 
+                          ? 'text-emerald-700 bg-emerald-50' 
+                          : 'text-red-700 bg-red-50'
+                      }`}>
+                        {stats.countChange > 0 ? '↑' : '↓'}{Math.abs(stats.countChange)}%
                       </span>
                     )}
                   </div>
                 </Card>
 
+                {/* Chiffre d'affaires */}
                 <Card 
                   variant="elevated" 
-                  className="p-5 sm:p-6 cursor-pointer hover:bg-secondary/30 transition-colors border-0 shadow-sm"
+                  className="p-5 sm:p-6 cursor-pointer group hover:shadow-lg transition-all duration-200"
                   onClick={() => setDetailDialog('revenue')}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                  <div className="flex items-start justify-between mb-1">
                     <p className="text-sm font-medium text-muted-foreground">Chiffre d'affaires</p>
+                    <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                      Voir le détail →
+                    </span>
                   </div>
-                  <div className="flex items-baseline gap-2">
-                    <p className="text-3xl font-semibold text-foreground tracking-tight">{stats.thisMonthRevenue.toLocaleString('fr-FR')}€</p>
+                  <div className="flex items-baseline gap-3 mt-2">
+                    <p className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">{stats.thisMonthRevenue.toLocaleString('fr-FR')}€</p>
                     {stats.revenueChange !== 0 && (
-                      <span className={`text-sm ${stats.revenueChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                        {stats.revenueChange > 0 ? '+' : ''}{stats.revenueChange}%
+                      <span className={`text-sm font-semibold px-2 py-0.5 rounded-full ${
+                        stats.revenueChange > 0 
+                          ? 'text-emerald-700 bg-emerald-50' 
+                          : 'text-red-700 bg-red-50'
+                      }`}>
+                        {stats.revenueChange > 0 ? '↑' : '↓'}{Math.abs(stats.revenueChange)}%
                       </span>
                     )}
                   </div>
                 </Card>
 
+                {/* Clients */}
                 <Card 
                   variant="elevated" 
-                  className="p-5 sm:p-6 cursor-pointer hover:bg-secondary/30 transition-colors border-0 shadow-sm"
+                  className="p-5 sm:p-6 cursor-pointer group hover:shadow-lg transition-all duration-200"
                   onClick={() => setDetailDialog('clients')}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Users className="w-4 h-4 text-muted-foreground" />
-                    <p className="text-sm font-medium text-muted-foreground">Clients</p>
+                  <div className="flex items-start justify-between mb-1">
+                    <p className="text-sm font-medium text-muted-foreground">Clients uniques</p>
+                    <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                      Voir le détail →
+                    </span>
                   </div>
-                  <p className="text-3xl font-semibold text-foreground tracking-tight">{stats.uniqueClients}</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight mt-2">{stats.uniqueClients}</p>
                 </Card>
 
-                <Card variant="elevated" className="p-5 sm:p-6 border-0 shadow-sm">
-                  <div className="flex items-center gap-2 mb-2">
-                    <ShoppingBag className="w-4 h-4 text-muted-foreground" />
-                    <p className="text-sm font-medium text-muted-foreground">Panier moyen</p>
-                  </div>
-                  <p className="text-3xl font-semibold text-foreground tracking-tight">{stats.avgBasket}€</p>
+                {/* Panier moyen */}
+                <Card variant="elevated" className="p-5 sm:p-6">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Panier moyen</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight mt-2">{stats.avgBasket}€</p>
                 </Card>
               </div>
 
