@@ -224,6 +224,9 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
         payload.custom_service_id = form.custom_service_id;
         payload.custom_price = parseFloat(form.custom_price) || selectedService?.price;
         payload.duration_minutes = selectedService?.duration_minutes;
+        // Send email confirmation for custom services
+        payload.send_email = true;
+        payload.service_name = selectedService?.name;
       }
     } else {
       // Standard pack mode

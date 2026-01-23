@@ -108,6 +108,9 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
     custom_service_id?: string | null;
     custom_price?: number | null;
     duration_minutes?: number;
+    // For email sending
+    service_name?: string;
+    send_email?: boolean;
   }) => {
     if (!center) return { error: 'Aucun centre trouvé' };
     
@@ -177,6 +180,34 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
         if (dateCompare !== 0) return dateCompare;
         return a.appointment_time.localeCompare(b.appointment_time);
       }));
+      
+      // Send confirmation email if requested (for custom services)
+      if (data.send_email && data.service_name && data.custom_price !== undefined && data.client_email) {
+        (async () => {
+          try {
+            await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+              },
+              body: JSON.stringify({
+                center_id: center.id,
+                client_name: data.client_name,
+                client_email: data.client_email,
+                client_phone: data.client_phone,
+                pack_name: data.service_name,
+                price: data.custom_price,
+                appointment_date: data.appointment_date,
+                appointment_time: data.appointment_time,
+                notes: data.notes,
+              }),
+            });
+          } catch (emailError) {
+            console.warn('[Custom Service Email] Error:', emailError);
+          }
+        })();
+      }
     }
     return { error: error?.message || null };
   };
