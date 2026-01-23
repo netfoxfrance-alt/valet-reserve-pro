@@ -101,10 +101,8 @@ const handler = async (req: Request): Promise<Response> => {
         <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
           <div style="background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
             <div style="text-align: center; margin-bottom: 32px;">
-              <div style="width: 64px; height: 64px; background: #10b981; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;">
-                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-                  <path d="M20 6L9 17l-5-5" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+              <div style="width: 64px; height: 64px; background: #10b981; border-radius: 50%; display: inline-block; line-height: 64px; text-align: center;">
+                <span style="color: white; font-size: 32px;">✓</span>
               </div>
             </div>
             
