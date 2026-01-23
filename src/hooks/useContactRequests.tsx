@@ -6,6 +6,7 @@ interface ContactRequest {
   center_id: string;
   client_name: string;
   client_phone: string;
+  client_address: string | null;
   message: string | null;
   status: string;
   created_at: string;
@@ -18,6 +19,7 @@ export function useCreateContactRequest() {
     center_id: string;
     client_name: string;
     client_phone: string;
+    client_address?: string;
     message?: string;
   }) => {
     setLoading(true);
@@ -28,6 +30,7 @@ export function useCreateContactRequest() {
           center_id: data.center_id,
           client_name: data.client_name,
           client_phone: data.client_phone,
+          client_address: data.client_address || null,
           message: data.message || null,
         });
       

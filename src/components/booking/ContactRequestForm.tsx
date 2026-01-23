@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { User, Phone, MessageSquare } from 'lucide-react';
+import { User, Phone, MessageSquare, MapPin } from 'lucide-react';
 
 export interface ContactRequestData {
   name: string;
   phone: string;
+  address: string;
   message: string;
 }
 
@@ -20,11 +21,12 @@ interface ContactRequestFormProps {
 export function ContactRequestForm({ onSubmit, isSubmitting }: ContactRequestFormProps) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
   const [message, setMessage] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ name, phone, message });
+    onSubmit({ name, phone, address, message });
   };
 
   return (
@@ -73,6 +75,22 @@ export function ContactRequestForm({ onSubmit, isSubmitting }: ContactRequestFor
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="address">Adresse d'intervention *</Label>
+            <div className="relative">
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Input
+                id="address"
+                type="text"
+                placeholder="12 rue de Paris, 75001 Paris"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="pl-12 h-12 rounded-xl"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="message">Votre message</Label>
             <div className="relative">
               <MessageSquare className="absolute left-4 top-4 w-5 h-5 text-muted-foreground" />
@@ -81,7 +99,7 @@ export function ContactRequestForm({ onSubmit, isSubmitting }: ContactRequestFor
                 placeholder="Décrivez votre véhicule et votre besoin..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="pl-12 min-h-[120px] rounded-xl resize-none"
+                className="pl-12 min-h-[100px] rounded-xl resize-none"
               />
             </div>
           </div>

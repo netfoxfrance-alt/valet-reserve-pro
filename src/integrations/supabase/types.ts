@@ -355,6 +355,7 @@ export type Database = {
       contact_requests: {
         Row: {
           center_id: string
+          client_address: string | null
           client_name: string
           client_phone: string
           created_at: string
@@ -364,6 +365,7 @@ export type Database = {
         }
         Insert: {
           center_id: string
+          client_address?: string | null
           client_name: string
           client_phone: string
           created_at?: string
@@ -373,6 +375,7 @@ export type Database = {
         }
         Update: {
           center_id?: string
+          client_address?: string | null
           client_name?: string
           client_phone?: string
           created_at?: string

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useMyCenter } from '@/hooks/useCenter';
 import { useMyContactRequests } from '@/hooks/useContactRequests';
-import { MessageSquare, Phone, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { MessageSquare, Phone, Clock, CheckCircle, XCircle, MapPin } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -118,6 +118,16 @@ export default function DashboardRequests() {
                         </div>
                         {getStatusBadge(request.status)}
                       </div>
+                      
+                      {/* Address */}
+                      {request.client_address && (
+                        <div className="flex items-start gap-2 bg-primary/5 rounded-xl p-3">
+                          <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                          <p className="text-foreground text-sm">
+                            {request.client_address}
+                          </p>
+                        </div>
+                      )}
                       
                       {/* Message */}
                       {request.message && (

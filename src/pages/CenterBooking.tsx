@@ -205,6 +205,7 @@ export default function CenterBooking() {
       center_id: center.id,
       client_name: data.name,
       client_phone: data.phone,
+      client_address: data.address,
       message: data.message,
     });
     
