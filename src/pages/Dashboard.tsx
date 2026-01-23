@@ -509,10 +509,10 @@ export default function Dashboard() {
   };
 
   const stats = [
-    { name: "Aujourd'hui", value: todayAppointments.length, icon: Calendar, color: 'bg-primary/10 text-primary' },
-    { name: 'En attente', value: pendingAppointments.length, icon: Clock, color: 'bg-amber-100 text-amber-700' },
-    { name: 'Cette semaine', value: weekAppointments.length, icon: TrendingUp, color: 'bg-emerald-100 text-emerald-700' },
-    { name: 'Total à venir', value: upcomingAppointments.length, icon: Users, color: 'bg-slate-100 text-slate-700' },
+    { name: "Aujourd'hui", value: todayAppointments.length },
+    { name: 'En attente', value: pendingAppointments.length },
+    { name: 'Semaine', value: weekAppointments.length },
+    { name: 'À venir', value: upcomingAppointments.length },
   ];
 
   const filters: { key: FilterType; label: string }[] = [
@@ -536,19 +536,12 @@ export default function Dashboard() {
         />
         
         <main className="p-4 lg:p-8 max-w-6xl">
-          {/* Stats */}
+          {/* Stats - Apple minimal style */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
             {stats.map((stat) => (
-              <Card key={stat.name} variant="elevated" className="p-4 sm:p-5 rounded-2xl border-0 shadow-sm">
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center ${stat.color}`}>
-                    <stat.icon className="w-5 h-5 sm:w-6 sm:h-6" />
-                  </div>
-                  <div>
-                    <p className="text-2xl sm:text-3xl font-bold text-foreground">{stat.value}</p>
-                    <p className="text-xs sm:text-sm text-muted-foreground font-medium">{stat.name}</p>
-                  </div>
-                </div>
+              <Card key={stat.name} variant="elevated" className="p-5 rounded-2xl border-0 shadow-sm">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">{stat.name}</p>
+                <p className="text-3xl sm:text-4xl font-semibold text-foreground tracking-tight">{stat.value}</p>
               </Card>
             ))}
           </div>

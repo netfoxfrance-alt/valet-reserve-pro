@@ -11,12 +11,12 @@ import { useMyCenter } from '@/hooks/useCenter';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { BarChart3, TrendingUp, Euro, Calendar, ArrowUpRight, ArrowDownRight, Users, ChevronLeft, ChevronRight, X, Clock, Phone, Wrench } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, parseISO, startOfMonth, endOfMonth, subMonths, addMonths, isWithinInterval, startOfWeek, endOfWeek, subWeeks, eachWeekOfInterval, eachMonthOfInterval } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
-const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+const COLORS = ['hsl(var(--foreground))', 'hsl(var(--muted-foreground))', 'hsl(var(--primary))', 'hsl(var(--accent))', '#a1a1aa', '#71717a'];
 
 type DetailType = 'reservations' | 'revenue' | 'clients' | 'completed' | null;
 
@@ -270,66 +270,52 @@ export default function DashboardStats() {
                 </Button>
               </div>
 
-              {/* KPI Cards - Clickable */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+              {/* KPI Cards - Apple minimal style */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
                 <Card 
                   variant="elevated" 
-                  className="p-4 sm:p-5 cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all"
+                  className="p-5 sm:p-6 cursor-pointer hover:bg-secondary/30 transition-colors border-0 shadow-sm"
                   onClick={() => setDetailDialog('reservations')}
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <Calendar className="w-5 h-5 text-primary" />
-                    </div>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Réservations</p>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-3xl sm:text-4xl font-semibold text-foreground tracking-tight">{stats.thisMonthCount}</p>
                     {stats.countChange !== 0 && (
-                      <div className={`flex items-center text-xs ${stats.countChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                        {stats.countChange > 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                        {Math.abs(stats.countChange)}%
-                      </div>
+                      <span className={`text-sm font-medium ${stats.countChange > 0 ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {stats.countChange > 0 ? '+' : ''}{stats.countChange}%
+                      </span>
                     )}
                   </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.thisMonthCount}</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Réservations</p>
                 </Card>
 
                 <Card 
                   variant="elevated" 
-                  className="p-4 sm:p-5 cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all"
+                  className="p-5 sm:p-6 cursor-pointer hover:bg-secondary/30 transition-colors border-0 shadow-sm"
                   onClick={() => setDetailDialog('revenue')}
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-                      <Euro className="w-5 h-5 text-green-600" />
-                    </div>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Chiffre d'affaires</p>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-3xl sm:text-4xl font-semibold text-foreground tracking-tight">{stats.thisMonthRevenue.toLocaleString('fr-FR')}€</p>
                     {stats.revenueChange !== 0 && (
-                      <div className={`flex items-center text-xs ${stats.revenueChange > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                        {stats.revenueChange > 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                        {Math.abs(stats.revenueChange)}%
-                      </div>
+                      <span className={`text-sm font-medium ${stats.revenueChange > 0 ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {stats.revenueChange > 0 ? '+' : ''}{stats.revenueChange}%
+                      </span>
                     )}
                   </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.thisMonthRevenue.toLocaleString('fr-FR')}€</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Chiffre d'affaires</p>
                 </Card>
 
                 <Card 
                   variant="elevated" 
-                  className="p-4 sm:p-5 cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all"
+                  className="p-5 sm:p-6 cursor-pointer hover:bg-secondary/30 transition-colors border-0 shadow-sm"
                   onClick={() => setDetailDialog('clients')}
                 >
-                  <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center mb-2">
-                    <Users className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.uniqueClients}</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Clients uniques</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Clients</p>
+                  <p className="text-3xl sm:text-4xl font-semibold text-foreground tracking-tight">{stats.uniqueClients}</p>
                 </Card>
 
-                <Card variant="elevated" className="p-4 sm:p-5">
-                  <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center mb-2">
-                    <TrendingUp className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.avgBasket}€</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Panier moyen</p>
+                <Card variant="elevated" className="p-5 sm:p-6 border-0 shadow-sm">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Panier moyen</p>
+                  <p className="text-3xl sm:text-4xl font-semibold text-foreground tracking-tight">{stats.avgBasket}€</p>
                 </Card>
               </div>
 
@@ -497,7 +483,6 @@ export default function DashboardStats() {
                                     <span className="font-medium text-foreground">{service.name}</span>
                                     {service.type === 'custom' && (
                                       <Badge variant="secondary" className="text-xs">
-                                        <Wrench className="w-3 h-3 mr-1" />
                                         Perso
                                       </Badge>
                                     )}
@@ -507,7 +492,7 @@ export default function DashboardStats() {
                                     <span className="text-muted-foreground text-sm ml-2">({service.value})</span>
                                   </div>
                                 </div>
-                                <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                                <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
                                   <div 
                                     className="h-full rounded-full transition-all"
                                     style={{ 
@@ -543,35 +528,22 @@ export default function DashboardStats() {
             {format(selectedMonth, 'MMMM yyyy', { locale: fr })} • {detailAppointments.length} {detailDialog === 'clients' ? 'clients' : 'réservations'}
           </div>
           <ScrollArea className="h-[60vh] pr-4">
-            <div className="space-y-3">
+            <div className="space-y-2">
               {detailAppointments.map((apt) => (
-                <Card key={apt.id} className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <p className="font-medium text-foreground">{apt.client_name}</p>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Phone className="w-3 h-3" />
-                        {apt.client_phone}
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Calendar className="w-3 h-3" />
-                        {format(parseISO(apt.appointment_date), 'd MMMM yyyy', { locale: fr })}
-                        <Clock className="w-3 h-3 ml-2" />
-                        {apt.appointment_time.slice(0, 5)}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-foreground">{getAppointmentPrice(apt)}€</p>
-                      <p className="text-sm text-muted-foreground">{getServiceName(apt)}</p>
-                      <Badge 
-                        variant={apt.status === 'completed' ? 'default' : apt.status === 'confirmed' ? 'secondary' : 'outline'}
-                        className="mt-1"
-                      >
-                        {apt.status === 'completed' ? 'Terminé' : apt.status === 'confirmed' ? 'Confirmé' : 'En attente'}
-                      </Badge>
-                    </div>
+                <div key={apt.id} className="flex items-center justify-between p-4 bg-secondary/30 rounded-xl">
+                  <div>
+                    <p className="font-medium text-foreground">{apt.client_name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {format(parseISO(apt.appointment_date), 'd MMM', { locale: fr })} à {apt.appointment_time.slice(0, 5)} • {getServiceName(apt)}
+                    </p>
                   </div>
-                </Card>
+                  <div className="text-right">
+                    <p className="font-semibold text-foreground">{getAppointmentPrice(apt)}€</p>
+                    <p className="text-xs text-muted-foreground">
+                      {apt.status === 'completed' ? 'Terminé' : apt.status === 'confirmed' ? 'Confirmé' : 'En attente'}
+                    </p>
+                  </div>
+                </div>
               ))}
               {detailAppointments.length === 0 && (
                 <p className="text-center text-muted-foreground py-8">Aucune donnée pour cette période</p>

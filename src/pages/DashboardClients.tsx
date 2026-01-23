@@ -15,7 +15,7 @@ import { useMyCustomServices, formatDuration } from '@/hooks/useCustomServices';
 import { ClientDetailDialog } from '@/components/clients/ClientDetailDialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { Users, Search, Phone, Mail, MapPin, Plus, Pencil, Trash2, Loader2, Sparkles, CalendarCheck, UserPlus, Eye } from 'lucide-react';
+import { Search, Phone, Mail, MapPin, Plus, Pencil, Trash2, Loader2, Eye } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -156,30 +156,21 @@ export default function DashboardClients() {
             </div>
           ) : (
             <>
-              {/* KPI Cards */}
+              {/* KPI Cards - Apple minimal style */}
               <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
-                <Card variant="elevated" className="p-4 sm:p-5">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
-                    <Users className="w-5 h-5 text-primary" />
-                  </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-foreground">{totalClients}</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Total clients</p>
+                <Card variant="elevated" className="p-5 border-0 shadow-sm">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Total</p>
+                  <p className="text-3xl sm:text-4xl font-semibold text-foreground tracking-tight">{totalClients}</p>
                 </Card>
 
-                <Card variant="elevated" className="p-4 sm:p-5">
-                  <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center mb-2">
-                    <CalendarCheck className="w-5 h-5 text-muted-foreground" />
-                  </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-foreground">{bookingClients}</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Via réservation</p>
+                <Card variant="elevated" className="p-5 border-0 shadow-sm">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Réservation</p>
+                  <p className="text-3xl sm:text-4xl font-semibold text-foreground tracking-tight">{bookingClients}</p>
                 </Card>
 
-                <Card variant="elevated" className="p-4 sm:p-5">
-                  <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center mb-2">
-                    <UserPlus className="w-5 h-5 text-muted-foreground" />
-                  </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-foreground">{manualClients}</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Ajout manuel</p>
+                <Card variant="elevated" className="p-5 border-0 shadow-sm">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Manuel</p>
+                  <p className="text-3xl sm:text-4xl font-semibold text-foreground tracking-tight">{manualClients}</p>
                 </Card>
               </div>
 
@@ -245,10 +236,7 @@ export default function DashboardClients() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="flex items-center gap-2">
-                          <Sparkles className="w-4 h-4 text-primary" />
-                          Prestation personnalisée
-                        </Label>
+                        <Label>Prestation par défaut</Label>
                         <Select
                           value={newClient.default_service_id || "none"}
                           onValueChange={(v) => setNewClient({ ...newClient, default_service_id: v === "none" ? "" : v })}
@@ -293,9 +281,6 @@ export default function DashboardClients() {
               <Card variant="elevated" className="p-4 sm:p-6">
                 {filteredClients.length === 0 ? (
                   <div className="text-center py-12">
-                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-                      <Users className="w-8 h-8 text-muted-foreground" />
-                    </div>
                     <h4 className="font-medium text-foreground mb-1">
                       {searchClient ? 'Aucun client trouvé' : 'Aucun client pour le moment'}
                     </h4>
@@ -357,8 +342,7 @@ export default function DashboardClients() {
                               )}
                             </div>
                             {client.default_service && (
-                              <p className="text-xs text-primary mt-1 flex items-center gap-1">
-                                <Sparkles className="w-3 h-3" />
+                              <p className="text-xs text-primary mt-1">
                                 {client.default_service.name} • {formatDuration(client.default_service.duration_minutes)} • {client.default_service.price}€
                               </p>
                             )}
@@ -435,10 +419,7 @@ export default function DashboardClients() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-primary" />
-                Prestation personnalisée
-              </Label>
+              <Label>Prestation par défaut</Label>
               <Select
                 value={editForm.default_service_id || "none"}
                 onValueChange={(v) => setEditForm({ ...editForm, default_service_id: v === "none" ? "" : v })}
