@@ -537,46 +537,45 @@ export default function Dashboard() {
         />
         
         <main className="p-4 lg:p-8 max-w-6xl">
-          {/* Stats - Shopify style: clean, bold numbers, status indicators */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {/* Stats - Responsive 2x2 grid */}
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
             {stats.map((stat) => (
               <Card 
                 key={stat.name} 
                 variant="elevated" 
-                className="p-5 rounded-2xl hover:shadow-lg transition-all duration-200"
+                className="p-4 sm:p-5 rounded-2xl hover:shadow-lg transition-all duration-200"
               >
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-muted-foreground">{stat.name}</p>
+                <div className="flex items-center justify-between mb-1 sm:mb-2">
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground">{stat.name}</p>
                   {stat.highlight && (
                     <span className={`w-2 h-2 rounded-full ${stat.isWarning ? 'bg-amber-400' : 'bg-emerald-400'} animate-pulse`} />
                   )}
                 </div>
-                <p className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">{stat.value}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{stat.value}</p>
               </Card>
             ))}
           </div>
 
           {/* Header with filters */}
-          <div className="flex flex-col gap-4 mb-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-foreground">Planning</h2>
-                <p className="text-sm text-muted-foreground mt-0.5">
+                <h2 className="text-lg sm:text-xl font-bold text-foreground">Planning</h2>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   {filteredAppointments.length} réservation{filteredAppointments.length !== 1 ? 's' : ''}
-                  {filter === 'month' && ` en ${format(currentMonth, 'MMMM yyyy', { locale: fr })}`}
                 </p>
               </div>
               <AddAppointmentDialog onAdd={handleAddAppointment} clients={clients} services={services} />
             </div>
             
-            {/* Filter tabs */}
-            <div className="flex items-center gap-3 overflow-x-auto pb-1">
-              <div className="flex bg-muted/60 rounded-xl p-1 flex-shrink-0">
+            {/* Filter tabs - scrollable on mobile */}
+            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
+              <div className="flex bg-muted/60 rounded-xl p-1 shrink-0">
                 {filters.map(({ key, label }) => (
                   <button
                     key={key}
                     onClick={() => setFilter(key)}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
                       filter === key 
                         ? 'bg-background text-foreground shadow-sm' 
                         : 'text-muted-foreground hover:text-foreground'
@@ -587,24 +586,24 @@ export default function Dashboard() {
                 ))}
               </div>
               
-              {/* Month navigation (visible when month filter is active) */}
+              {/* Month navigation */}
               {filter === 'month' && (
-                <div className="flex items-center gap-2 ml-auto">
+                <div className="flex items-center gap-1 sm:gap-2 ml-auto shrink-0">
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-9 w-9 rounded-xl"
+                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl"
                     onClick={() => setCurrentMonth(addMonths(currentMonth, -1))}
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
-                  <span className="text-sm font-medium min-w-[120px] text-center capitalize">
-                    {format(currentMonth, 'MMMM yyyy', { locale: fr })}
+                  <span className="text-xs sm:text-sm font-medium min-w-[100px] sm:min-w-[120px] text-center capitalize">
+                    {format(currentMonth, 'MMM yyyy', { locale: fr })}
                   </span>
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-9 w-9 rounded-xl"
+                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl"
                     onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
                   >
                     <ChevronRight className="w-4 h-4" />

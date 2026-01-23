@@ -105,58 +105,60 @@ export default function DashboardCustomServices() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background">
       <DashboardSidebar />
       <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
 
-      <div className="flex-1 flex flex-col lg:ml-72">
+      <div className="lg:pl-64">
         <DashboardHeader title="Prestations" onMenuClick={() => setMobileMenuOpen(true)} />
 
-        <main className="flex-1 p-4 md:p-6 lg:p-8">
-          <div className="max-w-4xl mx-auto space-y-6">
-            <div className="flex items-center justify-between">
+        <main className="p-4 lg:p-8">
+          <div className="max-w-4xl space-y-6">
+            {/* Header - responsive stack on mobile */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold">Prestations personnalisées</h1>
-                <p className="text-muted-foreground">
-                  Créez des services sur mesure avec durée et prix libres, puis attribuez-les à vos clients réguliers
+                <h1 className="text-xl sm:text-2xl font-bold">Prestations personnalisées</h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Créez des services sur mesure pour vos clients réguliers
                 </p>
               </div>
               <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                 <DialogTrigger asChild>
-                  <Button>
+                  <Button className="w-full sm:w-auto">
                     <Plus className="h-4 w-4 mr-2" />
                     Nouvelle prestation
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle>Nouvelle prestation personnalisée</DialogTitle>
+                    <DialogTitle>Nouvelle prestation</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 pt-4">
                     <div className="space-y-2">
                       <Label htmlFor="name">Nom de la prestation</Label>
                       <Input
                         id="name"
-                        placeholder="Ex: Nettoyage vitres bureau mensuel"
+                        placeholder="Ex: Nettoyage vitres bureau"
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
+                        className="h-11 rounded-xl"
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Durée</Label>
-                      <div className="flex gap-4">
-                        <div className="flex items-center gap-2">
+                      <div className="flex gap-3">
+                        <div className="flex items-center gap-2 flex-1">
                           <Input
                             type="number"
                             min={0}
                             max={10}
                             value={newHours}
                             onChange={(e) => setNewHours(parseInt(e.target.value) || 0)}
-                            className="w-20"
+                            className="h-11 rounded-xl text-center"
                           />
-                          <span className="text-muted-foreground">h</span>
+                          <span className="text-sm text-muted-foreground">h</span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-1">
                           <Input
                             type="number"
                             min={0}
@@ -164,9 +166,9 @@ export default function DashboardCustomServices() {
                             step={5}
                             value={newMinutes}
                             onChange={(e) => setNewMinutes(parseInt(e.target.value) || 0)}
-                            className="w-20"
+                            className="h-11 rounded-xl text-center"
                           />
-                          <span className="text-muted-foreground">min</span>
+                          <span className="text-sm text-muted-foreground">min</span>
                         </div>
                       </div>
                     </div>
@@ -180,6 +182,7 @@ export default function DashboardCustomServices() {
                         placeholder="85"
                         value={newPrice}
                         onChange={(e) => setNewPrice(e.target.value)}
+                        className="h-11 rounded-xl"
                       />
                     </div>
                     <div className="space-y-2">
@@ -189,9 +192,11 @@ export default function DashboardCustomServices() {
                         placeholder="Détails de la prestation..."
                         value={newDescription}
                         onChange={(e) => setNewDescription(e.target.value)}
+                        className="rounded-xl resize-none"
+                        rows={2}
                       />
                     </div>
-                    <Button onClick={handleCreate} className="w-full" disabled={creating}>
+                    <Button onClick={handleCreate} className="w-full h-11 rounded-xl" disabled={creating}>
                       {creating && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                       Créer la prestation
                     </Button>
@@ -201,46 +206,53 @@ export default function DashboardCustomServices() {
             </div>
 
             {loading ? (
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
                 {[1, 2, 3, 4].map((i) => (
-                  <Skeleton key={i} className="h-32" />
+                  <Skeleton key={i} className="h-32 rounded-2xl" />
                 ))}
               </div>
             ) : services.length === 0 ? (
-              <Card>
+              <Card variant="elevated" className="rounded-2xl">
                 <CardContent className="py-12 text-center">
-                  <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">Aucune prestation personnalisée</p>
+                  <FileText className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
+                  <p className="font-medium text-foreground">Aucune prestation</p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Créez votre première prestation pour pouvoir l'attacher à vos clients
+                    Créez votre première prestation
                   </p>
+                  <Button onClick={() => setIsCreateOpen(true)} className="mt-4">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Créer une prestation
+                  </Button>
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
                 {services.map((service) => (
-                  <Card key={service.id} className={!service.active ? 'opacity-60' : ''}>
-                    <CardHeader className="pb-2">
-                      <div className="flex items-start justify-between">
-                        <CardTitle className="text-lg">{service.name}</CardTitle>
-                        <div className="flex gap-1">
-                          <Button variant="ghost" size="icon" onClick={() => openEdit(service)}>
+                  <Card 
+                    key={service.id} 
+                    variant="elevated"
+                    className={`rounded-2xl ${!service.active ? 'opacity-60' : ''}`}
+                  >
+                    <CardHeader className="pb-2 px-4 sm:px-6 pt-4 sm:pt-6">
+                      <div className="flex items-start justify-between gap-2">
+                        <CardTitle className="text-base sm:text-lg leading-tight">{service.name}</CardTitle>
+                        <div className="flex gap-1 shrink-0">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl" onClick={() => openEdit(service)}>
                             <Pencil className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id)}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl" onClick={() => handleDelete(service.id)}>
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
                         </div>
                       </div>
                     </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center gap-4 text-sm">
-                        <div className="flex items-center gap-1 text-muted-foreground">
+                    <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
+                      <div className="flex items-center gap-3 sm:gap-4 text-sm">
+                        <div className="flex items-center gap-1.5 text-muted-foreground">
                           <Clock className="h-4 w-4" />
-                          {formatDuration(service.duration_minutes)}
+                          <span>{formatDuration(service.duration_minutes)}</span>
                         </div>
-                        <div className="flex items-center gap-1 font-semibold text-primary">
-                          <Euro className="h-4 w-4" />
+                        <div className="flex items-center gap-1.5 font-semibold text-emerald-600">
                           {service.price}€
                         </div>
                       </div>
@@ -260,7 +272,7 @@ export default function DashboardCustomServices() {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingService} onOpenChange={(open) => !open && setEditingService(null)}>
-        <DialogContent>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Modifier la prestation</DialogTitle>
           </DialogHeader>
@@ -271,23 +283,24 @@ export default function DashboardCustomServices() {
                 id="editName"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
+                className="h-11 rounded-xl"
               />
             </div>
             <div className="space-y-2">
               <Label>Durée</Label>
-              <div className="flex gap-4">
-                <div className="flex items-center gap-2">
+              <div className="flex gap-3">
+                <div className="flex items-center gap-2 flex-1">
                   <Input
                     type="number"
                     min={0}
                     max={10}
                     value={editHours}
                     onChange={(e) => setEditHours(parseInt(e.target.value) || 0)}
-                    className="w-20"
+                    className="h-11 rounded-xl text-center"
                   />
-                  <span className="text-muted-foreground">h</span>
+                  <span className="text-sm text-muted-foreground">h</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-1">
                   <Input
                     type="number"
                     min={0}
@@ -295,9 +308,9 @@ export default function DashboardCustomServices() {
                     step={5}
                     value={editMinutes}
                     onChange={(e) => setEditMinutes(parseInt(e.target.value) || 0)}
-                    className="w-20"
+                    className="h-11 rounded-xl text-center"
                   />
-                  <span className="text-muted-foreground">min</span>
+                  <span className="text-sm text-muted-foreground">min</span>
                 </div>
               </div>
             </div>
@@ -310,6 +323,7 @@ export default function DashboardCustomServices() {
                 step={0.01}
                 value={editPrice}
                 onChange={(e) => setEditPrice(e.target.value)}
+                className="h-11 rounded-xl"
               />
             </div>
             <div className="space-y-2">
@@ -318,9 +332,11 @@ export default function DashboardCustomServices() {
                 id="editDescription"
                 value={editDescription}
                 onChange={(e) => setEditDescription(e.target.value)}
+                className="rounded-xl resize-none"
+                rows={2}
               />
             </div>
-            <Button onClick={handleSave} className="w-full" disabled={saving}>
+            <Button onClick={handleSave} className="w-full h-11 rounded-xl" disabled={saving}>
               {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Enregistrer
             </Button>

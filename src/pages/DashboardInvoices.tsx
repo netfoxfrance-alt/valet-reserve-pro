@@ -288,10 +288,10 @@ export default function DashboardInvoices() {
                   {filteredInvoices.map(invoice => (
                     <div 
                       key={invoice.id}
-                      className="flex items-center justify-between p-4 rounded-xl bg-card hover:bg-secondary/50 transition-colors"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-card hover:bg-secondary/50 transition-colors"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                           invoice.type === 'invoice' 
                             ? 'bg-blue-50 dark:bg-blue-950/50' 
                             : 'bg-purple-50 dark:bg-purple-950/50'
@@ -301,25 +301,25 @@ export default function DashboardInvoices() {
                             : <FileCheck className="w-5 h-5 text-purple-600" />
                           }
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <span className="font-medium">{invoice.number}</span>
                             <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusConfig[invoice.status]?.color || 'bg-muted text-muted-foreground'}`}>
                               {statusConfig[invoice.status]?.label || invoice.status}
                             </span>
                           </div>
-                          <p className="text-sm text-muted-foreground">
-                            {invoice.client_name} • {format(new Date(invoice.issue_date), 'dd MMM yyyy', { locale: fr })}
+                          <p className="text-sm text-muted-foreground truncate">
+                            {invoice.client_name} • {format(new Date(invoice.issue_date), 'dd MMM', { locale: fr })}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4">
                         <span className="font-semibold text-lg">
-                          {invoice.total.toFixed(2)}€
+                          {invoice.total.toFixed(0)}€
                         </span>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl">
                               <MoreHorizontal className="w-4 h-4" />
                             </Button>
                           </DropdownMenuTrigger>
@@ -338,13 +338,13 @@ export default function DashboardInvoices() {
                                 setConvertDialogOpen(true);
                               }}>
                                 <ArrowRight className="w-4 h-4 mr-2" />
-                                Convertir en facture
+                                Convertir
                               </DropdownMenuItem>
                             )}
                             {invoice.type === 'invoice' && invoice.status === 'sent' && (
                               <DropdownMenuItem onClick={() => handleMarkAsPaid(invoice)}>
                                 <FileCheck className="w-4 h-4 mr-2" />
-                                Marquer payée
+                                Payée
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />

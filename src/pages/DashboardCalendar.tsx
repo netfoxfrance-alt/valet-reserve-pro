@@ -195,23 +195,23 @@ export default function DashboardCalendar() {
         />
         
         <main className="p-4 lg:p-8 max-w-7xl">
-          {/* Header with navigation */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div className="flex items-center gap-3">
-              <Button variant="outline" size="icon" onClick={prevMonth} className="rounded-xl">
-                <ChevronLeft className="w-5 h-5" />
+          {/* Header with navigation - mobile optimized */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Button variant="outline" size="icon" onClick={prevMonth} className="h-9 w-9 rounded-xl">
+                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground min-w-[180px] text-center capitalize">
+              <h2 className="text-lg sm:text-xl font-bold text-foreground min-w-[140px] sm:min-w-[180px] text-center capitalize">
                 {format(currentMonth, 'MMMM yyyy', { locale: fr })}
               </h2>
-              <Button variant="outline" size="icon" onClick={nextMonth} className="rounded-xl">
-                <ChevronRight className="w-5 h-5" />
+              <Button variant="outline" size="icon" onClick={nextMonth} className="h-9 w-9 rounded-xl">
+                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </div>
             
             <div className="flex gap-2">
-              <Button variant="outline" onClick={goToToday} className="rounded-xl">
-                <CalendarIcon className="w-4 h-4 mr-2" />
+              <Button variant="outline" onClick={goToToday} className="rounded-xl flex-1 sm:flex-none h-9 text-sm">
+                <CalendarIcon className="w-4 h-4 mr-1.5" />
                 Aujourd'hui
               </Button>
               <Button 
@@ -224,28 +224,28 @@ export default function DashboardCalendar() {
                   });
                   setShowBlockDialog(true);
                 }}
-                className="rounded-xl"
+                className="rounded-xl flex-1 sm:flex-none h-9 text-sm"
               >
-                <Ban className="w-4 h-4 mr-2" />
-                Bloquer période
+                <Ban className="w-4 h-4 mr-1.5" />
+                <span className="hidden sm:inline">Bloquer</span>
               </Button>
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-[1fr_360px] gap-6">
+          <div className="grid lg:grid-cols-[1fr_320px] gap-4 sm:gap-6">
             {/* Calendar Grid */}
-            <Card className="p-4 sm:p-6 rounded-2xl">
+            <Card className="p-3 sm:p-6 rounded-2xl">
               {/* Week days header */}
-              <div className="grid grid-cols-7 gap-1 mb-2">
+              <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-2">
                 {weekDays.map(day => (
-                  <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">
+                  <div key={day} className="text-center text-xs sm:text-sm font-medium text-muted-foreground py-1 sm:py-2">
                     {day}
                   </div>
                 ))}
               </div>
               
               {/* Days grid */}
-              <div className="grid grid-cols-7 gap-1">
+              <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
                 {days.map((day, idx) => {
                   const dayAppointments = getAppointmentsForDay(day);
                   const isCurrentMonth = isSameMonth(day, currentMonth);
@@ -258,7 +258,7 @@ export default function DashboardCalendar() {
                       key={idx}
                       onClick={() => setSelectedDate(day)}
                       className={cn(
-                        "relative aspect-square p-1 sm:p-2 rounded-xl transition-all flex flex-col items-center",
+                        "relative aspect-square p-0.5 sm:p-2 rounded-lg sm:rounded-xl transition-all flex flex-col items-center justify-start pt-1 sm:pt-2",
                         !isCurrentMonth && "opacity-30",
                         isCurrentMonth && !isSelected && "hover:bg-secondary",
                         isSelected && "bg-primary text-primary-foreground",
@@ -268,7 +268,7 @@ export default function DashboardCalendar() {
                       )}
                     >
                       <span className={cn(
-                        "text-sm sm:text-base font-medium",
+                        "text-xs sm:text-sm font-medium",
                         isSelected ? "text-primary-foreground" : "text-foreground"
                       )}>
                         {format(day, 'd')}
@@ -276,22 +276,22 @@ export default function DashboardCalendar() {
                       
                       {/* Appointment indicators */}
                       {dayAppointments.length > 0 && (
-                        <div className="flex gap-0.5 mt-1 flex-wrap justify-center">
-                          {dayAppointments.slice(0, 3).map((apt, i) => (
+                        <div className="flex gap-0.5 mt-0.5 sm:mt-1 flex-wrap justify-center">
+                          {dayAppointments.slice(0, 2).map((apt, i) => (
                             <div
                               key={i}
                               className={cn(
-                                "w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full",
+                                "w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full",
                                 isSelected ? "bg-primary-foreground/80" : statusColors[apt.status] || 'bg-primary'
                               )}
                             />
                           ))}
-                          {dayAppointments.length > 3 && (
+                          {dayAppointments.length > 2 && (
                             <span className={cn(
-                              "text-[10px] font-medium",
+                              "text-[8px] sm:text-[10px] font-medium",
                               isSelected ? "text-primary-foreground" : "text-muted-foreground"
                             )}>
-                              +{dayAppointments.length - 3}
+                              +{dayAppointments.length - 2}
                             </span>
                           )}
                         </div>
@@ -299,7 +299,7 @@ export default function DashboardCalendar() {
                       
                       {blocked && (
                         <Ban className={cn(
-                          "w-3 h-3 absolute bottom-1 right-1",
+                          "w-2.5 h-2.5 sm:w-3 sm:h-3 absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1",
                           isSelected ? "text-primary-foreground/70" : "text-red-400"
                         )} />
                       )}
@@ -308,33 +308,29 @@ export default function DashboardCalendar() {
                 })}
               </div>
               
-              {/* Legend - Apple style minimal */}
-              <div className="flex flex-wrap gap-5 mt-6 pt-4 border-t border-border">
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                  <span className="text-xs font-medium text-muted-foreground">En attente</span>
+              {/* Legend */}
+              <div className="flex flex-wrap gap-3 sm:gap-5 mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-border">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-amber-400" />
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">Attente</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                  <span className="text-xs font-medium text-muted-foreground">Confirmé</span>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">Confirmé</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-blue-400" />
-                  <span className="text-xs font-medium text-muted-foreground">Terminé</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                  <span className="text-xs font-medium text-muted-foreground">Bloqué</span>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-blue-400" />
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">Terminé</span>
                 </div>
               </div>
             </Card>
 
             {/* Side panel - Selected day details */}
-            <div className="space-y-4">
-              <Card className="p-5 rounded-2xl">
-                <h3 className="font-semibold text-lg text-foreground mb-4">
+            <div className="space-y-3 sm:space-y-4">
+              <Card className="p-4 sm:p-5 rounded-2xl">
+                <h3 className="font-semibold text-base sm:text-lg text-foreground mb-3 sm:mb-4">
                   {selectedDate 
-                    ? format(selectedDate, "EEEE d MMMM", { locale: fr }) 
+                    ? format(selectedDate, "EEE d MMM", { locale: fr }) 
                     : "Sélectionnez un jour"
                   }
                 </h3>
@@ -342,17 +338,17 @@ export default function DashboardCalendar() {
                 {selectedDate && (
                   <>
                     {loading ? (
-                      <div className="flex items-center justify-center py-8">
-                        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                      <div className="flex items-center justify-center py-6 sm:py-8">
+                        <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-muted-foreground" />
                       </div>
                     ) : selectedDayAppointments.length > 0 ? (
-                      <div className="space-y-3">
+                      <div className="space-y-2 sm:space-y-3">
                         {selectedDayAppointments.sort((a, b) => 
                           a.appointment_time.localeCompare(b.appointment_time)
                         ).map(apt => (
                           <div 
                             key={apt.id}
-                            className="group p-3 bg-secondary/50 rounded-xl hover:bg-secondary transition-colors cursor-pointer"
+                            className="group p-2.5 sm:p-3 bg-secondary/50 rounded-xl hover:bg-secondary transition-colors cursor-pointer"
                             onClick={() => {
                               setSelectedAppointment(apt);
                               setRescheduleForm({ 
@@ -363,37 +359,36 @@ export default function DashboardCalendar() {
                           >
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <Clock className="w-3.5 h-3.5 text-muted-foreground" />
-                                  <span className="font-semibold text-foreground">
+                                <div className="flex items-center gap-2 mb-0.5">
+                                  <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-muted-foreground shrink-0" />
+                                  <span className="font-semibold text-foreground text-sm">
                                     {apt.appointment_time.slice(0, 5)}
                                   </span>
                                   <div className={cn(
-                                    "w-2 h-2 rounded-full",
+                                    "w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full shrink-0",
                                     statusColors[apt.status]
                                   )} />
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <User className="w-3.5 h-3.5 text-muted-foreground" />
+                                  <User className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-muted-foreground shrink-0" />
                                   <span className="text-sm text-foreground truncate">
                                     {apt.client_name}
                                   </span>
                                 </div>
                                 {apt.pack && (
-                                  <p className="text-xs text-muted-foreground mt-1 ml-5">
+                                  <p className="text-xs text-muted-foreground mt-0.5 ml-5 truncate">
                                     {apt.pack.name} • {apt.pack.price}€
                                   </p>
                                 )}
                               </div>
-                              <GripVertical className="w-4 h-4 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity" />
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-8 text-muted-foreground">
-                        <CalendarIcon className="w-10 h-10 mx-auto mb-3 opacity-30" />
-                        <p className="text-sm">Aucun rendez-vous ce jour</p>
+                      <div className="text-center py-6 sm:py-8 text-muted-foreground">
+                        <CalendarIcon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-2 sm:mb-3 opacity-30" />
+                        <p className="text-sm">Aucun RDV</p>
                       </div>
                     )}
                   </>

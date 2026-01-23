@@ -271,24 +271,19 @@ export default function DashboardStats() {
                 </Button>
               </div>
 
-              {/* KPI Cards - Shopify style: clean labels, big numbers, colored variations, action links */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              {/* KPI Cards - Responsive grid */}
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
                 {/* Réservations */}
                 <Card 
                   variant="elevated" 
-                  className="p-5 sm:p-6 cursor-pointer group hover:shadow-lg transition-all duration-200"
+                  className="p-4 sm:p-5 cursor-pointer group hover:shadow-lg transition-all duration-200 rounded-2xl"
                   onClick={() => setDetailDialog('reservations')}
                 >
-                  <div className="flex items-start justify-between mb-1">
-                    <p className="text-sm font-medium text-muted-foreground">Réservations</p>
-                    <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                      Voir le détail →
-                    </span>
-                  </div>
-                  <div className="flex items-baseline gap-3 mt-2">
-                    <p className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">{stats.thisMonthCount}</p>
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Réservations</p>
+                  <div className="flex items-baseline gap-2 sm:gap-3">
+                    <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{stats.thisMonthCount}</p>
                     {stats.countChange !== 0 && (
-                      <span className={`text-sm font-semibold px-2 py-0.5 rounded-full ${
+                      <span className={`text-xs font-semibold px-1.5 py-0.5 rounded-full ${
                         stats.countChange > 0 
                           ? 'text-emerald-700 bg-emerald-50' 
                           : 'text-red-700 bg-red-50'
@@ -302,19 +297,14 @@ export default function DashboardStats() {
                 {/* Chiffre d'affaires */}
                 <Card 
                   variant="elevated" 
-                  className="p-5 sm:p-6 cursor-pointer group hover:shadow-lg transition-all duration-200"
+                  className="p-4 sm:p-5 cursor-pointer group hover:shadow-lg transition-all duration-200 rounded-2xl"
                   onClick={() => setDetailDialog('revenue')}
                 >
-                  <div className="flex items-start justify-between mb-1">
-                    <p className="text-sm font-medium text-muted-foreground">Chiffre d'affaires</p>
-                    <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                      Voir le détail →
-                    </span>
-                  </div>
-                  <div className="flex items-baseline gap-3 mt-2">
-                    <p className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">{stats.thisMonthRevenue.toLocaleString('fr-FR')}€</p>
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">CA</p>
+                  <div className="flex items-baseline gap-2 sm:gap-3">
+                    <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{stats.thisMonthRevenue.toLocaleString('fr-FR')}€</p>
                     {stats.revenueChange !== 0 && (
-                      <span className={`text-sm font-semibold px-2 py-0.5 rounded-full ${
+                      <span className={`text-xs font-semibold px-1.5 py-0.5 rounded-full hidden sm:inline ${
                         stats.revenueChange > 0 
                           ? 'text-emerald-700 bg-emerald-50' 
                           : 'text-red-700 bg-red-50'
@@ -328,38 +318,33 @@ export default function DashboardStats() {
                 {/* Clients */}
                 <Card 
                   variant="elevated" 
-                  className="p-5 sm:p-6 cursor-pointer group hover:shadow-lg transition-all duration-200"
+                  className="p-4 sm:p-5 cursor-pointer group hover:shadow-lg transition-all duration-200 rounded-2xl"
                   onClick={() => setDetailDialog('clients')}
                 >
-                  <div className="flex items-start justify-between mb-1">
-                    <p className="text-sm font-medium text-muted-foreground">Clients uniques</p>
-                    <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                      Voir le détail →
-                    </span>
-                  </div>
-                  <p className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight mt-2">{stats.uniqueClients}</p>
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Clients</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{stats.uniqueClients}</p>
                 </Card>
 
                 {/* Panier moyen */}
-                <Card variant="elevated" className="p-5 sm:p-6">
-                  <p className="text-sm font-medium text-muted-foreground mb-1">Panier moyen</p>
-                  <p className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight mt-2">{stats.avgBasket}€</p>
+                <Card variant="elevated" className="p-4 sm:p-5 rounded-2xl">
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Panier moyen</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{stats.avgBasket}€</p>
                 </Card>
               </div>
 
-              <Tabs defaultValue="evolution" className="space-y-6">
-                <TabsList className="w-full sm:w-auto rounded-xl">
-                  <TabsTrigger value="evolution" className="flex-1 sm:flex-none rounded-lg">Évolution</TabsTrigger>
-                  <TabsTrigger value="formules" className="flex-1 sm:flex-none rounded-lg">Services</TabsTrigger>
+              <Tabs defaultValue="evolution" className="space-y-4 sm:space-y-6">
+                <TabsList className="w-full rounded-xl grid grid-cols-2 h-10">
+                  <TabsTrigger value="evolution" className="rounded-lg text-sm">Évolution</TabsTrigger>
+                  <TabsTrigger value="formules" className="rounded-lg text-sm">Services</TabsTrigger>
                 </TabsList>
 
                 {/* Evolution Tab */}
-                <TabsContent value="evolution" className="space-y-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                    {/* Weekly Chart - Apple blue gradient */}
+                <TabsContent value="evolution" className="space-y-4 sm:space-y-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {/* Weekly Chart */}
                     <Card variant="elevated" className="p-4 sm:p-6 rounded-2xl">
-                      <h3 className="font-semibold text-foreground mb-4">Réservations par semaine</h3>
-                      <div className="h-64">
+                      <h3 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">Réservations par semaine</h3>
+                      <div className="h-48 sm:h-64">
                         <ResponsiveContainer width="100%" height="100%">
                           <AreaChart data={weeklyData}>
                             <defs>

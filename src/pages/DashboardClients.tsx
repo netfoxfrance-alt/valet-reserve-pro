@@ -301,64 +301,55 @@ export default function DashboardClients() {
                     {filteredClients.map((client) => (
                       <div
                         key={client.id}
-                        className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-secondary/20 rounded-xl hover:bg-secondary/40 transition-colors cursor-pointer"
+                        className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-secondary/30 rounded-xl hover:bg-secondary/50 transition-colors cursor-pointer"
                         onClick={() => setViewingClient(client)}
                       >
-                        <div className="flex items-center gap-3 flex-1">
-                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                             <span className="text-sm font-semibold text-primary">
                               {client.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                             </span>
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <p className="font-medium text-foreground">{client.name}</p>
-                              <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              <p className="font-medium text-foreground truncate">{client.name}</p>
+                              <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
                                 client.source === 'booking' 
-                                  ? 'bg-blue-500/10 text-blue-600' 
+                                  ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400' 
                                   : 'bg-muted text-muted-foreground'
                               }`}>
-                                {client.source === 'booking' ? 'Réservation' : 'Manuel'}
+                                {client.source === 'booking' ? 'Résa' : 'Manuel'}
                               </span>
                             </div>
                             <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground mt-1">
                               {client.phone && (
-                                <a href={`tel:${client.phone}`} className="flex items-center gap-1 hover:text-primary">
-                                  <Phone className="w-3 h-3" />
-                                  {client.phone}
+                                <a href={`tel:${client.phone}`} className="flex items-center gap-1 hover:text-primary" onClick={(e) => e.stopPropagation()}>
+                                  <Phone className="w-3 h-3 shrink-0" />
+                                  <span className="truncate">{client.phone}</span>
                                 </a>
                               )}
                               {client.email && (
-                                <a href={`mailto:${client.email}`} className="flex items-center gap-1 hover:text-primary">
-                                  <Mail className="w-3 h-3" />
-                                  <span className="truncate max-w-[180px]">{client.email}</span>
+                                <a href={`mailto:${client.email}`} className="flex items-center gap-1 hover:text-primary hidden sm:flex" onClick={(e) => e.stopPropagation()}>
+                                  <Mail className="w-3 h-3 shrink-0" />
+                                  <span className="truncate max-w-[150px]">{client.email}</span>
                                 </a>
-                              )}
-                              {client.address && (
-                                <span className="flex items-center gap-1">
-                                  <MapPin className="w-3 h-3" />
-                                  <span className="truncate max-w-[180px]">{client.address}</span>
-                                </span>
                               )}
                             </div>
                             {client.default_service && (
-                              <p className="text-xs text-primary mt-1">
-                                {client.default_service.name} • {formatDuration(client.default_service.duration_minutes)} • {client.default_service.price}€
+                              <p className="text-xs text-emerald-600 mt-1 truncate">
+                                {client.default_service.name} • {client.default_service.price}€
                               </p>
                             )}
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 self-end sm:self-center">
-                          <span className="text-xs text-muted-foreground hidden sm:block">
-                            Ajouté le {format(parseISO(client.created_at), 'd MMM yyyy', { locale: fr })}
-                          </span>
-                          <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); setViewingClient(client); }}>
+                        <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                          <Button variant="outline" size="sm" className="h-8 w-8 p-0 rounded-lg" onClick={(e) => { e.stopPropagation(); setViewingClient(client); }}>
                             <Eye className="w-4 h-4" />
                           </Button>
-                          <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); openEdit(client); }}>
+                          <Button variant="outline" size="sm" className="h-8 w-8 p-0 rounded-lg" onClick={(e) => { e.stopPropagation(); openEdit(client); }}>
                             <Pencil className="w-4 h-4" />
                           </Button>
-                          <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); handleDelete(client.id); }}>
+                          <Button variant="outline" size="sm" className="h-8 w-8 p-0 rounded-lg" onClick={(e) => { e.stopPropagation(); handleDelete(client.id); }}>
                             <Trash2 className="w-4 h-4 text-destructive" />
                           </Button>
                         </div>
