@@ -5,58 +5,68 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useMyAppointments } from '@/hooks/useAppointments';
 import { useMyCenter } from '@/hooks/useCenter';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BarChart3, TrendingUp, Euro, Calendar, ArrowUpRight, ArrowDownRight, Users } from 'lucide-react';
-import { format, parseISO, startOfMonth, endOfMonth, subMonths, isWithinInterval, startOfWeek, endOfWeek, subWeeks, eachWeekOfInterval, eachMonthOfInterval, subDays } from 'date-fns';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
+import { BarChart3, TrendingUp, Euro, Calendar, ArrowUpRight, ArrowDownRight, Users, ChevronLeft, ChevronRight, X, Clock, Phone, Wrench } from 'lucide-react';
+import { format, parseISO, startOfMonth, endOfMonth, subMonths, addMonths, isWithinInterval, startOfWeek, endOfWeek, subWeeks, eachWeekOfInterval, eachMonthOfInterval } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
-const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', '#10b981', '#f59e0b', '#8b5cf6'];
+const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+
+type DetailType = 'reservations' | 'revenue' | 'clients' | 'completed' | null;
 
 export default function DashboardStats() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
+  const [detailDialog, setDetailDialog] = useState<DetailType>(null);
   const { appointments, loading } = useMyAppointments();
   const { center } = useMyCenter();
 
+  // Helper to get price from appointment
+  const getAppointmentPrice = (a: any) => a.custom_price || a.pack?.price || 0;
+  const getServiceName = (a: any) => {
+    if (a.custom_service) return a.custom_service.name;
+    if (a.pack) return a.pack.name;
+    return 'Sans formule';
+  };
+
+  // Stats for selected month
   const stats = useMemo(() => {
-    const now = new Date();
-    const thisMonthStart = startOfMonth(now);
-    const thisMonthEnd = endOfMonth(now);
-    const lastMonthStart = startOfMonth(subMonths(now, 1));
-    const lastMonthEnd = endOfMonth(subMonths(now, 1));
+    const monthStart = startOfMonth(selectedMonth);
+    const monthEnd = endOfMonth(selectedMonth);
+    const prevMonthStart = startOfMonth(subMonths(selectedMonth, 1));
+    const prevMonthEnd = endOfMonth(subMonths(selectedMonth, 1));
 
     const thisMonthAppointments = appointments.filter(a => {
       const date = parseISO(a.appointment_date);
-      return isWithinInterval(date, { start: thisMonthStart, end: thisMonthEnd }) && a.status !== 'cancelled';
+      return isWithinInterval(date, { start: monthStart, end: monthEnd }) && a.status !== 'cancelled';
     });
 
-    const lastMonthAppointments = appointments.filter(a => {
+    const prevMonthAppointments = appointments.filter(a => {
       const date = parseISO(a.appointment_date);
-      return isWithinInterval(date, { start: lastMonthStart, end: lastMonthEnd }) && a.status !== 'cancelled';
+      return isWithinInterval(date, { start: prevMonthStart, end: prevMonthEnd }) && a.status !== 'cancelled';
     });
 
-    // Include both pack prices and custom_price for personalized services
-    const getAppointmentPrice = (a: any) => a.custom_price || a.pack?.price || 0;
     const thisMonthRevenue = thisMonthAppointments.reduce((sum, a) => sum + getAppointmentPrice(a), 0);
-    const lastMonthRevenue = lastMonthAppointments.reduce((sum, a) => sum + getAppointmentPrice(a), 0);
+    const prevMonthRevenue = prevMonthAppointments.reduce((sum, a) => sum + getAppointmentPrice(a), 0);
 
-    const revenueChange = lastMonthRevenue > 0 
-      ? Math.round(((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100)
+    const revenueChange = prevMonthRevenue > 0 
+      ? Math.round(((thisMonthRevenue - prevMonthRevenue) / prevMonthRevenue) * 100)
       : 0;
 
-    const countChange = lastMonthAppointments.length > 0
-      ? Math.round(((thisMonthAppointments.length - lastMonthAppointments.length) / lastMonthAppointments.length) * 100)
+    const countChange = prevMonthAppointments.length > 0
+      ? Math.round(((thisMonthAppointments.length - prevMonthAppointments.length) / prevMonthAppointments.length) * 100)
       : 0;
 
-    // Unique clients
-    const uniqueClients = new Set(appointments.map(a => a.client_phone)).size;
-
-    // Average basket - includes both packs and custom services
-    const completedWithPrice = appointments.filter(a => a.status === 'completed' && (a.pack || a.custom_price));
-    const avgBasket = completedWithPrice.length > 0
-      ? Math.round(completedWithPrice.reduce((sum, a) => sum + getAppointmentPrice(a), 0) / completedWithPrice.length)
+    const uniqueClients = new Set(thisMonthAppointments.map(a => a.client_phone)).size;
+    const completed = thisMonthAppointments.filter(a => a.status === 'completed');
+    const avgBasket = completed.length > 0
+      ? Math.round(completed.reduce((sum, a) => sum + getAppointmentPrice(a), 0) / completed.length)
       : 0;
 
     return {
@@ -66,16 +76,17 @@ export default function DashboardStats() {
       countChange,
       uniqueClients,
       avgBasket,
+      completedCount: completed.length,
+      appointments: thisMonthAppointments,
       totalRevenue: appointments.filter(a => a.status !== 'cancelled').reduce((sum, a) => sum + getAppointmentPrice(a), 0),
     };
-  }, [appointments]);
+  }, [appointments, selectedMonth]);
 
-  // Weekly evolution data (last 8 weeks)
+  // Weekly evolution data (last 8 weeks from selected month)
   const weeklyData = useMemo(() => {
-    const now = new Date();
     const weeks = eachWeekOfInterval({
-      start: subWeeks(now, 7),
-      end: now,
+      start: subWeeks(endOfMonth(selectedMonth), 7),
+      end: endOfMonth(selectedMonth),
     }, { weekStartsOn: 1 });
 
     return weeks.map(weekStart => {
@@ -88,17 +99,16 @@ export default function DashboardStats() {
       return {
         name: format(weekStart, 'd MMM', { locale: fr }),
         réservations: weekAppointments.length,
-        revenue: weekAppointments.reduce((sum, a) => sum + ((a as any).custom_price || a.pack?.price || 0), 0),
+        revenue: weekAppointments.reduce((sum, a) => sum + getAppointmentPrice(a), 0),
       };
     });
-  }, [appointments]);
+  }, [appointments, selectedMonth]);
 
-  // Monthly evolution data (last 6 months)
+  // Monthly evolution data (last 6 months from selected month)
   const monthlyData = useMemo(() => {
-    const now = new Date();
     const months = eachMonthOfInterval({
-      start: subMonths(now, 5),
-      end: now,
+      start: subMonths(selectedMonth, 5),
+      end: selectedMonth,
     });
 
     return months.map(monthStart => {
@@ -111,37 +121,102 @@ export default function DashboardStats() {
       return {
         name: format(monthStart, 'MMM', { locale: fr }),
         réservations: monthAppointments.length,
-        revenue: monthAppointments.reduce((sum, a) => sum + ((a as any).custom_price || a.pack?.price || 0), 0),
+        revenue: monthAppointments.reduce((sum, a) => sum + getAppointmentPrice(a), 0),
       };
     });
-  }, [appointments]);
+  }, [appointments, selectedMonth]);
 
-  // Pack distribution
-  const packDistribution = useMemo(() => {
-    const packCounts: Record<string, { count: number; revenue: number }> = {};
+  // Service distribution (packs + custom services)
+  const serviceDistribution = useMemo(() => {
+    const monthStart = startOfMonth(selectedMonth);
+    const monthEnd = endOfMonth(selectedMonth);
     
-    appointments.filter(a => a.status !== 'cancelled' && a.pack).forEach(a => {
-      const name = a.pack!.name;
-      if (!packCounts[name]) {
-        packCounts[name] = { count: 0, revenue: 0 };
-      }
-      packCounts[name].count++;
-      packCounts[name].revenue += a.pack!.price;
-    });
+    const serviceCounts: Record<string, { count: number; revenue: number; type: 'pack' | 'custom' | 'none' }> = {};
+    
+    appointments
+      .filter(a => {
+        const date = parseISO(a.appointment_date);
+        return isWithinInterval(date, { start: monthStart, end: monthEnd }) && a.status !== 'cancelled';
+      })
+      .forEach(a => {
+        let name: string;
+        let type: 'pack' | 'custom' | 'none';
+        let price: number;
 
-    return Object.entries(packCounts)
+        if (a.custom_service) {
+          name = a.custom_service.name;
+          type = 'custom';
+          price = a.custom_price || a.custom_service.price;
+        } else if (a.pack) {
+          name = a.pack.name;
+          type = 'pack';
+          price = a.custom_price || a.pack.price;
+        } else {
+          name = 'Sans formule';
+          type = 'none';
+          price = a.custom_price || 0;
+        }
+
+        if (!serviceCounts[name]) {
+          serviceCounts[name] = { count: 0, revenue: 0, type };
+        }
+        serviceCounts[name].count++;
+        serviceCounts[name].revenue += price;
+      });
+
+    return Object.entries(serviceCounts)
       .map(([name, data]) => ({
         name,
         value: data.count,
         revenue: data.revenue,
+        type: data.type,
       }))
       .sort((a, b) => b.value - a.value);
-  }, [appointments]);
+  }, [appointments, selectedMonth]);
 
-  // Unique clients count
+  // Unique clients for selected month
   const uniqueClientsCount = useMemo(() => {
-    return new Set(appointments.filter(a => a.status !== 'cancelled').map(a => a.client_phone)).size;
-  }, [appointments]);
+    return new Set(stats.appointments.map(a => a.client_phone)).size;
+  }, [stats.appointments]);
+
+  // Detail appointments based on dialog type
+  const detailAppointments = useMemo(() => {
+    if (!detailDialog) return [];
+    
+    switch (detailDialog) {
+      case 'reservations':
+        return stats.appointments;
+      case 'revenue':
+        return stats.appointments.filter(a => getAppointmentPrice(a) > 0);
+      case 'clients':
+        // Return unique clients with their appointments
+        const clientMap = new Map<string, typeof stats.appointments>();
+        stats.appointments.forEach(a => {
+          if (!clientMap.has(a.client_phone)) {
+            clientMap.set(a.client_phone, []);
+          }
+          clientMap.get(a.client_phone)!.push(a);
+        });
+        return Array.from(clientMap.values()).map(appts => appts[0]);
+      case 'completed':
+        return stats.appointments.filter(a => a.status === 'completed');
+      default:
+        return [];
+    }
+  }, [detailDialog, stats.appointments]);
+
+  const detailTitle = {
+    reservations: 'Toutes les réservations',
+    revenue: 'Détail du chiffre d\'affaires',
+    clients: 'Clients uniques',
+    completed: 'Réservations terminées',
+  };
+
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    setSelectedMonth(prev => direction === 'prev' ? subMonths(prev, 1) : addMonths(prev, 1));
+  };
+
+  const isCurrentMonth = format(selectedMonth, 'yyyy-MM') === format(new Date(), 'yyyy-MM');
 
   return (
     <div className="min-h-screen bg-background">
@@ -165,9 +240,43 @@ export default function DashboardStats() {
             </div>
           ) : (
             <>
-              {/* KPI Cards */}
+              {/* Month Navigation */}
+              <div className="flex items-center justify-between mb-6">
+                <Button variant="ghost" size="icon" onClick={() => navigateMonth('prev')}>
+                  <ChevronLeft className="w-5 h-5" />
+                </Button>
+                <div className="text-center">
+                  <h2 className="text-xl font-semibold text-foreground capitalize">
+                    {format(selectedMonth, 'MMMM yyyy', { locale: fr })}
+                  </h2>
+                  {!isCurrentMonth && (
+                    <Button 
+                      variant="link" 
+                      size="sm" 
+                      className="text-primary text-xs p-0 h-auto"
+                      onClick={() => setSelectedMonth(new Date())}
+                    >
+                      Revenir à aujourd'hui
+                    </Button>
+                  )}
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => navigateMonth('next')}
+                  disabled={isCurrentMonth}
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </Button>
+              </div>
+
+              {/* KPI Cards - Clickable */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
-                <Card variant="elevated" className="p-4 sm:p-5">
+                <Card 
+                  variant="elevated" 
+                  className="p-4 sm:p-5 cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all"
+                  onClick={() => setDetailDialog('reservations')}
+                >
                   <div className="flex items-start justify-between mb-2">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                       <Calendar className="w-5 h-5 text-primary" />
@@ -180,10 +289,14 @@ export default function DashboardStats() {
                     )}
                   </div>
                   <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.thisMonthCount}</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Réservations ce mois</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Réservations</p>
                 </Card>
 
-                <Card variant="elevated" className="p-4 sm:p-5">
+                <Card 
+                  variant="elevated" 
+                  className="p-4 sm:p-5 cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all"
+                  onClick={() => setDetailDialog('revenue')}
+                >
                   <div className="flex items-start justify-between mb-2">
                     <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
                       <Euro className="w-5 h-5 text-green-600" />
@@ -199,7 +312,11 @@ export default function DashboardStats() {
                   <p className="text-xs sm:text-sm text-muted-foreground">Chiffre d'affaires</p>
                 </Card>
 
-                <Card variant="elevated" className="p-4 sm:p-5">
+                <Card 
+                  variant="elevated" 
+                  className="p-4 sm:p-5 cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all"
+                  onClick={() => setDetailDialog('clients')}
+                >
                   <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center mb-2">
                     <Users className="w-5 h-5 text-blue-600" />
                   </div>
@@ -219,7 +336,7 @@ export default function DashboardStats() {
               <Tabs defaultValue="evolution" className="space-y-6">
                 <TabsList className="w-full sm:w-auto">
                   <TabsTrigger value="evolution" className="flex-1 sm:flex-none">Évolution</TabsTrigger>
-                  <TabsTrigger value="formules" className="flex-1 sm:flex-none">Formules</TabsTrigger>
+                  <TabsTrigger value="formules" className="flex-1 sm:flex-none">Services</TabsTrigger>
                 </TabsList>
 
                 {/* Evolution Tab */}
@@ -283,25 +400,34 @@ export default function DashboardStats() {
                     </Card>
                   </div>
 
-                  {/* Total stats */}
+                  {/* Total stats - Clickable */}
                   <Card variant="elevated" className="p-4 sm:p-6">
-                    <h3 className="font-semibold text-foreground mb-4">Récapitulatif global</h3>
+                    <h3 className="font-semibold text-foreground mb-4">Récapitulatif du mois</h3>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                      <div className="text-center p-4 bg-secondary/30 rounded-xl">
-                        <p className="text-2xl sm:text-3xl font-bold text-foreground">{appointments.filter(a => a.status !== 'cancelled').length}</p>
+                      <div 
+                        className="text-center p-4 bg-secondary/30 rounded-xl cursor-pointer hover:bg-secondary/50 transition-colors"
+                        onClick={() => setDetailDialog('reservations')}
+                      >
+                        <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.thisMonthCount}</p>
                         <p className="text-sm text-muted-foreground">Total réservations</p>
                       </div>
-                      <div className="text-center p-4 bg-secondary/30 rounded-xl">
-                        <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.totalRevenue.toLocaleString('fr-FR')}€</p>
-                        <p className="text-sm text-muted-foreground">CA total</p>
+                      <div 
+                        className="text-center p-4 bg-secondary/30 rounded-xl cursor-pointer hover:bg-secondary/50 transition-colors"
+                        onClick={() => setDetailDialog('revenue')}
+                      >
+                        <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.thisMonthRevenue.toLocaleString('fr-FR')}€</p>
+                        <p className="text-sm text-muted-foreground">CA du mois</p>
                       </div>
-                      <div className="text-center p-4 bg-secondary/30 rounded-xl">
-                        <p className="text-2xl sm:text-3xl font-bold text-foreground">{appointments.filter(a => a.status === 'completed').length}</p>
+                      <div 
+                        className="text-center p-4 bg-secondary/30 rounded-xl cursor-pointer hover:bg-secondary/50 transition-colors"
+                        onClick={() => setDetailDialog('completed')}
+                      >
+                        <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.completedCount}</p>
                         <p className="text-sm text-muted-foreground">Terminées</p>
                       </div>
                       <div className="text-center p-4 bg-secondary/30 rounded-xl">
                         <p className="text-2xl sm:text-3xl font-bold text-foreground">
-                          {uniqueClientsCount > 0 ? Math.round(appointments.filter(a => a.status !== 'cancelled').length / uniqueClientsCount * 10) / 10 : 0}
+                          {uniqueClientsCount > 0 ? Math.round(stats.thisMonthCount / uniqueClientsCount * 10) / 10 : 0}
                         </p>
                         <p className="text-sm text-muted-foreground">Visites/client</p>
                       </div>
@@ -309,13 +435,13 @@ export default function DashboardStats() {
                   </Card>
                 </TabsContent>
 
-                {/* Formules Tab */}
+                {/* Services Tab (renamed from Formules) */}
                 <TabsContent value="formules" className="space-y-6">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     {/* Pie Chart */}
                     <Card variant="elevated" className="p-4 sm:p-6">
-                      <h3 className="font-semibold text-foreground mb-4">Répartition des formules</h3>
-                      {packDistribution.length === 0 ? (
+                      <h3 className="font-semibold text-foreground mb-4">Répartition des services</h3>
+                      {serviceDistribution.length === 0 ? (
                         <div className="h-64 flex items-center justify-center">
                           <p className="text-muted-foreground">Aucune donnée disponible</p>
                         </div>
@@ -324,7 +450,7 @@ export default function DashboardStats() {
                           <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                               <Pie
-                                data={packDistribution}
+                                data={serviceDistribution}
                                 cx="50%"
                                 cy="50%"
                                 innerRadius={60}
@@ -332,7 +458,7 @@ export default function DashboardStats() {
                                 paddingAngle={2}
                                 dataKey="value"
                               >
-                                {packDistribution.map((_, index) => (
+                                {serviceDistribution.map((_, index) => (
                                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
                               </Pie>
@@ -350,29 +476,35 @@ export default function DashboardStats() {
                       )}
                     </Card>
 
-                    {/* Pack list */}
+                    {/* Service list */}
                     <Card variant="elevated" className="p-4 sm:p-6">
-                      <h3 className="font-semibold text-foreground mb-4">Performance par formule</h3>
-                      {packDistribution.length === 0 ? (
+                      <h3 className="font-semibold text-foreground mb-4">Performance par service</h3>
+                      {serviceDistribution.length === 0 ? (
                         <p className="text-muted-foreground text-center py-8">Aucune donnée disponible</p>
                       ) : (
                         <div className="space-y-3">
-                          {packDistribution.map((pack, index) => {
-                            const total = packDistribution.reduce((sum, p) => sum + p.value, 0);
-                            const pct = Math.round((pack.value / total) * 100);
+                          {serviceDistribution.map((service, index) => {
+                            const total = serviceDistribution.reduce((sum, p) => sum + p.value, 0);
+                            const pct = Math.round((service.value / total) * 100);
                             return (
-                              <div key={pack.name} className="space-y-2">
+                              <div key={service.name} className="space-y-2">
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2">
                                     <div 
                                       className="w-3 h-3 rounded-full" 
                                       style={{ backgroundColor: COLORS[index % COLORS.length] }}
                                     />
-                                    <span className="font-medium text-foreground">{pack.name}</span>
+                                    <span className="font-medium text-foreground">{service.name}</span>
+                                    {service.type === 'custom' && (
+                                      <Badge variant="secondary" className="text-xs">
+                                        <Wrench className="w-3 h-3 mr-1" />
+                                        Perso
+                                      </Badge>
+                                    )}
                                   </div>
                                   <div className="text-right">
-                                    <span className="font-semibold text-foreground">{pack.revenue}€</span>
-                                    <span className="text-muted-foreground text-sm ml-2">({pack.value})</span>
+                                    <span className="font-semibold text-foreground">{service.revenue}€</span>
+                                    <span className="text-muted-foreground text-sm ml-2">({service.value})</span>
                                   </div>
                                 </div>
                                 <div className="h-2 bg-secondary rounded-full overflow-hidden">
@@ -397,6 +529,57 @@ export default function DashboardStats() {
           )}
         </main>
       </div>
+
+      {/* Detail Dialog */}
+      <Dialog open={!!detailDialog} onOpenChange={() => setDetailDialog(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh]">
+          <DialogHeader>
+            <DialogTitle>{detailDialog ? detailTitle[detailDialog] : ''}</DialogTitle>
+            <DialogDescription className="sr-only">
+              Détail des données statistiques pour le mois sélectionné
+            </DialogDescription>
+          </DialogHeader>
+          <div className="text-sm text-muted-foreground mb-4">
+            {format(selectedMonth, 'MMMM yyyy', { locale: fr })} • {detailAppointments.length} {detailDialog === 'clients' ? 'clients' : 'réservations'}
+          </div>
+          <ScrollArea className="h-[60vh] pr-4">
+            <div className="space-y-3">
+              {detailAppointments.map((apt) => (
+                <Card key={apt.id} className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <p className="font-medium text-foreground">{apt.client_name}</p>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Phone className="w-3 h-3" />
+                        {apt.client_phone}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Calendar className="w-3 h-3" />
+                        {format(parseISO(apt.appointment_date), 'd MMMM yyyy', { locale: fr })}
+                        <Clock className="w-3 h-3 ml-2" />
+                        {apt.appointment_time.slice(0, 5)}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-foreground">{getAppointmentPrice(apt)}€</p>
+                      <p className="text-sm text-muted-foreground">{getServiceName(apt)}</p>
+                      <Badge 
+                        variant={apt.status === 'completed' ? 'default' : apt.status === 'confirmed' ? 'secondary' : 'outline'}
+                        className="mt-1"
+                      >
+                        {apt.status === 'completed' ? 'Terminé' : apt.status === 'confirmed' ? 'Confirmé' : 'En attente'}
+                      </Badge>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+              {detailAppointments.length === 0 && (
+                <p className="text-center text-muted-foreground py-8">Aucune donnée pour cette période</p>
+              )}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
