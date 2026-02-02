@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useMyCenter } from '@/hooks/useCenter';
 import { useMyContactRequests } from '@/hooks/useContactRequests';
-import { MessageSquare, Phone, Clock, CheckCircle, XCircle, MapPin } from 'lucide-react';
+import { MessageSquare, Phone, Clock, CheckCircle, XCircle, MapPin, Mail } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -38,7 +38,7 @@ export default function DashboardRequests() {
   };
 
   const handleMarkContacted = async (id: string) => {
-    await updateStatus(id, 'contacted');
+    await updateStatus(id, 'contacted', true);
   };
 
   const handleMarkConverted = async (id: string) => {
@@ -114,9 +114,44 @@ export default function DashboardRequests() {
                             >
                               {request.client_phone}
                             </a>
+                            {request.client_email && (
+                              <span className="text-sm text-muted-foreground">
+                                {request.client_email}
+                              </span>
+                            )}
                           </div>
                         </div>
                         {getStatusBadge(request.status)}
+                      </div>
+                      
+                      {/* Quick Actions */}
+                      <div className="flex flex-wrap gap-2">
+                        {request.client_phone && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            asChild
+                            className="h-9 rounded-xl"
+                          >
+                            <a href={`tel:${request.client_phone}`}>
+                              <Phone className="w-4 h-4 mr-1.5" />
+                              Appeler
+                            </a>
+                          </Button>
+                        )}
+                        {request.client_email && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            asChild
+                            className="h-9 rounded-xl"
+                          >
+                            <a href={`mailto:${request.client_email}`}>
+                              <Mail className="w-4 h-4 mr-1.5" />
+                              Email
+                            </a>
+                          </Button>
+                        )}
                       </div>
                       
                       {/* Address */}
@@ -139,10 +174,18 @@ export default function DashboardRequests() {
                       )}
                       
                       {/* Footer */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <Clock className="w-3.5 h-3.5" />
-                          {format(new Date(request.created_at), "d MMM yyyy 'à' HH:mm", { locale: fr })}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-border/50">
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <Clock className="w-3.5 h-3.5" />
+                            Reçue le {format(new Date(request.created_at), "d MMM yyyy 'à' HH:mm", { locale: fr })}
+                          </div>
+                          {request.contacted_at && (
+                            <div className="flex items-center gap-2 text-xs text-green-600">
+                              <CheckCircle className="w-3.5 h-3.5" />
+                              Contacté le {format(new Date(request.contacted_at), "d MMM yyyy 'à' HH:mm", { locale: fr })}
+                            </div>
+                          )}
                         </div>
                         
                         <div className="flex flex-wrap gap-2">

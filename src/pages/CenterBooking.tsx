@@ -204,6 +204,7 @@ export default function CenterBooking() {
     const { error } = await createContactRequest({
       center_id: center.id,
       client_name: data.name,
+      client_email: data.email,
       client_phone: data.phone,
       client_address: data.address,
       message: data.message,

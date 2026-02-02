@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { User, Phone, MessageSquare, MapPin } from 'lucide-react';
+import { User, Phone, MessageSquare, MapPin, Mail } from 'lucide-react';
 
 export interface ContactRequestData {
   name: string;
+  email: string;
   phone: string;
   address: string;
   message: string;
@@ -20,13 +21,14 @@ interface ContactRequestFormProps {
 
 export function ContactRequestForm({ onSubmit, isSubmitting }: ContactRequestFormProps) {
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [message, setMessage] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ name, phone, address, message });
+    onSubmit({ name, email, phone, address, message });
   };
 
   return (
@@ -52,6 +54,22 @@ export function ContactRequestForm({ onSubmit, isSubmitting }: ContactRequestFor
                 placeholder="Jean Dupont"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                className="pl-12 h-12 rounded-xl"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email">Email *</Label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Input
+                id="email"
+                type="email"
+                placeholder="jean.dupont@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="pl-12 h-12 rounded-xl"
                 required
               />
