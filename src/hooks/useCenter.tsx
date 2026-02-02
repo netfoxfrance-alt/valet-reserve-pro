@@ -6,7 +6,7 @@ import { CenterCustomization, defaultCustomization, migrateToBlocks } from '@/ty
 
 export interface Center {
   id: string;
-  owner_id: string;
+  owner_id?: string; // Optional - not available in public queries for security
   slug: string;
   name: string;
   address: string | null;
@@ -17,7 +17,7 @@ export interface Center {
   ai_enabled: boolean;
   subscription_plan: 'free' | 'pro' | 'trial' | 'expired' | 'past_due';
   customization: CenterCustomization;
-  ical_token?: string | null; // Token for iCal calendar sync
+  ical_token?: string | null; // Token for iCal calendar sync - owner only
   created_at: string;
   updated_at: string;
 }
@@ -145,10 +145,10 @@ export function useCenterBySlug(slug: string) {
       setLoading(true);
       setError(null);
 
-      // Fetch center - only select public-safe columns (excludes email, stripe_customer_id, stripe_subscription_id)
+      // Fetch center from the secure public view (excludes sensitive data like email, stripe IDs, ical_token)
       const { data: centerData, error: centerError } = await supabase
-        .from('centers')
-        .select('id, owner_id, slug, name, address, phone, logo_url, customization, welcome_message, ai_enabled, subscription_plan, created_at, updated_at')
+        .from('public_centers_view')
+        .select('*')
         .eq('slug', slug)
         .maybeSingle();
 
