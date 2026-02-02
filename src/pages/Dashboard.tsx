@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -10,11 +10,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { Calendar, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail, Users, MoreHorizontal, CalendarPlus } from 'lucide-react';
+import { Calendar, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail, Users, MoreHorizontal, CalendarPlus, CalendarCheck } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
 import { useMyClients, Client } from '@/hooks/useClients';
 import { useMyCustomServices, formatDuration, CustomService } from '@/hooks/useCustomServices';
+import { useCalendarSync } from '@/hooks/useCalendarSync';
 import { format, isToday, isTomorrow, parseISO, startOfDay, isBefore, addDays, addMonths, startOfMonth, endOfMonth, isSameMonth } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -48,15 +49,17 @@ const vehicleLabels: Record<string, string> = {
   standard: 'Standard',
 };
 
-function AppointmentRow({ appointment, centerAddress, onUpdateStatus, onConfirmAppointment, onRefuseAppointment, onCancelAppointment, onSendEmail, onViewDetails }: { 
+function AppointmentRow({ appointment, centerAddress, isSynced, onUpdateStatus, onConfirmAppointment, onRefuseAppointment, onCancelAppointment, onSendEmail, onViewDetails, onAddToCalendar }: { 
   appointment: Appointment; 
   centerAddress?: string;
+  isSynced: boolean;
   onUpdateStatus: (id: string, status: Appointment['status']) => void;
   onConfirmAppointment: (appointment: Appointment) => void;
   onRefuseAppointment: (appointment: Appointment) => void;
   onCancelAppointment: (appointment: Appointment) => void;
   onSendEmail: (appointment: Appointment, kind: 'confirmation' | 'reminder') => void;
   onViewDetails: (appointment: Appointment) => void;
+  onAddToCalendar: (appointment: Appointment) => void;
 }) {
   const status = statusConfig[appointment.status] || statusConfig.pending_validation;
   const date = parseISO(appointment.appointment_date);
@@ -88,6 +91,7 @@ function AppointmentRow({ appointment, centerAddress, onUpdateStatus, onConfirmA
       center_address: centerAddress,
     });
     window.open(url, '_blank');
+    onAddToCalendar(appointment);
   };
 
   return (
@@ -187,15 +191,27 @@ function AppointmentRow({ appointment, centerAddress, onUpdateStatus, onConfirmA
           {/* Confirmed: Add to calendar, complete, or cancel */}
           {appointment.status === 'confirmed' && (
             <>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-xl text-primary hover:text-primary hover:bg-primary/10"
-                onClick={handleAddToCalendar}
-                title="Ajouter à Google Agenda"
-              >
-                <CalendarPlus className="w-4 h-4" />
-              </Button>
+              {isSynced ? (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 rounded-xl text-primary hover:text-primary hover:bg-primary/10"
+                  onClick={handleAddToCalendar}
+                  title="Déjà ajouté à l'agenda (cliquez pour rajouter)"
+                >
+                  <CalendarCheck className="w-4 h-4" />
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10"
+                  onClick={handleAddToCalendar}
+                  title="Ajouter à Google Agenda"
+                >
+                  <CalendarPlus className="w-4 h-4" />
+                </Button>
+              )}
               <Button
                 variant="outline"
                 size="sm"
@@ -229,8 +245,9 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
   const { packs } = useMyPacks();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<'pack' | 'client'>('pack');
   const [selectedClientId, setSelectedClientId] = useState('');
+  // Service type: 'pack' for classic formulas, 'custom' for personalized services
+  const [serviceType, setServiceType] = useState<'pack' | 'custom'>('pack');
   const [form, setForm] = useState({
     client_name: '',
     client_email: '',
@@ -244,7 +261,7 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
     notes: ''
   });
 
-  // When a registered client is selected, pre-fill form with their data (but allow changing service)
+  // When a registered client is selected, pre-fill form with their data
   const handleClientSelect = (clientId: string) => {
     setSelectedClientId(clientId);
     if (clientId) {
@@ -256,11 +273,15 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
           client_email: client.email || '',
           client_phone: client.phone || '',
           client_address: client.address || '',
-          // Pre-fill with default service but allow override
+          // Pre-fill with default service if available
           custom_service_id: client.default_service_id || '',
           custom_price: client.default_service?.price?.toString() || '',
+          pack_id: '',
         });
-        setMode('client');
+        // If client has a default custom service, select custom type
+        if (client.default_service_id) {
+          setServiceType('custom');
+        }
       }
     } else {
       setForm({
@@ -271,12 +292,24 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
         client_address: '',
         custom_service_id: '',
         custom_price: '',
+        pack_id: '',
       });
+      setServiceType('pack');
     }
   };
 
-  // When service is changed, update price accordingly
-  const handleServiceChange = (serviceId: string) => {
+  // When service type changes, reset the respective field
+  const handleServiceTypeChange = (type: 'pack' | 'custom') => {
+    setServiceType(type);
+    if (type === 'pack') {
+      setForm({ ...form, custom_service_id: '', custom_price: '' });
+    } else {
+      setForm({ ...form, pack_id: '' });
+    }
+  };
+
+  // When custom service is changed, update price accordingly
+  const handleCustomServiceChange = (serviceId: string) => {
     const service = services.find(s => s.id === serviceId);
     setForm({
       ...form,
@@ -285,8 +318,14 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
     });
   };
 
-  // Get selected service details
-  const selectedService = services.find(s => s.id === form.custom_service_id);
+  // When pack is changed
+  const handlePackChange = (packId: string) => {
+    setForm({ ...form, pack_id: packId });
+  };
+
+  // Get selected service/pack details
+  const selectedCustomService = services.find(s => s.id === form.custom_service_id);
+  const selectedPack = packs.find(p => p.id === form.pack_id);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -307,18 +346,19 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
       vehicle_type: 'standard',
     };
 
-    // If using a registered client with custom service
-    if (mode === 'client' && selectedClientId) {
+    // Link client if selected
+    if (selectedClientId) {
       payload.client_id = selectedClientId;
-      if (form.custom_service_id) {
-        payload.custom_service_id = form.custom_service_id;
-        payload.custom_price = parseFloat(form.custom_price) || selectedService?.price;
-        payload.duration_minutes = selectedService?.duration_minutes;
-        payload.service_name = selectedService?.name;
-      }
-    } else {
-      // Standard pack mode
-      payload.pack_id = form.pack_id || null;
+    }
+
+    // Add service based on type
+    if (serviceType === 'custom' && form.custom_service_id) {
+      payload.custom_service_id = form.custom_service_id;
+      payload.custom_price = parseFloat(form.custom_price) || selectedCustomService?.price;
+      payload.duration_minutes = selectedCustomService?.duration_minutes;
+      payload.service_name = selectedCustomService?.name;
+    } else if (serviceType === 'pack' && form.pack_id) {
+      payload.pack_id = form.pack_id;
     }
 
     await onAdd(payload);
@@ -326,7 +366,7 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
     setOpen(false);
     // Reset form
     setSelectedClientId('');
-    setMode('pack');
+    setServiceType('pack');
     setForm({
       client_name: '',
       client_email: '',
@@ -382,35 +422,93 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
                   ))}
                 </SelectContent>
               </Select>
-              {/* Service selector - allows override of default service */}
-              {selectedClientId && services.length > 0 && (
-                <div className="space-y-2 mt-3">
-                  <Label>Prestation</Label>
-                  <Select value={form.custom_service_id} onValueChange={handleServiceChange}>
-                    <SelectTrigger className="h-11 rounded-xl">
-                      <SelectValue placeholder="Sélectionner une prestation" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {services.map((service) => (
-                        <SelectItem key={service.id} value={service.id}>
-                          {service.name} - {service.price}€ ({formatDuration(service.duration_minutes)})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {selectedService && (
-                    <div className="bg-primary/5 rounded-lg p-3 text-sm">
-                      <p className="font-medium text-primary">{selectedService.name}</p>
-                      <p className="text-muted-foreground">
-                        {formatDuration(selectedService.duration_minutes)} • {selectedService.price}€
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
           )}
 
+          {/* Service type selector - toggle between packs and custom services */}
+          <div className="space-y-3">
+            <Label>Type de prestation</Label>
+            <div className="flex bg-muted/60 rounded-xl p-1">
+              <button
+                type="button"
+                onClick={() => handleServiceTypeChange('pack')}
+                className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                  serviceType === 'pack' 
+                    ? 'bg-background text-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Formules
+              </button>
+              {services.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => handleServiceTypeChange('custom')}
+                  className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    serviceType === 'custom' 
+                      ? 'bg-background text-foreground shadow-sm' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  Prestations perso
+                </button>
+              )}
+            </div>
+
+            {/* Pack selector */}
+            {serviceType === 'pack' && (
+              <div className="space-y-2">
+                <Select value={form.pack_id} onValueChange={handlePackChange}>
+                  <SelectTrigger className="h-11 rounded-xl">
+                    <SelectValue placeholder="Sélectionner une formule" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {packs.map((pack) => (
+                      <SelectItem key={pack.id} value={pack.id}>
+                        {pack.name} - {pack.price}€
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedPack && (
+                  <div className="bg-primary/5 rounded-lg p-3 text-sm">
+                    <p className="font-medium text-primary">{selectedPack.name}</p>
+                    <p className="text-muted-foreground">
+                      {selectedPack.duration || 'Durée variable'} • {selectedPack.price}€
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Custom service selector */}
+            {serviceType === 'custom' && services.length > 0 && (
+              <div className="space-y-2">
+                <Select value={form.custom_service_id} onValueChange={handleCustomServiceChange}>
+                  <SelectTrigger className="h-11 rounded-xl">
+                    <SelectValue placeholder="Sélectionner une prestation" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {services.map((service) => (
+                      <SelectItem key={service.id} value={service.id}>
+                        {service.name} - {service.price}€ ({formatDuration(service.duration_minutes)})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedCustomService && (
+                  <div className="bg-primary/5 rounded-lg p-3 text-sm">
+                    <p className="font-medium text-primary">{selectedCustomService.name}</p>
+                    <p className="text-muted-foreground">
+                      {formatDuration(selectedCustomService.duration_minutes)} • {selectedCustomService.price}€
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Client info - only editable for new clients */}
           <div className="space-y-2">
             <Label htmlFor="client_name">Nom du client *</Label>
             <Input
@@ -448,25 +546,6 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
               />
             </div>
           </div>
-          
-          {/* Show pack selection only if NOT using registered client */}
-          {!selectedClientId && (
-            <div className="space-y-2">
-              <Label>Formule</Label>
-              <Select value={form.pack_id} onValueChange={(v) => setForm({ ...form, pack_id: v })}>
-                <SelectTrigger className="h-11 rounded-xl">
-                  <SelectValue placeholder="Sélectionner une formule" />
-                </SelectTrigger>
-                <SelectContent>
-                  {packs.map((pack) => (
-                    <SelectItem key={pack.id} value={pack.id}>
-                      {pack.name} - {pack.price}€
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -531,6 +610,7 @@ export default function Dashboard() {
   const { center } = useMyCenter();
   const { clients } = useMyClients();
   const { services } = useMyCustomServices();
+  const { markAsSynced, isSynced: checkIsSynced } = useCalendarSync();
   
   const today = startOfDay(new Date());
   const weekEnd = addDays(today, 7);
@@ -866,12 +946,14 @@ export default function Dashboard() {
                           key={appointment.id} 
                           appointment={appointment}
                           centerAddress={center?.address || undefined}
+                          isSynced={checkIsSynced(appointment.id)}
                           onUpdateStatus={handleUpdateStatus}
                           onConfirmAppointment={handleConfirmAppointment}
                           onRefuseAppointment={handleRefuseAppointment}
                           onCancelAppointment={handleCancelAppointment}
                           onSendEmail={handleSendEmail}
                           onViewDetails={handleViewDetails}
+                          onAddToCalendar={(apt) => markAsSynced(apt.id)}
                         />
                       ))}
                     </div>
@@ -898,6 +980,8 @@ export default function Dashboard() {
         onOpenChange={setConfirmDialogOpen}
         appointment={justConfirmedAppointment}
         centerAddress={center?.address}
+        isAlreadySynced={justConfirmedAppointment ? checkIsSynced(justConfirmedAppointment.id) : false}
+        onAddToCalendar={() => justConfirmedAppointment && markAsSynced(justConfirmedAppointment.id)}
       />
     </div>
   );
