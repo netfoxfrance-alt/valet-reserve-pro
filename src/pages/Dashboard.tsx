@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { Calendar, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail, Users, MoreHorizontal, Send } from 'lucide-react';
+import { Calendar, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail, Users, MoreHorizontal } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
 import { useMyClients, Client } from '@/hooks/useClients';
@@ -19,13 +19,13 @@ import { format, isToday, isTomorrow, parseISO, startOfDay, isBefore, addDays, a
 import { fr } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { sendBookingEmail, getClientEmail, buildEmailPayload, EmailType } from '@/lib/emailService';
 
 // Apple-style status colors - clean and vibrant
 const statusConfig: Record<string, { label: string; color: string }> = {
@@ -44,9 +44,6 @@ const vehicleLabels: Record<string, string> = {
   utilitaire: 'Utilitaire',
   standard: 'Standard',
 };
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 function AppointmentRow({ appointment, onUpdateStatus, onConfirmAppointment, onRefuseAppointment, onCancelAppointment, onSendEmail }: { 
   appointment: Appointment; 
@@ -579,58 +576,59 @@ export default function Dashboard() {
       return;
     }
 
-    // Use the latest client email from the client record when available
-    let clientEmail = appointment.client_email;
-    if (appointment.client_id) {
-      const { data: client } = await supabase
-        .from('clients')
-        .select('email')
-        .eq('id', appointment.client_id)
-        .maybeSingle();
-      if (client?.email) clientEmail = client.email;
-    }
-
-    if (!clientEmail || clientEmail === 'non-fourni@example.com') {
+    const clientEmail = await getClientEmail(appointment.client_email, appointment.client_id);
+    if (!clientEmail) {
       toast.error("Aucun email client valide");
       return;
     }
     
     const toastId = toast.loading(kind === 'reminder' ? 'Envoi du rappel…' : 'Envoi de la confirmation…');
     
-    try {
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-        },
-        body: JSON.stringify({
-          center_id: center.id,
-          client_name: appointment.client_name,
-          client_email: clientEmail,
-          client_phone: appointment.client_phone,
-          pack_name: serviceName,
-          price: price,
-          appointment_date: appointment.appointment_date,
-          appointment_time: appointment.appointment_time,
-          notes: appointment.notes,
-          email_type: kind,
-        }),
-      });
-
-      const bodyText = await response.text();
-      toast.dismiss(toastId);
-      
-      if (response.ok) {
-        toast.success(kind === 'reminder' ? 'Email de rappel envoyé' : 'Email de confirmation envoyé');
-      } else {
-        console.warn('[Send Email] Failed:', response.status, bodyText);
-        toast.error("Échec de l'envoi (voir console)");
-      }
-    } catch (error) {
-      toast.dismiss(toastId);
-      toast.error('Erreur réseau');
+    const payload = buildEmailPayload(
+      center.id,
+      appointment,
+      clientEmail,
+      serviceName,
+      price,
+      kind as EmailType
+    );
+    
+    const result = await sendBookingEmail(payload);
+    toast.dismiss(toastId);
+    
+    if (result.success) {
+      toast.success(kind === 'reminder' ? 'Email de rappel envoyé' : 'Email de confirmation envoyé');
+    } else {
+      toast.error("Échec de l'envoi");
     }
+  };
+
+  // Helper to send email for status change (fire-and-forget)
+  const sendStatusEmail = async (
+    appointment: Appointment,
+    emailType: EmailType
+  ) => {
+    if (!center) return;
+    
+    const serviceName = appointment.custom_service?.name || appointment.pack?.name;
+    const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
+    
+    if (!serviceName || price === undefined) return;
+    
+    const clientEmail = await getClientEmail(appointment.client_email, appointment.client_id);
+    if (!clientEmail) return;
+    
+    const payload = buildEmailPayload(
+      center.id,
+      appointment,
+      clientEmail,
+      serviceName,
+      price,
+      emailType
+    );
+    
+    // Fire-and-forget: don't await, don't block UI
+    sendBookingEmail(payload).catch(() => {});
   };
 
   // Confirm appointment: update status + send confirmation email
@@ -641,48 +639,7 @@ export default function Dashboard() {
       return;
     }
     toast.success('Rendez-vous confirmé');
-    
-    // Send confirmation email
-    const serviceName = appointment.custom_service?.name || appointment.pack?.name;
-    const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
-    
-    if (!serviceName || price === undefined) return;
-    
-    let clientEmail = appointment.client_email;
-    if (appointment.client_id) {
-      const { data: client } = await supabase
-        .from('clients')
-        .select('email')
-        .eq('id', appointment.client_id)
-        .maybeSingle();
-      if (client?.email) clientEmail = client.email;
-    }
-    
-    if (!clientEmail || clientEmail === 'non-fourni@example.com') return;
-    
-    try {
-      await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-        },
-        body: JSON.stringify({
-          center_id: center?.id,
-          client_name: appointment.client_name,
-          client_email: clientEmail,
-          client_phone: appointment.client_phone,
-          pack_name: serviceName,
-          price: price,
-          appointment_date: appointment.appointment_date,
-          appointment_time: appointment.appointment_time,
-          notes: appointment.notes,
-          email_type: 'confirmation',
-        }),
-      });
-    } catch (e) {
-      console.warn('[Confirmation Email] Error:', e);
-    }
+    sendStatusEmail(appointment, 'confirmation');
   };
 
   // Refuse appointment: update status + send refusal email
@@ -693,46 +650,7 @@ export default function Dashboard() {
       return;
     }
     toast.success('Demande refusée');
-    
-    const serviceName = appointment.custom_service?.name || appointment.pack?.name;
-    const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
-    
-    if (!serviceName || price === undefined) return;
-    
-    let clientEmail = appointment.client_email;
-    if (appointment.client_id) {
-      const { data: client } = await supabase
-        .from('clients')
-        .select('email')
-        .eq('id', appointment.client_id)
-        .maybeSingle();
-      if (client?.email) clientEmail = client.email;
-    }
-    
-    if (!clientEmail || clientEmail === 'non-fourni@example.com') return;
-    
-    try {
-      await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-        },
-        body: JSON.stringify({
-          center_id: center?.id,
-          client_name: appointment.client_name,
-          client_email: clientEmail,
-          client_phone: appointment.client_phone,
-          pack_name: serviceName,
-          price: price,
-          appointment_date: appointment.appointment_date,
-          appointment_time: appointment.appointment_time,
-          email_type: 'refused',
-        }),
-      });
-    } catch (e) {
-      console.warn('[Refusal Email] Error:', e);
-    }
+    sendStatusEmail(appointment, 'refused');
   };
 
   // Cancel appointment: update status + send cancellation email
@@ -743,46 +661,7 @@ export default function Dashboard() {
       return;
     }
     toast.success('Rendez-vous annulé');
-    
-    const serviceName = appointment.custom_service?.name || appointment.pack?.name;
-    const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
-    
-    if (!serviceName || price === undefined) return;
-    
-    let clientEmail = appointment.client_email;
-    if (appointment.client_id) {
-      const { data: client } = await supabase
-        .from('clients')
-        .select('email')
-        .eq('id', appointment.client_id)
-        .maybeSingle();
-      if (client?.email) clientEmail = client.email;
-    }
-    
-    if (!clientEmail || clientEmail === 'non-fourni@example.com') return;
-    
-    try {
-      await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-        },
-        body: JSON.stringify({
-          center_id: center?.id,
-          client_name: appointment.client_name,
-          client_email: clientEmail,
-          client_phone: appointment.client_phone,
-          pack_name: serviceName,
-          price: price,
-          appointment_date: appointment.appointment_date,
-          appointment_time: appointment.appointment_time,
-          email_type: 'cancelled',
-        }),
-      });
-    } catch (e) {
-      console.warn('[Cancellation Email] Error:', e);
-    }
+    sendStatusEmail(appointment, 'cancelled');
   };
 
   const stats = [

@@ -4,9 +4,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
+// CORS headers complets pour compatibilité Supabase client
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 type EmailType = 
@@ -37,6 +38,36 @@ interface BookingEmailRequest {
   refusal_reason?: string;
 }
 
+// Validation des données entrantes
+function validateRequest(data: any): { valid: boolean; error?: string } {
+  if (!data.center_id || typeof data.center_id !== 'string') {
+    return { valid: false, error: 'center_id is required' };
+  }
+  if (!data.client_email || typeof data.client_email !== 'string') {
+    return { valid: false, error: 'client_email is required' };
+  }
+  // Validation email basique
+  if (!data.client_email.includes('@')) {
+    return { valid: false, error: 'Invalid client_email format' };
+  }
+  if (!data.client_name || typeof data.client_name !== 'string') {
+    return { valid: false, error: 'client_name is required' };
+  }
+  if (!data.pack_name || typeof data.pack_name !== 'string') {
+    return { valid: false, error: 'pack_name is required' };
+  }
+  if (data.price === undefined || typeof data.price !== 'number') {
+    return { valid: false, error: 'price is required and must be a number' };
+  }
+  if (!data.appointment_date || typeof data.appointment_date !== 'string') {
+    return { valid: false, error: 'appointment_date is required' };
+  }
+  if (!data.appointment_time || typeof data.appointment_time !== 'string') {
+    return { valid: false, error: 'appointment_time is required' };
+  }
+  return { valid: true };
+}
+
 const formatDate = (dateStr: string): string => {
   const [year, month, day] = dateStr.split('-').map(Number);
   const date = new Date(year, month - 1, day);
@@ -53,12 +84,23 @@ const formatTime = (timeStr: string): string => {
 };
 
 const handler = async (req: Request): Promise<Response> => {
+  // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const data: BookingEmailRequest = await req.json();
+
+    // Validation des données
+    const validation = validateRequest(data);
+    if (!validation.valid) {
+      console.error('[Validation Error]', validation.error);
+      return new Response(
+        JSON.stringify({ error: validation.error }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -71,7 +113,11 @@ const handler = async (req: Request): Promise<Response> => {
       .single();
 
     if (centerError || !center) {
-      throw new Error("Centre non trouvé");
+      console.error('[Center Error]', centerError);
+      return new Response(
+        JSON.stringify({ error: "Centre non trouvé" }),
+        { status: 404, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
     }
 
     const formattedDate = formatDate(data.appointment_date);
