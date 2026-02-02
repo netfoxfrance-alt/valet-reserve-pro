@@ -28,6 +28,7 @@ import {
 import { sendBookingEmail, getClientEmail, buildEmailPayload, EmailType } from '@/lib/emailService';
 import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
 import { AppointmentDetailDialog } from '@/components/dashboard/AppointmentDetailDialog';
+import { ConfirmationCalendarDialog } from '@/components/dashboard/ConfirmationCalendarDialog';
 
 // Apple-style status colors - clean and vibrant
 const statusConfig: Record<string, { label: string; color: string }> = {
@@ -524,6 +525,8 @@ export default function Dashboard() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [justConfirmedAppointment, setJustConfirmedAppointment] = useState<Appointment | null>(null);
   const { appointments, loading, updateStatus, createAppointment } = useMyAppointments();
   const { center } = useMyCenter();
   const { clients } = useMyClients();
@@ -684,14 +687,17 @@ export default function Dashboard() {
     sendBookingEmail(payload).catch(() => {});
   };
 
-  // Confirm appointment: update status + send confirmation email
+  // Confirm appointment: update status + send confirmation email + show calendar dialog
   const handleConfirmAppointment = async (appointment: Appointment) => {
     const { error } = await updateStatus(appointment.id, 'confirmed');
     if (error) {
       toast.error('Erreur lors de la confirmation');
       return;
     }
-    toast.success('Rendez-vous confirmé');
+    // Open confirmation dialog with calendar add option
+    setJustConfirmedAppointment(appointment);
+    setConfirmDialogOpen(true);
+    // Send confirmation email (fire-and-forget)
     sendStatusEmail(appointment, 'confirmation');
   };
 
@@ -884,6 +890,14 @@ export default function Dashboard() {
         centerAddress={center?.address}
         open={detailDialogOpen}
         onOpenChange={setDetailDialogOpen}
+      />
+
+      {/* Confirmation Calendar Dialog */}
+      <ConfirmationCalendarDialog
+        open={confirmDialogOpen}
+        onOpenChange={setConfirmDialogOpen}
+        appointment={justConfirmedAppointment}
+        centerAddress={center?.address}
       />
     </div>
   );
