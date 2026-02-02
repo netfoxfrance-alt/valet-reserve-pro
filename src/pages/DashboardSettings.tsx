@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { Sparkles, Upload, Trash2, Loader2, CreditCard, Crown, ExternalLink, Link2, Check, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CenterCustomization, defaultCustomization } from '@/types/customization';
+import { CalendarSyncSection } from '@/components/settings/CalendarSyncSection';
 
 // Generate a clean slug from text
 const generateSlug = (text: string): string => {
@@ -480,6 +481,19 @@ export default function DashboardSettings() {
             </Card>
           </section>
           
+
+          {/* Calendar Sync Section */}
+          {center && center.ical_token && (
+            <CalendarSyncSection 
+              centerId={center.id} 
+              icalToken={center.ical_token}
+              onRefreshToken={async () => {
+                const newToken = crypto.randomUUID();
+                const { error } = await updateCenter({ ical_token: newToken } as any);
+                if (error) throw new Error(error);
+              }}
+            />
+          )}
 
           {/* Subscription Section */}
           <section className="mb-6 sm:mb-8">

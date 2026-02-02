@@ -228,6 +228,7 @@ export type Database = {
           created_at: string | null
           customization: Json | null
           email: string | null
+          ical_token: string | null
           id: string
           logo_url: string | null
           name: string
@@ -247,6 +248,7 @@ export type Database = {
           created_at?: string | null
           customization?: Json | null
           email?: string | null
+          ical_token?: string | null
           id?: string
           logo_url?: string | null
           name: string
@@ -266,6 +268,7 @@ export type Database = {
           created_at?: string | null
           customization?: Json | null
           email?: string | null
+          ical_token?: string | null
           id?: string
           logo_url?: string | null
           name?: string
