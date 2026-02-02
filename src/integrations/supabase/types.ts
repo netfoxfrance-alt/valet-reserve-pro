@@ -934,6 +934,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      normalize_phone: { Args: { phone: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "owner"
