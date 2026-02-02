@@ -375,9 +375,9 @@ export default function DashboardCalendar() {
                                     {apt.client_name}
                                   </span>
                                 </div>
-                                {apt.pack && (
+                                {(apt.pack || apt.custom_service) && (
                                   <p className="text-xs text-muted-foreground mt-0.5 ml-5 truncate">
-                                    {apt.pack.name} • {apt.pack.price}€
+                                    {apt.custom_service?.name || apt.pack?.name} • {apt.custom_price ?? apt.custom_service?.price ?? apt.pack?.price ?? 0}€
                                   </p>
                                 )}
                               </div>
