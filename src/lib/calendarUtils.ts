@@ -98,6 +98,16 @@ export function generateIcalSubscriptionUrl(centerId: string, icalToken: string)
 }
 
 /**
+ * Generate a Google Calendar subscribe URL (1-click add)
+ * Opens Google Calendar with "Add this calendar?" dialog
+ */
+export function generateGoogleCalendarSubscribeUrl(icalUrl: string): string {
+  // Convert https:// to webcal:// protocol (required by Google)
+  const webcalUrl = icalUrl.replace('https://', 'webcal://');
+  return `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
+}
+
+/**
  * Generate an .ics file content for a single appointment (for download)
  */
 export function generateSingleEventIcs(event: CalendarEvent): string {
