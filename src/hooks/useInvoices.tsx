@@ -18,6 +18,7 @@ export interface InvoiceItem {
 export interface Invoice {
   id: string;
   center_id: string;
+  client_id: string | null;
   type: 'invoice' | 'quote';
   number: string;
   client_name: string;
@@ -137,6 +138,7 @@ export function useInvoices() {
       .from('invoices')
       .insert({
         center_id: center.id,
+        client_id: (invoice as any).client_id || null,
         type: invoice.type,
         number,
         client_name: invoice.client_name,
@@ -328,6 +330,7 @@ export function useInvoices() {
     const result = await createInvoice(
       {
         type: 'invoice',
+        client_id: quote.client_id,
         client_name: quote.client_name,
         client_email: quote.client_email,
         client_phone: quote.client_phone,
@@ -342,7 +345,7 @@ export function useInvoices() {
         notes: quote.notes,
         terms: quote.terms,
         converted_from_quote_id: quoteId,
-        include_in_stats: true,
+        include_in_stats: false, // Invoices separate from appointments stats
       },
       (quote.items || []).map(item => ({
         description: item.description,

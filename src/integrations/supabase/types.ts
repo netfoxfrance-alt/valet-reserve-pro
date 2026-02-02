@@ -584,6 +584,7 @@ export type Database = {
           center_id: string
           client_address: string | null
           client_email: string | null
+          client_id: string | null
           client_name: string
           client_phone: string | null
           converted_from_quote_id: string | null
@@ -607,6 +608,7 @@ export type Database = {
           center_id: string
           client_address?: string | null
           client_email?: string | null
+          client_id?: string | null
           client_name: string
           client_phone?: string | null
           converted_from_quote_id?: string | null
@@ -630,6 +632,7 @@ export type Database = {
           center_id?: string
           client_address?: string | null
           client_email?: string | null
+          client_id?: string | null
           client_name?: string
           client_phone?: string | null
           converted_from_quote_id?: string | null
@@ -669,6 +672,13 @@ export type Database = {
             columns: ["center_id"]
             isOneToOne: false
             referencedRelation: "public_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
             referencedColumns: ["id"]
           },
           {
