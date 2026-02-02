@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useMyCenter } from './useCenter';
+import { findOrCreateClient } from '@/lib/clientService';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -114,40 +115,15 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
   }) => {
     if (!center) return { error: 'Aucun centre trouvé' };
     
-    // Auto-create or find client (same logic as public booking)
-    let clientId: string | null = data.client_id || null;
-    
-    if (!clientId && data.client_phone) {
-      // Check if client exists by phone
-      const { data: existingClient } = await supabase
-        .from('clients')
-        .select('id')
-        .eq('center_id', center.id)
-        .eq('phone', data.client_phone)
-        .maybeSingle();
-      
-      if (existingClient) {
-        clientId = existingClient.id;
-      } else {
-        // Create new client with source = 'manual'
-        const { data: newClient } = await supabase
-          .from('clients')
-          .insert({
-            center_id: center.id,
-            name: data.client_name,
-            email: data.client_email || null,
-            phone: data.client_phone,
-            address: data.client_address || null,
-            source: 'manual'
-          })
-          .select('id')
-          .single();
-        
-        if (newClient) {
-          clientId = newClient.id;
-        }
-      }
-    }
+    // Utiliser le service centralisé anti-doublon
+    const { clientId } = await findOrCreateClient({
+      center_id: center.id,
+      name: data.client_name,
+      phone: data.client_phone,
+      email: data.client_email,
+      address: data.client_address,
+      source: 'manual',
+    });
     
     const { data: newAppointment, error } = await supabase
       .from('appointments')
@@ -274,36 +250,15 @@ export function useCreateAppointment() {
     
     const duration_minutes = parseDurationToMinutes(data.duration);
     
-    // Auto-create or update client in the clients table
-    // First check if client exists by phone
-    const { data: existingClient } = await supabase
-      .from('clients')
-      .select('id')
-      .eq('center_id', data.center_id)
-      .eq('phone', data.client_phone)
-      .maybeSingle();
-    
-    let clientId: string | null = existingClient?.id || null;
-    
-    if (!existingClient) {
-      // Create new client with source = 'booking'
-      const { data: newClient } = await supabase
-        .from('clients')
-        .insert({
-          center_id: data.center_id,
-          name: data.client_name,
-          email: data.client_email,
-          phone: data.client_phone,
-          address: data.client_address || null,
-          source: 'booking'
-        })
-        .select('id')
-        .single();
-      
-      if (newClient) {
-        clientId = newClient.id;
-      }
-    }
+    // Utiliser le service centralisé anti-doublon
+    const { clientId } = await findOrCreateClient({
+      center_id: data.center_id,
+      name: data.client_name,
+      phone: data.client_phone,
+      email: data.client_email,
+      address: data.client_address,
+      source: 'booking',
+    });
     
     // Store the final price (variant or base pack price) in custom_price for accurate stats
     const finalPrice = data.price !== undefined ? data.price : null;

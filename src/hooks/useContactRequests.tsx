@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { findOrCreateClient } from '@/lib/clientService';
 
 interface ContactRequest {
   id: string;
@@ -27,6 +28,17 @@ export function useCreateContactRequest() {
   }) => {
     setLoading(true);
     try {
+      // 1. Créer ou rattacher à un client existant (anti-doublon)
+      await findOrCreateClient({
+        center_id: data.center_id,
+        name: data.client_name,
+        phone: data.client_phone,
+        email: data.client_email,
+        address: data.client_address,
+        source: 'contact_request',
+      });
+      
+      // 2. Créer la demande de contact
       const { error } = await supabase
         .from('contact_requests')
         .insert({
