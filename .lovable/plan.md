@@ -1,118 +1,142 @@
 
-# Plan : Synchronisation Google Agenda 1-Clic
+
+# Plan : Ajout automatique à l'agenda après confirmation
 
 ## Résumé
 
-Simplification de l'interface pour permettre la synchronisation en **1 seul clic** au lieu de copier/coller un lien manuellement.
+Quand le pro confirme un rendez-vous, un **dialog de confirmation** s'affiche immédiatement avec un bouton pour ajouter le RDV à Google Agenda. Le système de synchronisation automatique iCal sera **retiré** des paramètres.
+
+---
+
+## Expérience utilisateur finale
+
+### Flux de confirmation
+
+```text
+   Pro clique "Confirmer" ✓
+              │
+              ▼
+   ┌─────────────────────────────────────────────┐
+   │  ✓ Rendez-vous confirmé !                   │
+   │                                             │
+   │  Jean Dupont                                │
+   │  Lavage Complet - 89€                       │
+   │                                             │
+   │  📅 Lundi 3 février à 14:00                │
+   │                                             │
+   │  [📅 Ajouter à mon agenda]  [Fermer]       │
+   └─────────────────────────────────────────────┘
+```
+
+Le pro clique sur "Ajouter à mon agenda" et Google Calendar s'ouvre avec le RDV pré-rempli. Simple et efficace !
 
 ---
 
 ## Ce qui change
 
-### Avant (compliqué) :
-1. Copier le lien
-2. Aller dans Google Agenda → Paramètres → Ajouter un agenda → Depuis une URL
-3. Coller le lien
-4. Valider
-
-### Après (1 clic) :
-1. Cliquer sur **"Synchroniser avec Google Agenda"**
-2. Google affiche : "Ajouter ce calendrier ?"
-3. Cliquer "Ajouter" → **Terminé !**
+| Avant | Après |
+|-------|-------|
+| Toast "Rendez-vous confirmé" | Dialog avec option d'ajout à l'agenda |
+| Section "Synchronisation Google Agenda" dans Paramètres | **Supprimée** |
+| iCal avec refresh 12-24h | **Remplacé** par ajout manuel instantané |
+| Bouton 📅 visible sur les RDV confirmés | **Conservé** (pour ajouts ultérieurs) |
 
 ---
 
-## Nouvelle interface utilisateur
+## Modifications techniques
 
-```text
-┌──────────────────────────────────────────────────────────────┐
-│  📅 Synchronisation Google Agenda                            │
-│                                                              │
-│  Synchronisez tous vos rendez-vous en 1 clic.               │
-│                                                              │
-│     [🔗 Synchroniser avec Google Agenda]  (gros bouton)     │
-│                                                              │
-│  ✓ Tous vos RDV confirmés seront visibles                   │
-│  ✓ Les nouveaux RDV s'ajoutent automatiquement              │
-│  ✓ Les modifications et annulations sont synchronisées      │
-│                                                              │
-│  💡 Pour un ajout instantané d'un RDV urgent, utilisez      │
-│     le bouton 📅 à côté du rendez-vous.                     │
-│                                                              │
-│  ▼ Options avancées (replié par défaut)                     │
-│    └─ Copier le lien manuellement                           │
-│    └─ Régénérer le lien (invalide l'ancien)                 │
-└──────────────────────────────────────────────────────────────┘
+### 1. Dashboard.tsx - Dialog de confirmation avec ajout agenda
+
+**Nouveaux states** :
+- `confirmDialogOpen` : boolean pour afficher/masquer le dialog
+- `justConfirmedAppointment` : stocke le RDV qui vient d'être confirmé
+
+**Modification de handleConfirmAppointment** :
+- Au lieu d'un simple toast, on ouvre le dialog de confirmation
+- Le dialog affiche les infos du RDV et propose d'ajouter à l'agenda
+
+**Nouveau dialog** :
+- Affiche le nom du client, la prestation, le prix
+- Date et heure du RDV
+- Bouton "Ajouter à mon agenda" qui ouvre Google Calendar
+- Bouton "Fermer" pour ignorer
+
+### 2. DashboardSettings.tsx - Retrait de la section CalendarSync
+
+- Suppression de l'import `CalendarSyncSection`
+- Suppression du bloc qui affiche la section de synchronisation calendrier
+
+### 3. CalendarSyncSection.tsx - Fichier conservé mais non utilisé
+
+Le fichier reste dans le projet au cas où, mais n'est plus importé nulle part.
+
+### 4. calendarUtils.ts - Aucun changement
+
+Les fonctions `generateAppointmentCalendarUrl` et `generateGoogleCalendarUrl` restent inchangées car elles sont utilisées par le bouton 📅 existant et le nouveau dialog.
+
+---
+
+## Avantages de cette solution
+
+| Aspect | Bénéfice |
+|--------|----------|
+| **Fiabilité** | 100% - aucun système automatique à maintenir |
+| **Scalabilité** | Infinie - aucun appel API côté serveur |
+| **Simplicité** | Le pro décide quand ajouter |
+| **Pas de doublons** | Action intentionnelle uniquement |
+| **Compatible** | Fonctionne avec Google, Outlook, Apple Calendar |
+| **Instantané** | L'événement est créé immédiatement |
+
+---
+
+## Code prévu
+
+### Dialog de confirmation (dans Dashboard.tsx)
+
+```tsx
+<Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+  <DialogContent className="max-w-sm rounded-2xl">
+    <DialogHeader>
+      <DialogTitle className="flex items-center gap-2 text-emerald-600">
+        <Check className="w-5 h-5" />
+        Rendez-vous confirmé !
+      </DialogTitle>
+    </DialogHeader>
+    
+    {justConfirmedAppointment && (
+      <div className="space-y-4">
+        <div className="bg-muted/50 rounded-xl p-4">
+          <p className="font-semibold">{justConfirmedAppointment.client_name}</p>
+          <p className="text-sm text-muted-foreground">
+            {serviceName} - {price}€
+          </p>
+          <p className="text-sm text-muted-foreground flex items-center gap-2 mt-2">
+            <Calendar className="w-4 h-4" />
+            {formattedDate} à {time}
+          </p>
+        </div>
+        
+        <div className="flex gap-2">
+          <Button className="flex-1" onClick={handleAddToCalendar}>
+            <CalendarPlus className="w-4 h-4 mr-2" />
+            Ajouter à mon agenda
+          </Button>
+          <Button variant="outline" onClick={() => setConfirmDialogOpen(false)}>
+            Fermer
+          </Button>
+        </div>
+      </div>
+    )}
+  </DialogContent>
+</Dialog>
 ```
 
 ---
 
-## Fonctionnement technique
+## Fichiers impactés
 
-### Le lien magique Google
+| Fichier | Action |
+|---------|--------|
+| `src/pages/Dashboard.tsx` | Ajouter states + dialog de confirmation après validation |
+| `src/pages/DashboardSettings.tsx` | Retirer la section CalendarSyncSection |
 
-Quand le pro clique sur le bouton, on ouvre :
-```
-https://calendar.google.com/calendar/r?cid=webcal://[URL_ICAL]
-```
-
-Google affiche alors automatiquement une fenêtre de confirmation :
-- "Ajouter ce calendrier ?"
-- Le pro clique "Ajouter"
-- C'est fait !
-
----
-
-## Fichiers à modifier
-
-| Fichier | Modification |
-|---------|-------------|
-| `src/lib/calendarUtils.ts` | Ajouter `generateGoogleCalendarSubscribeUrl()` |
-| `src/components/settings/CalendarSyncSection.tsx` | Nouveau design avec bouton 1-clic + options avancées repliées |
-
----
-
-## Détails des modifications
-
-### 1. calendarUtils.ts - Nouvelle fonction
-
-```typescript
-/**
- * Generate a Google Calendar subscribe URL (1-click add)
- * Opens Google Calendar with "Add this calendar?" dialog
- */
-export function generateGoogleCalendarSubscribeUrl(icalUrl: string): string {
-  // Convert https:// to webcal:// protocol (required by Google)
-  const webcalUrl = icalUrl.replace('https://', 'webcal://');
-  return `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
-}
-```
-
-### 2. CalendarSyncSection.tsx - Nouveau composant
-
-- **Bouton principal** : "Synchroniser avec Google Agenda" (ouvre le lien 1-clic)
-- **Liste des avantages** : checkmarks avec ce qui est synchronisé
-- **Info** : rappel du bouton 📅 pour les ajouts instantanés
-- **Section repliable** : "Options avancées" contenant :
-  - Copier le lien manuellement
-  - Régénérer le lien
-
----
-
-## Ce qui est synchronisé automatiquement
-
-| Élément | Synchronisé |
-|---------|-------------|
-| RDV confirmés (3 derniers mois) | ✓ |
-| RDV confirmés (6 prochains mois) | ✓ |
-| Nouveaux RDV | ✓ (refresh 12-24h) |
-| Modifications de RDV | ✓ |
-| Annulations | ✓ (disparaissent) |
-
----
-
-## Note sur le délai de synchronisation
-
-Google Agenda rafraîchit les calendriers abonnés toutes les **12-24h** (imposé par Google, non modifiable).
-
-**Solution déjà en place** : Le bouton 📅 à côté de chaque RDV dans le dashboard permet un ajout **instantané** pour les cas urgents.
