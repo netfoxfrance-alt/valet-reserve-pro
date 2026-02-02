@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Calendar, Copy, Check, ExternalLink, RefreshCw } from 'lucide-react';
+import { Calendar, Copy, Check, RefreshCw, ChevronDown, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { generateIcalSubscriptionUrl } from '@/lib/calendarUtils';
+import { generateIcalSubscriptionUrl, generateGoogleCalendarSubscribeUrl } from '@/lib/calendarUtils';
 import { cn } from '@/lib/utils';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface CalendarSyncSectionProps {
   centerId: string;
@@ -17,8 +18,19 @@ export function CalendarSyncSection({ centerId, icalToken, onRefreshToken }: Cal
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
   const icalUrl = icalToken ? generateIcalSubscriptionUrl(centerId, icalToken) : null;
+  const googleSubscribeUrl = icalUrl ? generateGoogleCalendarSubscribeUrl(icalUrl) : null;
+
+  const handleGoogleSync = () => {
+    if (!googleSubscribeUrl) return;
+    window.open(googleSubscribeUrl, '_blank');
+    toast({ 
+      title: 'Google Agenda ouvert', 
+      description: 'Cliquez sur "Ajouter" dans la fenêtre Google pour finaliser.' 
+    });
+  };
 
   const handleCopy = async () => {
     if (!icalUrl) return;
@@ -49,110 +61,125 @@ export function CalendarSyncSection({ centerId, icalToken, onRefreshToken }: Cal
     }
   };
 
-  const openGoogleCalendarSubscribe = () => {
-    // Open Google Calendar's add by URL page
-    window.open('https://calendar.google.com/calendar/r/settings/addbyurl', '_blank');
-  };
-
   return (
     <section className="mb-6 sm:mb-8">
       <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">
-        Synchronisation Calendrier
+        Synchronisation Google Agenda
       </h2>
       <p className="text-sm text-muted-foreground mb-4 sm:mb-6">
-        Synchronisez automatiquement vos rendez-vous avec Google Agenda, Apple Calendar ou Outlook.
+        Synchronisez tous vos rendez-vous en 1 clic.
       </p>
       
       <Card variant="elevated" className="p-4 sm:p-6">
-        <div className="space-y-4">
-          {/* Icon and title */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-primary" />
+        <div className="space-y-5">
+          {/* Main sync button */}
+          <div className="flex flex-col items-center gap-4 py-2">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+              <Calendar className="w-7 h-7 text-primary" />
             </div>
-            <div>
-              <p className="font-medium text-foreground">Abonnement iCal</p>
-              <p className="text-sm text-muted-foreground">
-                Vos RDV confirmés apparaissent automatiquement
-              </p>
-            </div>
+            
+            <Button
+              size="lg"
+              onClick={handleGoogleSync}
+              disabled={!googleSubscribeUrl}
+              className="w-full sm:w-auto gap-2"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Synchroniser avec Google Agenda
+            </Button>
           </div>
 
-          {/* URL Input */}
-          {icalUrl && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">
-                Votre lien de synchronisation
-              </label>
-              <div className="flex gap-2">
-                <Input
-                  value={icalUrl}
-                  readOnly
-                  className="font-mono text-xs bg-muted/50"
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleCopy}
-                  className="shrink-0"
-                >
-                  {copied ? (
-                    <Check className="w-4 h-4 text-emerald-500" />
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
-                </Button>
-              </div>
+          {/* Benefits list */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm text-foreground">
+              <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>Tous vos RDV confirmés seront visibles</span>
             </div>
-          )}
-
-          {/* Instructions */}
-          <div className="rounded-lg bg-muted/50 p-4 space-y-3">
-            <p className="text-sm font-medium text-foreground">Comment ça marche ?</p>
-            <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
-              <li>Copiez le lien ci-dessus</li>
-              <li>
-                Ouvrez{' '}
-                <button
-                  onClick={openGoogleCalendarSubscribe}
-                  className="text-primary hover:underline inline-flex items-center gap-1"
-                >
-                  Google Agenda
-                  <ExternalLink className="w-3 h-3" />
-                </button>
-                {' '}→ Paramètres → Ajouter un agenda
-              </li>
-              <li>Sélectionnez "Depuis une URL" et collez le lien</li>
-              <li>Vos rendez-vous confirmés apparaîtront automatiquement !</li>
-            </ol>
+            <div className="flex items-center gap-2 text-sm text-foreground">
+              <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>Les nouveaux RDV s'ajoutent automatiquement</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-foreground">
+              <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>Les modifications et annulations sont synchronisées</span>
+            </div>
           </div>
 
           {/* Info box */}
-          <div className="flex items-start gap-2 text-xs text-muted-foreground">
+          <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 rounded-lg p-3">
             <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-              <span className="text-primary text-[10px] font-medium">i</span>
+              <span className="text-primary text-[10px] font-medium">💡</span>
             </div>
             <p>
-              Le calendrier se met à jour automatiquement toutes les 12-24h.
-              Pour un ajout instantané, utilisez le bouton 📅 sur chaque RDV dans votre agenda.
+              Pour un ajout <strong>instantané</strong> d'un RDV urgent, utilisez le bouton 📅 à côté de chaque rendez-vous dans votre agenda.
             </p>
           </div>
 
-          {/* Regenerate token button */}
-          {onRefreshToken && (
-            <div className="pt-2 border-t border-border">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleRefreshToken}
-                disabled={isRefreshing}
-                className="text-muted-foreground hover:text-foreground"
+          {/* Advanced options (collapsible) */}
+          <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen}>
+            <CollapsibleTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="w-full justify-between text-muted-foreground hover:text-foreground"
               >
-                <RefreshCw className={cn("w-4 h-4 mr-2", isRefreshing && "animate-spin")} />
-                Régénérer le lien (invalide l'ancien)
+                Options avancées
+                <ChevronDown className={cn(
+                  "w-4 h-4 transition-transform duration-200",
+                  isAdvancedOpen && "rotate-180"
+                )} />
               </Button>
-            </div>
-          )}
+            </CollapsibleTrigger>
+            
+            <CollapsibleContent className="pt-3 space-y-4">
+              {/* Manual copy */}
+              {icalUrl && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">
+                    Copier le lien manuellement
+                  </label>
+                  <p className="text-xs text-muted-foreground">
+                    Pour Apple Calendar, Outlook ou autre application calendrier.
+                  </p>
+                  <div className="flex gap-2">
+                    <Input
+                      value={icalUrl}
+                      readOnly
+                      className="font-mono text-xs bg-muted/50"
+                    />
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleCopy}
+                      className="shrink-0"
+                    >
+                      {copied ? (
+                        <Check className="w-4 h-4 text-emerald-500" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Regenerate token button */}
+              {onRefreshToken && (
+                <div className="pt-2 border-t border-border">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleRefreshToken}
+                    disabled={isRefreshing}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <RefreshCw className={cn("w-4 h-4 mr-2", isRefreshing && "animate-spin")} />
+                    Régénérer le lien (invalide l'ancien)
+                  </Button>
+                </div>
+              )}
+            </CollapsibleContent>
+          </Collapsible>
         </div>
       </Card>
     </section>
