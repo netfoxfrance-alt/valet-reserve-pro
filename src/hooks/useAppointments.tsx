@@ -250,15 +250,9 @@ export function useCreateAppointment() {
     
     const duration_minutes = parseDurationToMinutes(data.duration);
     
-    // Utiliser le service centralisé anti-doublon
-    const { clientId } = await findOrCreateClient({
-      center_id: data.center_id,
-      name: data.client_name,
-      phone: data.client_phone,
-      email: data.client_email,
-      address: data.client_address,
-      source: 'booking',
-    });
+    // Note: On réservation publique (non authentifié), on ne peut pas créer de client
+    // car la table clients est protégée par RLS (propriétaire seulement)
+    // Le client_id sera null et pourra être associé plus tard par le pro
     
     // Store the final price (variant or base pack price) in custom_price for accurate stats
     const finalPrice = data.price !== undefined ? data.price : null;
@@ -268,7 +262,7 @@ export function useCreateAppointment() {
       .insert({
         center_id: data.center_id,
         pack_id: data.pack_id,
-        client_id: clientId,
+        client_id: null, // Sera associé plus tard par le pro si besoin
         client_name: data.client_name,
         client_email: data.client_email,
         client_phone: data.client_phone,
