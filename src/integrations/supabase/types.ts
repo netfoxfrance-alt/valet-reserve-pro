@@ -356,8 +356,10 @@ export type Database = {
         Row: {
           center_id: string
           client_address: string | null
+          client_email: string | null
           client_name: string
           client_phone: string
+          contacted_at: string | null
           created_at: string
           id: string
           message: string | null
@@ -366,8 +368,10 @@ export type Database = {
         Insert: {
           center_id: string
           client_address?: string | null
+          client_email?: string | null
           client_name: string
           client_phone: string
+          contacted_at?: string | null
           created_at?: string
           id?: string
           message?: string | null
@@ -376,8 +380,10 @@ export type Database = {
         Update: {
           center_id?: string
           client_address?: string | null
+          client_email?: string | null
           client_name?: string
           client_phone?: string
+          contacted_at?: string | null
           created_at?: string
           id?: string
           message?: string | null

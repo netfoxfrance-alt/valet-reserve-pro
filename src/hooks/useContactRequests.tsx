@@ -5,11 +5,13 @@ interface ContactRequest {
   id: string;
   center_id: string;
   client_name: string;
+  client_email: string | null;
   client_phone: string;
   client_address: string | null;
   message: string | null;
   status: string;
   created_at: string;
+  contacted_at: string | null;
 }
 
 export function useCreateContactRequest() {
@@ -18,6 +20,7 @@ export function useCreateContactRequest() {
   const createContactRequest = async (data: {
     center_id: string;
     client_name: string;
+    client_email: string;
     client_phone: string;
     client_address?: string;
     message?: string;
@@ -29,6 +32,7 @@ export function useCreateContactRequest() {
         .insert({
           center_id: data.center_id,
           client_name: data.client_name,
+          client_email: data.client_email,
           client_phone: data.client_phone,
           client_address: data.client_address || null,
           message: data.message || null,
@@ -62,15 +66,21 @@ export function useMyContactRequests() {
     return { data, error };
   };
 
-  const updateStatus = async (requestId: string, status: string) => {
+  const updateStatus = async (requestId: string, status: string, recordContactedAt: boolean = false) => {
+    const updateData: { status: string; contacted_at?: string } = { status };
+    
+    if (recordContactedAt) {
+      updateData.contacted_at = new Date().toISOString();
+    }
+    
     const { error } = await supabase
       .from('contact_requests')
-      .update({ status })
+      .update(updateData)
       .eq('id', requestId);
     
     if (!error) {
       setRequests(prev => prev.map(r => 
-        r.id === requestId ? { ...r, status } : r
+        r.id === requestId ? { ...r, ...updateData } : r
       ));
     }
     
