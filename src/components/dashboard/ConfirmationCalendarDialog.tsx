@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Check, Calendar, CalendarPlus } from 'lucide-react';
+import { Check, Calendar, CalendarPlus, CalendarCheck } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
@@ -11,6 +11,8 @@ interface ConfirmationCalendarDialogProps {
   onOpenChange: (open: boolean) => void;
   appointment: Appointment | null;
   centerAddress?: string;
+  isAlreadySynced?: boolean;
+  onAddToCalendar: () => void;
 }
 
 export function ConfirmationCalendarDialog({
@@ -18,6 +20,8 @@ export function ConfirmationCalendarDialog({
   onOpenChange,
   appointment,
   centerAddress,
+  isAlreadySynced = false,
+  onAddToCalendar,
 }: ConfirmationCalendarDialogProps) {
   if (!appointment) return null;
 
@@ -44,6 +48,7 @@ export function ConfirmationCalendarDialog({
       center_address: centerAddress,
     });
     window.open(url, '_blank');
+    onAddToCalendar();
     onOpenChange(false);
   };
 
@@ -51,7 +56,7 @@ export function ConfirmationCalendarDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm rounded-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-emerald-600">
+          <DialogTitle className="flex items-center gap-2 text-primary">
             <Check className="w-5 h-5" />
             Rendez-vous confirmé !
           </DialogTitle>
@@ -75,10 +80,17 @@ export function ConfirmationCalendarDialog({
           </div>
           
           <div className="flex gap-2">
-            <Button className="flex-1" onClick={handleAddToCalendar}>
-              <CalendarPlus className="w-4 h-4 mr-2" />
-              Ajouter à mon agenda
-            </Button>
+            {isAlreadySynced ? (
+              <Button className="flex-1 bg-primary/80 hover:bg-primary/70" disabled>
+                <CalendarCheck className="w-4 h-4 mr-2" />
+                Déjà dans l'agenda
+              </Button>
+            ) : (
+              <Button className="flex-1" onClick={handleAddToCalendar}>
+                <CalendarPlus className="w-4 h-4 mr-2" />
+                Ajouter à mon agenda
+              </Button>
+            )}
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Fermer
             </Button>
