@@ -17,6 +17,7 @@ export interface Center {
   ai_enabled: boolean;
   subscription_plan: 'free' | 'pro' | 'trial' | 'expired' | 'past_due';
   customization: CenterCustomization;
+  ical_token?: string | null; // Token for iCal calendar sync
   created_at: string;
   updated_at: string;
 }

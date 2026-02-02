@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { Calendar, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail, Users, MoreHorizontal } from 'lucide-react';
+import { Calendar, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail, Users, MoreHorizontal, CalendarPlus } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
 import { useMyClients, Client } from '@/hooks/useClients';
@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { sendBookingEmail, getClientEmail, buildEmailPayload, EmailType } from '@/lib/emailService';
+import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
 
 // Apple-style status colors - clean and vibrant
 const statusConfig: Record<string, { label: string; color: string }> = {
@@ -45,8 +46,9 @@ const vehicleLabels: Record<string, string> = {
   standard: 'Standard',
 };
 
-function AppointmentRow({ appointment, onUpdateStatus, onConfirmAppointment, onRefuseAppointment, onCancelAppointment, onSendEmail }: { 
+function AppointmentRow({ appointment, centerAddress, onUpdateStatus, onConfirmAppointment, onRefuseAppointment, onCancelAppointment, onSendEmail }: { 
   appointment: Appointment; 
+  centerAddress?: string;
   onUpdateStatus: (id: string, status: Appointment['status']) => void;
   onConfirmAppointment: (appointment: Appointment) => void;
   onRefuseAppointment: (appointment: Appointment) => void;
@@ -64,6 +66,23 @@ function AppointmentRow({ appointment, onUpdateStatus, onConfirmAppointment, onR
   const hasCustomService = Boolean(appointment.custom_service_id);
   const serviceName = appointment.custom_service?.name || appointment.pack?.name;
   const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
+
+  // Generate Google Calendar URL for this appointment
+  const handleAddToCalendar = () => {
+    const url = generateAppointmentCalendarUrl({
+      id: appointment.id,
+      client_name: appointment.client_name,
+      appointment_date: appointment.appointment_date,
+      appointment_time: appointment.appointment_time,
+      duration_minutes: appointment.duration_minutes,
+      vehicle_type: appointment.vehicle_type,
+      notes: appointment.notes,
+      pack: appointment.pack ? { name: appointment.pack.name, price: appointment.pack.price } : null,
+      custom_service: appointment.custom_service ? { name: appointment.custom_service.name, price: appointment.custom_service.price } : null,
+      center_address: centerAddress,
+    });
+    window.open(url, '_blank');
+  };
 
   return (
     <div className="group flex flex-col sm:flex-row sm:items-center gap-4 p-5 bg-card border border-border/50 rounded-2xl hover:border-border hover:shadow-md transition-all duration-200">
@@ -139,7 +158,7 @@ function AppointmentRow({ appointment, onUpdateStatus, onConfirmAppointment, onR
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 rounded-xl text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                className="h-9 w-9 rounded-xl text-primary hover:text-primary hover:bg-primary/10"
                 onClick={() => onConfirmAppointment(appointment)}
                 title="Confirmer"
               >
@@ -148,7 +167,7 @@ function AppointmentRow({ appointment, onUpdateStatus, onConfirmAppointment, onR
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 rounded-xl text-red-500 hover:text-red-600 hover:bg-red-50"
+                className="h-9 w-9 rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10"
                 onClick={() => onRefuseAppointment(appointment)}
                 title="Refuser"
               >
@@ -156,9 +175,18 @@ function AppointmentRow({ appointment, onUpdateStatus, onConfirmAppointment, onR
               </Button>
             </>
           )}
-          {/* Confirmed: Mark as complete or cancel */}
+          {/* Confirmed: Add to calendar, complete, or cancel */}
           {appointment.status === 'confirmed' && (
             <>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-xl text-primary hover:text-primary hover:bg-primary/10"
+                onClick={handleAddToCalendar}
+                title="Ajouter à Google Agenda"
+              >
+                <CalendarPlus className="w-4 h-4" />
+              </Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -170,7 +198,7 @@ function AppointmentRow({ appointment, onUpdateStatus, onConfirmAppointment, onR
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 rounded-xl text-red-500 hover:text-red-600 hover:bg-red-50"
+                className="h-9 w-9 rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10"
                 onClick={() => onCancelAppointment(appointment)}
                 title="Annuler"
               >
@@ -805,7 +833,8 @@ export default function Dashboard() {
                       {groupedAppointments[dateStr].map((appointment) => (
                         <AppointmentRow 
                           key={appointment.id} 
-                          appointment={appointment} 
+                          appointment={appointment}
+                          centerAddress={center?.address || undefined}
                           onUpdateStatus={handleUpdateStatus}
                           onConfirmAppointment={handleConfirmAppointment}
                           onRefuseAppointment={handleRefuseAppointment}
