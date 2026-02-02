@@ -67,11 +67,14 @@ function AppointmentRow({ appointment, centerAddress, onUpdateStatus, onConfirmA
   const serviceName = appointment.custom_service?.name || appointment.pack?.name;
   const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
 
-  // Generate Google Calendar URL for this appointment
+  // Generate Google Calendar URL for this appointment with ALL client info
   const handleAddToCalendar = () => {
     const url = generateAppointmentCalendarUrl({
       id: appointment.id,
       client_name: appointment.client_name,
+      client_phone: appointment.client_phone,
+      client_email: appointment.client_email,
+      client_address: appointment.client_address,
       appointment_date: appointment.appointment_date,
       appointment_time: appointment.appointment_time,
       duration_minutes: appointment.duration_minutes,

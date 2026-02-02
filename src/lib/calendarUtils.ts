@@ -13,10 +13,18 @@ export interface CalendarEvent {
 }
 
 /**
- * Format a date for Google Calendar URL (YYYYMMDDTHHmmssZ format)
+ * Format a date for Google Calendar URL (YYYYMMDDTHHmmss format - LOCAL time)
+ * IMPORTANT: We use local time format WITHOUT 'Z' suffix to preserve the user's timezone
+ * Using toISOString() would convert to UTC and shift the time incorrectly
  */
 function formatDateForGoogle(date: Date): string {
-  return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}${month}${day}T${hours}${minutes}${seconds}`;
 }
 
 /**
@@ -43,10 +51,14 @@ export function generateGoogleCalendarUrl(event: CalendarEvent): string {
 
 /**
  * Generate a Google Calendar URL from appointment data
+ * Uses local date components to avoid timezone conversion issues
  */
 export function generateAppointmentCalendarUrl(appointment: {
   id: string;
   client_name: string;
+  client_phone?: string;
+  client_email?: string;
+  client_address?: string | null;
   appointment_date: string;
   appointment_time: string;
   duration_minutes?: number | null;
@@ -56,36 +68,62 @@ export function generateAppointmentCalendarUrl(appointment: {
   custom_service?: { name: string; price: number } | null;
   center_address?: string;
 }): string {
-  // Parse date and time
+  // Parse date and time using individual components to avoid timezone shifts
   const [year, month, day] = appointment.appointment_date.split('-').map(Number);
-  const [hours, minutes] = appointment.appointment_time.split(':').map(Number);
+  const timeParts = appointment.appointment_time.split(':');
+  const hours = parseInt(timeParts[0], 10);
+  const minutes = parseInt(timeParts[1], 10);
   
-  const startDate = new Date(year, month - 1, day, hours, minutes);
+  // Create date using local components (not UTC)
+  const startDate = new Date(year, month - 1, day, hours, minutes, 0);
   const duration = appointment.duration_minutes || 60;
   const endDate = new Date(startDate.getTime() + duration * 60 * 1000);
 
-  // Build description
+  // Build comprehensive description with all client info
   const serviceName = appointment.pack?.name || appointment.custom_service?.name || 'Prestation';
   const servicePrice = appointment.pack?.price || appointment.custom_service?.price;
   
-  const descriptionParts = [serviceName];
-  if (appointment.vehicle_type) {
-    descriptionParts.push(`Véhicule: ${appointment.vehicle_type}`);
-  }
+  const descriptionParts: string[] = [];
+  
+  // Service info
+  descriptionParts.push(`📋 ${serviceName}`);
   if (servicePrice) {
-    descriptionParts.push(`Prix: ${servicePrice}€`);
+    descriptionParts.push(`💰 Prix: ${servicePrice}€`);
   }
+  
+  // Client info
+  descriptionParts.push('');
+  descriptionParts.push('👤 CLIENT:');
+  descriptionParts.push(`Nom: ${appointment.client_name}`);
+  if (appointment.client_phone) {
+    descriptionParts.push(`Tél: ${appointment.client_phone}`);
+  }
+  if (appointment.client_email) {
+    descriptionParts.push(`Email: ${appointment.client_email}`);
+  }
+  if (appointment.client_address) {
+    descriptionParts.push(`Adresse: ${appointment.client_address}`);
+  }
+  
+  // Vehicle info
+  if (appointment.vehicle_type) {
+    descriptionParts.push('');
+    descriptionParts.push(`🚗 Véhicule: ${appointment.vehicle_type}`);
+  }
+  
+  // Notes
   if (appointment.notes) {
-    descriptionParts.push(`Notes: ${appointment.notes}`);
+    descriptionParts.push('');
+    descriptionParts.push(`📝 Notes: ${appointment.notes}`);
   }
 
   return generateGoogleCalendarUrl({
     id: appointment.id,
-    title: `RDV - ${appointment.client_name}`,
+    title: `🚗 RDV - ${appointment.client_name}`,
     startDate,
     endDate,
     description: descriptionParts.join('\n'),
-    location: appointment.center_address,
+    location: appointment.client_address || appointment.center_address,
   });
 }
 
@@ -111,8 +149,15 @@ export function generateGoogleCalendarSubscribeUrl(icalUrl: string): string {
  * Generate an .ics file content for a single appointment (for download)
  */
 export function generateSingleEventIcs(event: CalendarEvent): string {
+  // Format date using local components to avoid timezone shifts
   const formatDate = (date: Date): string => {
-    return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}${month}${day}T${hours}${minutes}${seconds}`;
   };
 
   const escapeText = (text: string): string => {
