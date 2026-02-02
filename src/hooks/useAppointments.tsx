@@ -18,7 +18,7 @@ export interface Appointment {
   appointment_date: string;
   appointment_time: string;
   notes: string | null;
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  status: 'pending_validation' | 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'refused';
   created_at: string;
   updated_at: string;
   duration_minutes: number | null;
@@ -325,9 +325,11 @@ export function useCreateAppointment() {
         duration_minutes,
         // Store final price for accurate revenue stats (handles variants)
         custom_price: finalPrice,
+        // New: RDV en attente de validation (pas confirmé automatiquement)
+        status: 'pending_validation',
       });
 
-    // Send confirmation emails in background (fire-and-forget)
+    // Send "request received" email (not confirmation - waiting for pro validation)
     if (!error && data.pack_name && data.price !== undefined) {
       (async () => {
         try {
@@ -348,6 +350,7 @@ export function useCreateAppointment() {
               appointment_date: data.appointment_date,
               appointment_time: data.appointment_time,
               notes: data.notes,
+              email_type: 'request_received', // New: demande en attente
             }),
           });
           

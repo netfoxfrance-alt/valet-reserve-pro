@@ -29,10 +29,12 @@ import {
 
 // Apple-style status colors - clean and vibrant
 const statusConfig: Record<string, { label: string; color: string }> = {
+  pending_validation: { label: 'En attente', color: 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400' },
   pending: { label: 'En attente', color: 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400' },
   confirmed: { label: 'Confirmé', color: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400' },
   completed: { label: 'Terminé', color: 'bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400' },
   cancelled: { label: 'Annulé', color: 'bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-400' },
+  refused: { label: 'Refusé', color: 'bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-400' },
 };
 
 const vehicleLabels: Record<string, string> = {
@@ -46,12 +48,15 @@ const vehicleLabels: Record<string, string> = {
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-function AppointmentRow({ appointment, onUpdateStatus, onSendEmail }: { 
+function AppointmentRow({ appointment, onUpdateStatus, onConfirmAppointment, onRefuseAppointment, onCancelAppointment, onSendEmail }: { 
   appointment: Appointment; 
   onUpdateStatus: (id: string, status: Appointment['status']) => void;
+  onConfirmAppointment: (appointment: Appointment) => void;
+  onRefuseAppointment: (appointment: Appointment) => void;
+  onCancelAppointment: (appointment: Appointment) => void;
   onSendEmail: (appointment: Appointment, kind: 'confirmation' | 'reminder') => void;
 }) {
-  const status = statusConfig[appointment.status] || statusConfig.pending;
+  const status = statusConfig[appointment.status] || statusConfig.pending_validation;
   const date = parseISO(appointment.appointment_date);
   
   let dateLabel = format(date, "EEE d MMM", { locale: fr });
@@ -109,8 +114,8 @@ function AppointmentRow({ appointment, onUpdateStatus, onSendEmail }: {
         
         {/* Actions */}
         <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
-          {/* Actions menu (manual emails) */}
-          {canSendEmail && serviceName && price !== undefined && (
+          {/* Actions menu (manual emails) - only for confirmed appointments */}
+          {appointment.status === 'confirmed' && canSendEmail && serviceName && price !== undefined && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -123,13 +128,6 @@ function AppointmentRow({ appointment, onUpdateStatus, onSendEmail }: {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-64">
-                {/* Only show confirmation for custom-service bookings (pack bookings already send automatically at booking time) */}
-                {hasCustomService && (
-                  <DropdownMenuItem onClick={() => onSendEmail(appointment, 'confirmation')}>
-                    <Send className="w-4 h-4 mr-2" />
-                    Envoyer un mail de confirmation
-                  </DropdownMenuItem>
-                )}
                 <DropdownMenuItem onClick={() => onSendEmail(appointment, 'reminder')}>
                   <Mail className="w-4 h-4 mr-2" />
                   Envoyer un email de rappel
@@ -138,13 +136,14 @@ function AppointmentRow({ appointment, onUpdateStatus, onSendEmail }: {
             </DropdownMenu>
           )}
           
-          {appointment.status === 'pending' && (
+          {/* Pending validation: Confirm or Refuse */}
+          {(appointment.status === 'pending_validation' || appointment.status === 'pending') && (
             <>
               <Button
                 variant="ghost"
                 size="icon"
                 className="h-9 w-9 rounded-xl text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
-                onClick={() => onUpdateStatus(appointment.id, 'confirmed')}
+                onClick={() => onConfirmAppointment(appointment)}
                 title="Confirmer"
               >
                 <Check className="w-4 h-4" />
@@ -153,22 +152,34 @@ function AppointmentRow({ appointment, onUpdateStatus, onSendEmail }: {
                 variant="ghost"
                 size="icon"
                 className="h-9 w-9 rounded-xl text-red-500 hover:text-red-600 hover:bg-red-50"
-                onClick={() => onUpdateStatus(appointment.id, 'cancelled')}
-                title="Annuler"
+                onClick={() => onRefuseAppointment(appointment)}
+                title="Refuser"
               >
                 <X className="w-4 h-4" />
               </Button>
             </>
           )}
+          {/* Confirmed: Mark as complete or cancel */}
           {appointment.status === 'confirmed' && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9 rounded-xl text-xs font-medium"
-              onClick={() => onUpdateStatus(appointment.id, 'completed')}
-            >
-              Terminer
-            </Button>
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 rounded-xl text-xs font-medium"
+                onClick={() => onUpdateStatus(appointment.id, 'completed')}
+              >
+                Terminer
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-xl text-red-500 hover:text-red-600 hover:bg-red-50"
+                onClick={() => onCancelAppointment(appointment)}
+                title="Annuler"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </>
           )}
         </div>
       </div>
@@ -493,7 +504,9 @@ export default function Dashboard() {
     return isToday(date) && a.status !== 'cancelled';
   });
   
-  const pendingAppointments = appointments.filter(a => a.status === 'pending');
+  const pendingAppointments = appointments.filter(a => 
+    a.status === 'pending' || a.status === 'pending_validation'
+  );
   
   const upcomingAppointments = appointments.filter(a => {
     const date = parseISO(a.appointment_date);
@@ -617,6 +630,158 @@ export default function Dashboard() {
     } catch (error) {
       toast.dismiss(toastId);
       toast.error('Erreur réseau');
+    }
+  };
+
+  // Confirm appointment: update status + send confirmation email
+  const handleConfirmAppointment = async (appointment: Appointment) => {
+    const { error } = await updateStatus(appointment.id, 'confirmed');
+    if (error) {
+      toast.error('Erreur lors de la confirmation');
+      return;
+    }
+    toast.success('Rendez-vous confirmé');
+    
+    // Send confirmation email
+    const serviceName = appointment.custom_service?.name || appointment.pack?.name;
+    const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
+    
+    if (!serviceName || price === undefined) return;
+    
+    let clientEmail = appointment.client_email;
+    if (appointment.client_id) {
+      const { data: client } = await supabase
+        .from('clients')
+        .select('email')
+        .eq('id', appointment.client_id)
+        .maybeSingle();
+      if (client?.email) clientEmail = client.email;
+    }
+    
+    if (!clientEmail || clientEmail === 'non-fourni@example.com') return;
+    
+    try {
+      await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+        },
+        body: JSON.stringify({
+          center_id: center?.id,
+          client_name: appointment.client_name,
+          client_email: clientEmail,
+          client_phone: appointment.client_phone,
+          pack_name: serviceName,
+          price: price,
+          appointment_date: appointment.appointment_date,
+          appointment_time: appointment.appointment_time,
+          notes: appointment.notes,
+          email_type: 'confirmation',
+        }),
+      });
+    } catch (e) {
+      console.warn('[Confirmation Email] Error:', e);
+    }
+  };
+
+  // Refuse appointment: update status + send refusal email
+  const handleRefuseAppointment = async (appointment: Appointment) => {
+    const { error } = await updateStatus(appointment.id, 'refused');
+    if (error) {
+      toast.error('Erreur lors du refus');
+      return;
+    }
+    toast.success('Demande refusée');
+    
+    const serviceName = appointment.custom_service?.name || appointment.pack?.name;
+    const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
+    
+    if (!serviceName || price === undefined) return;
+    
+    let clientEmail = appointment.client_email;
+    if (appointment.client_id) {
+      const { data: client } = await supabase
+        .from('clients')
+        .select('email')
+        .eq('id', appointment.client_id)
+        .maybeSingle();
+      if (client?.email) clientEmail = client.email;
+    }
+    
+    if (!clientEmail || clientEmail === 'non-fourni@example.com') return;
+    
+    try {
+      await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+        },
+        body: JSON.stringify({
+          center_id: center?.id,
+          client_name: appointment.client_name,
+          client_email: clientEmail,
+          client_phone: appointment.client_phone,
+          pack_name: serviceName,
+          price: price,
+          appointment_date: appointment.appointment_date,
+          appointment_time: appointment.appointment_time,
+          email_type: 'refused',
+        }),
+      });
+    } catch (e) {
+      console.warn('[Refusal Email] Error:', e);
+    }
+  };
+
+  // Cancel appointment: update status + send cancellation email
+  const handleCancelAppointment = async (appointment: Appointment) => {
+    const { error } = await updateStatus(appointment.id, 'cancelled');
+    if (error) {
+      toast.error('Erreur lors de l\'annulation');
+      return;
+    }
+    toast.success('Rendez-vous annulé');
+    
+    const serviceName = appointment.custom_service?.name || appointment.pack?.name;
+    const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
+    
+    if (!serviceName || price === undefined) return;
+    
+    let clientEmail = appointment.client_email;
+    if (appointment.client_id) {
+      const { data: client } = await supabase
+        .from('clients')
+        .select('email')
+        .eq('id', appointment.client_id)
+        .maybeSingle();
+      if (client?.email) clientEmail = client.email;
+    }
+    
+    if (!clientEmail || clientEmail === 'non-fourni@example.com') return;
+    
+    try {
+      await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+        },
+        body: JSON.stringify({
+          center_id: center?.id,
+          client_name: appointment.client_name,
+          client_email: clientEmail,
+          client_phone: appointment.client_phone,
+          pack_name: serviceName,
+          price: price,
+          appointment_date: appointment.appointment_date,
+          appointment_time: appointment.appointment_time,
+          email_type: 'cancelled',
+        }),
+      });
+    } catch (e) {
+      console.warn('[Cancellation Email] Error:', e);
     }
   };
 
@@ -763,6 +928,9 @@ export default function Dashboard() {
                           key={appointment.id} 
                           appointment={appointment} 
                           onUpdateStatus={handleUpdateStatus}
+                          onConfirmAppointment={handleConfirmAppointment}
+                          onRefuseAppointment={handleRefuseAppointment}
+                          onCancelAppointment={handleCancelAppointment}
                           onSendEmail={handleSendEmail}
                         />
                       ))}
