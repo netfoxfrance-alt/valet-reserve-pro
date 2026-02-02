@@ -5,10 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useInvoices, Invoice, useVatRates } from '@/hooks/useInvoices';
+import { useMyClients, Client } from '@/hooks/useClients';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Trash2, FileText, FileCheck } from 'lucide-react';
+import { Plus, Trash2, FileText, FileCheck, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface InvoiceFormDialogProps {
@@ -29,12 +29,14 @@ interface FormItem {
 export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoice }: InvoiceFormDialogProps) {
   const { createInvoice, updateInvoice, getInvoiceWithItems, generateNextNumber } = useInvoices();
   const { vatRates } = useVatRates();
+  const { clients } = useMyClients();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   
   // Form state
   const [selectedType, setSelectedType] = useState<'invoice' | 'quote'>(initialType || 'invoice');
   const [documentNumber, setDocumentNumber] = useState('');
+  const [selectedClientId, setSelectedClientId] = useState<string>('');
   const [clientName, setClientName] = useState('');
   const [clientEmail, setClientEmail] = useState('');
   const [clientPhone, setClientPhone] = useState('');
@@ -45,7 +47,6 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
   const [status, setStatus] = useState<Invoice['status']>('draft');
   const [notes, setNotes] = useState('');
   const [terms, setTerms] = useState('');
-  const [includeInStats, setIncludeInStats] = useState(true);
   const [items, setItems] = useState<FormItem[]>([
     { id: crypto.randomUUID(), description: '', quantity: 1, unit_price: 0, vat_rate: 20 }
   ]);
@@ -77,7 +78,8 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
           setStatus(data.status);
           setNotes(data.notes || '');
           setTerms(data.terms || '');
-          setIncludeInStats(data.include_in_stats);
+          // client_id will be loaded from invoice if available
+          setSelectedClientId((data as any).client_id || '');
           
           if (data.items && data.items.length > 0) {
             setItems(data.items.map(item => ({
@@ -112,7 +114,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
       setStatus('draft');
       setNotes('');
       setTerms('');
-      setIncludeInStats(true);
+      setSelectedClientId('');
       setItems([{ id: crypto.randomUUID(), description: '', quantity: 1, unit_price: 0, vat_rate: defaultVatRate }]);
     }
   }, [invoice, open, initialType]);
@@ -202,7 +204,8 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
       notes: notes || null,
       terms: terms || null,
       converted_from_quote_id: null,
-      include_in_stats: includeInStats,
+      include_in_stats: false, // Invoices are separate from appointments stats
+      client_id: selectedClientId || null,
     };
 
     const itemsData = items.map(item => ({
@@ -343,6 +346,50 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
             <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
               Informations client
             </h3>
+            
+            {/* Client selection */}
+            {clients.length > 0 && (
+              <div className="space-y-2">
+                <Label>Client enregistré</Label>
+                <Select 
+                  value={selectedClientId || "new"} 
+                  onValueChange={(v) => {
+                    if (v === "new") {
+                      setSelectedClientId('');
+                      setClientName('');
+                      setClientEmail('');
+                      setClientPhone('');
+                      setClientAddress('');
+                    } else {
+                      const client = clients.find(c => c.id === v);
+                      if (client) {
+                        setSelectedClientId(v);
+                        setClientName(client.name);
+                        setClientEmail(client.email || '');
+                        setClientPhone(client.phone || '');
+                        setClientAddress(client.address || '');
+                      }
+                    }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Nouveau client ou sélectionner..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="new">Nouveau client</SelectItem>
+                    {clients.map((client) => (
+                      <SelectItem key={client.id} value={client.id}>
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4 text-primary" />
+                          <span>{client.name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="clientName">Nom du client *</Label>
@@ -352,6 +399,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
                   onChange={(e) => setClientName(e.target.value)}
                   placeholder="Nom complet ou entreprise"
                   required
+                  disabled={!!selectedClientId}
                 />
               </div>
               <div className="space-y-2">
@@ -362,6 +410,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
                   value={clientEmail}
                   onChange={(e) => setClientEmail(e.target.value)}
                   placeholder="email@exemple.com"
+                  disabled={!!selectedClientId}
                 />
               </div>
               <div className="space-y-2">
@@ -371,6 +420,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
                   value={clientPhone}
                   onChange={(e) => setClientPhone(e.target.value)}
                   placeholder="06 00 00 00 00"
+                  disabled={!!selectedClientId}
                 />
               </div>
               <div className="space-y-2">
@@ -380,6 +430,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
                   value={clientAddress}
                   onChange={(e) => setClientAddress(e.target.value)}
                   placeholder="Adresse complète"
+                  disabled={!!selectedClientId}
                 />
               </div>
             </div>
@@ -544,30 +595,6 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
               </div>
             </div>
           </div>
-
-          {/* Options */}
-          {selectedType === 'invoice' && (
-            <div className="space-y-4">
-              <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
-                Options
-              </h3>
-              <div className="flex items-center space-x-3 p-4 rounded-lg border bg-muted/30">
-                <Checkbox
-                  id="includeInStats"
-                  checked={includeInStats}
-                  onCheckedChange={(checked) => setIncludeInStats(checked === true)}
-                />
-                <div className="space-y-0.5">
-                  <Label htmlFor="includeInStats" className="font-medium cursor-pointer">
-                    Comptabiliser dans les statistiques
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Décochez si cette facture correspond à une réservation déjà comptée
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Notes */}
           <div className="space-y-4">

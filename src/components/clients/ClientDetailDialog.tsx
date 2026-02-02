@@ -2,16 +2,28 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Client } from '@/hooks/useClients';
 import { useClientHistory } from '@/hooks/useClientHistory';
-import { Phone, Mail, MapPin, Euro, Calendar, TrendingUp, Clock, Sparkles } from 'lucide-react';
+import { useClientInvoices } from '@/hooks/useClientInvoices';
+import { Phone, Mail, MapPin, Euro, Calendar, TrendingUp, Clock, Sparkles, FileText, FileCheck } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 const statusConfig: Record<string, { label: string; color: string }> = {
   pending: { label: 'En attente', color: 'bg-amber-100 text-amber-700' },
+  pending_validation: { label: 'En attente', color: 'bg-amber-100 text-amber-700' },
   confirmed: { label: 'Confirmé', color: 'bg-emerald-100 text-emerald-700' },
   completed: { label: 'Terminé', color: 'bg-slate-100 text-slate-600' },
+  cancelled: { label: 'Annulé', color: 'bg-red-100 text-red-600' },
+};
+
+const invoiceStatusConfig: Record<string, { label: string; color: string }> = {
+  draft: { label: 'Brouillon', color: 'bg-slate-100 text-slate-600' },
+  sent: { label: 'Envoyé', color: 'bg-blue-100 text-blue-700' },
+  accepted: { label: 'Accepté', color: 'bg-emerald-100 text-emerald-700' },
+  rejected: { label: 'Refusé', color: 'bg-red-100 text-red-600' },
+  paid: { label: 'Payé', color: 'bg-emerald-100 text-emerald-700' },
   cancelled: { label: 'Annulé', color: 'bg-red-100 text-red-600' },
 };
 
@@ -22,7 +34,8 @@ interface ClientDetailDialogProps {
 }
 
 export function ClientDetailDialog({ client, open, onOpenChange }: ClientDetailDialogProps) {
-  const { appointments, loading, stats } = useClientHistory(client?.id || null);
+  const { appointments, loading: loadingAppointments, stats } = useClientHistory(client?.id || null);
+  const { invoices, loading: loadingInvoices, stats: invoiceStats } = useClientInvoices(client?.id || null);
 
   if (!client) return null;
 
@@ -96,19 +109,17 @@ export function ClientDetailDialog({ client, open, onOpenChange }: ClientDetailD
             <Card variant="elevated" className="p-3 text-center">
               <Euro className="w-5 h-5 mx-auto text-green-600 mb-1" />
               <p className="text-xl font-bold">{stats.totalRevenue}€</p>
-              <p className="text-xs text-muted-foreground">CA total</p>
+              <p className="text-xs text-muted-foreground">CA prestations</p>
             </Card>
             <Card variant="elevated" className="p-3 text-center">
-              <TrendingUp className="w-5 h-5 mx-auto text-blue-600 mb-1" />
-              <p className="text-xl font-bold">{stats.avgPrice}€</p>
-              <p className="text-xs text-muted-foreground">Panier moyen</p>
+              <FileText className="w-5 h-5 mx-auto text-blue-600 mb-1" />
+              <p className="text-xl font-bold">{invoiceStats.totalInvoices}</p>
+              <p className="text-xs text-muted-foreground">Factures</p>
             </Card>
             <Card variant="elevated" className="p-3 text-center">
-              <Clock className="w-5 h-5 mx-auto text-purple-600 mb-1" />
-              <p className="text-xl font-bold">
-                {stats.lastVisit ? format(parseISO(stats.lastVisit), 'd MMM', { locale: fr }) : '-'}
-              </p>
-              <p className="text-xs text-muted-foreground">Dernière visite</p>
+              <FileCheck className="w-5 h-5 mx-auto text-purple-600 mb-1" />
+              <p className="text-xl font-bold">{invoiceStats.totalQuotes}</p>
+              <p className="text-xs text-muted-foreground">Devis</p>
             </Card>
           </div>
 
@@ -120,46 +131,101 @@ export function ClientDetailDialog({ client, open, onOpenChange }: ClientDetailD
             </div>
           )}
 
-          {/* Appointment History */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-3">Historique des prestations</h4>
-            {loading ? (
-              <div className="space-y-2">
-                {[1, 2, 3].map(i => <Skeleton key={i} className="h-16" />)}
-              </div>
-            ) : appointments.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Calendar className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p>Aucune prestation pour ce client</p>
-              </div>
-            ) : (
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {appointments.map((apt) => {
-                  const status = statusConfig[apt.status] || statusConfig.pending;
-                  const price = apt.custom_price || apt.pack?.price || 0;
-                  const serviceName = apt.custom_service?.name || apt.pack?.name || 'Service';
-                  
-                  return (
-                    <div
-                      key={apt.id}
-                      className="flex items-center justify-between gap-3 p-3 bg-secondary/20 rounded-xl"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-foreground truncate">{serviceName}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {format(parseISO(apt.appointment_date), 'd MMMM yyyy', { locale: fr })} à {apt.appointment_time.slice(0, 5)}
-                        </p>
+          {/* Tabs for History */}
+          <Tabs defaultValue="appointments" className="w-full">
+            <TabsList className="w-full grid grid-cols-2">
+              <TabsTrigger value="appointments">Prestations</TabsTrigger>
+              <TabsTrigger value="invoices">Factures & Devis</TabsTrigger>
+            </TabsList>
+            
+            {/* Appointments Tab */}
+            <TabsContent value="appointments" className="mt-4">
+              {loadingAppointments ? (
+                <div className="space-y-2">
+                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-16" />)}
+                </div>
+              ) : appointments.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Calendar className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p>Aucune prestation pour ce client</p>
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {appointments.map((apt) => {
+                    const status = statusConfig[apt.status] || statusConfig.pending;
+                    const price = apt.custom_price || apt.pack?.price || 0;
+                    const serviceName = apt.custom_service?.name || apt.pack?.name || 'Service';
+                    
+                    return (
+                      <div
+                        key={apt.id}
+                        className="flex items-center justify-between gap-3 p-3 bg-secondary/20 rounded-xl"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-foreground truncate">{serviceName}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {format(parseISO(apt.appointment_date), 'd MMMM yyyy', { locale: fr })} à {apt.appointment_time.slice(0, 5)}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className="font-semibold text-foreground">{price}€</span>
+                          <Badge className={`${status.color} text-xs`}>{status.label}</Badge>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="font-semibold text-foreground">{price}€</span>
-                        <Badge className={`${status.color} text-xs`}>{status.label}</Badge>
+                    );
+                  })}
+                </div>
+              )}
+            </TabsContent>
+            
+            {/* Invoices Tab */}
+            <TabsContent value="invoices" className="mt-4">
+              {loadingInvoices ? (
+                <div className="space-y-2">
+                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-16" />)}
+                </div>
+              ) : invoices.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p>Aucune facture ou devis pour ce client</p>
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {invoices.map((inv) => {
+                    const status = invoiceStatusConfig[inv.status] || invoiceStatusConfig.draft;
+                    const isInvoice = inv.type === 'invoice';
+                    
+                    return (
+                      <div
+                        key={inv.id}
+                        className="flex items-center justify-between gap-3 p-3 bg-secondary/20 rounded-xl"
+                      >
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <div className={`p-2 rounded-lg ${isInvoice ? 'bg-blue-100' : 'bg-purple-100'}`}>
+                            {isInvoice ? (
+                              <FileText className="w-4 h-4 text-blue-600" />
+                            ) : (
+                              <FileCheck className="w-4 h-4 text-purple-600" />
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-medium text-foreground truncate">{inv.number}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {format(parseISO(inv.issue_date), 'd MMMM yyyy', { locale: fr })}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className="font-semibold text-foreground">{inv.total.toFixed(2)}€</span>
+                          <Badge className={`${status.color} text-xs`}>{status.label}</Badge>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+                    );
+                  })}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </div>
       </DialogContent>
     </Dialog>
