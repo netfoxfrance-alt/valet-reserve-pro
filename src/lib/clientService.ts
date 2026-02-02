@@ -53,21 +53,23 @@ export async function findOrCreateClient(params: {
     
     let existingClient: { id: string; phone: string | null; email: string | null; address: string | null } | null = null;
     
-    // 1a. Chercher par téléphone normalisé (priorité)
+    // 1a. Chercher par téléphone (on cherche tous les clients du centre et filtre côté JS)
+    // L'index unique sur normalize_phone garantit l'unicité
     if (hasPhone) {
-      // Requête SQL avec téléphone normalisé via la fonction SQL
-      const { data } = await supabase
-        .rpc('find_client_by_normalized_phone', {
-          p_center_id: center_id,
-          p_normalized_phone: normalizedPhone
-        });
+      const { data: clients } = await supabase
+        .from('clients')
+        .select('id, phone, email, address')
+        .eq('center_id', center_id)
+        .not('phone', 'is', null);
       
-      if (data && data.length > 0) {
-        existingClient = data[0];
+      if (clients) {
+        existingClient = clients.find(c => 
+          c.phone && normalizePhone(c.phone) === normalizedPhone
+        ) || null;
       }
     }
     
-    // 1b. Si pas trouvé par téléphone, chercher par email
+    // 1b. Si pas trouvé par téléphone, chercher par email (case insensitive)
     if (!existingClient && hasEmail) {
       const { data } = await supabase
         .from('clients')
@@ -125,19 +127,25 @@ export async function findOrCreateClient(params: {
     }
     
     // ========================================
-    // ÉTAPE 4: Gestion race condition
+    // ÉTAPE 4: Gestion race condition (unique constraint violation)
     // ========================================
-    if (insertError?.code === '23505') { // Unique violation
+    if (insertError?.code === '23505') {
       // Re-chercher le client qui a été créé entre-temps
       if (hasPhone) {
-        const { data: raceClient } = await supabase
-          .rpc('find_client_by_normalized_phone', {
-            p_center_id: center_id,
-            p_normalized_phone: normalizedPhone
-          });
+        const { data: clients } = await supabase
+          .from('clients')
+          .select('id')
+          .eq('center_id', center_id)
+          .not('phone', 'is', null);
         
-        if (raceClient && raceClient.length > 0) {
-          return { clientId: raceClient[0].id, error: null, isNew: false };
+        if (clients) {
+          const raceClient = clients.find(c => 
+            (c as { id: string; phone?: string }).phone && 
+            normalizePhone((c as { id: string; phone: string }).phone) === normalizedPhone
+          );
+          if (raceClient) {
+            return { clientId: raceClient.id, error: null, isNew: false };
+          }
         }
       }
       
