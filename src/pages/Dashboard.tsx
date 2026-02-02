@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { sendBookingEmail, getClientEmail, buildEmailPayload, EmailType } from '@/lib/emailService';
 import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
+import { AppointmentDetailDialog } from '@/components/dashboard/AppointmentDetailDialog';
 
 // Apple-style status colors - clean and vibrant
 const statusConfig: Record<string, { label: string; color: string }> = {
@@ -46,7 +47,7 @@ const vehicleLabels: Record<string, string> = {
   standard: 'Standard',
 };
 
-function AppointmentRow({ appointment, centerAddress, onUpdateStatus, onConfirmAppointment, onRefuseAppointment, onCancelAppointment, onSendEmail }: { 
+function AppointmentRow({ appointment, centerAddress, onUpdateStatus, onConfirmAppointment, onRefuseAppointment, onCancelAppointment, onSendEmail, onViewDetails }: { 
   appointment: Appointment; 
   centerAddress?: string;
   onUpdateStatus: (id: string, status: Appointment['status']) => void;
@@ -54,6 +55,7 @@ function AppointmentRow({ appointment, centerAddress, onUpdateStatus, onConfirmA
   onRefuseAppointment: (appointment: Appointment) => void;
   onCancelAppointment: (appointment: Appointment) => void;
   onSendEmail: (appointment: Appointment, kind: 'confirmation' | 'reminder') => void;
+  onViewDetails: (appointment: Appointment) => void;
 }) {
   const status = statusConfig[appointment.status] || statusConfig.pending_validation;
   const date = parseISO(appointment.appointment_date);
@@ -88,7 +90,10 @@ function AppointmentRow({ appointment, centerAddress, onUpdateStatus, onConfirmA
   };
 
   return (
-    <div className="group flex flex-col sm:flex-row sm:items-center gap-4 p-5 bg-card border border-border/50 rounded-2xl hover:border-border hover:shadow-md transition-all duration-200">
+    <div 
+      className="group flex flex-col sm:flex-row sm:items-center gap-4 p-5 bg-card border border-border/50 rounded-2xl hover:border-border hover:shadow-md transition-all duration-200 cursor-pointer"
+      onClick={() => onViewDetails(appointment)}
+    >
       {/* Left: Avatar + Client info */}
       <div className="flex items-center gap-4 flex-1 min-w-0">
         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0 shadow-sm">
@@ -131,8 +136,8 @@ function AppointmentRow({ appointment, centerAddress, onUpdateStatus, onConfirmA
           {status.label}
         </span>
         
-        {/* Actions */}
-        <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+        {/* Actions - stop propagation to prevent opening detail dialog */}
+        <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
           {/* Actions menu (manual emails) - only for confirmed appointments */}
           {appointment.status === 'confirmed' && canSendEmail && serviceName && price !== undefined && (
             <DropdownMenu>
@@ -517,6 +522,8 @@ export default function Dashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [filter, setFilter] = useState<FilterType>('all');
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const { appointments, loading, updateStatus, createAppointment } = useMyAppointments();
   const { center } = useMyCenter();
   const { clients } = useMyClients();
@@ -595,6 +602,21 @@ export default function Dashboard() {
       toast.success('Réservation ajoutée');
     }
   };
+
+  // Open appointment detail dialog and find associated client
+  const handleViewDetails = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    setDetailDialogOpen(true);
+  };
+
+  // Find the client associated with the selected appointment
+  const selectedClient = selectedAppointment 
+    ? clients.find(c => 
+        c.id === selectedAppointment.client_id || 
+        (c.phone && c.phone === selectedAppointment.client_phone) ||
+        (c.email && c.email === selectedAppointment.client_email)
+      ) || null
+    : null;
 
   const handleSendEmail = async (appointment: Appointment, kind: 'confirmation' | 'reminder') => {
     if (!center) return;
@@ -843,6 +865,7 @@ export default function Dashboard() {
                           onRefuseAppointment={handleRefuseAppointment}
                           onCancelAppointment={handleCancelAppointment}
                           onSendEmail={handleSendEmail}
+                          onViewDetails={handleViewDetails}
                         />
                       ))}
                     </div>
@@ -853,6 +876,15 @@ export default function Dashboard() {
           )}
         </main>
       </div>
+      
+      {/* Appointment Detail Dialog */}
+      <AppointmentDetailDialog
+        appointment={selectedAppointment}
+        client={selectedClient}
+        centerAddress={center?.address}
+        open={detailDialogOpen}
+        onOpenChange={setDetailDialogOpen}
+      />
     </div>
   );
 }
