@@ -116,10 +116,10 @@ function AppointmentRow({ appointment, centerAddress, onUpdateStatus, onConfirmA
           </div>
         </div>
         
-        {/* Price */}
-        {appointment.pack && (
+        {/* Price - Use fallback logic: custom_price > custom_service.price > pack.price */}
+        {(price !== undefined && price !== null) && (
           <div className="hidden sm:block text-right min-w-[60px]">
-            <p className="text-lg font-bold text-foreground">{appointment.pack.price}€</p>
+            <p className="text-lg font-bold text-foreground">{price}€</p>
           </div>
         )}
         
