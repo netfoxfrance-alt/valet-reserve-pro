@@ -40,6 +40,7 @@ const DEFAULT_HOURS = [
 export function CenterLanding({ center, packs, onStartBooking, onSelectPack, hasPacks, isPro, isPreview = false }: CenterLandingProps) {
   const { toast } = useToast();
   const [contactName, setContactName] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [contactMessage, setContactMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -398,6 +399,29 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
               </div>
 
               <div className="space-y-2">
+                <Label style={{ color: textColors.secondary }}>Email *</Label>
+                <div className="relative">
+                  <Mail 
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" 
+                    style={{ color: textColors.secondary }}
+                  />
+                  <Input
+                    type="email"
+                    placeholder="jean.dupont@email.com"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    className="pl-11 h-12 rounded-xl"
+                    style={{
+                      backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'white',
+                      borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.2)' : undefined,
+                      color: textColors.primary,
+                    }}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
                 <Label style={{ color: textColors.secondary }}>Téléphone *</Label>
                 <div className="relative">
                   <Phone 
@@ -740,7 +764,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contactName.trim() || !contactPhone.trim()) return;
+    if (!contactName.trim() || !contactEmail.trim() || !contactPhone.trim()) return;
 
     setIsSubmitting(true);
     try {
@@ -749,6 +773,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
         .insert({
           center_id: center.id,
           client_name: contactName.trim(),
+          client_email: contactEmail.trim().toLowerCase(),
           client_phone: contactPhone.trim(),
           message: contactMessage.trim() || null,
         });
