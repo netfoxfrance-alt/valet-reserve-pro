@@ -6,6 +6,7 @@ import { ClientForm, ClientData } from '@/components/booking/ClientForm';
 import { ConfirmationView } from '@/components/booking/ConfirmationView';
 import { CenterLanding, RecognizedClient } from '@/components/booking/CenterLanding';
 import { ContactRequestForm, ContactRequestData } from '@/components/booking/ContactRequestForm';
+import { ClientLookupInline } from '@/components/booking/ClientLookupInline';
 import { ContactConfirmation } from '@/components/booking/ContactConfirmation';
 import { useCenterBySlug, Pack, PriceVariant } from '@/hooks/useCenter';
 import { useCreateAppointment } from '@/hooks/useAppointments';
@@ -446,6 +447,19 @@ export default function CenterBooking() {
                   Sélectionnez la prestation qui vous convient
                 </p>
               </div>
+
+              {/* Client recognition in pack selection */}
+              {!recognizedClient && (
+                <ClientLookupInline
+                  centerId={center.id}
+                  onRecognizedClient={(client) => {
+                    setRecognizedClient(client);
+                    if (client.service_id) {
+                      setCurrentStep('calendar');
+                    }
+                  }}
+                />
+              )}
               
               <div className="grid gap-4 sm:grid-cols-2">
                 {packs.map((pack) => {

@@ -1060,7 +1060,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                   border: `1px solid ${customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'}`,
                 }}
               >
-                🔄 Vous êtes déjà client ? Identifiez-vous
+                🔑 Vous avez une formule personnalisée ? Identifiez-vous
               </button>
             ) : (
               <Card
