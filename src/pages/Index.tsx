@@ -19,7 +19,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Index() {
+  const [dashboardTab, setDashboardTab] = useState<'reservations' | 'calendar' | 'clients' | 'invoices' | 'stats' | 'mypage' | 'formules'>('reservations');
   const [mobileTab, setMobileTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings' | 'dispo'>('mypage');
+  const [mockupTab, setMockupTab] = useState<'design' | 'formules' | 'elements' | 'seo'>('design');
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const { toast } = useToast();
 
@@ -787,215 +789,814 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Section 3: Gérez votre activité — Widget Grid */}
+      {/* Section 3: Gérez votre activité */}
       <section className="py-16 sm:py-24 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4">
-              Tout pour gérer votre activité.
-            </h2>
-            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto">
-              Un tableau de bord complet, accessible en un clic.
-            </p>
+        <div className="max-w-6xl mx-auto">
+          {/* Section Label */}
+          <div className="flex items-center gap-2 text-muted-foreground mb-4 opacity-0 animate-fade-in-up">
+            <Shield className="w-4 h-4" />
+            <span className="text-xs font-medium uppercase tracking-wider">Gestion</span>
+          </div>
+          
+          <h2 className="opacity-0 animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+            Gérez votre activité
+          </h2>
+          <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-base sm:text-lg mb-8 max-w-2xl leading-relaxed">
+            Réservations, calendrier, clients, factures, statistiques... Un tableau de bord complet pour piloter votre activité.
+          </p>
+
+          {/* Dashboard Tabs Preview - Interactive */}
+          <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-wrap gap-2 sm:gap-3 mb-10 justify-center">
+            {[
+              { icon: Calendar, label: 'Réservations', tab: 'reservations' as const, badge: '3' },
+              { icon: CalendarDays, label: 'Calendrier', tab: 'calendar' as const, badge: null },
+              { icon: Users, label: 'Clients', tab: 'clients' as const, badge: null },
+              { icon: Star, label: 'Factures', tab: 'invoices' as const, badge: null },
+              { icon: BarChart3, label: 'Statistiques', tab: 'stats' as const, badge: null },
+              { icon: Globe, label: 'Ma Page', tab: 'mypage' as const, badge: null },
+              { icon: Droplets, label: 'Formules', tab: 'formules' as const, badge: null },
+            ].map((item) => (
+              <button 
+                key={item.label}
+                onClick={() => setDashboardTab(item.tab)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer ${
+                  dashboardTab === item.tab 
+                    ? 'bg-foreground text-background shadow-lg' 
+                    : 'bg-card border border-border/60 text-foreground hover:bg-secondary/50'
+                }`}
+              >
+                <item.icon className="w-4 h-4" />
+                <span className="hidden sm:inline">{item.label}</span>
+                {item.badge && (
+                  <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            ))}
           </div>
 
-          <div className="opacity-0 animate-fade-in-up stagger-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-
-            {/* Widget 1: Réservations */}
-            <div className="bg-secondary/40 rounded-[1.25rem] p-5 hover:bg-secondary/60 transition-colors duration-300">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2.5">
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-[13px] font-semibold text-foreground">Réservations</span>
-                </div>
-                <span className="text-[11px] text-muted-foreground">Aujourd'hui</span>
-              </div>
-              <p className="text-3xl font-bold text-foreground tracking-tight mb-1">5</p>
-              <p className="text-[11px] text-muted-foreground mb-4">rendez-vous aujourd'hui</p>
-              <div className="space-y-1.5">
-                {[
-                  { name: 'Jean M.', time: '10:00', done: true },
-                  { name: 'Marie D.', time: '11:30', done: false },
-                  { name: 'Pierre B.', time: '14:00', done: false },
-                ].map((r, i) => (
-                  <div key={i} className="flex items-center gap-2.5 py-1.5">
-                    <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${r.done ? 'bg-muted-foreground/30' : 'bg-emerald-500'}`} />
-                    <span className={`text-[12px] flex-1 ${r.done ? 'text-muted-foreground line-through' : 'text-foreground font-medium'}`}>{r.name}</span>
-                    <span className="text-[11px] text-muted-foreground tabular-nums">{r.time}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Widget 2: Calendrier */}
-            <div className="bg-secondary/40 rounded-[1.25rem] p-5 hover:bg-secondary/60 transition-colors duration-300">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2.5">
-                  <CalendarDays className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-[13px] font-semibold text-foreground">Calendrier</span>
-                </div>
+          {/* Dashboard Browser Mockup */}
+          <div className="opacity-0 animate-fade-in-up stagger-4">
+            <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60 max-w-5xl mx-auto">
+              {/* Browser Bar */}
+              <div className="bg-secondary/50 px-4 py-3 flex items-center gap-3 border-b border-border/40">
                 <div className="flex gap-1.5">
-                  <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />
-                  <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+                  <div className="w-3 h-3 rounded-full bg-red-400" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                  <div className="w-3 h-3 rounded-full bg-green-400" />
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <div className="flex items-center gap-2 bg-background rounded-full px-4 py-1.5 text-xs text-muted-foreground">
+                    <Shield className="w-3 h-3" />
+                    cleaningpage.com/<span className="text-foreground font-medium">dashboard</span>
+                  </div>
                 </div>
               </div>
-              <p className="text-[12px] font-medium text-foreground mb-3">Février 2026</p>
-              <div className="grid grid-cols-7 gap-0.5 mb-1.5">
-                {['L','M','M','J','V','S','D'].map((d,i) => (
-                  <div key={i} className="text-center text-[9px] font-medium text-muted-foreground/60 py-0.5">{d}</div>
-                ))}
-              </div>
-              <div className="grid grid-cols-7 gap-0.5">
-                {[26,27,28,29,30,31].map(d => (
-                  <div key={`p${d}`} className="aspect-square rounded-lg flex items-center justify-center text-[9px] text-muted-foreground/20">{d}</div>
-                ))}
-                {Array.from({length: 28}, (_, i) => i + 1).map(d => {
-                  const hasAppt = [3,5,8,11,15,22].includes(d);
-                  const isToday = d === 11;
-                  return (
-                    <div key={d} className={`aspect-square rounded-lg flex flex-col items-center justify-center text-[9px] ${
-                      isToday ? 'bg-foreground text-background font-bold' : 'text-foreground'
-                    }`}>
-                      {d}
-                      {hasAppt && !isToday && <div className="w-0.5 h-0.5 bg-foreground/40 rounded-full mt-0.5" />}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
 
-            {/* Widget 3: Clients */}
-            <div className="bg-secondary/40 rounded-[1.25rem] p-5 hover:bg-secondary/60 transition-colors duration-300">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2.5">
-                  <Users className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-[13px] font-semibold text-foreground">Clients</span>
-                </div>
-                <span className="text-[11px] text-muted-foreground">Ce mois</span>
-              </div>
-              <p className="text-3xl font-bold text-foreground tracking-tight mb-1">128</p>
-              <p className="text-[11px] text-muted-foreground mb-4">clients actifs</p>
-              <div className="space-y-2.5">
-                {[
-                  { name: 'Sophie Leroy', visits: 15, value: '1 420€' },
-                  { name: 'Jean Martin', visits: 12, value: '1 068€' },
-                  { name: 'Marie Dupont', visits: 8, value: '520€' },
-                ].map((c, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center text-[8px] font-semibold text-foreground/70">
-                        {c.name.split(' ').map(n => n[0]).join('')}
-                      </div>
-                      <div>
-                        <p className="text-[11px] font-medium text-foreground">{c.name}</p>
-                        <p className="text-[9px] text-muted-foreground">{c.visits} visites</p>
+              {/* Dashboard Content */}
+              <div className="flex min-h-[480px]">
+                {/* Sidebar */}
+                <div className="w-52 bg-secondary/30 border-r border-border/40 p-4 flex-shrink-0 hidden md:flex flex-col">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Logo size="md" />
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-5 truncate">clean-auto-pro</p>
+
+                  {/* Sidebar Groups */}
+                  <nav className="flex-1 space-y-4">
+                    <div>
+                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">Activité</p>
+                      <div className="space-y-0.5">
+                        {[
+                          { icon: Calendar, label: 'Réservations', tab: 'reservations' as const, badge: '3' },
+                          { icon: CalendarDays, label: 'Calendrier', tab: 'calendar' as const },
+                        ].map((item) => (
+                          <button
+                            key={item.label}
+                            onClick={() => setDashboardTab(item.tab)}
+                            className={`w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg text-xs transition-all ${
+                              dashboardTab === item.tab 
+                                ? 'bg-foreground text-background font-medium' 
+                                : 'text-muted-foreground hover:bg-card/50'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <item.icon className="w-3.5 h-3.5" />
+                              {item.label}
+                            </div>
+                            {item.badge && (
+                              <span className="bg-primary text-primary-foreground text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                                {item.badge}
+                              </span>
+                            )}
+                          </button>
+                        ))}
                       </div>
                     </div>
-                    <span className="text-[11px] font-semibold text-foreground tabular-nums">{c.value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Widget 4: Factures & Devis */}
-            <div className="bg-secondary/40 rounded-[1.25rem] p-5 hover:bg-secondary/60 transition-colors duration-300">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2.5">
-                  <svg className="w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                  </svg>
-                  <span className="text-[13px] font-semibold text-foreground">Factures & Devis</span>
-                </div>
-              </div>
-              <div className="flex items-baseline gap-2 mb-4">
-                <p className="text-3xl font-bold text-foreground tracking-tight">4 280€</p>
-                <span className="text-[11px] text-muted-foreground">ce mois</span>
-              </div>
-              <div className="space-y-1.5">
-                {[
-                  { num: 'FAC-012', client: 'Jean Martin', amount: '89€', status: 'Payé' },
-                  { num: 'FAC-011', client: 'Marie Dupont', amount: '159€', status: 'Envoyé' },
-                  { num: 'DEV-005', client: 'Pierre B.', amount: '320€', status: 'Brouillon' },
-                ].map((inv, i) => (
-                  <div key={i} className="flex items-center py-1.5">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-medium text-foreground">{inv.num} · {inv.client}</p>
+                    
+                    <div>
+                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">Clients</p>
+                      <div className="space-y-0.5">
+                        {[
+                          { icon: Users, label: 'Clients', tab: 'clients' as const },
+                          { icon: Star, label: 'Factures & Devis', tab: 'invoices' as const },
+                        ].map((item) => (
+                          <button
+                            key={item.label}
+                            onClick={() => setDashboardTab(item.tab)}
+                            className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs transition-all ${
+                              dashboardTab === item.tab 
+                                ? 'bg-foreground text-background font-medium' 
+                                : 'text-muted-foreground hover:bg-card/50'
+                            }`}
+                          >
+                            <item.icon className="w-3.5 h-3.5" />
+                            {item.label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    <span className="text-[11px] font-semibold text-foreground tabular-nums mr-3">{inv.amount}</span>
-                    <span className={`text-[10px] font-medium ${
-                      inv.status === 'Payé' ? 'text-emerald-600' : inv.status === 'Envoyé' ? 'text-foreground/60' : 'text-muted-foreground'
-                    }`}>{inv.status}</span>
+                    
+                    <div>
+                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">Configuration</p>
+                      <div className="space-y-0.5">
+                        {[
+                          { icon: Globe, label: 'Ma Page', tab: 'mypage' as const },
+                          { icon: Droplets, label: 'Formules', tab: 'formules' as const },
+                        ].map((item) => (
+                          <button
+                            key={item.label}
+                            onClick={() => setDashboardTab(item.tab)}
+                            className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs transition-all ${
+                              dashboardTab === item.tab 
+                                ? 'bg-foreground text-background font-medium' 
+                                : 'text-muted-foreground hover:bg-card/50'
+                            }`}
+                          >
+                            <item.icon className="w-3.5 h-3.5" />
+                            {item.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">Insights</p>
+                      <div className="space-y-0.5">
+                        <button
+                          onClick={() => setDashboardTab('stats')}
+                          className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs transition-all ${
+                            dashboardTab === 'stats' 
+                              ? 'bg-foreground text-background font-medium' 
+                              : 'text-muted-foreground hover:bg-card/50'
+                          }`}
+                        >
+                          <BarChart3 className="w-3.5 h-3.5" />
+                          Statistiques
+                        </button>
+                      </div>
+                    </div>
+                  </nav>
+
+                  {/* Link at bottom */}
+                  <div className="mt-4 pt-3 border-t border-border/40">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Link2 className="w-3.5 h-3.5" />
+                      <span className="text-[10px]">Votre lien</span>
+                    </div>
+                    <p className="text-[9px] text-muted-foreground mt-1 truncate">cleaningpage.com/clean-auto...</p>
                   </div>
-                ))}
+                </div>
+
+                {/* Main Content Area */}
+                <div className="flex-1 p-5 sm:p-6 overflow-y-auto" style={{ background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary)/0.3) 100%)' }}>
+                  
+                  {/* === RÉSERVATIONS === */}
+                  {dashboardTab === 'reservations' && (
+                    <>
+                      <div className="flex items-center justify-between mb-6">
+                        <div>
+                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Réservations</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">Mardi 11 février 2026</p>
+                        </div>
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
+                          + Nouveau RDV
+                        </button>
+                      </div>
+
+                      {/* KPI row — clean widget style */}
+                      <div className="grid grid-cols-3 gap-3 mb-6">
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Aujourd'hui</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">5</p>
+                          <div className="flex items-center gap-1.5 mt-2">
+                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                            <p className="text-[10px] text-muted-foreground font-medium">2 en attente</p>
+                          </div>
+                        </div>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Cette semaine</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">23</p>
+                          <p className="text-[10px] text-muted-foreground mt-2">dont 4 demandes</p>
+                        </div>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">CA du jour</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">340€</p>
+                          <p className="text-[10px] text-emerald-600 font-semibold mt-2">↑ 15%</p>
+                        </div>
+                      </div>
+
+                      {/* Segmented control */}
+                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
+                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Prochains</span>
+                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">Demandes</span>
+                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">Passés</span>
+                      </div>
+
+                      <div className="space-y-2">
+                        {[
+                          { name: 'Jean Martin', service: 'Nettoyage Complet', time: '10:00', duration: '1h30', price: '89€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'JM', avatarBg: 'bg-blue-500' },
+                          { name: 'Marie Dupont', service: 'Express', time: '11:30', duration: '45min', price: '35€', status: 'En attente', statusBg: 'bg-orange-500', initials: 'MD', avatarBg: 'bg-pink-500' },
+                          { name: 'Pierre Bernard', service: 'Rénovation Premium', time: '14:00', duration: '3h', price: '159€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'PB', avatarBg: 'bg-amber-500' },
+                          { name: 'Demande entrante', service: 'Nettoyage canapé', time: '—', duration: '—', price: 'Sur devis', status: 'Demande', statusBg: 'bg-blue-500', initials: '?', avatarBg: 'bg-indigo-500' },
+                          { name: 'Sophie Leroy', service: 'Pack Intérieur', time: '16:30', duration: '1h', price: '65€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'SL', avatarBg: 'bg-violet-500' },
+                        ].map((booking, i) => (
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 hover:shadow-md transition-all cursor-pointer">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 ${booking.avatarBg}`}>
+                              {booking.initials}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[13px] font-semibold text-foreground truncate">{booking.name}</p>
+                              <p className="text-[11px] text-muted-foreground mt-0.5">{booking.service} · {booking.time} · {booking.duration}</p>
+                            </div>
+                            <span className="text-[13px] font-bold text-foreground hidden sm:block tabular-nums">{booking.price}</span>
+                            <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold text-white ${booking.statusBg}`}>
+                              {booking.status}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {/* === CALENDRIER === */}
+                  {dashboardTab === 'calendar' && (
+                    <div className="flex gap-6 h-full">
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-5">
+                          <div className="flex items-center gap-3">
+                            <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                              <ChevronLeft className="w-4 h-4" />
+                            </button>
+                            <h3 className="text-base font-semibold text-foreground min-w-[130px] text-center">Février 2026</h3>
+                            <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                              <ChevronRight className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <button className="text-[11px] text-white font-semibold bg-blue-500 px-3.5 py-1.5 rounded-full shadow-sm shadow-blue-500/25 hover:bg-blue-600 transition-colors">Aujourd'hui</button>
+                        </div>
+
+                        <div className="grid grid-cols-7 gap-1 mb-2">
+                          {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
+                            <div key={i} className="text-center text-[11px] font-semibold text-muted-foreground py-1">{d}</div>
+                          ))}
+                        </div>
+                        <div className="grid grid-cols-7 gap-1">
+                          {[26, 27, 28, 29, 30, 31].map((d, i) => (
+                            <div key={`prev-${i}`} className="aspect-square rounded-2xl flex flex-col items-center justify-start pt-2 text-[11px] text-muted-foreground/25">
+                              <span>{d}</span>
+                            </div>
+                          ))}
+                          {Array.from({ length: 28 }, (_, i) => i + 1).map(d => {
+                            const hasAppointments = [3, 5, 8, 11, 12, 15, 18, 22, 25].includes(d);
+                            const isSelected = d === 11;
+                            const count = d === 11 ? 3 : d === 15 ? 2 : d === 22 ? 4 : 1;
+                            return (
+                              <div key={d} className={`aspect-square rounded-2xl flex flex-col items-center justify-start pt-2 text-[11px] relative cursor-pointer transition-all ${
+                                isSelected ? 'bg-blue-500 text-white font-bold shadow-lg shadow-blue-500/30' : 'hover:bg-secondary/50'
+                              }`}>
+                                <span>{d}</span>
+                                {hasAppointments && (
+                                  <div className="flex gap-0.5 mt-1">
+                                    {Array.from({ length: Math.min(count, 3) }).map((_, j) => (
+                                      <div key={j} className={`w-1.5 h-1.5 rounded-full ${
+                                        isSelected ? 'bg-white/70' :
+                                        j === 0 ? 'bg-emerald-500' : j === 1 ? 'bg-orange-400' : 'bg-blue-500'
+                                      }`} />
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        <div className="flex gap-5 mt-4 pt-3 border-t border-border/20">
+                          {[
+                            { color: 'bg-emerald-500', label: 'Confirmé' },
+                            { color: 'bg-orange-400', label: 'En attente' },
+                            { color: 'bg-blue-500', label: 'Terminé' },
+                          ].map(l => (
+                            <div key={l.label} className="flex items-center gap-2">
+                              <div className={`w-2 h-2 rounded-full ${l.color}`} />
+                              <span className="text-[10px] text-muted-foreground font-medium">{l.label}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Right: Selected Day Detail */}
+                      <div className="w-48 hidden lg:flex flex-col border-l border-border/20 pl-5">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+                            <span className="text-[10px] text-white font-bold">11</span>
+                          </div>
+                          <p className="text-sm font-semibold text-foreground">Mercredi</p>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground mb-4">3 rendez-vous · 340€</p>
+                        <div className="space-y-2.5 flex-1">
+                          {[
+                            { time: '10:00', name: 'Jean M.', service: 'Complet · 89€', color: 'bg-emerald-500', initials: 'JM' },
+                            { time: '11:30', name: 'Marie D.', service: 'Express · 35€', color: 'bg-orange-400', initials: 'MD' },
+                            { time: '14:00', name: 'Pierre B.', service: 'Rénovation · 159€', color: 'bg-emerald-500', initials: 'PB' },
+                          ].map((rdv, i) => (
+                            <div key={i} className="bg-card rounded-xl p-2.5 border border-border/20 hover:shadow-sm transition-all cursor-pointer">
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className={`w-1.5 h-1.5 rounded-full ${rdv.color}`} />
+                                <span className="text-[11px] font-semibold text-foreground">{rdv.time}</span>
+                              </div>
+                              <p className="text-[11px] font-medium text-foreground">{rdv.name}</p>
+                              <p className="text-[10px] text-muted-foreground">{rdv.service}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* === CLIENTS === */}
+                  {dashboardTab === 'clients' && (
+                    <>
+                      <div className="flex items-center justify-between mb-6">
+                        <div>
+                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Clients</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">142 clients enregistrés</p>
+                        </div>
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
+                          + Ajouter
+                        </button>
+                      </div>
+
+                      {/* Search */}
+                      <div className="relative mb-5">
+                        <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        <div className="bg-card rounded-2xl pl-11 pr-4 py-3 text-xs text-muted-foreground/50 border border-border/20 shadow-sm">
+                          Rechercher un client...
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        {[
+                          { name: 'Sophie Leroy', rdvCount: 15, totalSpent: '1 420€', lastVisit: 'Aujourd\'hui', initials: 'SL', avatarBg: 'bg-violet-500' },
+                          { name: 'Jean Martin', rdvCount: 12, totalSpent: '1 068€', lastVisit: '10 fév', initials: 'JM', avatarBg: 'bg-blue-500' },
+                          { name: 'Marie Dupont', rdvCount: 8, totalSpent: '520€', lastVisit: '8 fév', initials: 'MD', avatarBg: 'bg-pink-500' },
+                          { name: 'Pierre Bernard', rdvCount: 3, totalSpent: '477€', lastVisit: '2 fév', initials: 'PB', avatarBg: 'bg-amber-500' },
+                        ].map((client, i) => (
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer group">
+                            <div className={`w-11 h-11 rounded-full flex items-center justify-center text-[12px] font-bold text-white shrink-0 ${client.avatarBg}`}>
+                              {client.initials}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[13px] font-semibold text-foreground truncate">{client.name}</p>
+                              <p className="text-[11px] text-muted-foreground mt-0.5">{client.rdvCount} visites · Dernier : {client.lastVisit}</p>
+                            </div>
+                            <div className="text-right hidden sm:block">
+                              <p className="text-[13px] font-bold text-foreground tabular-nums">{client.totalSpent}</p>
+                              <p className="text-[10px] text-muted-foreground">CA total</p>
+                            </div>
+                            <ChevronRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-muted-foreground transition-colors shrink-0" />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Client stats summary */}
+                      <div className="mt-4 bg-card rounded-2xl border border-border/15 p-5 shadow-sm">
+                        <p className="text-sm font-semibold text-foreground mb-3">Vue d'ensemble</p>
+                        <div className="grid grid-cols-3 gap-3">
+                          {[
+                            { value: '142', label: 'Clients' },
+                            { value: '8 640€', label: 'CA total' },
+                            { value: '61€', label: 'Panier moy.' },
+                          ].map((s, i) => (
+                            <div key={i} className="bg-secondary/20 rounded-xl p-3 text-center border border-border/10">
+                              <p className="text-lg font-bold text-foreground tracking-tight">{s.value}</p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5">{s.label}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* === FACTURES & DEVIS === */}
+                  {dashboardTab === 'invoices' && (
+                    <>
+                      <div className="flex items-center justify-between mb-6">
+                        <div>
+                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Factures & Devis</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">Gérez vos documents</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button className="bg-secondary/60 text-foreground px-3.5 py-2 rounded-full text-xs font-semibold hover:bg-secondary transition-colors">Devis</button>
+                          <button className="bg-blue-500 text-white px-3.5 py-2 rounded-full text-xs font-semibold shadow-sm shadow-blue-500/25">+ Facture</button>
+                        </div>
+                      </div>
+
+                      {/* KPIs — clean */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Factures</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none text-foreground">24</p>
+                        </div>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Devis</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none text-foreground">8</p>
+                        </div>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">En attente</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none text-foreground">680€</p>
+                        </div>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Encaissé</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none text-foreground">3 240€</p>
+                        </div>
+                      </div>
+
+                      {/* Segmented control */}
+                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
+                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Tout</span>
+                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">Factures</span>
+                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">Devis</span>
+                      </div>
+
+                      {/* Invoice list */}
+                      <div className="space-y-2">
+                        {[
+                          { number: 'FAC-2026-012', client: 'Jean Martin', date: '10 fév', total: '89,00 €', status: 'Payé', statusBg: 'bg-emerald-500' },
+                          { number: 'FAC-2026-011', client: 'Marie Dupont', date: '8 fév', total: '159,00 €', status: 'Envoyé', statusBg: 'bg-blue-500' },
+                          { number: 'DEV-2026-005', client: 'Pierre Bernard', date: '5 fév', total: '320,00 €', status: 'En attente', statusBg: 'bg-orange-500' },
+                          { number: 'FAC-2026-010', client: 'Sophie Leroy', date: '3 fév', total: '65,00 €', status: 'Payé', statusBg: 'bg-emerald-500' },
+                        ].map((inv, i) => (
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl px-4 py-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer">
+                            <div className={`w-2 h-8 rounded-full ${inv.statusBg}`} />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[13px] font-semibold text-foreground">{inv.number}</p>
+                              <p className="text-[11px] text-muted-foreground mt-0.5">{inv.client} · {inv.date}</p>
+                            </div>
+                            <span className="text-[13px] font-bold text-foreground tabular-nums">{inv.total}</span>
+                            <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold text-white ${inv.statusBg}`}>{inv.status}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {/* === STATISTIQUES === */}
+                  {dashboardTab === 'stats' && (
+                    <>
+                      {/* Month navigation */}
+                      <div className="flex items-center justify-between mb-6">
+                        <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <h3 className="text-lg font-semibold text-foreground tracking-tight">Janvier 2025</h3>
+                        <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {/* KPIs — clean white cards with borders */}
+                      <div className="grid grid-cols-2 gap-3 mb-3">
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Réservations</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-3xl font-bold tracking-tight leading-none text-foreground">24</p>
+                            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">↑12%</span>
+                          </div>
+                        </div>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">CA</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-3xl font-bold tracking-tight leading-none text-foreground">8 450€</p>
+                            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">↑18%</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3 mb-6">
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Clients</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">18</p>
+                        </div>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Panier moyen</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">352€</p>
+                        </div>
+                      </div>
+
+                      {/* Segmented control */}
+                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
+                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Évolution</span>
+                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">Services</span>
+                      </div>
+
+                      {/* Charts row */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* Line chart — Réservations par semaine */}
+                        <div className="bg-card rounded-2xl p-5 border border-border/15 shadow-sm">
+                          <p className="text-sm font-semibold text-foreground mb-4">Réservations par semaine</p>
+                          <div className="relative h-32">
+                            <svg viewBox="0 0 300 100" className="w-full h-full" preserveAspectRatio="none">
+                              <defs>
+                                <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.15" />
+                                  <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
+                                </linearGradient>
+                              </defs>
+                              {[25, 50, 75].map(y => (
+                                <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="hsl(var(--border))" strokeWidth="0.3" />
+                              ))}
+                              {/* Y-axis labels */}
+                              <text x="2" y="18" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">8</text>
+                              <text x="2" y="35" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">6</text>
+                              <text x="2" y="55" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">4</text>
+                              <text x="2" y="78" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">2</text>
+                              <text x="2" y="98" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">0</text>
+                              {/* Area */}
+                              <path d="M20,80 C50,75 70,68 100,55 C130,42 160,35 190,30 C220,28 250,25 280,22 L280,100 L20,100 Z" fill="url(#lineGrad)" />
+                              {/* Line */}
+                              <path d="M20,80 C50,75 70,68 100,55 C130,42 160,35 190,30 C220,28 250,25 280,22" fill="none" stroke="#3B82F6" strokeWidth="2.5" strokeLinecap="round" />
+                              <circle cx="280" cy="22" r="3.5" fill="#3B82F6" />
+                            </svg>
+                            <div className="flex justify-between mt-2 px-2">
+                              {['9 déc', '16 déc', '23 déc', '30 déc', '6 jan', '13 jan', '20 jan'].map(m => (
+                                <span key={m} className="text-[8px] text-muted-foreground">{m}</span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Bar chart — CA par mois */}
+                        <div className="bg-card rounded-2xl p-5 border border-border/15 shadow-sm">
+                          <div className="flex items-center justify-between mb-4">
+                            <p className="text-sm font-semibold text-foreground">Chiffre d'affaires par mois</p>
+                            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+18%</span>
+                          </div>
+                          <div className="relative h-32">
+                            <svg viewBox="0 0 300 100" className="w-full h-full" preserveAspectRatio="none">
+                              {[25, 50, 75].map(y => (
+                                <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="hsl(var(--border))" strokeWidth="0.3" />
+                              ))}
+                              {/* Y-axis labels */}
+                              <text x="2" y="8" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">10k</text>
+                              <text x="2" y="30" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">7.5k</text>
+                              <text x="2" y="53" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">5k</text>
+                              <text x="2" y="78" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">2.5k</text>
+                              <text x="2" y="98" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">0</text>
+                              {/* Bars with rounded tops */}
+                              {[
+                                { x: 40, h: 45 },
+                                { x: 80, h: 50 },
+                                { x: 120, h: 48 },
+                                { x: 160, h: 55 },
+                                { x: 200, h: 60 },
+                                { x: 240, h: 70 },
+                              ].map((bar, i) => (
+                                <rect key={i} x={bar.x} y={100 - bar.h} width="22" height={bar.h} rx="6" ry="6" fill={i === 5 ? '#10B981' : '#10B981'} opacity={i === 5 ? 1 : 0.4} />
+                              ))}
+                              {/* Dashed target line */}
+                              <line x1="30" y1="35" x2="270" y2="35" stroke="#10B981" strokeWidth="1" strokeDasharray="4,3" opacity="0.5" />
+                            </svg>
+                            <div className="flex justify-between mt-2 px-5">
+                              {['août', 'sept.', 'oct.', 'nov.', 'déc.', 'janv.'].map((m, i) => (
+                                <span key={m} className={`text-[8px] ${i === 5 ? 'text-foreground font-bold' : 'text-muted-foreground'}`}>{m}</span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* === MA PAGE === */}
+                  {dashboardTab === 'mypage' && (
+                    <div className="h-full flex flex-col">
+                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        {/* Left: Live Preview */}
+                        <div className="flex flex-col min-h-[300px] sm:min-h-[380px] order-2 lg:order-1">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-sm font-semibold text-foreground">Aperçu</span>
+                            <div className="flex gap-1">
+                              <div className="w-7 h-7 bg-blue-500 rounded-lg flex items-center justify-center shadow-sm shadow-blue-500/25">
+                                <Phone className="w-3.5 h-3.5 text-white" />
+                              </div>
+                              <div className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center">
+                                <svg className="w-3.5 h-3.5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <rect x="2" y="3" width="20" height="14" rx="2" />
+                                  <path d="M8 21h8" /><path d="M12 17v4" />
+                                </svg>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex-1 bg-secondary/20 rounded-2xl overflow-hidden border border-border/15 shadow-sm">
+                            <div className="bg-card h-full overflow-y-auto">
+                              <div className="h-28 relative">
+                                <img src={mockupBanner} alt="Preview" className="w-full h-full object-cover" />
+                                <div className="absolute left-1/2 -translate-x-1/2 -bottom-7">
+                                  <div className="w-16 h-16 rounded-2xl shadow-lg ring-4 ring-card overflow-hidden">
+                                    <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="px-4 pt-10 pb-4">
+                                <h3 className="text-sm font-bold text-foreground text-center mb-0.5">GOCLEANING</h3>
+                                <p className="text-[9px] text-muted-foreground text-center mb-2">Nettoyage automobile premium</p>
+                                <div className="flex justify-center mb-3">
+                                  <span className="inline-flex items-center gap-1 text-[8px] bg-emerald-500 text-white px-2.5 py-0.5 rounded-full font-semibold">
+                                    <span className="w-1 h-1 bg-white rounded-full" />Ouvert
+                                  </span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-1.5 mb-3">
+                                  <div className="bg-secondary/30 rounded-xl p-2.5 text-left border border-border/10">
+                                    <p className="text-[9px] font-medium">Express</p>
+                                    <p className="text-[12px] font-bold text-foreground">35€</p>
+                                  </div>
+                                  <div className="bg-secondary/30 rounded-xl p-2.5 text-left border border-border/10">
+                                    <p className="text-[9px] font-medium">Complet</p>
+                                    <p className="text-[12px] font-bold text-foreground">89€</p>
+                                  </div>
+                                </div>
+                                <button className="w-full bg-blue-500 text-white py-2.5 rounded-xl text-[10px] font-semibold shadow-sm shadow-blue-500/25">Réserver</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right: Customization controls */}
+                        <div className="flex flex-col order-1 lg:order-2">
+                          <span className="text-sm font-semibold text-foreground mb-3">Personnalisation</span>
+                          <div className="bg-card rounded-2xl border border-border/15 flex-1 overflow-hidden shadow-sm">
+                            <div className="flex items-center border-b border-border/15">
+                              {[
+                                { id: 'design', label: 'Design' },
+                                { id: 'formules', label: 'Formules' },
+                                { id: 'elements', label: 'Éléments' },
+                                { id: 'seo', label: 'SEO' },
+                              ].map(tab => (
+                                <button key={tab.id} onClick={() => setMockupTab(tab.id as any)}
+                                  className={`flex-1 py-3 text-[11px] font-semibold text-center transition-colors border-b-2 ${mockupTab === tab.id ? 'border-blue-500 text-blue-500' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+                                >
+                                  {tab.label}
+                                </button>
+                              ))}
+                            </div>
+                            <div className="p-4 space-y-4 overflow-y-auto max-h-[280px]">
+                              {mockupTab === 'design' && (
+                                <>
+                                  <div>
+                                    <p className="text-[11px] font-semibold text-foreground mb-2">Bannière</p>
+                                    <div className="rounded-xl overflow-hidden mb-2.5 shadow-sm">
+                                      <img src={mockupBanner} alt="Banner" className="w-full h-16 object-cover" />
+                                    </div>
+                                    <button className="text-[11px] font-semibold text-blue-500 bg-blue-50 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors">Modifier</button>
+                                  </div>
+                                  <div>
+                                    <p className="text-[11px] font-semibold text-foreground mb-2.5">Couleur principale</p>
+                                    <div className="flex gap-3">
+                                      {[
+                                        '#3B82F6', '#EF4444', '#10B981', '#8B5CF6', '#F59E0B', '#EC4899',
+                                      ].map((c, i) => (
+                                        <div key={i} className={`w-8 h-8 rounded-full cursor-pointer transition-all shadow-sm ${i === 2 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background scale-110' : 'hover:scale-110'}`}
+                                          style={{ backgroundColor: c }} />
+                                      ))}
+                                    </div>
+                                  </div>
+                                </>
+                              )}
+                              {mockupTab === 'formules' && (
+                                <div className="space-y-2">
+                                  <p className="text-[11px] text-muted-foreground mb-1">Formules visibles sur votre page</p>
+                                  {['Lavage Express · 35€', 'Nettoyage Complet · 89€', 'Rénovation Premium · 159€'].map((f, i) => (
+                                    <div key={i} className="flex items-center justify-between bg-secondary/20 rounded-xl p-3 border border-border/10">
+                                      <span className="text-[11px] font-medium text-foreground">{f}</span>
+                                      <div className={`w-9 h-5 rounded-full relative transition-colors cursor-pointer ${i < 2 ? 'bg-emerald-500' : 'bg-secondary border border-border/30'}`}>
+                                        <div className={`absolute top-[3px] w-3.5 h-3.5 bg-white rounded-full shadow-sm transition-all ${i < 2 ? 'right-[3px]' : 'left-[3px]'}`} />
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              {mockupTab === 'elements' && (
+                                <div className="space-y-2">
+                                  <p className="text-[11px] text-muted-foreground mb-1">Éléments affichés</p>
+                                  {['Instagram', 'Téléphone', 'Horaires', 'Adresse', 'Galerie'].map((el) => (
+                                    <div key={el} className="flex items-center justify-between bg-secondary/20 rounded-xl p-3 border border-border/10">
+                                      <span className="text-[11px] font-medium text-foreground">{el}</span>
+                                      <div className="w-9 h-5 bg-emerald-500 rounded-full relative cursor-pointer">
+                                        <div className="absolute right-[3px] top-[3px] w-3.5 h-3.5 bg-white rounded-full shadow-sm" />
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              {mockupTab === 'seo' && (
+                                <div className="space-y-3">
+                                  <p className="text-[11px] text-muted-foreground">Référencement Google</p>
+                                  <div>
+                                    <p className="text-[10px] text-muted-foreground mb-1">Titre</p>
+                                    <div className="bg-secondary/20 rounded-xl px-3 py-2.5 border border-border/10 text-[11px] text-foreground font-medium">GOCLEANING - Nettoyage Auto Paris</div>
+                                  </div>
+                                  <div>
+                                    <p className="text-[10px] text-muted-foreground mb-1">Description</p>
+                                    <div className="bg-secondary/20 rounded-xl px-3 py-2.5 border border-border/10 text-[11px] text-foreground">Service de nettoyage automobile premium à domicile.</div>
+                                  </div>
+                                  <div className="bg-white rounded-xl p-4 border border-border/15 shadow-sm">
+                                    <p className="text-[9px] text-muted-foreground mb-2 font-medium uppercase tracking-wider">Aperçu Google</p>
+                                    <p className="text-[13px] text-blue-600 font-medium hover:underline cursor-pointer">GOCLEANING - Nettoyage Auto Paris</p>
+                                    <p className="text-[10px] text-emerald-700 mt-0.5">cleaningpage.com/gocleaning</p>
+                                    <p className="text-[10px] text-muted-foreground mt-0.5">Service de nettoyage automobile premium à domicile.</p>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* === FORMULES === */}
+                  {dashboardTab === 'formules' && (
+                    <>
+                      <div className="flex items-center justify-between mb-6">
+                        <div>
+                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Formules & Prestations</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">Gérez vos offres</p>
+                        </div>
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
+                          + Ajouter
+                        </button>
+                      </div>
+
+                      <p className="text-xs font-semibold text-foreground mb-2.5">Formules</p>
+                      <div className="space-y-2 mb-6">
+                        {[
+                          { name: 'Lavage Express', desc: 'Extérieur uniquement · 45min', price: '35€', color: 'from-blue-500 to-blue-600' },
+                          { name: 'Nettoyage Complet', desc: 'Intérieur + extérieur · 1h30', price: '89€', color: 'from-emerald-500 to-emerald-600' },
+                          { name: 'Rénovation Premium', desc: 'Polish + céramique · 3h', price: '159€', color: 'from-purple-500 to-purple-600' },
+                        ].map((pack, i) => (
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer group">
+                            <div className={`w-10 h-10 bg-gradient-to-br ${pack.color} rounded-xl flex items-center justify-center shrink-0 shadow-sm`}>
+                              <Car className="w-4 h-4 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[13px] font-semibold text-foreground">{pack.name}</p>
+                              <p className="text-[11px] text-muted-foreground mt-0.5">{pack.desc}</p>
+                            </div>
+                            <span className="text-[14px] font-bold text-foreground tabular-nums">{pack.price}</span>
+                            <div className="w-9 h-5 bg-emerald-500 rounded-full relative shrink-0 cursor-pointer">
+                              <div className="absolute right-[3px] top-[3px] w-3.5 h-3.5 bg-white rounded-full shadow-sm" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <p className="text-xs font-semibold text-foreground mb-1.5">Prestations personnalisées</p>
+                      <p className="text-[11px] text-muted-foreground mb-2.5">Tarifs sur mesure par client</p>
+                      <div className="space-y-2">
+                        {[
+                          { name: 'Nettoyage canapé 3 places', client: 'Marie Dupont', duration: '2h', price: '120€', avatarBg: 'bg-pink-500', initials: 'MD' },
+                          { name: 'Détachage moquette salon', client: 'Pierre Bernard', duration: '1h30', price: '80€', avatarBg: 'bg-amber-500', initials: 'PB' },
+                        ].map((service, i) => (
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer group">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 ${service.avatarBg}`}>
+                              {service.initials}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[13px] font-semibold text-foreground">{service.name}</p>
+                              <p className="text-[11px] text-muted-foreground mt-0.5">Pour {service.client} · {service.duration}</p>
+                            </div>
+                            <span className="text-[14px] font-bold text-foreground tabular-nums">{service.price}</span>
+                            <ChevronRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-muted-foreground transition-colors shrink-0" />
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
-
-            {/* Widget 5: Statistiques */}
-            <div className="bg-secondary/40 rounded-[1.25rem] p-5 hover:bg-secondary/60 transition-colors duration-300">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2.5">
-                  <BarChart3 className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-[13px] font-semibold text-foreground">Statistiques</span>
-                </div>
-                <span className="text-[11px] text-emerald-600 font-medium">+18%</span>
-              </div>
-              <p className="text-3xl font-bold text-foreground tracking-tight mb-1">8 450€</p>
-              <p className="text-[11px] text-muted-foreground mb-3">chiffre d'affaires</p>
-              <svg viewBox="0 0 200 50" className="w-full h-12 mb-3">
-                <defs>
-                  <linearGradient id="widgetGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="currentColor" stopOpacity="0.08" />
-                    <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                <path d="M0,42 C25,40 40,35 65,30 C90,25 110,22 140,18 C165,14 180,10 200,6 L200,50 L0,50 Z" fill="url(#widgetGrad)" className="text-foreground" />
-                <path d="M0,42 C25,40 40,35 65,30 C90,25 110,22 140,18 C165,14 180,10 200,6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-foreground/40" />
-              </svg>
-              <div className="flex justify-between">
-                {[
-                  { value: '24', label: 'RDV' },
-                  { value: '352€', label: 'Panier moy.' },
-                  { value: '92%', label: 'Confirmés' },
-                ].map((s, i) => (
-                  <div key={i} className="text-center">
-                    <p className="text-[13px] font-bold text-foreground">{s.value}</p>
-                    <p className="text-[9px] text-muted-foreground">{s.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Widget 6: Personnalisation */}
-            <div className="bg-secondary/40 rounded-[1.25rem] p-5 hover:bg-secondary/60 transition-colors duration-300">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2.5">
-                  <Palette className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-[13px] font-semibold text-foreground">Personnalisation</span>
-                </div>
-              </div>
-              <div className="mb-4">
-                <div className="h-16 rounded-xl overflow-hidden mb-3">
-                  <img src={mockupBanner} alt="" className="w-full h-full object-cover" />
-                </div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 rounded-lg overflow-hidden ring-1 ring-border/20">
-                    <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-semibold text-foreground">GOCLEANING</p>
-                    <p className="text-[9px] text-muted-foreground">cleaningpage.com/gocleaning</p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] text-muted-foreground mr-1">Thème</span>
-                {['bg-foreground', 'bg-muted-foreground/30', 'bg-muted-foreground/15'].map((bg, i) => (
-                  <div key={i} className={`w-5 h-5 rounded-full ${bg} ${i === 0 ? 'ring-1 ring-foreground/20 ring-offset-1 ring-offset-secondary/40' : ''}`} />
-                ))}
-              </div>
-            </div>
-
           </div>
         </div>
       </section>
