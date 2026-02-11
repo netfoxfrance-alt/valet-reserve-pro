@@ -131,7 +131,7 @@ export function ClientLookupInline({ centerId, onRecognizedClient }: ClientLooku
       </form>
       {notFound && (
         <p className="text-sm text-muted-foreground mt-3">
-          Email non reconnu. Choisissez une formule ci-dessous.
+          Email non reconnu. Contactez-nous si vous souhaitez une formule personnalisée.
         </p>
       )}
     </Card>
