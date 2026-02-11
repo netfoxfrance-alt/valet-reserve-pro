@@ -1053,14 +1053,15 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
             {!showClientLookup ? (
               <button
                 onClick={() => setShowClientLookup(true)}
-                className="w-full py-3 px-4 rounded-2xl text-sm font-medium transition-all duration-300 hover:scale-[1.01]"
+                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl text-sm font-medium transition-all duration-300 hover:scale-[1.01]"
                 style={{
                   backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
                   color: textColors.secondary,
                   border: `1px solid ${customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'}`,
                 }}
               >
-                🔑 Vous avez une formule personnalisée ? Identifiez-vous
+                <Mail className="w-4 h-4" />
+                Formule personnalisée ? Identifiez-vous
               </button>
             ) : (
               <Card

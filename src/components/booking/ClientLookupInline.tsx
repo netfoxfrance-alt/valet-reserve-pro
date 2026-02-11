@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Mail, Clock } from 'lucide-react';
+import { Mail, Clock, ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { RecognizedClient } from '@/components/booking/CenterLanding';
 
@@ -50,30 +50,31 @@ export function ClientLookupInline({ centerId, onRecognizedClient }: ClientLooku
 
   if (found) {
     return (
-      <Card className="p-5 rounded-2xl mb-6 border-primary/30 shadow-sm">
-        <p className="text-base font-semibold text-foreground mb-1">
-          Bonjour {found.first_name} ! 👋
+      <Card variant="elevated" className="p-6 rounded-2xl mb-6 border-primary/20">
+        <p className="text-lg font-semibold text-foreground mb-1">
+          Bonjour {found.first_name}
         </p>
         {found.service_name ? (
           <>
-            <p className="text-sm text-muted-foreground mb-3">
-              Votre prestation personnalisée :
+            <p className="text-sm text-muted-foreground mb-4">
+              Votre prestation personnalisée
             </p>
-            <div className="flex items-center justify-between p-3 rounded-xl bg-primary/10 mb-3">
+            <div className="flex items-center justify-between p-4 rounded-xl bg-primary/5 mb-4">
               <div>
-                <p className="font-semibold text-foreground">{found.service_name}</p>
-                <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
+                <p className="font-medium text-foreground">{found.service_name}</p>
+                <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1">
                   <Clock className="w-3.5 h-3.5" />
                   {found.service_duration_minutes} min
                 </p>
               </div>
-              <p className="text-xl font-bold text-primary">{found.service_price}€</p>
+              <p className="text-2xl font-semibold tracking-tight text-foreground">{found.service_price}€</p>
             </div>
             <Button
               onClick={() => onRecognizedClient(found)}
-              className="w-full h-11 font-semibold rounded-xl"
+              className="w-full h-12 text-sm font-medium rounded-xl"
             >
               Choisir un créneau
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </>
         ) : (
@@ -83,7 +84,7 @@ export function ClientLookupInline({ centerId, onRecognizedClient }: ClientLooku
         )}
         <button
           onClick={() => { setFound(null); setShowLookup(false); setEmail(''); }}
-          className="w-full text-center text-xs mt-2 underline text-muted-foreground"
+          className="w-full text-center text-xs mt-3 text-muted-foreground hover:text-foreground transition-colors"
         >
           Ce n'est pas moi
         </button>
@@ -95,15 +96,16 @@ export function ClientLookupInline({ centerId, onRecognizedClient }: ClientLooku
     return (
       <button
         onClick={() => setShowLookup(true)}
-        className="w-full py-3 px-4 rounded-2xl text-sm font-medium mb-6 transition-all border border-border bg-muted/30 text-muted-foreground hover:bg-muted/50"
+        className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl text-sm font-medium mb-6 transition-all bg-secondary/50 text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
       >
-        🔑 Vous avez une formule personnalisée ? Identifiez-vous
+        <Mail className="w-4 h-4" />
+        Formule personnalisée ? Identifiez-vous
       </button>
     );
   }
 
   return (
-    <Card className="p-4 rounded-2xl mb-6">
+    <Card variant="elevated" className="p-5 rounded-2xl mb-6">
       <p className="text-sm font-medium text-foreground mb-3">
         Entrez votre adresse email
       </p>
@@ -129,7 +131,7 @@ export function ClientLookupInline({ centerId, onRecognizedClient }: ClientLooku
       </form>
       {notFound && (
         <p className="text-sm text-muted-foreground mt-3">
-          Email non reconnu. Vous pouvez choisir une formule ci-dessous.
+          Email non reconnu. Choisissez une formule ci-dessous.
         </p>
       )}
     </Card>
