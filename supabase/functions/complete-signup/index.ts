@@ -102,10 +102,17 @@ serve(async (req) => {
     logStep("Checkout session retrieved", { 
       status: checkoutSession.status,
       payment_status: checkoutSession.payment_status,
-      customer: checkoutSession.customer,
-      customer_email: checkoutSession.customer_email,
-      customer_details: checkoutSession.customer_details
     });
+
+    // Verify checkout session is complete
+    if (checkoutSession.status !== 'complete') {
+      throw new Error("Checkout session is not complete");
+    }
+
+    // Verify payment was successful
+    if (checkoutSession.payment_status !== 'paid' && checkoutSession.payment_status !== 'no_payment_required') {
+      throw new Error("Payment not completed");
+    }
 
     // Try multiple sources to find the email
     let email: string | null = null;
