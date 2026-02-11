@@ -970,7 +970,7 @@ export default function Index() {
                 </div>
 
                 {/* Main Content Area */}
-                <div className="flex-1 p-5 sm:p-6 overflow-y-auto bg-background/50">
+                <div className="flex-1 p-5 sm:p-6 overflow-y-auto" style={{ background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary)/0.3) 100%)' }}>
                   
                   {/* === RÉSERVATIONS === */}
                   {dashboardTab === 'reservations' && (
@@ -980,66 +980,58 @@ export default function Index() {
                           <h3 className="text-lg font-semibold text-foreground tracking-tight">Réservations</h3>
                           <p className="text-xs text-muted-foreground mt-0.5">Mardi 11 février 2026</p>
                         </div>
-                        <button className="bg-foreground text-background px-4 py-2 rounded-xl text-xs font-medium">
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
                           + Nouveau RDV
                         </button>
                       </div>
 
-                      {/* KPI row */}
+                      {/* KPI row — colorful Apple-style */}
                       <div className="grid grid-cols-3 gap-3 mb-6">
-                        <div className="bg-card rounded-2xl p-4 border border-border/30">
-                          <p className="text-[11px] text-muted-foreground mb-1">Aujourd'hui</p>
-                          <p className="text-3xl font-bold text-foreground tracking-tight leading-none">5</p>
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/20">
+                          <p className="text-[11px] text-white/70 mb-1">Aujourd'hui</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none">5</p>
                           <div className="flex items-center gap-1.5 mt-2">
-                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                            <p className="text-[10px] text-emerald-600 font-medium">2 en attente</p>
+                            <span className="w-1.5 h-1.5 bg-white/80 rounded-full animate-pulse" />
+                            <p className="text-[10px] text-white/80 font-medium">2 en attente</p>
                           </div>
                         </div>
-                        <div className="bg-card rounded-2xl p-4 border border-border/30">
-                          <p className="text-[11px] text-muted-foreground mb-1">Cette semaine</p>
-                          <p className="text-3xl font-bold text-foreground tracking-tight leading-none">23</p>
-                          <p className="text-[10px] text-muted-foreground mt-2">dont 4 demandes</p>
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/20">
+                          <p className="text-[11px] text-white/70 mb-1">Cette semaine</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none">23</p>
+                          <p className="text-[10px] text-white/70 mt-2">dont 4 demandes</p>
                         </div>
-                        <div className="bg-card rounded-2xl p-4 border border-border/30">
-                          <p className="text-[11px] text-muted-foreground mb-1">CA du jour</p>
-                          <p className="text-3xl font-bold text-foreground tracking-tight leading-none">340€</p>
-                          <p className="text-[10px] text-emerald-600 font-medium mt-2">+15%</p>
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/20">
+                          <p className="text-[11px] text-white/70 mb-1">CA du jour</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none">340€</p>
+                          <p className="text-[10px] text-white/80 font-medium mt-2">↑ 15%</p>
                         </div>
                       </div>
 
                       {/* Segmented control */}
-                      <div className="flex gap-0 bg-secondary/40 rounded-xl p-1 mb-5 w-fit">
-                        <span className="text-[11px] font-medium bg-card shadow-sm px-4 py-1.5 rounded-lg">Prochains</span>
-                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-lg cursor-pointer hover:text-foreground transition-colors">Demandes</span>
-                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-lg cursor-pointer hover:text-foreground transition-colors">Passés</span>
+                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
+                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Prochains</span>
+                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">Demandes</span>
+                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">Passés</span>
                       </div>
 
-                      <div className="space-y-1.5">
+                      <div className="space-y-2">
                         {[
-                          { name: 'Jean Martin', service: 'Nettoyage Complet', time: '10:00', duration: '1h30', price: '89€', status: 'Confirmé', statusColor: 'emerald', initials: 'JM' },
-                          { name: 'Marie Dupont', service: 'Express', time: '11:30', duration: '45min', price: '35€', status: 'En attente', statusColor: 'amber', initials: 'MD' },
-                          { name: 'Pierre Bernard', service: 'Rénovation Premium', time: '14:00', duration: '3h', price: '159€', status: 'Confirmé', statusColor: 'emerald', initials: 'PB' },
-                          { name: 'Demande entrante', service: 'Nettoyage canapé', time: '—', duration: '—', price: 'Sur devis', status: 'Demande', statusColor: 'blue', initials: '?' },
-                          { name: 'Sophie Leroy', service: 'Pack Intérieur', time: '16:30', duration: '1h', price: '65€', status: 'Confirmé', statusColor: 'emerald', initials: 'SL' },
+                          { name: 'Jean Martin', service: 'Nettoyage Complet', time: '10:00', duration: '1h30', price: '89€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'JM', avatarBg: 'bg-blue-500' },
+                          { name: 'Marie Dupont', service: 'Express', time: '11:30', duration: '45min', price: '35€', status: 'En attente', statusBg: 'bg-orange-500', initials: 'MD', avatarBg: 'bg-pink-500' },
+                          { name: 'Pierre Bernard', service: 'Rénovation Premium', time: '14:00', duration: '3h', price: '159€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'PB', avatarBg: 'bg-amber-500' },
+                          { name: 'Demande entrante', service: 'Nettoyage canapé', time: '—', duration: '—', price: 'Sur devis', status: 'Demande', statusBg: 'bg-blue-500', initials: '?', avatarBg: 'bg-indigo-500' },
+                          { name: 'Sophie Leroy', service: 'Pack Intérieur', time: '16:30', duration: '1h', price: '65€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'SL', avatarBg: 'bg-violet-500' },
                         ].map((booking, i) => (
-                          <div key={i} className={`flex items-center gap-3 rounded-2xl p-3.5 transition-all cursor-pointer ${
-                            booking.statusColor === 'blue' ? 'bg-blue-50 border border-blue-100/80' : 'bg-card border border-border/20 hover:border-border/50'
-                          }`}>
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-semibold shrink-0 ${
-                              booking.statusColor === 'blue' ? 'bg-blue-100 text-blue-600' : 'bg-secondary/60 text-foreground'
-                            }`}>
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 hover:shadow-md transition-all cursor-pointer">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 ${booking.avatarBg}`}>
                               {booking.initials}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[13px] font-medium text-foreground truncate">{booking.name}</p>
+                              <p className="text-[13px] font-semibold text-foreground truncate">{booking.name}</p>
                               <p className="text-[11px] text-muted-foreground mt-0.5">{booking.service} · {booking.time} · {booking.duration}</p>
                             </div>
-                            <span className="text-[13px] font-semibold text-foreground hidden sm:block tabular-nums">{booking.price}</span>
-                            <span className={`text-[10px] px-2.5 py-1 rounded-full font-medium ${
-                              booking.statusColor === 'emerald' ? 'bg-emerald-50 text-emerald-700' : 
-                              booking.statusColor === 'amber' ? 'bg-amber-50 text-amber-700' :
-                              'bg-blue-50 text-blue-700'
-                            }`}>
+                            <span className="text-[13px] font-bold text-foreground hidden sm:block tabular-nums">{booking.price}</span>
+                            <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold text-white ${booking.statusBg}`}>
                               {booking.status}
                             </span>
                           </div>
@@ -1054,25 +1046,25 @@ export default function Index() {
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-5">
                           <div className="flex items-center gap-3">
-                            <button className="w-8 h-8 rounded-xl bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                            <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
                               <ChevronLeft className="w-4 h-4" />
                             </button>
                             <h3 className="text-base font-semibold text-foreground min-w-[130px] text-center">Février 2026</h3>
-                            <button className="w-8 h-8 rounded-xl bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                            <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
                               <ChevronRight className="w-4 h-4" />
                             </button>
                           </div>
-                          <button className="text-[11px] text-foreground font-medium bg-secondary/50 px-3 py-1.5 rounded-lg hover:bg-secondary transition-colors">Aujourd'hui</button>
+                          <button className="text-[11px] text-white font-semibold bg-blue-500 px-3.5 py-1.5 rounded-full shadow-sm shadow-blue-500/25 hover:bg-blue-600 transition-colors">Aujourd'hui</button>
                         </div>
 
-                        <div className="grid grid-cols-7 gap-0.5 mb-2">
+                        <div className="grid grid-cols-7 gap-1 mb-2">
                           {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
-                            <div key={i} className="text-center text-[11px] font-medium text-muted-foreground py-1.5">{d}</div>
+                            <div key={i} className="text-center text-[11px] font-semibold text-muted-foreground py-1">{d}</div>
                           ))}
                         </div>
-                        <div className="grid grid-cols-7 gap-0.5">
+                        <div className="grid grid-cols-7 gap-1">
                           {[26, 27, 28, 29, 30, 31].map((d, i) => (
-                            <div key={`prev-${i}`} className="aspect-square rounded-xl flex flex-col items-center justify-start pt-2 text-[11px] text-muted-foreground/30">
+                            <div key={`prev-${i}`} className="aspect-square rounded-2xl flex flex-col items-center justify-start pt-2 text-[11px] text-muted-foreground/25">
                               <span>{d}</span>
                             </div>
                           ))}
@@ -1081,15 +1073,15 @@ export default function Index() {
                             const isSelected = d === 11;
                             const count = d === 11 ? 3 : d === 15 ? 2 : d === 22 ? 4 : 1;
                             return (
-                              <div key={d} className={`aspect-square rounded-xl flex flex-col items-center justify-start pt-2 text-[11px] relative cursor-pointer transition-all ${
-                                isSelected ? 'bg-foreground text-background font-semibold' : 'hover:bg-secondary/40'
+                              <div key={d} className={`aspect-square rounded-2xl flex flex-col items-center justify-start pt-2 text-[11px] relative cursor-pointer transition-all ${
+                                isSelected ? 'bg-blue-500 text-white font-bold shadow-lg shadow-blue-500/30' : 'hover:bg-secondary/50'
                               }`}>
                                 <span>{d}</span>
                                 {hasAppointments && (
                                   <div className="flex gap-0.5 mt-1">
                                     {Array.from({ length: Math.min(count, 3) }).map((_, j) => (
-                                      <div key={j} className={`w-1 h-1 rounded-full ${
-                                        isSelected ? 'bg-background/60' :
+                                      <div key={j} className={`w-1.5 h-1.5 rounded-full ${
+                                        isSelected ? 'bg-white/70' :
                                         j === 0 ? 'bg-emerald-500' : j === 1 ? 'bg-orange-400' : 'bg-blue-500'
                                       }`} />
                                     ))}
@@ -1100,37 +1092,42 @@ export default function Index() {
                           })}
                         </div>
 
-                        <div className="flex gap-5 mt-4 pt-3 border-t border-border/30">
+                        <div className="flex gap-5 mt-4 pt-3 border-t border-border/20">
                           {[
                             { color: 'bg-emerald-500', label: 'Confirmé' },
                             { color: 'bg-orange-400', label: 'En attente' },
                             { color: 'bg-blue-500', label: 'Terminé' },
                           ].map(l => (
-                            <div key={l.label} className="flex items-center gap-1.5">
-                              <div className={`w-1.5 h-1.5 rounded-full ${l.color}`} />
-                              <span className="text-[10px] text-muted-foreground">{l.label}</span>
+                            <div key={l.label} className="flex items-center gap-2">
+                              <div className={`w-2 h-2 rounded-full ${l.color}`} />
+                              <span className="text-[10px] text-muted-foreground font-medium">{l.label}</span>
                             </div>
                           ))}
                         </div>
                       </div>
 
                       {/* Right: Selected Day Detail */}
-                      <div className="w-48 hidden lg:flex flex-col border-l border-border/30 pl-5">
-                        <p className="text-sm font-semibold text-foreground mb-0.5">Mer. 11 février</p>
-                        <p className="text-[11px] text-muted-foreground mb-4">3 rendez-vous</p>
-                        <div className="space-y-3 flex-1">
+                      <div className="w-48 hidden lg:flex flex-col border-l border-border/20 pl-5">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+                            <span className="text-[10px] text-white font-bold">11</span>
+                          </div>
+                          <p className="text-sm font-semibold text-foreground">Mercredi</p>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground mb-4">3 rendez-vous · 340€</p>
+                        <div className="space-y-2.5 flex-1">
                           {[
-                            { time: '10:00', name: 'Jean M.', service: 'Complet', color: 'bg-emerald-500' },
-                            { time: '11:30', name: 'Marie D.', service: 'Express', color: 'bg-orange-400' },
-                            { time: '14:00', name: 'Pierre B.', service: 'Rénovation', color: 'bg-emerald-500' },
+                            { time: '10:00', name: 'Jean M.', service: 'Complet · 89€', color: 'bg-emerald-500', initials: 'JM' },
+                            { time: '11:30', name: 'Marie D.', service: 'Express · 35€', color: 'bg-orange-400', initials: 'MD' },
+                            { time: '14:00', name: 'Pierre B.', service: 'Rénovation · 159€', color: 'bg-emerald-500', initials: 'PB' },
                           ].map((rdv, i) => (
-                            <div key={i} className="flex gap-2.5 items-start">
-                              <div className={`w-0.5 h-full min-h-[36px] rounded-full ${rdv.color}`} />
-                              <div>
-                                <p className="text-[11px] font-medium text-foreground">{rdv.time}</p>
-                                <p className="text-[11px] text-foreground mt-0.5">{rdv.name}</p>
-                                <p className="text-[10px] text-muted-foreground">{rdv.service}</p>
+                            <div key={i} className="bg-card rounded-xl p-2.5 border border-border/20 hover:shadow-sm transition-all cursor-pointer">
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className={`w-1.5 h-1.5 rounded-full ${rdv.color}`} />
+                                <span className="text-[11px] font-semibold text-foreground">{rdv.time}</span>
                               </div>
+                              <p className="text-[11px] font-medium text-foreground">{rdv.name}</p>
+                              <p className="text-[10px] text-muted-foreground">{rdv.service}</p>
                             </div>
                           ))}
                         </div>
@@ -1146,61 +1143,61 @@ export default function Index() {
                           <h3 className="text-lg font-semibold text-foreground tracking-tight">Clients</h3>
                           <p className="text-xs text-muted-foreground mt-0.5">142 clients enregistrés</p>
                         </div>
-                        <button className="bg-foreground text-background px-4 py-2 rounded-xl text-xs font-medium">
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
                           + Ajouter
                         </button>
                       </div>
 
                       {/* Search */}
                       <div className="relative mb-5">
-                        <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                        <div className="bg-card rounded-xl pl-10 pr-4 py-3 text-xs text-muted-foreground/60 border border-border/30">
+                        <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        <div className="bg-card rounded-2xl pl-11 pr-4 py-3 text-xs text-muted-foreground/50 border border-border/20 shadow-sm">
                           Rechercher un client...
                         </div>
                       </div>
 
-                      <div className="space-y-1.5">
+                      <div className="space-y-2">
                         {[
-                          { name: 'Sophie Leroy', phone: '06 11 22 33 44', rdvCount: 15, totalSpent: '1 420€', lastVisit: 'Aujourd\'hui', initials: 'SL' },
-                          { name: 'Jean Martin', phone: '06 12 34 56 78', rdvCount: 12, totalSpent: '1 068€', lastVisit: '10 fév', initials: 'JM' },
-                          { name: 'Marie Dupont', phone: '07 98 76 54 32', rdvCount: 8, totalSpent: '520€', lastVisit: '8 fév', initials: 'MD' },
-                          { name: 'Pierre Bernard', phone: '06 55 44 33 22', rdvCount: 3, totalSpent: '477€', lastVisit: '2 fév', initials: 'PB' },
+                          { name: 'Sophie Leroy', rdvCount: 15, totalSpent: '1 420€', lastVisit: 'Aujourd\'hui', initials: 'SL', avatarBg: 'bg-violet-500' },
+                          { name: 'Jean Martin', rdvCount: 12, totalSpent: '1 068€', lastVisit: '10 fév', initials: 'JM', avatarBg: 'bg-blue-500' },
+                          { name: 'Marie Dupont', rdvCount: 8, totalSpent: '520€', lastVisit: '8 fév', initials: 'MD', avatarBg: 'bg-pink-500' },
+                          { name: 'Pierre Bernard', rdvCount: 3, totalSpent: '477€', lastVisit: '2 fév', initials: 'PB', avatarBg: 'bg-amber-500' },
                         ].map((client, i) => (
-                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 hover:border-border/50 transition-all cursor-pointer group">
-                            <div className="w-10 h-10 rounded-full bg-secondary/60 flex items-center justify-center text-[11px] font-semibold text-foreground shrink-0">
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer group">
+                            <div className={`w-11 h-11 rounded-full flex items-center justify-center text-[12px] font-bold text-white shrink-0 ${client.avatarBg}`}>
                               {client.initials}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[13px] font-medium text-foreground truncate">{client.name}</p>
-                              <p className="text-[11px] text-muted-foreground mt-0.5">{client.rdvCount} RDV · Dernier : {client.lastVisit}</p>
+                              <p className="text-[13px] font-semibold text-foreground truncate">{client.name}</p>
+                              <p className="text-[11px] text-muted-foreground mt-0.5">{client.rdvCount} visites · Dernier : {client.lastVisit}</p>
                             </div>
-                            <span className="text-[12px] font-semibold text-foreground tabular-nums hidden sm:block">{client.totalSpent}</span>
+                            <div className="text-right hidden sm:block">
+                              <p className="text-[13px] font-bold text-foreground tabular-nums">{client.totalSpent}</p>
+                              <p className="text-[10px] text-muted-foreground">CA total</p>
+                            </div>
                             <ChevronRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-muted-foreground transition-colors shrink-0" />
                           </div>
                         ))}
                       </div>
 
                       {/* Client detail peek */}
-                      <div className="mt-4 bg-card rounded-2xl border border-border/20 p-5">
-                        <div className="flex items-center gap-3.5 mb-4 pb-4 border-b border-border/20">
-                          <div className="w-12 h-12 rounded-full bg-secondary/60 flex items-center justify-center text-sm font-semibold text-foreground">SL</div>
-                          <div>
-                            <p className="text-sm font-semibold text-foreground">Sophie Leroy</p>
-                            <p className="text-[11px] text-muted-foreground">Depuis mars 2025 · 15 rendez-vous</p>
-                          </div>
+                      <div className="mt-4 bg-card rounded-2xl border border-border/15 overflow-hidden">
+                        <div className="bg-gradient-to-r from-violet-500 to-purple-600 px-5 pt-4 pb-8 relative">
+                          <p className="text-[11px] text-white/70 font-medium">Fiche client</p>
+                          <p className="text-base font-bold text-white mt-0.5">Sophie Leroy</p>
                         </div>
-                        <div className="grid grid-cols-3 gap-4">
-                          <div className="text-center">
-                            <p className="text-xl font-bold text-foreground tracking-tight">15</p>
-                            <p className="text-[10px] text-muted-foreground mt-0.5">Visites</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-xl font-bold text-foreground tracking-tight">1 420€</p>
-                            <p className="text-[10px] text-muted-foreground mt-0.5">CA total</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-xl font-bold text-foreground tracking-tight">95€</p>
-                            <p className="text-[10px] text-muted-foreground mt-0.5">Panier moy.</p>
+                        <div className="px-5 pb-5 -mt-5">
+                          <div className="grid grid-cols-3 gap-3">
+                            {[
+                              { value: '15', label: 'Visites' },
+                              { value: '1 420€', label: 'CA total' },
+                              { value: '95€', label: 'Panier moy.' },
+                            ].map((s, i) => (
+                              <div key={i} className="bg-card rounded-xl p-3 text-center border border-border/20 shadow-sm">
+                                <p className="text-lg font-bold text-foreground tracking-tight">{s.value}</p>
+                                <p className="text-[10px] text-muted-foreground mt-0.5">{s.label}</p>
+                              </div>
+                            ))}
                           </div>
                         </div>
                       </div>
@@ -1216,59 +1213,54 @@ export default function Index() {
                           <p className="text-xs text-muted-foreground mt-0.5">Gérez vos documents</p>
                         </div>
                         <div className="flex gap-2">
-                          <button className="bg-secondary/50 text-foreground px-3.5 py-2 rounded-xl text-xs font-medium hover:bg-secondary transition-colors">Devis</button>
-                          <button className="bg-foreground text-background px-3.5 py-2 rounded-xl text-xs font-medium">+ Facture</button>
+                          <button className="bg-secondary/60 text-foreground px-3.5 py-2 rounded-full text-xs font-semibold hover:bg-secondary transition-colors">Devis</button>
+                          <button className="bg-blue-500 text-white px-3.5 py-2 rounded-full text-xs font-semibold shadow-sm shadow-blue-500/25">+ Facture</button>
                         </div>
                       </div>
 
-                      {/* KPIs */}
+                      {/* KPIs — colored */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                        <div className="bg-card rounded-2xl p-4 border border-border/20">
-                          <p className="text-[11px] text-muted-foreground mb-1">Factures</p>
-                          <p className="text-2xl font-bold text-foreground tracking-tight leading-none">24</p>
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/15">
+                          <p className="text-[11px] text-white/70 mb-1">Factures</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none">24</p>
                         </div>
-                        <div className="bg-card rounded-2xl p-4 border border-border/20">
-                          <p className="text-[11px] text-muted-foreground mb-1">Devis</p>
-                          <p className="text-2xl font-bold text-foreground tracking-tight leading-none">8</p>
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/15">
+                          <p className="text-[11px] text-white/70 mb-1">Devis</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none">8</p>
                         </div>
-                        <div className="bg-card rounded-2xl p-4 border border-border/20">
-                          <p className="text-[11px] text-muted-foreground mb-1">En attente</p>
-                          <p className="text-2xl font-bold text-orange-500 tracking-tight leading-none">680€</p>
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-orange-400 to-orange-500 text-white shadow-lg shadow-orange-500/15">
+                          <p className="text-[11px] text-white/70 mb-1">En attente</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none">680€</p>
                         </div>
-                        <div className="bg-card rounded-2xl p-4 border border-border/20">
-                          <p className="text-[11px] text-muted-foreground mb-1">Encaissé</p>
-                          <p className="text-2xl font-bold text-emerald-600 tracking-tight leading-none">3 240€</p>
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/15">
+                          <p className="text-[11px] text-white/70 mb-1">Encaissé</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none">3 240€</p>
                         </div>
                       </div>
 
                       {/* Segmented control */}
-                      <div className="flex gap-0 bg-secondary/40 rounded-xl p-1 mb-5 w-fit">
-                        <span className="text-[11px] font-medium bg-card shadow-sm px-4 py-1.5 rounded-lg">Tout</span>
-                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-lg cursor-pointer">Factures</span>
-                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-lg cursor-pointer">Devis</span>
+                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
+                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Tout</span>
+                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">Factures</span>
+                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">Devis</span>
                       </div>
 
                       {/* Invoice list */}
-                      <div className="bg-card rounded-2xl border border-border/20 overflow-hidden">
+                      <div className="space-y-2">
                         {[
-                          { number: 'FAC-2026-012', client: 'Jean Martin', date: '10 fév', total: '89,00 €', status: 'Payé', type: 'invoice' },
-                          { number: 'FAC-2026-011', client: 'Marie Dupont', date: '8 fév', total: '159,00 €', status: 'Envoyé', type: 'invoice' },
-                          { number: 'DEV-2026-005', client: 'Pierre Bernard', date: '5 fév', total: '320,00 €', status: 'En attente', type: 'quote' },
-                          { number: 'FAC-2026-010', client: 'Sophie Leroy', date: '3 fév', total: '65,00 €', status: 'Payé', type: 'invoice' },
+                          { number: 'FAC-2026-012', client: 'Jean Martin', date: '10 fév', total: '89,00 €', status: 'Payé', statusBg: 'bg-emerald-500' },
+                          { number: 'FAC-2026-011', client: 'Marie Dupont', date: '8 fév', total: '159,00 €', status: 'Envoyé', statusBg: 'bg-blue-500' },
+                          { number: 'DEV-2026-005', client: 'Pierre Bernard', date: '5 fév', total: '320,00 €', status: 'En attente', statusBg: 'bg-orange-500' },
+                          { number: 'FAC-2026-010', client: 'Sophie Leroy', date: '3 fév', total: '65,00 €', status: 'Payé', statusBg: 'bg-emerald-500' },
                         ].map((inv, i) => (
-                          <div key={i} className="flex items-center gap-3.5 px-4 py-3.5 border-b border-border/10 last:border-0 hover:bg-secondary/20 transition-colors cursor-pointer">
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl px-4 py-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer">
+                            <div className={`w-2 h-8 rounded-full ${inv.statusBg}`} />
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="text-[13px] font-medium text-foreground">{inv.number}</span>
-                              </div>
+                              <p className="text-[13px] font-semibold text-foreground">{inv.number}</p>
                               <p className="text-[11px] text-muted-foreground mt-0.5">{inv.client} · {inv.date}</p>
                             </div>
-                            <span className="text-[13px] font-semibold text-foreground tabular-nums">{inv.total}</span>
-                            <span className={`text-[10px] px-2.5 py-1 rounded-full font-medium ${
-                              inv.status === 'Payé' ? 'bg-emerald-50 text-emerald-700' :
-                              inv.status === 'Envoyé' ? 'bg-blue-50 text-blue-600' :
-                              'bg-orange-50 text-orange-600'
-                            }`}>{inv.status}</span>
+                            <span className="text-[13px] font-bold text-foreground tabular-nums">{inv.total}</span>
+                            <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold text-white ${inv.statusBg}`}>{inv.status}</span>
                           </div>
                         ))}
                       </div>
@@ -1283,31 +1275,31 @@ export default function Index() {
                           <h3 className="text-lg font-semibold text-foreground tracking-tight">Statistiques</h3>
                           <p className="text-xs text-muted-foreground mt-0.5">Vue d'ensemble</p>
                         </div>
-                        <div className="flex gap-0 bg-secondary/40 rounded-xl p-1">
-                          <span className="text-[11px] font-medium text-muted-foreground px-3 py-1.5 rounded-lg cursor-pointer">7j</span>
-                          <span className="text-[11px] font-medium bg-card shadow-sm px-3 py-1.5 rounded-lg">30j</span>
-                          <span className="text-[11px] font-medium text-muted-foreground px-3 py-1.5 rounded-lg cursor-pointer">12m</span>
+                        <div className="flex gap-0 bg-secondary/50 rounded-full p-1">
+                          <span className="text-[11px] font-medium text-muted-foreground px-3.5 py-1.5 rounded-full cursor-pointer">7j</span>
+                          <span className="text-[11px] font-semibold bg-card shadow-sm px-3.5 py-1.5 rounded-full">30j</span>
+                          <span className="text-[11px] font-medium text-muted-foreground px-3.5 py-1.5 rounded-full cursor-pointer">12m</span>
                         </div>
                       </div>
 
-                      {/* KPIs */}
+                      {/* KPIs — colorful cards */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
                         {[
-                          { value: '4 850€', label: 'Chiffre d\'affaires', change: '+18%' },
-                          { value: '127', label: 'Réservations', change: '+12%' },
-                          { value: '89', label: 'Clients actifs', change: '+5' },
-                          { value: '54€', label: 'Panier moyen', change: '+3€' },
+                          { value: '4 850€', label: 'Chiffre d\'affaires', change: '+18%', gradient: 'from-emerald-500 to-emerald-600', shadow: 'shadow-emerald-500/15' },
+                          { value: '127', label: 'Réservations', change: '+12%', gradient: 'from-blue-500 to-blue-600', shadow: 'shadow-blue-500/15' },
+                          { value: '89', label: 'Clients actifs', change: '+5', gradient: 'from-purple-500 to-purple-600', shadow: 'shadow-purple-500/15' },
+                          { value: '54€', label: 'Panier moyen', change: '+3€', gradient: 'from-orange-400 to-orange-500', shadow: 'shadow-orange-400/15' },
                         ].map((stat, i) => (
-                          <div key={i} className="bg-card rounded-2xl p-4 border border-border/20">
-                            <p className="text-[11px] text-muted-foreground mb-1">{stat.label}</p>
-                            <p className="text-xl font-bold text-foreground tracking-tight leading-none">{stat.value}</p>
-                            <p className="text-[10px] text-emerald-600 font-medium mt-2">{stat.change}</p>
+                          <div key={i} className={`rounded-2xl p-4 bg-gradient-to-br ${stat.gradient} text-white shadow-lg ${stat.shadow}`}>
+                            <p className="text-[11px] text-white/70 mb-1">{stat.label}</p>
+                            <p className="text-xl font-bold tracking-tight leading-none">{stat.value}</p>
+                            <p className="text-[10px] text-white/80 font-semibold mt-2">{stat.change}</p>
                           </div>
                         ))}
                       </div>
 
-                      {/* Revenue Chart - Apple-style colored gradient */}
-                      <div className="bg-card rounded-2xl p-5 mb-4 border border-border/20">
+                      {/* Revenue Chart — Apple-style with vivid green gradient */}
+                      <div className="bg-card rounded-2xl p-5 mb-4 border border-border/15 shadow-sm">
                         <div className="flex items-center justify-between mb-5">
                           <div>
                             <p className="text-sm font-semibold text-foreground">Chiffre d'affaires</p>
@@ -1315,33 +1307,29 @@ export default function Index() {
                           </div>
                           <div className="text-right">
                             <p className="text-lg font-bold text-foreground tracking-tight">4 850€</p>
-                            <p className="text-[10px] text-emerald-600 font-medium">+18% vs mois dernier</p>
+                            <p className="text-[10px] text-emerald-600 font-semibold">+18% vs mois dernier</p>
                           </div>
                         </div>
                         <div className="relative h-36">
                           <svg viewBox="0 0 300 120" className="w-full h-full" preserveAspectRatio="none">
                             <defs>
-                              <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#34D399" stopOpacity="0.3" />
-                                <stop offset="50%" stopColor="#34D399" stopOpacity="0.08" />
-                                <stop offset="100%" stopColor="#34D399" stopOpacity="0" />
+                              <linearGradient id="revenueGrad2" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stopColor="#10B981" stopOpacity="0.35" />
+                                <stop offset="60%" stopColor="#10B981" stopOpacity="0.08" />
+                                <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
                               </linearGradient>
                             </defs>
-                            {/* Subtle grid */}
                             {[30, 60, 90].map(y => (
                               <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="hsl(var(--border))" strokeWidth="0.3" />
                             ))}
-                            {/* Area */}
-                            <path d="M0,95 C25,88 40,78 60,72 C80,66 95,70 120,62 C145,54 160,48 180,40 C200,32 220,25 240,20 C260,15 280,12 300,8 L300,120 L0,120 Z" fill="url(#revenueGrad)" />
-                            {/* Line */}
+                            <path d="M0,95 C25,88 40,78 60,72 C80,66 95,70 120,62 C145,54 160,48 180,40 C200,32 220,25 240,20 C260,15 280,12 300,8 L300,120 L0,120 Z" fill="url(#revenueGrad2)" />
                             <path d="M0,95 C25,88 40,78 60,72 C80,66 95,70 120,62 C145,54 160,48 180,40 C200,32 220,25 240,20 C260,15 280,12 300,8" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" />
-                            {/* End dot */}
                             <circle cx="300" cy="8" r="4" fill="#10B981" />
-                            <circle cx="300" cy="8" r="7" fill="none" stroke="#10B981" strokeWidth="1.5" strokeOpacity="0.3" />
+                            <circle cx="300" cy="8" r="8" fill="none" stroke="#10B981" strokeWidth="1.5" strokeOpacity="0.25" />
                           </svg>
                           <div className="flex justify-between mt-3">
                             {['Sept', 'Oct', 'Nov', 'Déc', 'Jan', 'Fév'].map(m => (
-                              <span key={m} className="text-[10px] text-muted-foreground">{m}</span>
+                              <span key={m} className="text-[10px] text-muted-foreground font-medium">{m}</span>
                             ))}
                           </div>
                         </div>
@@ -1349,8 +1337,7 @@ export default function Index() {
 
                       {/* Bottom row */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {/* Service distribution with colored bars */}
-                        <div className="bg-card rounded-2xl p-5 border border-border/20">
+                        <div className="bg-card rounded-2xl p-5 border border-border/15 shadow-sm">
                           <p className="text-sm font-semibold text-foreground mb-4">Services</p>
                           <div className="space-y-3">
                             {[
@@ -1361,35 +1348,36 @@ export default function Index() {
                             ].map((s, i) => (
                               <div key={i}>
                                 <div className="flex items-center justify-between mb-1.5">
-                                  <span className="text-[11px] text-foreground font-medium">{s.name}</span>
-                                  <span className="text-[11px] text-muted-foreground tabular-nums">{s.amount}</span>
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }} />
+                                    <span className="text-[11px] text-foreground font-medium">{s.name}</span>
+                                  </div>
+                                  <span className="text-[11px] text-muted-foreground tabular-nums font-medium">{s.pct}%</span>
                                 </div>
-                                <div className="w-full h-2 bg-secondary/40 rounded-full overflow-hidden">
+                                <div className="w-full h-2.5 bg-secondary/40 rounded-full overflow-hidden">
                                   <div className="h-full rounded-full transition-all" style={{ width: `${s.pct}%`, backgroundColor: s.color }} />
                                 </div>
                               </div>
                             ))}
                           </div>
                         </div>
-                        {/* Top clients */}
-                        <div className="bg-card rounded-2xl p-5 border border-border/20">
+                        <div className="bg-card rounded-2xl p-5 border border-border/15 shadow-sm">
                           <p className="text-sm font-semibold text-foreground mb-4">Top clients</p>
                           <div className="space-y-3">
                             {[
-                              { name: 'Sophie Leroy', visits: 15, total: '1 420€', initials: 'SL' },
-                              { name: 'Jean Martin', visits: 12, total: '1 068€', initials: 'JM' },
-                              { name: 'Marie Dupont', visits: 8, total: '520€', initials: 'MD' },
+                              { name: 'Sophie Leroy', visits: 15, total: '1 420€', initials: 'SL', avatarBg: 'bg-violet-500' },
+                              { name: 'Jean Martin', visits: 12, total: '1 068€', initials: 'JM', avatarBg: 'bg-blue-500' },
+                              { name: 'Marie Dupont', visits: 8, total: '520€', initials: 'MD', avatarBg: 'bg-pink-500' },
                             ].map((c, i) => (
                               <div key={i} className="flex items-center gap-3">
-                                <span className="text-[11px] font-bold text-muted-foreground/50 w-4 tabular-nums">{i + 1}</span>
-                                <div className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center text-[10px] font-semibold text-foreground shrink-0">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0 ${c.avatarBg}`}>
                                   {c.initials}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-[12px] font-medium text-foreground truncate">{c.name}</p>
+                                  <p className="text-[12px] font-semibold text-foreground truncate">{c.name}</p>
                                   <p className="text-[10px] text-muted-foreground">{c.visits} visites</p>
                                 </div>
-                                <span className="text-[12px] font-semibold text-foreground tabular-nums">{c.total}</span>
+                                <span className="text-[12px] font-bold text-foreground tabular-nums">{c.total}</span>
                               </div>
                             ))}
                           </div>
@@ -1405,12 +1393,12 @@ export default function Index() {
                         {/* Left: Live Preview */}
                         <div className="flex flex-col min-h-[300px] sm:min-h-[380px] order-2 lg:order-1">
                           <div className="flex items-center justify-between mb-3">
-                            <span className="text-sm font-medium text-foreground">Aperçu</span>
+                            <span className="text-sm font-semibold text-foreground">Aperçu</span>
                             <div className="flex gap-1">
-                              <div className="w-7 h-7 bg-foreground rounded-lg flex items-center justify-center">
-                                <Phone className="w-3.5 h-3.5 text-background" />
+                              <div className="w-7 h-7 bg-blue-500 rounded-lg flex items-center justify-center shadow-sm shadow-blue-500/25">
+                                <Phone className="w-3.5 h-3.5 text-white" />
                               </div>
-                              <div className="w-7 h-7 bg-secondary/50 rounded-lg flex items-center justify-center">
+                              <div className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center">
                                 <svg className="w-3.5 h-3.5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                   <rect x="2" y="3" width="20" height="14" rx="2" />
                                   <path d="M8 21h8" /><path d="M12 17v4" />
@@ -1419,7 +1407,7 @@ export default function Index() {
                             </div>
                           </div>
                           
-                          <div className="flex-1 bg-secondary/20 rounded-2xl overflow-hidden border border-border/20">
+                          <div className="flex-1 bg-secondary/20 rounded-2xl overflow-hidden border border-border/15 shadow-sm">
                             <div className="bg-card h-full overflow-y-auto">
                               <div className="h-28 relative">
                                 <img src={mockupBanner} alt="Preview" className="w-full h-full object-cover" />
@@ -1433,21 +1421,21 @@ export default function Index() {
                                 <h3 className="text-sm font-bold text-foreground text-center mb-0.5">GOCLEANING</h3>
                                 <p className="text-[9px] text-muted-foreground text-center mb-2">Nettoyage automobile premium</p>
                                 <div className="flex justify-center mb-3">
-                                  <span className="inline-flex items-center gap-1 text-[8px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-medium">
-                                    <span className="w-1 h-1 bg-emerald-500 rounded-full" />Ouvert
+                                  <span className="inline-flex items-center gap-1 text-[8px] bg-emerald-500 text-white px-2.5 py-0.5 rounded-full font-semibold">
+                                    <span className="w-1 h-1 bg-white rounded-full" />Ouvert
                                   </span>
                                 </div>
                                 <div className="grid grid-cols-2 gap-1.5 mb-3">
-                                  <div className="bg-secondary/30 rounded-xl p-2.5 text-left border border-border/15">
+                                  <div className="bg-secondary/30 rounded-xl p-2.5 text-left border border-border/10">
                                     <p className="text-[9px] font-medium">Express</p>
-                                    <p className="text-[11px] font-bold text-muted-foreground">35€</p>
+                                    <p className="text-[12px] font-bold text-foreground">35€</p>
                                   </div>
-                                  <div className="bg-secondary/30 rounded-xl p-2.5 text-left border border-border/15">
+                                  <div className="bg-secondary/30 rounded-xl p-2.5 text-left border border-border/10">
                                     <p className="text-[9px] font-medium">Complet</p>
-                                    <p className="text-[11px] font-bold text-muted-foreground">89€</p>
+                                    <p className="text-[12px] font-bold text-foreground">89€</p>
                                   </div>
                                 </div>
-                                <button className="w-full bg-neutral-800 text-white py-2.5 rounded-xl text-[10px] font-semibold">Réserver</button>
+                                <button className="w-full bg-blue-500 text-white py-2.5 rounded-xl text-[10px] font-semibold shadow-sm shadow-blue-500/25">Réserver</button>
                               </div>
                             </div>
                           </div>
@@ -1455,9 +1443,9 @@ export default function Index() {
 
                         {/* Right: Customization controls */}
                         <div className="flex flex-col order-1 lg:order-2">
-                          <span className="text-sm font-medium text-foreground mb-3">Personnalisation</span>
-                          <div className="bg-card rounded-2xl border border-border/20 flex-1 overflow-hidden">
-                            <div className="flex items-center border-b border-border/20">
+                          <span className="text-sm font-semibold text-foreground mb-3">Personnalisation</span>
+                          <div className="bg-card rounded-2xl border border-border/15 flex-1 overflow-hidden shadow-sm">
+                            <div className="flex items-center border-b border-border/15">
                               {[
                                 { id: 'design', label: 'Design' },
                                 { id: 'formules', label: 'Formules' },
@@ -1465,7 +1453,7 @@ export default function Index() {
                                 { id: 'seo', label: 'SEO' },
                               ].map(tab => (
                                 <button key={tab.id} onClick={() => setMockupTab(tab.id as any)}
-                                  className={`flex-1 py-3 text-[11px] font-medium text-center transition-colors border-b-2 ${mockupTab === tab.id ? 'border-foreground text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground/70'}`}
+                                  className={`flex-1 py-3 text-[11px] font-semibold text-center transition-colors border-b-2 ${mockupTab === tab.id ? 'border-blue-500 text-blue-500' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
                                 >
                                   {tab.label}
                                 </button>
@@ -1475,19 +1463,19 @@ export default function Index() {
                               {mockupTab === 'design' && (
                                 <>
                                   <div>
-                                    <p className="text-[11px] font-medium text-foreground mb-2">Bannière</p>
-                                    <div className="rounded-xl overflow-hidden mb-2.5">
+                                    <p className="text-[11px] font-semibold text-foreground mb-2">Bannière</p>
+                                    <div className="rounded-xl overflow-hidden mb-2.5 shadow-sm">
                                       <img src={mockupBanner} alt="Banner" className="w-full h-16 object-cover" />
                                     </div>
-                                    <button className="text-[11px] font-medium text-foreground bg-secondary/40 px-4 py-2 rounded-xl hover:bg-secondary transition-colors">Modifier</button>
+                                    <button className="text-[11px] font-semibold text-blue-500 bg-blue-50 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors">Modifier</button>
                                   </div>
                                   <div>
-                                    <p className="text-[11px] font-medium text-foreground mb-2.5">Couleur principale</p>
-                                    <div className="flex gap-2.5">
+                                    <p className="text-[11px] font-semibold text-foreground mb-2.5">Couleur principale</p>
+                                    <div className="flex gap-3">
                                       {[
                                         '#3B82F6', '#EF4444', '#10B981', '#8B5CF6', '#F59E0B', '#EC4899',
                                       ].map((c, i) => (
-                                        <div key={i} className={`w-8 h-8 rounded-full cursor-pointer transition-transform ${i === 2 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background scale-110' : 'hover:scale-110'}`}
+                                        <div key={i} className={`w-8 h-8 rounded-full cursor-pointer transition-all shadow-sm ${i === 2 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background scale-110' : 'hover:scale-110'}`}
                                           style={{ backgroundColor: c }} />
                                       ))}
                                     </div>
@@ -1498,10 +1486,10 @@ export default function Index() {
                                 <div className="space-y-2">
                                   <p className="text-[11px] text-muted-foreground mb-1">Formules visibles sur votre page</p>
                                   {['Lavage Express · 35€', 'Nettoyage Complet · 89€', 'Rénovation Premium · 159€'].map((f, i) => (
-                                    <div key={i} className="flex items-center justify-between bg-secondary/30 rounded-xl p-3 border border-border/15">
+                                    <div key={i} className="flex items-center justify-between bg-secondary/20 rounded-xl p-3 border border-border/10">
                                       <span className="text-[11px] font-medium text-foreground">{f}</span>
-                                      <div className={`w-8 h-[18px] rounded-full relative transition-colors ${i < 2 ? 'bg-emerald-500' : 'bg-secondary border border-border/30'}`}>
-                                        <div className={`absolute top-[3px] w-3 h-3 bg-white rounded-full shadow-sm transition-all ${i < 2 ? 'right-[3px]' : 'left-[3px]'}`} />
+                                      <div className={`w-9 h-5 rounded-full relative transition-colors cursor-pointer ${i < 2 ? 'bg-emerald-500' : 'bg-secondary border border-border/30'}`}>
+                                        <div className={`absolute top-[3px] w-3.5 h-3.5 bg-white rounded-full shadow-sm transition-all ${i < 2 ? 'right-[3px]' : 'left-[3px]'}`} />
                                       </div>
                                     </div>
                                   ))}
@@ -1510,11 +1498,11 @@ export default function Index() {
                               {mockupTab === 'elements' && (
                                 <div className="space-y-2">
                                   <p className="text-[11px] text-muted-foreground mb-1">Éléments affichés</p>
-                                  {['Instagram', 'Téléphone', 'Horaires', 'Adresse', 'Galerie'].map((el, i) => (
-                                    <div key={i} className="flex items-center justify-between bg-secondary/30 rounded-xl p-3 border border-border/15">
+                                  {['Instagram', 'Téléphone', 'Horaires', 'Adresse', 'Galerie'].map((el) => (
+                                    <div key={el} className="flex items-center justify-between bg-secondary/20 rounded-xl p-3 border border-border/10">
                                       <span className="text-[11px] font-medium text-foreground">{el}</span>
-                                      <div className="w-8 h-[18px] bg-emerald-500 rounded-full relative">
-                                        <div className="absolute right-[3px] top-[3px] w-3 h-3 bg-white rounded-full shadow-sm" />
+                                      <div className="w-9 h-5 bg-emerald-500 rounded-full relative cursor-pointer">
+                                        <div className="absolute right-[3px] top-[3px] w-3.5 h-3.5 bg-white rounded-full shadow-sm" />
                                       </div>
                                     </div>
                                   ))}
@@ -1525,15 +1513,15 @@ export default function Index() {
                                   <p className="text-[11px] text-muted-foreground">Référencement Google</p>
                                   <div>
                                     <p className="text-[10px] text-muted-foreground mb-1">Titre</p>
-                                    <div className="bg-secondary/30 rounded-xl px-3 py-2 border border-border/15 text-[11px] text-foreground">GOCLEANING - Nettoyage Auto Paris</div>
+                                    <div className="bg-secondary/20 rounded-xl px-3 py-2.5 border border-border/10 text-[11px] text-foreground font-medium">GOCLEANING - Nettoyage Auto Paris</div>
                                   </div>
                                   <div>
                                     <p className="text-[10px] text-muted-foreground mb-1">Description</p>
-                                    <div className="bg-secondary/30 rounded-xl px-3 py-2 border border-border/15 text-[11px] text-foreground">Service de nettoyage automobile premium à domicile.</div>
+                                    <div className="bg-secondary/20 rounded-xl px-3 py-2.5 border border-border/10 text-[11px] text-foreground">Service de nettoyage automobile premium à domicile.</div>
                                   </div>
-                                  <div className="bg-secondary/20 rounded-xl p-3.5 border border-border/15">
-                                    <p className="text-[10px] text-muted-foreground mb-2">Aperçu Google</p>
-                                    <p className="text-[12px] text-blue-600 font-medium">GOCLEANING - Nettoyage Auto Paris</p>
+                                  <div className="bg-white rounded-xl p-4 border border-border/15 shadow-sm">
+                                    <p className="text-[9px] text-muted-foreground mb-2 font-medium uppercase tracking-wider">Aperçu Google</p>
+                                    <p className="text-[13px] text-blue-600 font-medium hover:underline cursor-pointer">GOCLEANING - Nettoyage Auto Paris</p>
                                     <p className="text-[10px] text-emerald-700 mt-0.5">cleaningpage.com/gocleaning</p>
                                     <p className="text-[10px] text-muted-foreground mt-0.5">Service de nettoyage automobile premium à domicile.</p>
                                   </div>
@@ -1554,29 +1542,29 @@ export default function Index() {
                           <h3 className="text-lg font-semibold text-foreground tracking-tight">Formules & Prestations</h3>
                           <p className="text-xs text-muted-foreground mt-0.5">Gérez vos offres</p>
                         </div>
-                        <button className="bg-foreground text-background px-4 py-2 rounded-xl text-xs font-medium">
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
                           + Ajouter
                         </button>
                       </div>
 
                       <p className="text-xs font-semibold text-foreground mb-2.5">Formules</p>
-                      <div className="space-y-1.5 mb-6">
+                      <div className="space-y-2 mb-6">
                         {[
-                          { name: 'Lavage Express', desc: 'Extérieur uniquement · 45min', price: '35€' },
-                          { name: 'Nettoyage Complet', desc: 'Intérieur + extérieur · 1h30', price: '89€' },
-                          { name: 'Rénovation Premium', desc: 'Polish + céramique · 3h', price: '159€' },
+                          { name: 'Lavage Express', desc: 'Extérieur uniquement · 45min', price: '35€', color: 'from-blue-500 to-blue-600' },
+                          { name: 'Nettoyage Complet', desc: 'Intérieur + extérieur · 1h30', price: '89€', color: 'from-emerald-500 to-emerald-600' },
+                          { name: 'Rénovation Premium', desc: 'Polish + céramique · 3h', price: '159€', color: 'from-purple-500 to-purple-600' },
                         ].map((pack, i) => (
-                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 hover:border-border/50 transition-all cursor-pointer group">
-                            <div className="w-10 h-10 bg-secondary/50 rounded-xl flex items-center justify-center shrink-0">
-                              <Car className="w-4 h-4 text-foreground/70" />
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer group">
+                            <div className={`w-10 h-10 bg-gradient-to-br ${pack.color} rounded-xl flex items-center justify-center shrink-0 shadow-sm`}>
+                              <Car className="w-4 h-4 text-white" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[13px] font-medium text-foreground">{pack.name}</p>
+                              <p className="text-[13px] font-semibold text-foreground">{pack.name}</p>
                               <p className="text-[11px] text-muted-foreground mt-0.5">{pack.desc}</p>
                             </div>
-                            <span className="text-[13px] font-bold text-foreground tabular-nums">{pack.price}</span>
-                            <div className="w-8 h-[18px] bg-emerald-500 rounded-full relative shrink-0">
-                              <div className="absolute right-[3px] top-[3px] w-3 h-3 bg-white rounded-full shadow-sm" />
+                            <span className="text-[14px] font-bold text-foreground tabular-nums">{pack.price}</span>
+                            <div className="w-9 h-5 bg-emerald-500 rounded-full relative shrink-0 cursor-pointer">
+                              <div className="absolute right-[3px] top-[3px] w-3.5 h-3.5 bg-white rounded-full shadow-sm" />
                             </div>
                           </div>
                         ))}
@@ -1584,20 +1572,20 @@ export default function Index() {
 
                       <p className="text-xs font-semibold text-foreground mb-1.5">Prestations personnalisées</p>
                       <p className="text-[11px] text-muted-foreground mb-2.5">Tarifs sur mesure par client</p>
-                      <div className="space-y-1.5">
+                      <div className="space-y-2">
                         {[
-                          { name: 'Nettoyage canapé 3 places', client: 'Marie Dupont', duration: '2h', price: '120€' },
-                          { name: 'Détachage moquette salon', client: 'Pierre Bernard', duration: '1h30', price: '80€' },
+                          { name: 'Nettoyage canapé 3 places', client: 'Marie Dupont', duration: '2h', price: '120€', avatarBg: 'bg-pink-500', initials: 'MD' },
+                          { name: 'Détachage moquette salon', client: 'Pierre Bernard', duration: '1h30', price: '80€', avatarBg: 'bg-amber-500', initials: 'PB' },
                         ].map((service, i) => (
-                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 hover:border-border/50 transition-all cursor-pointer group">
-                            <div className="w-10 h-10 bg-secondary/50 rounded-xl flex items-center justify-center shrink-0 text-[11px] font-semibold text-foreground/70">
-                              {service.client.split(' ').map(w => w[0]).join('')}
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer group">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 ${service.avatarBg}`}>
+                              {service.initials}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[13px] font-medium text-foreground">{service.name}</p>
+                              <p className="text-[13px] font-semibold text-foreground">{service.name}</p>
                               <p className="text-[11px] text-muted-foreground mt-0.5">Pour {service.client} · {service.duration}</p>
                             </div>
-                            <span className="text-[13px] font-bold text-foreground tabular-nums">{service.price}</span>
+                            <span className="text-[14px] font-bold text-foreground tabular-nums">{service.price}</span>
                             <ChevronRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-muted-foreground transition-colors shrink-0" />
                           </div>
                         ))}
