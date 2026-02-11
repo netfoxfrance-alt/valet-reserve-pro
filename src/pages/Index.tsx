@@ -1526,53 +1526,82 @@ export default function Index() {
                   {/* === MA PAGE === */}
                   {dashboardTab === 'mypage' && (
                     <div className="h-full flex flex-col">
-                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-5">
-                        {/* Left: Live Preview */}
-                        <div className="flex flex-col min-h-[300px] sm:min-h-[380px] order-2 lg:order-1">
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="text-sm font-semibold text-foreground">Aperçu</span>
-                            <div className="flex gap-1">
-                              <div className="w-7 h-7 bg-blue-500 rounded-lg flex items-center justify-center shadow-sm shadow-blue-500/25">
-                                <Phone className="w-3.5 h-3.5 text-white" />
+                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* Left: iPhone-style Preview */}
+                        <div className="flex flex-col order-2 lg:order-1">
+                          <div className="flex items-center justify-between mb-4">
+                            <span className="text-base font-semibold text-foreground tracking-tight">Aperçu</span>
+                            <div className="flex gap-2">
+                              <div className="w-8 h-8 bg-secondary/40 rounded-full flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
+                                <Phone className="w-4 h-4 text-muted-foreground" />
                               </div>
-                              <div className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center">
-                                <svg className="w-3.5 h-3.5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <rect x="2" y="3" width="20" height="14" rx="2" />
-                                  <path d="M8 21h8" /><path d="M12 17v4" />
-                                </svg>
+                              <div className="w-8 h-8 bg-secondary/40 rounded-full flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
+                                <Globe className="w-4 h-4 text-muted-foreground" />
                               </div>
                             </div>
                           </div>
                           
-                          <div className="flex-1 bg-secondary/20 rounded-2xl overflow-hidden border border-border/15 shadow-sm">
-                            <div className="bg-card h-full overflow-y-auto">
-                              <div className="h-28 relative">
-                                <img src={mockupBanner} alt="Preview" className="w-full h-full object-cover" />
-                                <div className="absolute left-1/2 -translate-x-1/2 -bottom-7">
-                                  <div className="w-16 h-16 rounded-2xl shadow-lg ring-4 ring-card overflow-hidden">
-                                    <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
+                          {/* iPhone frame */}
+                          <div className="flex-1 flex justify-center">
+                            <div className="w-full max-w-[300px] bg-card rounded-[2.5rem] shadow-xl border border-border/20 p-3 relative">
+                              {/* Notch */}
+                              <div className="absolute top-3 left-1/2 -translate-x-1/2 w-24 h-5 bg-foreground rounded-full z-10" />
+                              
+                              <div className="rounded-[2rem] overflow-hidden bg-card h-[420px] sm:h-[480px] overflow-y-auto">
+                                {/* Banner */}
+                                <div className="h-28 relative">
+                                  <img src={mockupBanner} alt="Preview" className="w-full h-full object-cover" />
+                                  <div className="absolute top-4 left-4">
+                                    <div className="w-10 h-10 rounded-xl shadow-lg overflow-hidden bg-card">
+                                      <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
+                                    </div>
                                   </div>
+                                  <div className="absolute top-4 right-4">
+                                    <div className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm">
+                                      <Phone className="w-3.5 h-3.5 text-foreground" />
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                {/* Content */}
+                                <div className="px-5 pt-5 pb-6">
+                                  <h3 className="text-[15px] font-bold text-foreground text-center mb-1 tracking-tight">GOCLEANING</h3>
+                                  <div className="flex items-center justify-center gap-2 mb-1.5">
+                                    <span className="text-[11px] text-emerald-500 font-semibold">Ouvert</span>
+                                    <span className="text-[10px] text-muted-foreground">· Ferme à 19h</span>
+                                  </div>
+                                  <div className="flex items-center justify-center gap-0.5 mb-5">
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                                    ))}
+                                    <span className="text-[10px] text-muted-foreground ml-1 font-medium">4.9</span>
+                                  </div>
+                                  
+                                  {/* Formules as visual cards */}
+                                  <p className="text-[11px] font-semibold text-foreground mb-2.5 tracking-tight">Nos formules</p>
+                                  <div className="grid grid-cols-2 gap-2 mb-4">
+                                    {[
+                                      { name: 'Express', price: '35€' },
+                                      { name: 'Complet', price: '89€' },
+                                    ].map((f, i) => (
+                                      <div key={i} className="rounded-xl overflow-hidden relative h-20 shadow-sm">
+                                        <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                                        <div className="absolute bottom-2 left-2.5">
+                                          <p className="text-[10px] text-white font-medium">{f.name}</p>
+                                          <p className="text-[12px] text-white font-bold">{f.price}</p>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                  
+                                  <button className="w-full bg-foreground text-background py-3 rounded-2xl text-[12px] font-semibold shadow-sm">Réserver</button>
                                 </div>
                               </div>
-                              <div className="px-4 pt-10 pb-4">
-                                <h3 className="text-sm font-bold text-foreground text-center mb-0.5">GOCLEANING</h3>
-                                <p className="text-[9px] text-muted-foreground text-center mb-2">Nettoyage automobile premium</p>
-                                <div className="flex justify-center mb-3">
-                                  <span className="inline-flex items-center gap-1 text-[8px] bg-emerald-500 text-white px-2.5 py-0.5 rounded-full font-semibold">
-                                    <span className="w-1 h-1 bg-white rounded-full" />Ouvert
-                                  </span>
-                                </div>
-                                <div className="grid grid-cols-2 gap-1.5 mb-3">
-                                  <div className="bg-secondary/30 rounded-xl p-2.5 text-left border border-border/10">
-                                    <p className="text-[9px] font-medium">Express</p>
-                                    <p className="text-[12px] font-bold text-foreground">35€</p>
-                                  </div>
-                                  <div className="bg-secondary/30 rounded-xl p-2.5 text-left border border-border/10">
-                                    <p className="text-[9px] font-medium">Complet</p>
-                                    <p className="text-[12px] font-bold text-foreground">89€</p>
-                                  </div>
-                                </div>
-                                <button className="w-full bg-blue-500 text-white py-2.5 rounded-xl text-[10px] font-semibold shadow-sm shadow-blue-500/25">Réserver</button>
+                              
+                              {/* Home indicator */}
+                              <div className="flex justify-center pt-2">
+                                <div className="w-28 h-1 bg-muted-foreground/20 rounded-full" />
                               </div>
                             </div>
                           </div>
@@ -1580,310 +1609,232 @@ export default function Index() {
 
                         {/* Right: Customization controls */}
                         <div className="flex flex-col order-1 lg:order-2">
-                          <span className="text-sm font-semibold text-foreground mb-3">Personnalisation</span>
-                          <div className="bg-card rounded-2xl border border-border/15 flex-1 overflow-hidden shadow-sm">
-                            <div className="flex items-center border-b border-border/15">
-                              {[
-                                { id: 'design', label: 'Design' },
-                                { id: 'formules', label: 'Formules' },
-                                { id: 'elements', label: 'Éléments' },
-                                { id: 'seo', label: 'SEO' },
-                              ].map(tab => (
-                                <button key={tab.id} onClick={() => setMockupTab(tab.id as any)}
-                                  className={`flex-1 py-3 text-[11px] font-semibold text-center transition-colors border-b-2 ${mockupTab === tab.id ? 'border-blue-500 text-blue-500' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
-                                >
-                                  {tab.label}
-                                </button>
-                              ))}
-                            </div>
-                            <div className="p-4 space-y-4 overflow-y-auto max-h-[350px]">
-                              {mockupTab === 'design' && (
-                                <div className="space-y-5">
-                                  {/* Header style */}
-                                  <div>
-                                    <p className="text-[11px] font-semibold text-foreground mb-2">Style d'en-tête</p>
-                                    <div className="grid grid-cols-2 gap-2">
-                                      <div className="border-2 border-foreground rounded-xl p-2.5 cursor-pointer bg-secondary/20">
-                                        <div className="h-8 bg-secondary rounded-lg mb-1.5 overflow-hidden">
-                                          <img src={mockupBanner} alt="" className="w-full h-full object-cover opacity-60" />
+                          <span className="text-base font-semibold text-foreground mb-4 tracking-tight">Personnalisation</span>
+                          
+                          {/* Tabs with icons */}
+                          <div className="flex items-center justify-between border-b border-border/15 mb-5">
+                            {[
+                              { id: 'design', label: 'Design', icon: <Palette className="w-4 h-4" /> },
+                              { id: 'formules', label: 'Formules', icon: <Tag className="w-4 h-4" /> },
+                              { id: 'elements', label: 'Éléments', icon: <Settings className="w-4 h-4" /> },
+                              { id: 'seo', label: 'SEO', icon: <Globe className="w-4 h-4" /> },
+                            ].map(tab => (
+                              <button key={tab.id} onClick={() => setMockupTab(tab.id as any)}
+                                className={`flex flex-col items-center gap-1.5 pb-3 px-3 transition-colors border-b-2 ${mockupTab === tab.id ? 'border-foreground text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+                              >
+                                {tab.icon}
+                                <span className="text-[11px] font-medium">{tab.label}</span>
+                              </button>
+                            ))}
+                          </div>
+                          
+                          <div className="overflow-y-auto max-h-[450px] pr-1">
+                            {mockupTab === 'design' && (
+                              <div className="space-y-7">
+                                {/* Banner */}
+                                <div>
+                                  <p className="text-sm font-semibold text-foreground mb-3">Bannière</p>
+                                  <div className="rounded-2xl overflow-hidden mb-3 shadow-sm border border-border/10">
+                                    <img src={mockupBanner} alt="Banner" className="w-full h-32 object-cover" />
+                                  </div>
+                                  <button className="text-[12px] font-medium text-foreground bg-secondary/40 hover:bg-secondary px-4 py-2 rounded-xl transition-colors flex items-center gap-2 border border-border/10">
+                                    <Upload className="w-3.5 h-3.5" /> Changer
+                                  </button>
+                                </div>
+                                
+                                {/* Logo note */}
+                                <p className="text-[11px] text-muted-foreground">Le logo se configure dans Paramètres → Informations</p>
+
+                                {/* Color palettes */}
+                                <div>
+                                  <p className="text-sm font-semibold text-foreground mb-4">Couleurs</p>
+                                  <div className="flex gap-4 flex-wrap mb-5">
+                                    {[
+                                      { name: 'Bleu', colors: ['#3B82F6', '#1D4ED8'] },
+                                      { name: 'Rouge', colors: ['#EF4444', '#991B1B'] },
+                                      { name: 'Vert', colors: ['#10B981', '#047857'] },
+                                      { name: 'Violet', colors: ['#8B5CF6', '#6D28D9'] },
+                                      { name: 'Orange', colors: ['#F59E0B', '#B45309'] },
+                                    ].map((palette, i) => (
+                                      <div key={i} className="flex flex-col items-center gap-1.5 cursor-pointer group">
+                                        <div className={`flex -space-x-1 ${i === 2 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background rounded-full' : ''}`}>
+                                          <div className="w-6 h-6 rounded-full border-2 border-card shadow-sm" style={{ backgroundColor: palette.colors[0] }} />
+                                          <div className="w-6 h-6 rounded-full border-2 border-card shadow-sm" style={{ backgroundColor: palette.colors[1] }} />
                                         </div>
-                                        <p className="text-[9px] font-semibold text-center text-foreground">Bannière</p>
+                                        <span className="text-[10px] text-muted-foreground group-hover:text-foreground transition-colors font-medium">{palette.name}</span>
                                       </div>
-                                      <div className="border border-border/30 rounded-xl p-2.5 cursor-pointer hover:border-border transition-colors">
-                                        <div className="h-8 bg-secondary/30 rounded-lg mb-1.5 flex items-center justify-center">
-                                          <div className="w-5 h-5 rounded-lg bg-secondary" />
-                                        </div>
-                                        <p className="text-[9px] font-semibold text-center text-muted-foreground">Minimal</p>
-                                      </div>
-                                    </div>
+                                    ))}
                                   </div>
 
-                                  {/* Banner preview */}
-                                  <div>
-                                    <p className="text-[11px] font-semibold text-foreground mb-2">Bannière</p>
-                                    <div className="rounded-xl overflow-hidden mb-2 shadow-sm border border-border/10">
-                                      <img src={mockupBanner} alt="Banner" className="w-full h-14 object-cover" />
+                                  {/* Individual color controls */}
+                                  <div className="grid grid-cols-3 gap-3">
+                                    {[
+                                      { label: 'Principale', color: '#10B981', hex: '#10B981' },
+                                      { label: 'Titres', color: '#111827', hex: '#111827' },
+                                      { label: 'Texte', color: '#6B7280', hex: '#6b7280' },
+                                    ].map((item, i) => (
+                                      <div key={i}>
+                                        <p className="text-[10px] text-muted-foreground mb-1.5">{item.label}</p>
+                                        <div className="flex items-center gap-2 bg-secondary/20 rounded-xl px-2.5 py-2 border border-border/10 cursor-pointer hover:border-border/30 transition-colors">
+                                          <div className="w-5 h-5 rounded-lg shadow-sm shrink-0" style={{ backgroundColor: item.color }} />
+                                          <span className="text-[10px] text-muted-foreground font-mono">{item.hex}</span>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Style de page */}
+                                <div>
+                                  <p className="text-sm font-semibold text-foreground mb-3">Style de page</p>
+                                  <div className="grid grid-cols-2 gap-3">
+                                    <div className="border border-border/20 rounded-2xl p-4 cursor-pointer hover:border-border/40 transition-colors">
+                                      <div className="h-16 bg-secondary/30 rounded-xl mb-2 overflow-hidden">
+                                        <div className="w-full h-8 bg-secondary/60" />
+                                        <div className="flex justify-center -mt-3">
+                                          <div className="w-6 h-6 rounded-lg bg-secondary border-2 border-card" />
+                                        </div>
+                                      </div>
+                                      <p className="text-[11px] font-medium text-center text-muted-foreground">Banner</p>
                                     </div>
-                                    <div className="flex gap-2">
-                                      <button className="text-[10px] font-semibold text-blue-500 bg-blue-50 px-3 py-1.5 rounded-full hover:bg-blue-100 transition-colors flex items-center gap-1">
-                                        <Upload className="w-3 h-3" /> Modifier
-                                      </button>
+                                    <div className="border-2 border-foreground rounded-2xl p-4 cursor-pointer">
+                                      <div className="h-16 bg-foreground rounded-xl mb-2 flex items-center justify-center">
+                                        <div className="w-10 h-1 bg-white/40 rounded-full" />
+                                      </div>
+                                      <p className="text-[11px] font-semibold text-center text-foreground">Minimal</p>
                                     </div>
                                   </div>
+                                </div>
 
-                                  {/* Logo */}
+                                {/* Dark mode */}
+                                <div className="flex items-center justify-between py-1">
                                   <div>
-                                    <p className="text-[11px] font-semibold text-foreground mb-2">Logo</p>
+                                    <p className="text-[12px] font-semibold text-foreground">Mode sombre</p>
+                                    <p className="text-[10px] text-muted-foreground mt-0.5">Proposer un thème sombre</p>
+                                  </div>
+                                  <div className="w-10 h-[22px] bg-secondary border border-border/30 rounded-full relative cursor-pointer">
+                                    <div className="absolute left-[3px] top-[3px] w-4 h-4 bg-white rounded-full shadow-sm border border-border/10" />
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {mockupTab === 'formules' && (
+                              <div className="space-y-2.5">
+                                <p className="text-[12px] text-muted-foreground mb-2">Formules visibles sur votre page</p>
+                                {['Lavage Express · 35€', 'Nettoyage Complet · 89€', 'Rénovation Premium · 159€'].map((f, i) => (
+                                  <div key={i} className="flex items-center justify-between bg-secondary/20 rounded-xl p-3.5 border border-border/10">
+                                    <span className="text-[12px] font-medium text-foreground">{f}</span>
+                                    <div className={`w-10 h-[22px] rounded-full relative transition-colors cursor-pointer ${i < 2 ? 'bg-foreground' : 'bg-secondary border border-border/30'}`}>
+                                      <div className={`absolute top-[3px] w-4 h-4 bg-white rounded-full shadow-sm transition-all ${i < 2 ? 'right-[3px]' : 'left-[3px]'}`} />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {mockupTab === 'elements' && (
+                              <div className="space-y-3">
+                                <div className="flex items-center justify-between mb-2">
+                                  <p className="text-[12px] text-muted-foreground">Éléments de votre page</p>
+                                  <button className="text-[11px] font-medium text-foreground bg-secondary/40 hover:bg-secondary px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1.5 border border-border/10">
+                                    <Plus className="w-3.5 h-3.5" /> Ajouter
+                                  </button>
+                                </div>
+
+                                {/* Blocks */}
+                                {[
+                                  { icon: <Phone className="w-4 h-4" />, name: 'Téléphone', desc: '06 12 34 56 78', hasStyle: true, styleIdx: 0 },
+                                  { icon: <Clock className="w-4 h-4" />, name: 'Horaires', desc: 'Configurés dans Paramètres → Disponibilités', hasStyle: true, styleIdx: 0 },
+                                  { icon: <MapPin className="w-4 h-4" />, name: 'Adresse', desc: '12 rue de Paris, 75001 Paris', hasStyle: true, styleIdx: 2 },
+                                  { icon: <Tag className="w-4 h-4" />, name: 'Nos formules', desc: null, hasStyle: false },
+                                  { icon: <Star className="w-4 h-4" />, name: 'Avis Google', desc: null, hasStyle: false, hasGoogleDetail: true },
+                                  { icon: <ImagePlus className="w-4 h-4" />, name: 'Galerie photos', desc: null, hasStyle: false },
+                                  { icon: <Instagram className="w-4 h-4" />, name: 'Instagram', desc: null, hasStyle: false, off: true },
+                                ].map((block, idx) => (
+                                  <div key={idx} className="bg-card rounded-2xl border border-border/10 p-4">
                                     <div className="flex items-center gap-3">
-                                      <div className="w-12 h-12 rounded-xl overflow-hidden border border-border/15 shadow-sm">
-                                        <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
+                                      <svg className="w-4 h-4 text-muted-foreground/30 cursor-grab shrink-0" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                                      <div className="w-8 h-8 rounded-xl bg-secondary/40 flex items-center justify-center text-muted-foreground shrink-0">
+                                        {block.icon}
                                       </div>
-                                      <button className="text-[10px] font-semibold text-blue-500 bg-blue-50 px-3 py-1.5 rounded-full hover:bg-blue-100 transition-colors flex items-center gap-1">
-                                        <Upload className="w-3 h-3" /> Changer
-                                      </button>
+                                      <span className="text-[12px] font-semibold text-foreground flex-1">{block.name}</span>
+                                      <div className="flex items-center gap-2">
+                                        {!block.off && (
+                                          <>
+                                            <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground/25 rotate-90 cursor-pointer hover:text-muted-foreground transition-colors" />
+                                            <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/25 -rotate-90 cursor-pointer hover:text-muted-foreground transition-colors" />
+                                          </>
+                                        )}
+                                        <div className={`w-10 h-[22px] rounded-full relative cursor-pointer ${block.off ? 'bg-secondary border border-border/30' : 'bg-foreground'}`}>
+                                          <div className={`absolute top-[3px] w-4 h-4 bg-white rounded-full shadow-sm ${block.off ? 'left-[3px] border border-border/10' : 'right-[3px]'}`} />
+                                        </div>
+                                        {!block.off && (
+                                          <svg className="w-4 h-4 text-red-400/60 cursor-pointer hover:text-red-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /></svg>
+                                        )}
+                                      </div>
                                     </div>
-                                  </div>
+                                    
+                                    {block.desc && (
+                                      <p className="text-[10px] text-muted-foreground mt-2 ml-[60px]">{block.desc}</p>
+                                    )}
+                                    
+                                    {block.hasStyle && (
+                                      <div className="flex items-center gap-2 mt-2.5 ml-[60px]">
+                                        <span className="text-[10px] text-muted-foreground">Style :</span>
+                                        {['Minimal', 'Pill', 'Carte'].map((s, i) => (
+                                          <span key={s} className={`text-[10px] px-3 py-1 rounded-full cursor-pointer transition-colors ${i === block.styleIdx ? 'bg-foreground text-background font-semibold' : 'bg-secondary/40 text-muted-foreground hover:bg-secondary'}`}>{s}</span>
+                                        ))}
+                                      </div>
+                                    )}
 
-                                  {/* Colors */}
-                                  <div>
-                                    <p className="text-[11px] font-semibold text-foreground mb-3">Couleurs</p>
-                                    <div className="space-y-3">
-                                      {[
-                                        { label: 'Couleur principale', color: '#10B981' },
-                                        { label: 'Texte principal', color: '#1F2937' },
-                                        { label: 'Texte secondaire', color: '#6B7280' },
-                                        { label: 'Fond de page', color: '#FFFFFF' },
-                                      ].map((item, i) => (
-                                        <div key={i} className="flex items-center justify-between">
-                                          <span className="text-[10px] text-muted-foreground">{item.label}</span>
-                                          <div className="flex items-center gap-2 cursor-pointer group">
-                                            <span className="text-[9px] text-muted-foreground/60 font-mono group-hover:text-muted-foreground transition-colors">{item.color}</span>
-                                            <div className="w-6 h-6 rounded-lg border border-border/20 shadow-sm group-hover:scale-110 transition-transform" style={{ backgroundColor: item.color }} />
+                                    {block.hasGoogleDetail && (
+                                      <div className="ml-[60px] mt-2.5 space-y-2">
+                                        <div className="flex items-center gap-1.5">
+                                          <svg className="w-4 h-4" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                                          <span className="text-[10px] font-semibold text-foreground">Google</span>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                          <div>
+                                            <p className="text-[9px] text-muted-foreground mb-1">Note</p>
+                                            <div className="bg-secondary/20 rounded-lg px-2.5 py-1.5 border border-border/10 text-[10px] font-medium text-foreground">4,7</div>
+                                          </div>
+                                          <div>
+                                            <p className="text-[9px] text-muted-foreground mb-1">Avis</p>
+                                            <div className="bg-secondary/20 rounded-lg px-2.5 py-1.5 border border-border/10 text-[10px] font-medium text-foreground">122</div>
                                           </div>
                                         </div>
-                                      ))}
-                                    </div>
+                                      </div>
+                                    )}
                                   </div>
+                                ))}
+                              </div>
+                            )}
 
-                                  {/* Bouton CTA */}
-                                  <div>
-                                    <p className="text-[11px] font-semibold text-foreground mb-2">Bouton d'action</p>
-                                    <div className="flex items-center justify-between bg-secondary/20 rounded-xl p-3 border border-border/10">
-                                      <div className="flex items-center gap-2">
-                                        <div className="w-5 h-5 rounded-lg bg-emerald-500" />
-                                        <span className="text-[10px] text-muted-foreground">Style arrondi</span>
-                                      </div>
-                                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40" />
-                                    </div>
-                                  </div>
-
-                                  {/* Dark mode */}
-                                  <div>
-                                    <div className="flex items-center justify-between">
-                                      <div>
-                                        <p className="text-[11px] font-semibold text-foreground">Mode sombre</p>
-                                        <p className="text-[9px] text-muted-foreground mt-0.5">Proposer un thème sombre</p>
-                                      </div>
-                                      <div className="w-9 h-5 bg-secondary border border-border/30 rounded-full relative cursor-pointer">
-                                        <div className="absolute left-[3px] top-[3px] w-3.5 h-3.5 bg-white rounded-full shadow-sm border border-border/10" />
-                                      </div>
-                                    </div>
-                                  </div>
+                            {mockupTab === 'seo' && (
+                              <div className="space-y-4">
+                                <p className="text-[12px] text-muted-foreground">Référencement Google</p>
+                                <div>
+                                  <p className="text-[11px] text-muted-foreground mb-1.5">Titre</p>
+                                  <div className="bg-secondary/20 rounded-xl px-3.5 py-2.5 border border-border/10 text-[12px] text-foreground font-medium">GOCLEANING - Nettoyage Auto Paris</div>
                                 </div>
-                              )}
-                              {mockupTab === 'formules' && (
-                                <div className="space-y-2">
-                                  <p className="text-[11px] text-muted-foreground mb-1">Formules visibles sur votre page</p>
-                                  {['Lavage Express · 35€', 'Nettoyage Complet · 89€', 'Rénovation Premium · 159€'].map((f, i) => (
-                                    <div key={i} className="flex items-center justify-between bg-secondary/20 rounded-xl p-3 border border-border/10">
-                                      <span className="text-[11px] font-medium text-foreground">{f}</span>
-                                      <div className={`w-9 h-5 rounded-full relative transition-colors cursor-pointer ${i < 2 ? 'bg-emerald-500' : 'bg-secondary border border-border/30'}`}>
-                                        <div className={`absolute top-[3px] w-3.5 h-3.5 bg-white rounded-full shadow-sm transition-all ${i < 2 ? 'right-[3px]' : 'left-[3px]'}`} />
-                                      </div>
-                                    </div>
-                                  ))}
+                                <div>
+                                  <p className="text-[11px] text-muted-foreground mb-1.5">Description</p>
+                                  <div className="bg-secondary/20 rounded-xl px-3.5 py-2.5 border border-border/10 text-[12px] text-foreground">Service de nettoyage automobile premium à domicile.</div>
                                 </div>
-                              )}
-                              {mockupTab === 'elements' && (
-                                <div className="space-y-3">
-                                  <div className="flex items-center justify-between mb-1">
-                                    <p className="text-[11px] text-muted-foreground">Éléments de votre page</p>
-                                    <button className="text-[10px] font-semibold text-blue-500 bg-blue-50 px-2.5 py-1 rounded-full hover:bg-blue-100 transition-colors flex items-center gap-1">
-                                      <Plus className="w-3 h-3" /> Ajouter
-                                    </button>
-                                  </div>
-
-                                  {/* Block: Téléphone */}
-                                  <div className="bg-card rounded-xl border border-border/15 p-3">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <svg className="w-3.5 h-3.5 text-muted-foreground/40 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
-                                      <Phone className="w-3.5 h-3.5 text-muted-foreground" />
-                                      <span className="text-[11px] font-semibold text-foreground flex-1">Téléphone</span>
-                                      <div className="flex items-center gap-1.5">
-                                        <ChevronLeft className="w-3 h-3 text-muted-foreground/30 rotate-90" />
-                                        <ChevronRight className="w-3 h-3 text-muted-foreground/30 -rotate-90" />
-                                        <div className="w-8 h-[18px] bg-foreground rounded-full relative cursor-pointer">
-                                          <div className="absolute right-[2px] top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow-sm" />
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <p className="text-[9px] text-muted-foreground mb-2 pl-8">06 12 34 56 78</p>
-                                    <div className="flex items-center gap-1.5 pl-8">
-                                      <span className="text-[9px] text-muted-foreground mr-1">Style :</span>
-                                      {['Minimal', 'Pill', 'Carte'].map((s, i) => (
-                                        <span key={s} className={`text-[9px] px-2.5 py-1 rounded-full cursor-pointer transition-colors ${i === 0 ? 'bg-foreground text-background font-semibold' : 'bg-secondary/50 text-muted-foreground hover:bg-secondary'}`}>{s}</span>
-                                      ))}
-                                    </div>
-                                  </div>
-
-                                  {/* Block: Horaires */}
-                                  <div className="bg-card rounded-xl border border-border/15 p-3">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <svg className="w-3.5 h-3.5 text-muted-foreground/40 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
-                                      <Clock className="w-3.5 h-3.5 text-muted-foreground" />
-                                      <span className="text-[11px] font-semibold text-foreground flex-1">Horaires</span>
-                                      <div className="flex items-center gap-1.5">
-                                        <ChevronLeft className="w-3 h-3 text-muted-foreground/30 rotate-90" />
-                                        <ChevronRight className="w-3 h-3 text-muted-foreground/30 -rotate-90" />
-                                        <div className="w-8 h-[18px] bg-foreground rounded-full relative cursor-pointer">
-                                          <div className="absolute right-[2px] top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow-sm" />
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <p className="text-[9px] text-muted-foreground mb-2 pl-8">Configurés dans Paramètres → Disponibilités</p>
-                                    <div className="flex items-center gap-1.5 pl-8">
-                                      <span className="text-[9px] text-muted-foreground mr-1">Style :</span>
-                                      {['Minimal', 'Pill', 'Carte'].map((s, i) => (
-                                        <span key={s} className={`text-[9px] px-2.5 py-1 rounded-full cursor-pointer transition-colors ${i === 0 ? 'bg-foreground text-background font-semibold' : 'bg-secondary/50 text-muted-foreground hover:bg-secondary'}`}>{s}</span>
-                                      ))}
-                                    </div>
-                                  </div>
-
-                                  {/* Block: Adresse */}
-                                  <div className="bg-card rounded-xl border border-border/15 p-3">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <svg className="w-3.5 h-3.5 text-muted-foreground/40 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
-                                      <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
-                                      <span className="text-[11px] font-semibold text-foreground flex-1">Adresse</span>
-                                      <div className="flex items-center gap-1.5">
-                                        <ChevronLeft className="w-3 h-3 text-muted-foreground/30 rotate-90" />
-                                        <ChevronRight className="w-3 h-3 text-muted-foreground/30 -rotate-90" />
-                                        <div className="w-8 h-[18px] bg-foreground rounded-full relative cursor-pointer">
-                                          <div className="absolute right-[2px] top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow-sm" />
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <p className="text-[9px] text-muted-foreground mb-2 pl-8">12 rue de Paris, 75001 Paris</p>
-                                    <div className="flex items-center gap-1.5 pl-8">
-                                      <span className="text-[9px] text-muted-foreground mr-1">Style :</span>
-                                      {['Minimal', 'Pill', 'Carte'].map((s, i) => (
-                                        <span key={s} className={`text-[9px] px-2.5 py-1 rounded-full cursor-pointer transition-colors ${i === 2 ? 'bg-foreground text-background font-semibold' : 'bg-secondary/50 text-muted-foreground hover:bg-secondary'}`}>{s}</span>
-                                      ))}
-                                    </div>
-                                  </div>
-
-                                  {/* Block: Nos formules */}
-                                  <div className="bg-card rounded-xl border border-border/15 p-3">
-                                    <div className="flex items-center gap-2">
-                                      <svg className="w-3.5 h-3.5 text-muted-foreground/40 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
-                                      <Tag className="w-3.5 h-3.5 text-muted-foreground" />
-                                      <span className="text-[11px] font-semibold text-foreground flex-1">Nos formules</span>
-                                      <div className="w-8 h-[18px] bg-foreground rounded-full relative cursor-pointer">
-                                        <div className="absolute right-[2px] top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow-sm" />
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  {/* Block: Avis Google */}
-                                  <div className="bg-card rounded-xl border border-border/15 p-3">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <svg className="w-3.5 h-3.5 text-muted-foreground/40 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
-                                      <Star className="w-3.5 h-3.5 text-muted-foreground" />
-                                      <span className="text-[11px] font-semibold text-foreground flex-1">Avis Google</span>
-                                      <div className="flex items-center gap-1.5">
-                                        <ChevronLeft className="w-3 h-3 text-muted-foreground/30 rotate-90" />
-                                        <ChevronRight className="w-3 h-3 text-muted-foreground/30 -rotate-90" />
-                                        <div className="w-8 h-[18px] bg-foreground rounded-full relative cursor-pointer">
-                                          <div className="absolute right-[2px] top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow-sm" />
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="pl-8 space-y-2">
-                                      <div className="flex items-center gap-1.5">
-                                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-                                        <span className="text-[10px] font-semibold text-foreground">Google</span>
-                                      </div>
-                                      <div>
-                                        <p className="text-[9px] text-muted-foreground mb-1">Lien vers votre fiche</p>
-                                        <div className="bg-secondary/20 rounded-lg px-2.5 py-1.5 border border-border/10">
-                                          <span className="text-[9px] text-muted-foreground/70 truncate block">https://share.google/TNZKNun...</span>
-                                        </div>
-                                      </div>
-                                      <div className="grid grid-cols-2 gap-2">
-                                        <div>
-                                          <p className="text-[9px] text-muted-foreground mb-1">Note (sur 5)</p>
-                                          <div className="bg-secondary/20 rounded-lg px-2.5 py-1.5 border border-border/10 text-[10px] font-medium text-foreground">4,7</div>
-                                        </div>
-                                        <div>
-                                          <p className="text-[9px] text-muted-foreground mb-1">Nombre d'avis</p>
-                                          <div className="bg-secondary/20 rounded-lg px-2.5 py-1.5 border border-border/10 text-[10px] font-medium text-foreground">122</div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  {/* Block: Galerie */}
-                                  <div className="bg-card rounded-xl border border-border/15 p-3">
-                                    <div className="flex items-center gap-2">
-                                      <svg className="w-3.5 h-3.5 text-muted-foreground/40 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
-                                      <ImagePlus className="w-3.5 h-3.5 text-muted-foreground" />
-                                      <span className="text-[11px] font-semibold text-foreground flex-1">Galerie photos</span>
-                                      <div className="w-8 h-[18px] bg-foreground rounded-full relative cursor-pointer">
-                                        <div className="absolute right-[2px] top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow-sm" />
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  {/* Block: Instagram */}
-                                  <div className="bg-card rounded-xl border border-border/15 p-3">
-                                    <div className="flex items-center gap-2">
-                                      <svg className="w-3.5 h-3.5 text-muted-foreground/40 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
-                                      <Instagram className="w-3.5 h-3.5 text-muted-foreground" />
-                                      <span className="text-[11px] font-semibold text-foreground flex-1">Instagram</span>
-                                      <div className="w-8 h-[18px] bg-secondary border border-border/30 rounded-full relative cursor-pointer">
-                                        <div className="absolute left-[2px] top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow-sm border border-border/10" />
-                                      </div>
-                                    </div>
-                                  </div>
+                                <div className="bg-white rounded-2xl p-5 border border-border/15 shadow-sm">
+                                  <p className="text-[10px] text-muted-foreground mb-2.5 font-medium uppercase tracking-wider">Aperçu Google</p>
+                                  <p className="text-[14px] text-blue-600 font-medium hover:underline cursor-pointer">GOCLEANING - Nettoyage Auto Paris</p>
+                                  <p className="text-[11px] text-emerald-700 mt-0.5">cleaningpage.com/gocleaning</p>
+                                  <p className="text-[11px] text-muted-foreground mt-1">Service de nettoyage automobile premium à domicile.</p>
                                 </div>
-                              )}
-                              {mockupTab === 'seo' && (
-                                <div className="space-y-3">
-                                  <p className="text-[11px] text-muted-foreground">Référencement Google</p>
-                                  <div>
-                                    <p className="text-[10px] text-muted-foreground mb-1">Titre</p>
-                                    <div className="bg-secondary/20 rounded-xl px-3 py-2.5 border border-border/10 text-[11px] text-foreground font-medium">GOCLEANING - Nettoyage Auto Paris</div>
-                                  </div>
-                                  <div>
-                                    <p className="text-[10px] text-muted-foreground mb-1">Description</p>
-                                    <div className="bg-secondary/20 rounded-xl px-3 py-2.5 border border-border/10 text-[11px] text-foreground">Service de nettoyage automobile premium à domicile.</div>
-                                  </div>
-                                  <div className="bg-white rounded-xl p-4 border border-border/15 shadow-sm">
-                                    <p className="text-[9px] text-muted-foreground mb-2 font-medium uppercase tracking-wider">Aperçu Google</p>
-                                    <p className="text-[13px] text-blue-600 font-medium hover:underline cursor-pointer">GOCLEANING - Nettoyage Auto Paris</p>
-                                    <p className="text-[10px] text-emerald-700 mt-0.5">cleaningpage.com/gocleaning</p>
-                                    <p className="text-[10px] text-muted-foreground mt-0.5">Service de nettoyage automobile premium à domicile.</p>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
                     </div>
                   )}
-
-                  {/* === FORMULES === */}
                   {dashboardTab === 'formules' && (
                     <>
                       <div className="flex items-center justify-between mb-6">
