@@ -1596,28 +1596,100 @@ export default function Index() {
                                 </button>
                               ))}
                             </div>
-                            <div className="p-4 space-y-4 overflow-y-auto max-h-[280px]">
+                            <div className="p-4 space-y-4 overflow-y-auto max-h-[350px]">
                               {mockupTab === 'design' && (
-                                <>
+                                <div className="space-y-5">
+                                  {/* Header style */}
+                                  <div>
+                                    <p className="text-[11px] font-semibold text-foreground mb-2">Style d'en-tête</p>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      <div className="border-2 border-foreground rounded-xl p-2.5 cursor-pointer bg-secondary/20">
+                                        <div className="h-8 bg-secondary rounded-lg mb-1.5 overflow-hidden">
+                                          <img src={mockupBanner} alt="" className="w-full h-full object-cover opacity-60" />
+                                        </div>
+                                        <p className="text-[9px] font-semibold text-center text-foreground">Bannière</p>
+                                      </div>
+                                      <div className="border border-border/30 rounded-xl p-2.5 cursor-pointer hover:border-border transition-colors">
+                                        <div className="h-8 bg-secondary/30 rounded-lg mb-1.5 flex items-center justify-center">
+                                          <div className="w-5 h-5 rounded-lg bg-secondary" />
+                                        </div>
+                                        <p className="text-[9px] font-semibold text-center text-muted-foreground">Minimal</p>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Banner preview */}
                                   <div>
                                     <p className="text-[11px] font-semibold text-foreground mb-2">Bannière</p>
-                                    <div className="rounded-xl overflow-hidden mb-2.5 shadow-sm">
-                                      <img src={mockupBanner} alt="Banner" className="w-full h-16 object-cover" />
+                                    <div className="rounded-xl overflow-hidden mb-2 shadow-sm border border-border/10">
+                                      <img src={mockupBanner} alt="Banner" className="w-full h-14 object-cover" />
                                     </div>
-                                    <button className="text-[11px] font-semibold text-blue-500 bg-blue-50 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors">Modifier</button>
+                                    <div className="flex gap-2">
+                                      <button className="text-[10px] font-semibold text-blue-500 bg-blue-50 px-3 py-1.5 rounded-full hover:bg-blue-100 transition-colors flex items-center gap-1">
+                                        <Upload className="w-3 h-3" /> Modifier
+                                      </button>
+                                    </div>
                                   </div>
+
+                                  {/* Logo */}
                                   <div>
-                                    <p className="text-[11px] font-semibold text-foreground mb-2.5">Couleur principale</p>
-                                    <div className="flex gap-3">
+                                    <p className="text-[11px] font-semibold text-foreground mb-2">Logo</p>
+                                    <div className="flex items-center gap-3">
+                                      <div className="w-12 h-12 rounded-xl overflow-hidden border border-border/15 shadow-sm">
+                                        <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
+                                      </div>
+                                      <button className="text-[10px] font-semibold text-blue-500 bg-blue-50 px-3 py-1.5 rounded-full hover:bg-blue-100 transition-colors flex items-center gap-1">
+                                        <Upload className="w-3 h-3" /> Changer
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {/* Colors */}
+                                  <div>
+                                    <p className="text-[11px] font-semibold text-foreground mb-3">Couleurs</p>
+                                    <div className="space-y-3">
                                       {[
-                                        '#3B82F6', '#EF4444', '#10B981', '#8B5CF6', '#F59E0B', '#EC4899',
-                                      ].map((c, i) => (
-                                        <div key={i} className={`w-8 h-8 rounded-full cursor-pointer transition-all shadow-sm ${i === 2 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background scale-110' : 'hover:scale-110'}`}
-                                          style={{ backgroundColor: c }} />
+                                        { label: 'Couleur principale', color: '#10B981' },
+                                        { label: 'Texte principal', color: '#1F2937' },
+                                        { label: 'Texte secondaire', color: '#6B7280' },
+                                        { label: 'Fond de page', color: '#FFFFFF' },
+                                      ].map((item, i) => (
+                                        <div key={i} className="flex items-center justify-between">
+                                          <span className="text-[10px] text-muted-foreground">{item.label}</span>
+                                          <div className="flex items-center gap-2 cursor-pointer group">
+                                            <span className="text-[9px] text-muted-foreground/60 font-mono group-hover:text-muted-foreground transition-colors">{item.color}</span>
+                                            <div className="w-6 h-6 rounded-lg border border-border/20 shadow-sm group-hover:scale-110 transition-transform" style={{ backgroundColor: item.color }} />
+                                          </div>
+                                        </div>
                                       ))}
                                     </div>
                                   </div>
-                                </>
+
+                                  {/* Bouton CTA */}
+                                  <div>
+                                    <p className="text-[11px] font-semibold text-foreground mb-2">Bouton d'action</p>
+                                    <div className="flex items-center justify-between bg-secondary/20 rounded-xl p-3 border border-border/10">
+                                      <div className="flex items-center gap-2">
+                                        <div className="w-5 h-5 rounded-lg bg-emerald-500" />
+                                        <span className="text-[10px] text-muted-foreground">Style arrondi</span>
+                                      </div>
+                                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40" />
+                                    </div>
+                                  </div>
+
+                                  {/* Dark mode */}
+                                  <div>
+                                    <div className="flex items-center justify-between">
+                                      <div>
+                                        <p className="text-[11px] font-semibold text-foreground">Mode sombre</p>
+                                        <p className="text-[9px] text-muted-foreground mt-0.5">Proposer un thème sombre</p>
+                                      </div>
+                                      <div className="w-9 h-5 bg-secondary border border-border/30 rounded-full relative cursor-pointer">
+                                        <div className="absolute left-[3px] top-[3px] w-3.5 h-3.5 bg-white rounded-full shadow-sm border border-border/10" />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                               )}
                               {mockupTab === 'formules' && (
                                 <div className="space-y-2">
@@ -1633,16 +1705,156 @@ export default function Index() {
                                 </div>
                               )}
                               {mockupTab === 'elements' && (
-                                <div className="space-y-2">
-                                  <p className="text-[11px] text-muted-foreground mb-1">Éléments affichés</p>
-                                  {['Instagram', 'Téléphone', 'Horaires', 'Adresse', 'Galerie'].map((el) => (
-                                    <div key={el} className="flex items-center justify-between bg-secondary/20 rounded-xl p-3 border border-border/10">
-                                      <span className="text-[11px] font-medium text-foreground">{el}</span>
-                                      <div className="w-9 h-5 bg-emerald-500 rounded-full relative cursor-pointer">
-                                        <div className="absolute right-[3px] top-[3px] w-3.5 h-3.5 bg-white rounded-full shadow-sm" />
+                                <div className="space-y-3">
+                                  <div className="flex items-center justify-between mb-1">
+                                    <p className="text-[11px] text-muted-foreground">Éléments de votre page</p>
+                                    <button className="text-[10px] font-semibold text-blue-500 bg-blue-50 px-2.5 py-1 rounded-full hover:bg-blue-100 transition-colors flex items-center gap-1">
+                                      <Plus className="w-3 h-3" /> Ajouter
+                                    </button>
+                                  </div>
+
+                                  {/* Block: Téléphone */}
+                                  <div className="bg-card rounded-xl border border-border/15 p-3">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <svg className="w-3.5 h-3.5 text-muted-foreground/40 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                                      <Phone className="w-3.5 h-3.5 text-muted-foreground" />
+                                      <span className="text-[11px] font-semibold text-foreground flex-1">Téléphone</span>
+                                      <div className="flex items-center gap-1.5">
+                                        <ChevronLeft className="w-3 h-3 text-muted-foreground/30 rotate-90" />
+                                        <ChevronRight className="w-3 h-3 text-muted-foreground/30 -rotate-90" />
+                                        <div className="w-8 h-[18px] bg-foreground rounded-full relative cursor-pointer">
+                                          <div className="absolute right-[2px] top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow-sm" />
+                                        </div>
                                       </div>
                                     </div>
-                                  ))}
+                                    <p className="text-[9px] text-muted-foreground mb-2 pl-8">06 12 34 56 78</p>
+                                    <div className="flex items-center gap-1.5 pl-8">
+                                      <span className="text-[9px] text-muted-foreground mr-1">Style :</span>
+                                      {['Minimal', 'Pill', 'Carte'].map((s, i) => (
+                                        <span key={s} className={`text-[9px] px-2.5 py-1 rounded-full cursor-pointer transition-colors ${i === 0 ? 'bg-foreground text-background font-semibold' : 'bg-secondary/50 text-muted-foreground hover:bg-secondary'}`}>{s}</span>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  {/* Block: Horaires */}
+                                  <div className="bg-card rounded-xl border border-border/15 p-3">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <svg className="w-3.5 h-3.5 text-muted-foreground/40 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                                      <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+                                      <span className="text-[11px] font-semibold text-foreground flex-1">Horaires</span>
+                                      <div className="flex items-center gap-1.5">
+                                        <ChevronLeft className="w-3 h-3 text-muted-foreground/30 rotate-90" />
+                                        <ChevronRight className="w-3 h-3 text-muted-foreground/30 -rotate-90" />
+                                        <div className="w-8 h-[18px] bg-foreground rounded-full relative cursor-pointer">
+                                          <div className="absolute right-[2px] top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow-sm" />
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <p className="text-[9px] text-muted-foreground mb-2 pl-8">Configurés dans Paramètres → Disponibilités</p>
+                                    <div className="flex items-center gap-1.5 pl-8">
+                                      <span className="text-[9px] text-muted-foreground mr-1">Style :</span>
+                                      {['Minimal', 'Pill', 'Carte'].map((s, i) => (
+                                        <span key={s} className={`text-[9px] px-2.5 py-1 rounded-full cursor-pointer transition-colors ${i === 0 ? 'bg-foreground text-background font-semibold' : 'bg-secondary/50 text-muted-foreground hover:bg-secondary'}`}>{s}</span>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  {/* Block: Adresse */}
+                                  <div className="bg-card rounded-xl border border-border/15 p-3">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <svg className="w-3.5 h-3.5 text-muted-foreground/40 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                                      <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
+                                      <span className="text-[11px] font-semibold text-foreground flex-1">Adresse</span>
+                                      <div className="flex items-center gap-1.5">
+                                        <ChevronLeft className="w-3 h-3 text-muted-foreground/30 rotate-90" />
+                                        <ChevronRight className="w-3 h-3 text-muted-foreground/30 -rotate-90" />
+                                        <div className="w-8 h-[18px] bg-foreground rounded-full relative cursor-pointer">
+                                          <div className="absolute right-[2px] top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow-sm" />
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <p className="text-[9px] text-muted-foreground mb-2 pl-8">12 rue de Paris, 75001 Paris</p>
+                                    <div className="flex items-center gap-1.5 pl-8">
+                                      <span className="text-[9px] text-muted-foreground mr-1">Style :</span>
+                                      {['Minimal', 'Pill', 'Carte'].map((s, i) => (
+                                        <span key={s} className={`text-[9px] px-2.5 py-1 rounded-full cursor-pointer transition-colors ${i === 2 ? 'bg-foreground text-background font-semibold' : 'bg-secondary/50 text-muted-foreground hover:bg-secondary'}`}>{s}</span>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  {/* Block: Nos formules */}
+                                  <div className="bg-card rounded-xl border border-border/15 p-3">
+                                    <div className="flex items-center gap-2">
+                                      <svg className="w-3.5 h-3.5 text-muted-foreground/40 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                                      <Tag className="w-3.5 h-3.5 text-muted-foreground" />
+                                      <span className="text-[11px] font-semibold text-foreground flex-1">Nos formules</span>
+                                      <div className="w-8 h-[18px] bg-foreground rounded-full relative cursor-pointer">
+                                        <div className="absolute right-[2px] top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow-sm" />
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Block: Avis Google */}
+                                  <div className="bg-card rounded-xl border border-border/15 p-3">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <svg className="w-3.5 h-3.5 text-muted-foreground/40 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                                      <Star className="w-3.5 h-3.5 text-muted-foreground" />
+                                      <span className="text-[11px] font-semibold text-foreground flex-1">Avis Google</span>
+                                      <div className="flex items-center gap-1.5">
+                                        <ChevronLeft className="w-3 h-3 text-muted-foreground/30 rotate-90" />
+                                        <ChevronRight className="w-3 h-3 text-muted-foreground/30 -rotate-90" />
+                                        <div className="w-8 h-[18px] bg-foreground rounded-full relative cursor-pointer">
+                                          <div className="absolute right-[2px] top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow-sm" />
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="pl-8 space-y-2">
+                                      <div className="flex items-center gap-1.5">
+                                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                                        <span className="text-[10px] font-semibold text-foreground">Google</span>
+                                      </div>
+                                      <div>
+                                        <p className="text-[9px] text-muted-foreground mb-1">Lien vers votre fiche</p>
+                                        <div className="bg-secondary/20 rounded-lg px-2.5 py-1.5 border border-border/10">
+                                          <span className="text-[9px] text-muted-foreground/70 truncate block">https://share.google/TNZKNun...</span>
+                                        </div>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <p className="text-[9px] text-muted-foreground mb-1">Note (sur 5)</p>
+                                          <div className="bg-secondary/20 rounded-lg px-2.5 py-1.5 border border-border/10 text-[10px] font-medium text-foreground">4,7</div>
+                                        </div>
+                                        <div>
+                                          <p className="text-[9px] text-muted-foreground mb-1">Nombre d'avis</p>
+                                          <div className="bg-secondary/20 rounded-lg px-2.5 py-1.5 border border-border/10 text-[10px] font-medium text-foreground">122</div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Block: Galerie */}
+                                  <div className="bg-card rounded-xl border border-border/15 p-3">
+                                    <div className="flex items-center gap-2">
+                                      <svg className="w-3.5 h-3.5 text-muted-foreground/40 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                                      <ImagePlus className="w-3.5 h-3.5 text-muted-foreground" />
+                                      <span className="text-[11px] font-semibold text-foreground flex-1">Galerie photos</span>
+                                      <div className="w-8 h-[18px] bg-foreground rounded-full relative cursor-pointer">
+                                        <div className="absolute right-[2px] top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow-sm" />
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Block: Instagram */}
+                                  <div className="bg-card rounded-xl border border-border/15 p-3">
+                                    <div className="flex items-center gap-2">
+                                      <svg className="w-3.5 h-3.5 text-muted-foreground/40 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                                      <Instagram className="w-3.5 h-3.5 text-muted-foreground" />
+                                      <span className="text-[11px] font-semibold text-foreground flex-1">Instagram</span>
+                                      <div className="w-8 h-[18px] bg-secondary border border-border/30 rounded-full relative cursor-pointer">
+                                        <div className="absolute left-[2px] top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow-sm border border-border/10" />
+                                      </div>
+                                    </div>
+                                  </div>
                                 </div>
                               )}
                               {mockupTab === 'seo' && (
