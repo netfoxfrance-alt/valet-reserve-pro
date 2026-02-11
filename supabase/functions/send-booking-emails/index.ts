@@ -103,8 +103,75 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    const emailType = data.email_type || 'request_received';
+
+    // --- AUTHORIZATION ---
+    // Public flow (request_received): validate a matching appointment exists
+    // Dashboard flow (all other types): require authentication + center ownership
+    if (emailType === 'request_received') {
+      // Validate that a matching pending appointment was recently created
+      const { data: matchingAppointment, error: appointmentError } = await supabase
+        .from('appointments')
+        .select('id')
+        .eq('center_id', data.center_id)
+        .eq('client_email', data.client_email)
+        .eq('appointment_date', data.appointment_date)
+        .eq('appointment_time', data.appointment_time)
+        .eq('status', 'pending_validation')
+        .gte('created_at', new Date(Date.now() - 5 * 60 * 1000).toISOString()) // within last 5 minutes
+        .limit(1);
+
+      if (appointmentError || !matchingAppointment || matchingAppointment.length === 0) {
+        console.error('[Auth] No matching recent appointment found for request_received email');
+        return new Response(
+          JSON.stringify({ error: "Aucun rendez-vous correspondant trouvé" }),
+          { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+    } else {
+      // Dashboard flow: require JWT authentication
+      const authHeader = req.headers.get('Authorization');
+      if (!authHeader?.startsWith('Bearer ')) {
+        return new Response(
+          JSON.stringify({ error: "Non autorisé" }),
+          { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+
+      const token = authHeader.replace('Bearer ', '');
+      const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+        global: { headers: { Authorization: `Bearer ${token}` } }
+      });
+      
+      const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+      if (claimsError || !claimsData?.claims?.sub) {
+        return new Response(
+          JSON.stringify({ error: "Session expirée" }),
+          { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+
+      const userId = claimsData.claims.sub;
+
+      // Verify the user owns the center
+      const { data: centerOwnership, error: ownerError } = await supabase
+        .from('centers')
+        .select('id')
+        .eq('id', data.center_id)
+        .eq('owner_id', userId)
+        .single();
+
+      if (ownerError || !centerOwnership) {
+        return new Response(
+          JSON.stringify({ error: "Accès refusé" }),
+          { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+    }
 
     const { data: center, error: centerError } = await supabase
       .from("centers")
@@ -125,8 +192,6 @@ const handler = async (req: Request): Promise<Response> => {
     const serviceInfo = data.variant_name 
       ? `${data.pack_name} - ${data.variant_name}` 
       : data.pack_name;
-
-    const emailType = data.email_type || 'request_received';
 
     // Generate Google Calendar link
     const [year, month, day] = data.appointment_date.split('-');
@@ -222,7 +287,7 @@ const handler = async (req: Request): Promise<Response> => {
   } catch (error: any) {
     console.error("Error in send-booking-emails function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "Une erreur est survenue" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
