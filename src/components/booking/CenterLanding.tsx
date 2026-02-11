@@ -131,9 +131,14 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
   }, [customization.blocks]);
 
   // Quick action blocks (phone, address) - displayed at the top
+  // In minimal header mode, phone is already in the header bar, so exclude it
   const quickActions = useMemo(() => {
-    return activeBlocks.filter(b => ['phone', 'address'].includes(b.type));
-  }, [activeBlocks]);
+    const isMinimal = (customization.layout.header_style || 'banner') === 'minimal';
+    return activeBlocks.filter(b => {
+      if (b.type === 'phone' && isMinimal) return false;
+      return ['phone', 'address'].includes(b.type);
+    });
+  }, [activeBlocks, customization.layout.header_style]);
 
   // All other blocks in user-defined order (excluding quick actions)
   const orderedBlocks = useMemo(() => {
