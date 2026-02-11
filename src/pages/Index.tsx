@@ -1042,94 +1042,98 @@ export default function Index() {
 
                   {/* === CALENDRIER === */}
                   {dashboardTab === 'calendar' && (
-                    <div className="flex gap-6 h-full">
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-5">
-                          <div className="flex items-center gap-3">
-                            <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
-                              <ChevronLeft className="w-4 h-4" />
-                            </button>
-                            <h3 className="text-base font-semibold text-foreground min-w-[130px] text-center">Février 2026</h3>
-                            <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
-                              <ChevronRight className="w-4 h-4" />
-                            </button>
-                          </div>
-                          <button className="text-[11px] font-semibold bg-foreground text-background px-3.5 py-1.5 rounded-full hover:opacity-90 transition-opacity">Aujourd'hui</button>
+                    <>
+                      <div className="flex items-center justify-between mb-5">
+                        <div>
+                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Calendrier</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">5 clients · 8 réservations</p>
                         </div>
+                        <div className="flex gap-0 bg-secondary/50 rounded-full p-1">
+                          <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Semaine</span>
+                          <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">Mois</span>
+                        </div>
+                      </div>
 
-                        <div className="grid grid-cols-7 gap-1 mb-2">
-                          {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
-                            <div key={i} className="text-center text-[11px] font-semibold text-muted-foreground py-1">{d}</div>
-                          ))}
-                        </div>
-                        <div className="grid grid-cols-7 gap-1">
-                          {[26, 27, 28, 29, 30, 31].map((d, i) => (
-                            <div key={`prev-${i}`} className="aspect-square rounded-2xl flex flex-col items-center justify-start pt-2 text-[11px] text-muted-foreground/25">
-                              <span>{d}</span>
+                      {/* Week navigation */}
+                      <div className="flex items-center justify-center gap-4 mb-5">
+                        <button className="w-7 h-7 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                          <ChevronLeft className="w-3.5 h-3.5" />
+                        </button>
+                        <h4 className="text-sm font-semibold text-foreground">10 - 16 Février</h4>
+                        <button className="w-7 h-7 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      {/* Weekly Gantt-style grid */}
+                      <div className="bg-card rounded-2xl border border-border/30 overflow-hidden">
+                        {/* Header row */}
+                        <div className="grid grid-cols-[100px_repeat(7,1fr)] border-b border-border/20">
+                          <div className="p-3 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Client</div>
+                          {[
+                            { day: 'L', num: '10' },
+                            { day: 'M', num: '11' },
+                            { day: 'M', num: '12' },
+                            { day: 'J', num: '13' },
+                            { day: 'V', num: '14' },
+                            { day: 'S', num: '15' },
+                            { day: 'D', num: '16' },
+                          ].map((d, i) => (
+                            <div key={i} className={`py-2.5 px-1 text-center ${d.num === '11' ? 'bg-foreground text-background rounded-t-xl' : ''}`}>
+                              <p className={`text-[10px] font-medium ${d.num === '11' ? 'text-background/70' : 'text-muted-foreground'}`}>{d.day}</p>
+                              <p className={`text-sm font-bold ${d.num === '11' ? '' : 'text-foreground'}`}>{d.num}</p>
                             </div>
                           ))}
-                          {Array.from({ length: 28 }, (_, i) => i + 1).map(d => {
-                            const hasAppointments = [3, 5, 8, 11, 12, 15, 18, 22, 25].includes(d);
-                            const isSelected = d === 11;
-                            const count = d === 11 ? 3 : d === 15 ? 2 : d === 22 ? 4 : 1;
-                            return (
-                              <div key={d} className={`aspect-square rounded-2xl flex flex-col items-center justify-start pt-2 text-[11px] relative cursor-pointer transition-all ${
-                                isSelected ? 'bg-foreground text-background font-bold' : 'hover:bg-secondary/50'
-                              }`}>
-                                <span>{d}</span>
-                                {hasAppointments && (
-                                  <div className="flex gap-0.5 mt-1">
-                                    {Array.from({ length: Math.min(count, 3) }).map((_, j) => (
-                                      <div key={j} className={`w-1.5 h-1.5 rounded-full ${
-                                        isSelected ? 'bg-white/70' :
-                                        j === 0 ? 'bg-emerald-500' : j === 1 ? 'bg-orange-400' : 'bg-blue-500'
-                                      }`} />
-                                    ))}
+                        </div>
+
+                        {/* Rows */}
+                        {[
+                          { name: 'Jean M.', initials: 'JM', avatarBg: 'bg-blue-50 text-blue-600', barStart: 0, barSpan: 2, barColor: 'bg-blue-500', label: 'Complet · 89€' },
+                          { name: 'Marie D.', initials: 'MD', avatarBg: 'bg-emerald-50 text-emerald-600', barStart: 2, barSpan: 3, barColor: 'bg-emerald-500', label: 'Express · 35€' },
+                          { name: 'Pierre B.', initials: 'PB', avatarBg: 'bg-orange-50 text-orange-600', barStart: 4, barSpan: 2, barColor: 'bg-orange-400', label: 'Rénovation · 159€' },
+                          { name: 'Sophie L.', initials: 'SL', avatarBg: 'bg-violet-50 text-violet-600', barStart: 1, barSpan: 2, barColor: 'bg-violet-500', label: 'Intérieur · 65€' },
+                          { name: 'Lucas M.', initials: 'LM', avatarBg: 'bg-rose-50 text-rose-600', barStart: -1, barSpan: 0, barColor: '', label: '' },
+                        ].map((row, i) => (
+                          <div key={i} className="grid grid-cols-[100px_repeat(7,1fr)] border-b border-border/10 last:border-0">
+                            <div className="p-2.5 flex items-center gap-2">
+                              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 ${row.avatarBg}`}>
+                                {row.initials}
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-[11px] font-semibold text-foreground truncate">{row.name}</p>
+                              </div>
+                            </div>
+                            {Array.from({ length: 7 }).map((_, j) => (
+                              <div key={j} className="py-2.5 px-0.5 relative flex items-center">
+                                {j === row.barStart && row.barSpan > 0 && (
+                                  <div 
+                                    className={`${row.barColor} text-white text-[9px] font-semibold px-2.5 py-1.5 rounded-lg truncate cursor-pointer hover:opacity-90 transition-opacity absolute left-0 z-10`}
+                                    style={{ width: `${row.barSpan * 100}%`, minWidth: '60px' }}
+                                  >
+                                    {row.label}
                                   </div>
                                 )}
                               </div>
-                            );
-                          })}
-                        </div>
-
-                        <div className="flex gap-5 mt-4 pt-3 border-t border-border/20">
-                          {[
-                            { color: 'bg-emerald-500', label: 'Confirmé' },
-                            { color: 'bg-orange-400', label: 'En attente' },
-                            { color: 'bg-blue-500', label: 'Terminé' },
-                          ].map(l => (
-                            <div key={l.label} className="flex items-center gap-2">
-                              <div className={`w-2 h-2 rounded-full ${l.color}`} />
-                              <span className="text-[10px] text-muted-foreground font-medium">{l.label}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Right: Selected Day Detail */}
-                      <div className="w-48 hidden lg:flex flex-col border-l border-border/20 pl-5">
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="w-6 h-6 rounded-full bg-foreground flex items-center justify-center">
-                            <span className="text-[10px] text-background font-bold">11</span>
+                            ))}
                           </div>
-                          <p className="text-sm font-semibold text-foreground">Mercredi</p>
-                        </div>
-                        <p className="text-[11px] text-muted-foreground mb-4">3 rendez-vous · 340€</p>
-                        <div className="space-y-2.5 flex-1">
-                          {[
-                            { time: '10:00', name: 'Jean M.', service: 'Complet · 89€', color: 'border-l-emerald-500 bg-emerald-50/50', initials: 'JM' },
-                            { time: '11:30', name: 'Marie D.', service: 'Express · 35€', color: 'border-l-orange-400 bg-orange-50/50', initials: 'MD' },
-                            { time: '14:00', name: 'Pierre B.', service: 'Rénovation · 159€', color: 'border-l-blue-500 bg-blue-50/50', initials: 'PB' },
-                          ].map((rdv, i) => (
-                            <div key={i} className={`rounded-xl p-2.5 border-l-[3px] ${rdv.color} hover:shadow-sm transition-all cursor-pointer`}>
-                              <span className="text-[11px] font-bold text-foreground">{rdv.time}</span>
-                              <p className="text-[11px] font-medium text-foreground mt-0.5">{rdv.name}</p>
-                              <p className="text-[10px] text-muted-foreground">{rdv.service}</p>
-                            </div>
-                          ))}
-                        </div>
+                        ))}
                       </div>
-                    </div>
+
+                      {/* Legend */}
+                      <div className="flex gap-5 mt-4 justify-center">
+                        {[
+                          { color: 'bg-blue-500', label: 'Confirmé' },
+                          { color: 'bg-emerald-500', label: 'En cours' },
+                          { color: 'bg-orange-400', label: 'À venir' },
+                          { color: 'bg-violet-500', label: 'Nouveau' },
+                        ].map(l => (
+                          <div key={l.label} className="flex items-center gap-2">
+                            <div className={`w-2.5 h-2.5 rounded-full ${l.color}`} />
+                            <span className="text-[10px] text-muted-foreground font-medium">{l.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
                   )}
 
                   {/* === CLIENTS === */}
@@ -1263,116 +1267,105 @@ export default function Index() {
                   {/* === STATISTIQUES === */}
                   {dashboardTab === 'stats' && (
                     <>
+                      {/* Month navigation */}
                       <div className="flex items-center justify-between mb-6">
-                        <div>
-                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Statistiques</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">Vue d'ensemble</p>
+                        <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <h3 className="text-lg font-semibold text-foreground tracking-tight">Février 2026</h3>
+                        <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {/* KPIs — 2x2 grid like reference */}
+                      <div className="grid grid-cols-2 gap-3 mb-6">
+                        <div className="rounded-2xl p-5 bg-card border border-border/30">
+                          <p className="text-[12px] text-muted-foreground mb-1">Réservations</p>
+                          <div className="flex items-baseline gap-3">
+                            <p className="text-3xl font-bold text-foreground tracking-tight leading-none">24</p>
+                            <span className="text-[11px] text-emerald-600 font-semibold">↑12%</span>
+                          </div>
                         </div>
-                        <div className="flex gap-0 bg-secondary/50 rounded-full p-1">
-                          <span className="text-[11px] font-medium text-muted-foreground px-3.5 py-1.5 rounded-full cursor-pointer">7j</span>
-                          <span className="text-[11px] font-semibold bg-card shadow-sm px-3.5 py-1.5 rounded-full">30j</span>
-                          <span className="text-[11px] font-medium text-muted-foreground px-3.5 py-1.5 rounded-full cursor-pointer">12m</span>
+                        <div className="rounded-2xl p-5 bg-card border border-border/30">
+                          <p className="text-[12px] text-muted-foreground mb-1">CA</p>
+                          <div className="flex items-baseline gap-3">
+                            <p className="text-3xl font-bold text-foreground tracking-tight leading-none">8 450€</p>
+                            <span className="text-[11px] text-emerald-600 font-semibold">↑18%</span>
+                          </div>
+                        </div>
+                        <div className="rounded-2xl p-5 bg-card border border-border/30">
+                          <p className="text-[12px] text-muted-foreground mb-1">Clients</p>
+                          <p className="text-3xl font-bold text-foreground tracking-tight leading-none">18</p>
+                        </div>
+                        <div className="rounded-2xl p-5 bg-card border border-border/30">
+                          <p className="text-[12px] text-muted-foreground mb-1">Panier moyen</p>
+                          <p className="text-3xl font-bold text-foreground tracking-tight leading-none">352€</p>
                         </div>
                       </div>
 
-                      {/* KPIs */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                        {[
-                          { value: '4 850€', label: 'Chiffre d\'affaires', change: '+18%', icon: '💰' },
-                          { value: '127', label: 'Réservations', change: '+12%', icon: '📅' },
-                          { value: '89', label: 'Clients actifs', change: '+5', icon: '👥' },
-                          { value: '54€', label: 'Panier moyen', change: '+3€', icon: '🛒' },
-                        ].map((stat, i) => (
-                          <div key={i} className="rounded-2xl p-4 bg-card border border-border/30">
-                            <p className="text-[11px] text-muted-foreground mb-1">{stat.label}</p>
-                            <p className="text-xl font-bold text-foreground tracking-tight leading-none">{stat.value}</p>
-                            <p className="text-[10px] text-emerald-600 font-medium mt-2">{stat.change}</p>
-                          </div>
-                        ))}
+                      {/* Tab control */}
+                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
+                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Évolution</span>
+                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">Services</span>
                       </div>
 
-                      {/* Revenue Chart — colorful Apple-style */}
-                      <div className="bg-card rounded-2xl p-5 mb-4 border border-border/30">
-                        <div className="flex items-center justify-between mb-5">
-                          <div>
-                            <p className="text-sm font-semibold text-foreground">Chiffre d'affaires</p>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">Évolution sur 6 mois</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-lg font-bold text-foreground tracking-tight">4 850€</p>
-                            <p className="text-[10px] text-emerald-600 font-semibold">+18% vs mois dernier</p>
-                          </div>
-                        </div>
-                        <div className="relative h-36">
-                          <svg viewBox="0 0 300 120" className="w-full h-full" preserveAspectRatio="none">
-                            <defs>
-                              <linearGradient id="revenueGrad2" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#10B981" stopOpacity="0.3" />
-                                <stop offset="60%" stopColor="#10B981" stopOpacity="0.06" />
-                                <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
-                              </linearGradient>
-                            </defs>
-                            {[30, 60, 90].map(y => (
-                              <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="hsl(var(--border))" strokeWidth="0.3" />
-                            ))}
-                            <path d="M0,95 C25,88 40,78 60,72 C80,66 95,70 120,62 C145,54 160,48 180,40 C200,32 220,25 240,20 C260,15 280,12 300,8 L300,120 L0,120 Z" fill="url(#revenueGrad2)" />
-                            <path d="M0,95 C25,88 40,78 60,72 C80,66 95,70 120,62 C145,54 160,48 180,40 C200,32 220,25 240,20 C260,15 280,12 300,8" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" />
-                            <circle cx="300" cy="8" r="4" fill="#10B981" />
-                            <circle cx="300" cy="8" r="8" fill="none" stroke="#10B981" strokeWidth="1.5" strokeOpacity="0.25" />
-                          </svg>
-                          <div className="flex justify-between mt-3">
-                            {['Sept', 'Oct', 'Nov', 'Déc', 'Jan', 'Fév'].map(m => (
-                              <span key={m} className="text-[10px] text-muted-foreground font-medium">{m}</span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Bottom row */}
+                      {/* Charts row — blue area + green bars like reference */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* Blue area chart - Reservations */}
                         <div className="bg-card rounded-2xl p-5 border border-border/30">
-                          <p className="text-sm font-semibold text-foreground mb-4">Répartition services</p>
-                          <div className="space-y-3">
-                            {[
-                              { name: 'Nettoyage Complet', pct: 38, color: '#10B981' },
-                              { name: 'Express', pct: 28, color: '#3B82F6' },
-                              { name: 'Rénovation', pct: 20, color: '#F59E0B' },
-                              { name: 'Prestations perso', pct: 14, color: '#8B5CF6' },
-                            ].map((s, i) => (
-                              <div key={i}>
-                                <div className="flex items-center justify-between mb-1.5">
-                                  <div className="flex items-center gap-2">
-                                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }} />
-                                    <span className="text-[11px] text-foreground font-medium">{s.name}</span>
-                                  </div>
-                                  <span className="text-[11px] text-muted-foreground tabular-nums font-medium">{s.pct}%</span>
-                                </div>
-                                <div className="w-full h-2 bg-secondary/40 rounded-full overflow-hidden">
-                                  <div className="h-full rounded-full transition-all" style={{ width: `${s.pct}%`, backgroundColor: s.color }} />
-                                </div>
-                              </div>
-                            ))}
+                          <p className="text-sm font-semibold text-foreground mb-4">Réservations par semaine</p>
+                          <div className="relative h-32">
+                            <svg viewBox="0 0 300 120" className="w-full h-full" preserveAspectRatio="none">
+                              <defs>
+                                <linearGradient id="blueAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.25" />
+                                  <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.02" />
+                                </linearGradient>
+                              </defs>
+                              {[30, 60, 90].map(y => (
+                                <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="hsl(var(--border))" strokeWidth="0.3" />
+                              ))}
+                              <path d="M0,100 C30,95 50,90 75,85 C100,80 120,70 150,55 C180,40 200,35 225,30 C250,28 275,25 300,22 L300,120 L0,120 Z" fill="url(#blueAreaGrad)" />
+                              <path d="M0,100 C30,95 50,90 75,85 C100,80 120,70 150,55 C180,40 200,35 225,30 C250,28 275,25 300,22" fill="none" stroke="#3B82F6" strokeWidth="2.5" strokeLinecap="round" />
+                              <circle cx="300" cy="22" r="4" fill="#3B82F6" />
+                            </svg>
+                            <div className="absolute left-0 top-0 h-full flex flex-col justify-between py-1">
+                              {['8', '6', '4', '2'].map(v => (
+                                <span key={v} className="text-[9px] text-muted-foreground tabular-nums">{v}</span>
+                              ))}
+                            </div>
                           </div>
                         </div>
+
+                        {/* Green bar chart - Revenue */}
                         <div className="bg-card rounded-2xl p-5 border border-border/30">
-                          <p className="text-sm font-semibold text-foreground mb-4">Top clients</p>
-                          <div className="space-y-3">
+                          <div className="flex items-center justify-between mb-4">
+                            <p className="text-sm font-semibold text-foreground">Chiffre d'affaires par mois</p>
+                            <span className="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full">+18%</span>
+                          </div>
+                          <div className="relative h-32 flex items-end gap-2 justify-between px-1">
                             {[
-                              { name: 'Sophie Leroy', visits: 15, total: '1 420€', initials: 'SL', avatarBg: 'bg-rose-50 text-rose-600' },
-                              { name: 'Jean Martin', visits: 12, total: '1 068€', initials: 'JM', avatarBg: 'bg-blue-50 text-blue-600' },
-                              { name: 'Marie Dupont', visits: 8, total: '520€', initials: 'MD', avatarBg: 'bg-violet-50 text-violet-600' },
-                            ].map((c, i) => (
-                              <div key={i} className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${c.avatarBg}`}>
-                                  {c.initials}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-[12px] font-semibold text-foreground truncate">{c.name}</p>
-                                  <p className="text-[10px] text-muted-foreground">{c.visits} visites</p>
-                                </div>
-                                <span className="text-[12px] font-semibold text-foreground tabular-nums">{c.total}</span>
+                              { month: 'S', h: 40 },
+                              { month: 'O', h: 45 },
+                              { month: 'N', h: 42 },
+                              { month: 'D', h: 50 },
+                              { month: 'J', h: 65 },
+                              { month: 'F', h: 85 },
+                            ].map((bar, i) => (
+                              <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
+                                <div 
+                                  className={`w-full rounded-lg transition-all ${i === 5 ? 'bg-emerald-500' : 'bg-emerald-400/60'}`}
+                                  style={{ height: `${bar.h}%` }}
+                                />
+                                <span className="text-[9px] text-muted-foreground font-medium">{bar.month}</span>
                               </div>
                             ))}
+                            <div className="absolute left-0 top-0 h-full flex flex-col justify-between py-1">
+                              {['10k', '7.5k', '5k', '2.5k', '0'].map(v => (
+                                <span key={v} className="text-[8px] text-muted-foreground/50 tabular-nums">{v}</span>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1402,30 +1395,50 @@ export default function Index() {
                           
                           <div className="flex-1 bg-secondary/20 rounded-2xl overflow-hidden border border-border/15 shadow-sm">
                             <div className="bg-card h-full overflow-y-auto">
-                              <div className="h-28 relative">
-                                <img src={mockupBanner} alt="Preview" className="w-full h-full object-cover" />
-                                <div className="absolute left-1/2 -translate-x-1/2 -bottom-7">
-                                  <div className="w-16 h-16 rounded-2xl shadow-lg ring-4 ring-card overflow-hidden">
+                              <div className="h-24 relative bg-foreground">
+                                <img src={mockupBanner} alt="Preview" className="w-full h-full object-cover opacity-80" />
+                                <div className="absolute left-4 -bottom-6">
+                                  <div className="w-14 h-14 rounded-2xl shadow-lg ring-4 ring-card overflow-hidden bg-foreground">
                                     <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
                                   </div>
                                 </div>
-                              </div>
-                              <div className="px-4 pt-10 pb-4">
-                                <h3 className="text-sm font-bold text-foreground text-center mb-0.5">GOCLEANING</h3>
-                                <p className="text-[9px] text-muted-foreground text-center mb-2">Nettoyage automobile premium</p>
-                                <div className="flex justify-center mb-3">
-                                  <span className="inline-flex items-center gap-1 text-[8px] bg-emerald-500 text-white px-2.5 py-0.5 rounded-full font-semibold">
-                                    <span className="w-1 h-1 bg-white rounded-full" />Ouvert
-                                  </span>
-                                </div>
-                                <div className="grid grid-cols-2 gap-1.5 mb-3">
-                                  <div className="bg-secondary/30 rounded-xl p-2.5 text-left border border-border/10">
-                                    <p className="text-[9px] font-medium">Express</p>
-                                    <p className="text-[12px] font-bold text-foreground">35€</p>
+                                <div className="absolute right-3 -bottom-5">
+                                  <div className="w-9 h-9 bg-secondary/80 rounded-full flex items-center justify-center border border-border/20 shadow-sm">
+                                    <Phone className="w-3.5 h-3.5 text-foreground" />
                                   </div>
-                                  <div className="bg-secondary/30 rounded-xl p-2.5 text-left border border-border/10">
-                                    <p className="text-[9px] font-medium">Complet</p>
-                                    <p className="text-[12px] font-bold text-foreground">89€</p>
+                                </div>
+                              </div>
+                              <div className="px-4 pt-9 pb-4">
+                                <h3 className="text-sm font-bold text-foreground mb-0.5">GOCLEANING</h3>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-[9px] text-emerald-600 font-semibold">Ouvert</span>
+                                  <span className="text-[9px] text-muted-foreground">· Ferme à 19h</span>
+                                </div>
+                                <div className="flex items-center gap-1 mb-3">
+                                  {Array.from({ length: 5 }).map((_, i) => (
+                                    <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                                  ))}
+                                  <span className="text-[10px] text-muted-foreground ml-1">4.9</span>
+                                </div>
+                                
+                                {/* Gallery grid like reference */}
+                                <p className="text-[10px] font-semibold text-foreground mb-2">Nos formules</p>
+                                <div className="grid grid-cols-2 gap-1.5 mb-3">
+                                  <div className="rounded-xl overflow-hidden relative aspect-[4/3]">
+                                    <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                    <div className="absolute bottom-2 left-2">
+                                      <p className="text-[9px] text-white font-medium">Express</p>
+                                      <p className="text-[11px] text-white font-bold">35€</p>
+                                    </div>
+                                  </div>
+                                  <div className="rounded-xl overflow-hidden relative aspect-[4/3]">
+                                    <img src={mockupBanner} alt="" className="w-full h-full object-cover" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                    <div className="absolute bottom-2 left-2">
+                                      <p className="text-[9px] text-white font-medium">Complet</p>
+                                      <p className="text-[11px] text-white font-bold">89€</p>
+                                    </div>
                                   </div>
                                 </div>
                                 <button className="w-full bg-foreground text-background py-2.5 rounded-xl text-[10px] font-semibold">Réserver</button>
@@ -1452,24 +1465,37 @@ export default function Index() {
                                 </button>
                               ))}
                             </div>
-                            <div className="p-4 space-y-4 overflow-y-auto max-h-[280px]">
+                            <div className="p-4 space-y-4 overflow-y-auto max-h-[320px]">
                               {mockupTab === 'design' && (
                                 <>
                                   <div>
-                                    <p className="text-[11px] font-semibold text-foreground mb-2">Bannière</p>
-                                    <div className="rounded-xl overflow-hidden mb-2.5 shadow-sm">
-                                      <img src={mockupBanner} alt="Banner" className="w-full h-16 object-cover" />
+                                    <p className="text-[12px] font-semibold text-foreground mb-2">Bannière</p>
+                                    <div className="rounded-xl overflow-hidden mb-3 shadow-sm">
+                                      <img src={mockupCarCleaning} alt="Banner" className="w-full h-28 object-cover" />
                                     </div>
-                                    <button className="text-[11px] font-semibold text-foreground bg-secondary px-4 py-2 rounded-full hover:bg-secondary/80 transition-colors">Modifier</button>
+                                    <button className="inline-flex items-center gap-2 text-[11px] font-semibold text-foreground bg-secondary px-4 py-2 rounded-full hover:bg-secondary/80 transition-colors">
+                                      <Upload className="w-3.5 h-3.5" />
+                                      Changer
+                                    </button>
                                   </div>
                                   <div>
-                                    <p className="text-[11px] font-semibold text-foreground mb-2.5">Couleur principale</p>
-                                    <div className="flex gap-3">
+                                    <p className="text-[12px] font-semibold text-foreground mb-3">Couleurs</p>
+                                    <div className="flex gap-4 mb-3">
                                       {[
-                                        '#3B82F6', '#EF4444', '#10B981', '#8B5CF6', '#F59E0B', '#EC4899',
-                                      ].map((c, i) => (
-                                        <div key={i} className={`w-8 h-8 rounded-full cursor-pointer transition-all shadow-sm ${i === 2 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background scale-110' : 'hover:scale-110'}`}
-                                          style={{ backgroundColor: c }} />
+                                        { label: 'Bleu', colors: ['#60A5FA', '#3B82F6'] },
+                                        { label: 'Rouge', colors: ['#F87171', '#EF4444'] },
+                                        { label: 'Vert', colors: ['#34D399', '#10B981'] },
+                                        { label: 'Violet', colors: ['#A78BFA', '#8B5CF6'] },
+                                        { label: 'Orange', colors: ['#FBBF24', '#F59E0B'] },
+                                      ].map((palette, i) => (
+                                        <div key={i} className="flex flex-col items-center gap-1.5 cursor-pointer group">
+                                          <div className={`flex gap-0.5 p-1 rounded-full transition-all ${i === 2 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background' : 'group-hover:scale-110'}`}>
+                                            {palette.colors.map((c, j) => (
+                                              <div key={j} className="w-4 h-4 rounded-full" style={{ backgroundColor: c }} />
+                                            ))}
+                                          </div>
+                                          <span className="text-[9px] text-muted-foreground font-medium">{palette.label}</span>
+                                        </div>
                                       ))}
                                     </div>
                                   </div>
