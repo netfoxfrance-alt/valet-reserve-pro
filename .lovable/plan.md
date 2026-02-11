@@ -1,142 +1,131 @@
 
 
-# Plan : Ajout automatique à l'agenda après confirmation
+# Systeme de reconnaissance client pour prestations personnalisees
 
-## Résumé
+## Recapitulatif du besoin
 
-Quand le pro confirme un rendez-vous, un **dialog de confirmation** s'affiche immédiatement avec un bouton pour ajouter le RDV à Google Agenda. Le système de synchronisation automatique iCal sera **retiré** des paramètres.
+Aujourd'hui, le parcours de reservation est concu pour des **formules fixes** (packs). Mais pour les pros dont la prestation depend du client (nettoyeurs de vitres, entretien recurrent...), il faut un moyen pour le **client recurrent** d'etre reconnu et de voir directement **sa prestation personnalisee** (prix, duree) sans passer par les packs standards.
 
----
+## Approche strategique retenue : Identification par telephone
 
-## Expérience utilisateur finale
+**Pourquoi le telephone et pas l'email :**
+- Le telephone est deja la cle primaire de deduplication dans `clientService.ts`
+- Les clients connaissent leur numero par coeur (pas besoin de chercher)
+- L'index unique `normalize_phone()` existe deja en base -- zero cout supplementaire
+- Portee limitee au centre : il faut connaitre le slug du pro ET le numero du client
 
-### Flux de confirmation
+**Pourquoi pas de lien personnalise :**
+- Les liens peuvent etre partages/exposes
+- Le pro doit gerer l'envoi de liens (friction supplementaire)
+- Le telephone est plus naturel et universel
+
+**Securite : pourquoi c'est suffisant sans code de verification :**
+- Les donnees exposees sont **minimales** : uniquement le prenom + nom de la prestation + prix (jamais l'email, l'adresse ou l'historique)
+- La recherche est **scopee au centre** (il faut connaitre le slug du pro)
+- C'est le meme niveau de securite qu'un systeme de reservation chez le dentiste ou le coiffeur
+- Ajouter un SMS/email de verification ajouterait une friction enorme et tuerait l'adoption
+
+## Parcours utilisateur
 
 ```text
-   Pro clique "Confirmer" ✓
-              │
-              ▼
-   ┌─────────────────────────────────────────────┐
-   │  ✓ Rendez-vous confirmé !                   │
-   │                                             │
-   │  Jean Dupont                                │
-   │  Lavage Complet - 89€                       │
-   │                                             │
-   │  📅 Lundi 3 février à 14:00                │
-   │                                             │
-   │  [📅 Ajouter à mon agenda]  [Fermer]       │
-   └─────────────────────────────────────────────┘
+Page du pro (/:slug)
+       |
+       v
+  "Vous etes deja client ?"
+  [Entrer mon numero de telephone]
+       |
+       v
+  Recherche dans clients (center_id + normalize_phone)
+       |
+  +----+----+
+  |         |
+  v         v
+Trouve    Non trouve
+  |         |
+  v         v
+A une      "Numero non reconnu.
+prestation  Continuez normalement."
+par defaut?  -> Flux packs standard
+  |
+  +----+----+
+  |         |
+  v         v
+ OUI       NON
+  |         |
+  v         v
+Affiche    "Bonjour [prenom]!
+prestation  Choisissez votre formule."
+perso:      -> Flux packs standard
+"Bonjour    (infos pre-remplies)
+[prenom]!
+Votre prestation:
+[Nom] - [Prix]€ - [Duree]
+[Choisir un creneau]"
+  |
+  v
+Calendrier (duree = celle de la prestation)
+  |
+  v
+Formulaire pre-rempli (nom, tel, email, adresse)
+  |
+  v
+Confirmation
 ```
 
-Le pro clique sur "Ajouter à mon agenda" et Google Calendar s'ouvre avec le RDV pré-rempli. Simple et efficace !
+## Plan technique
 
----
+### 1. Nouvelle vue SQL securisee : `public_client_lookup`
 
-## Ce qui change
+Creer une fonction SQL `security definer` qui ne retourne que le strict minimum :
+- `client_id`
+- `first_name` (prenom seulement, extrait du champ `name`)
+- `service_name`, `service_price`, `service_duration_minutes` (depuis `custom_services`)
+- `client_name`, `client_email`, `client_phone`, `client_address` (pour pre-remplir le formulaire)
 
-| Avant | Après |
-|-------|-------|
-| Toast "Rendez-vous confirmé" | Dialog avec option d'ajout à l'agenda |
-| Section "Synchronisation Google Agenda" dans Paramètres | **Supprimée** |
-| iCal avec refresh 12-24h | **Remplacé** par ajout manuel instantané |
-| Bouton 📅 visible sur les RDV confirmés | **Conservé** (pour ajouts ultérieurs) |
+La fonction prend en parametre `center_id` + `phone` normalise, et ne retourne rien si le client n'existe pas.
 
----
+**Avantage scalabilite** : utilise l'index existant `normalize_phone()`, zero scan de table.
 
-## Modifications techniques
+### 2. Modifier `CenterLanding.tsx`
 
-### 1. Dashboard.tsx - Dialog de confirmation avec ajout agenda
+Ajouter un bouton/section "Vous etes deja client ?" qui ouvre un champ telephone. Quand le client soumet :
+- Appel a la fonction SQL via Supabase RPC
+- Si client trouve avec prestation : afficher un ecran personnalise avec la prestation et un bouton "Choisir un creneau"
+- Si client trouve sans prestation : message de bienvenue + redirection vers le flux packs avec infos pre-remplies
+- Si non trouve : message neutre + flux normal
 
-**Nouveaux states** :
-- `confirmDialogOpen` : boolean pour afficher/masquer le dialog
-- `justConfirmedAppointment` : stocke le RDV qui vient d'être confirmé
+### 3. Modifier `CenterBooking.tsx`
 
-**Modification de handleConfirmAppointment** :
-- Au lieu d'un simple toast, on ouvre le dialog de confirmation
-- Le dialog affiche les infos du RDV et propose d'ajouter à l'agenda
+Ajouter un nouvel etat pour le "mode client reconnu" :
+- Stocker les donnees du client reconnu (prestation, infos)
+- Passer la duree de la prestation au `CalendarPicker`
+- Pre-remplir le `ClientForm` avec les infos existantes
+- A la creation du RDV, utiliser `custom_service_id` + `client_id` + `custom_price`
 
-**Nouveau dialog** :
-- Affiche le nom du client, la prestation, le prix
-- Date et heure du RDV
-- Bouton "Ajouter à mon agenda" qui ouvre Google Calendar
-- Bouton "Fermer" pour ignorer
+### 4. Modifier `ClientForm.tsx`
 
-### 2. DashboardSettings.tsx - Retrait de la section CalendarSync
+Accepter des valeurs initiales (`defaultValues`) pour pre-remplir les champs quand le client est reconnu. Les champs restent editables.
 
-- Suppression de l'import `CalendarSyncSection`
-- Suppression du bloc qui affiche la section de synchronisation calendrier
+### 5. Option dans le dashboard pro
 
-### 3. CalendarSyncSection.tsx - Fichier conservé mais non utilisé
+Ajouter un toggle dans les reglages ou la personnalisation pour que le pro puisse activer/desactiver la reconnaissance client sur sa page. Stocke dans le champ `customization` JSONB de `centers`.
 
-Le fichier reste dans le projet au cas où, mais n'est plus importé nulle part.
+### Impact sur la scalabilite
 
-### 4. calendarUtils.ts - Aucun changement
-
-Les fonctions `generateAppointmentCalendarUrl` et `generateGoogleCalendarUrl` restent inchangées car elles sont utilisées par le bouton 📅 existant et le nouveau dialog.
-
----
-
-## Avantages de cette solution
-
-| Aspect | Bénéfice |
-|--------|----------|
-| **Fiabilité** | 100% - aucun système automatique à maintenir |
-| **Scalabilité** | Infinie - aucun appel API côté serveur |
-| **Simplicité** | Le pro décide quand ajouter |
-| **Pas de doublons** | Action intentionnelle uniquement |
-| **Compatible** | Fonctionne avec Google, Outlook, Apple Calendar |
-| **Instantané** | L'événement est créé immédiatement |
-
----
-
-## Code prévu
-
-### Dialog de confirmation (dans Dashboard.tsx)
-
-```tsx
-<Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
-  <DialogContent className="max-w-sm rounded-2xl">
-    <DialogHeader>
-      <DialogTitle className="flex items-center gap-2 text-emerald-600">
-        <Check className="w-5 h-5" />
-        Rendez-vous confirmé !
-      </DialogTitle>
-    </DialogHeader>
-    
-    {justConfirmedAppointment && (
-      <div className="space-y-4">
-        <div className="bg-muted/50 rounded-xl p-4">
-          <p className="font-semibold">{justConfirmedAppointment.client_name}</p>
-          <p className="text-sm text-muted-foreground">
-            {serviceName} - {price}€
-          </p>
-          <p className="text-sm text-muted-foreground flex items-center gap-2 mt-2">
-            <Calendar className="w-4 h-4" />
-            {formattedDate} à {time}
-          </p>
-        </div>
-        
-        <div className="flex gap-2">
-          <Button className="flex-1" onClick={handleAddToCalendar}>
-            <CalendarPlus className="w-4 h-4 mr-2" />
-            Ajouter à mon agenda
-          </Button>
-          <Button variant="outline" onClick={() => setConfirmDialogOpen(false)}>
-            Fermer
-          </Button>
-        </div>
-      </div>
-    )}
-  </DialogContent>
-</Dialog>
-```
-
----
-
-## Fichiers impactés
-
-| Fichier | Action |
+| Element | Impact |
 |---------|--------|
-| `src/pages/Dashboard.tsx` | Ajouter states + dialog de confirmation après validation |
-| `src/pages/DashboardSettings.tsx` | Retirer la section CalendarSyncSection |
+| Fonction SQL RPC | O(1) grace a l'index `normalize_phone` |
+| Pas de table supplementaire | Zero migration lourde |
+| Pas d'auth client | Zero friction, zero gestion de comptes |
+| Scope par centre | Chaque requete est isolee, pas de table scan globale |
+| Donnees exposees minimales | Securite preservee sans verification |
+
+### Fichiers a modifier/creer
+
+- **Migration SQL** : fonction RPC `lookup_client_by_phone`
+- `src/components/booking/CenterLanding.tsx` : section "Deja client ?"
+- `src/pages/CenterBooking.tsx` : gestion du mode client reconnu
+- `src/components/booking/ClientForm.tsx` : support des valeurs par defaut
+- `src/hooks/useCenter.tsx` : lecture du toggle dans customization
+- Optionnel : toggle dans le dashboard (customization)
 
