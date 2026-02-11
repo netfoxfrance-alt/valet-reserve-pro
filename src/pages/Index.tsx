@@ -985,25 +985,25 @@ export default function Index() {
                         </button>
                       </div>
 
-                      {/* KPI row — colorful Apple-style */}
+                      {/* KPI row — clean widget style */}
                       <div className="grid grid-cols-3 gap-3 mb-6">
-                        <div className="rounded-2xl p-4 bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/20">
-                          <p className="text-[11px] text-white/70 mb-1">Aujourd'hui</p>
-                          <p className="text-3xl font-bold tracking-tight leading-none">5</p>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Aujourd'hui</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">5</p>
                           <div className="flex items-center gap-1.5 mt-2">
-                            <span className="w-1.5 h-1.5 bg-white/80 rounded-full animate-pulse" />
-                            <p className="text-[10px] text-white/80 font-medium">2 en attente</p>
+                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                            <p className="text-[10px] text-muted-foreground font-medium">2 en attente</p>
                           </div>
                         </div>
-                        <div className="rounded-2xl p-4 bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/20">
-                          <p className="text-[11px] text-white/70 mb-1">Cette semaine</p>
-                          <p className="text-3xl font-bold tracking-tight leading-none">23</p>
-                          <p className="text-[10px] text-white/70 mt-2">dont 4 demandes</p>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Cette semaine</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">23</p>
+                          <p className="text-[10px] text-muted-foreground mt-2">dont 4 demandes</p>
                         </div>
-                        <div className="rounded-2xl p-4 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/20">
-                          <p className="text-[11px] text-white/70 mb-1">CA du jour</p>
-                          <p className="text-3xl font-bold tracking-tight leading-none">340€</p>
-                          <p className="text-[10px] text-white/80 font-medium mt-2">↑ 15%</p>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">CA du jour</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">340€</p>
+                          <p className="text-[10px] text-emerald-600 font-semibold mt-2">↑ 15%</p>
                         </div>
                       </div>
 
@@ -1180,25 +1180,20 @@ export default function Index() {
                         ))}
                       </div>
 
-                      {/* Client detail peek */}
-                      <div className="mt-4 bg-card rounded-2xl border border-border/15 overflow-hidden">
-                        <div className="bg-gradient-to-r from-violet-500 to-purple-600 px-5 pt-4 pb-8 relative">
-                          <p className="text-[11px] text-white/70 font-medium">Fiche client</p>
-                          <p className="text-base font-bold text-white mt-0.5">Sophie Leroy</p>
-                        </div>
-                        <div className="px-5 pb-5 -mt-5">
-                          <div className="grid grid-cols-3 gap-3">
-                            {[
-                              { value: '15', label: 'Visites' },
-                              { value: '1 420€', label: 'CA total' },
-                              { value: '95€', label: 'Panier moy.' },
-                            ].map((s, i) => (
-                              <div key={i} className="bg-card rounded-xl p-3 text-center border border-border/20 shadow-sm">
-                                <p className="text-lg font-bold text-foreground tracking-tight">{s.value}</p>
-                                <p className="text-[10px] text-muted-foreground mt-0.5">{s.label}</p>
-                              </div>
-                            ))}
-                          </div>
+                      {/* Client stats summary */}
+                      <div className="mt-4 bg-card rounded-2xl border border-border/15 p-5 shadow-sm">
+                        <p className="text-sm font-semibold text-foreground mb-3">Vue d'ensemble</p>
+                        <div className="grid grid-cols-3 gap-3">
+                          {[
+                            { value: '142', label: 'Clients' },
+                            { value: '8 640€', label: 'CA total' },
+                            { value: '61€', label: 'Panier moy.' },
+                          ].map((s, i) => (
+                            <div key={i} className="bg-secondary/20 rounded-xl p-3 text-center border border-border/10">
+                              <p className="text-lg font-bold text-foreground tracking-tight">{s.value}</p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5">{s.label}</p>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </>
@@ -1218,23 +1213,23 @@ export default function Index() {
                         </div>
                       </div>
 
-                      {/* KPIs — colored */}
+                      {/* KPIs — clean */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                        <div className="rounded-2xl p-4 bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/15">
-                          <p className="text-[11px] text-white/70 mb-1">Factures</p>
-                          <p className="text-2xl font-bold tracking-tight leading-none">24</p>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Factures</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none text-foreground">24</p>
                         </div>
-                        <div className="rounded-2xl p-4 bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/15">
-                          <p className="text-[11px] text-white/70 mb-1">Devis</p>
-                          <p className="text-2xl font-bold tracking-tight leading-none">8</p>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Devis</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none text-foreground">8</p>
                         </div>
-                        <div className="rounded-2xl p-4 bg-gradient-to-br from-orange-400 to-orange-500 text-white shadow-lg shadow-orange-500/15">
-                          <p className="text-[11px] text-white/70 mb-1">En attente</p>
-                          <p className="text-2xl font-bold tracking-tight leading-none">680€</p>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">En attente</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none text-foreground">680€</p>
                         </div>
-                        <div className="rounded-2xl p-4 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/15">
-                          <p className="text-[11px] text-white/70 mb-1">Encaissé</p>
-                          <p className="text-2xl font-bold tracking-tight leading-none">3 240€</p>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Encaissé</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none text-foreground">3 240€</p>
                         </div>
                       </div>
 
@@ -1270,116 +1265,123 @@ export default function Index() {
                   {/* === STATISTIQUES === */}
                   {dashboardTab === 'stats' && (
                     <>
+                      {/* Month navigation */}
                       <div className="flex items-center justify-between mb-6">
-                        <div>
-                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Statistiques</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">Vue d'ensemble</p>
-                        </div>
-                        <div className="flex gap-0 bg-secondary/50 rounded-full p-1">
-                          <span className="text-[11px] font-medium text-muted-foreground px-3.5 py-1.5 rounded-full cursor-pointer">7j</span>
-                          <span className="text-[11px] font-semibold bg-card shadow-sm px-3.5 py-1.5 rounded-full">30j</span>
-                          <span className="text-[11px] font-medium text-muted-foreground px-3.5 py-1.5 rounded-full cursor-pointer">12m</span>
-                        </div>
+                        <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <h3 className="text-lg font-semibold text-foreground tracking-tight">Janvier 2025</h3>
+                        <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
                       </div>
 
-                      {/* KPIs — colorful cards */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                        {[
-                          { value: '4 850€', label: 'Chiffre d\'affaires', change: '+18%', gradient: 'from-emerald-500 to-emerald-600', shadow: 'shadow-emerald-500/15' },
-                          { value: '127', label: 'Réservations', change: '+12%', gradient: 'from-blue-500 to-blue-600', shadow: 'shadow-blue-500/15' },
-                          { value: '89', label: 'Clients actifs', change: '+5', gradient: 'from-purple-500 to-purple-600', shadow: 'shadow-purple-500/15' },
-                          { value: '54€', label: 'Panier moyen', change: '+3€', gradient: 'from-orange-400 to-orange-500', shadow: 'shadow-orange-400/15' },
-                        ].map((stat, i) => (
-                          <div key={i} className={`rounded-2xl p-4 bg-gradient-to-br ${stat.gradient} text-white shadow-lg ${stat.shadow}`}>
-                            <p className="text-[11px] text-white/70 mb-1">{stat.label}</p>
-                            <p className="text-xl font-bold tracking-tight leading-none">{stat.value}</p>
-                            <p className="text-[10px] text-white/80 font-semibold mt-2">{stat.change}</p>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Revenue Chart — Apple-style with vivid green gradient */}
-                      <div className="bg-card rounded-2xl p-5 mb-4 border border-border/15 shadow-sm">
-                        <div className="flex items-center justify-between mb-5">
-                          <div>
-                            <p className="text-sm font-semibold text-foreground">Chiffre d'affaires</p>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">Évolution sur 6 mois</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-lg font-bold text-foreground tracking-tight">4 850€</p>
-                            <p className="text-[10px] text-emerald-600 font-semibold">+18% vs mois dernier</p>
+                      {/* KPIs — clean white cards with borders */}
+                      <div className="grid grid-cols-2 gap-3 mb-3">
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Réservations</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-3xl font-bold tracking-tight leading-none text-foreground">24</p>
+                            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">↑12%</span>
                           </div>
                         </div>
-                        <div className="relative h-36">
-                          <svg viewBox="0 0 300 120" className="w-full h-full" preserveAspectRatio="none">
-                            <defs>
-                              <linearGradient id="revenueGrad2" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#10B981" stopOpacity="0.35" />
-                                <stop offset="60%" stopColor="#10B981" stopOpacity="0.08" />
-                                <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
-                              </linearGradient>
-                            </defs>
-                            {[30, 60, 90].map(y => (
-                              <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="hsl(var(--border))" strokeWidth="0.3" />
-                            ))}
-                            <path d="M0,95 C25,88 40,78 60,72 C80,66 95,70 120,62 C145,54 160,48 180,40 C200,32 220,25 240,20 C260,15 280,12 300,8 L300,120 L0,120 Z" fill="url(#revenueGrad2)" />
-                            <path d="M0,95 C25,88 40,78 60,72 C80,66 95,70 120,62 C145,54 160,48 180,40 C200,32 220,25 240,20 C260,15 280,12 300,8" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" />
-                            <circle cx="300" cy="8" r="4" fill="#10B981" />
-                            <circle cx="300" cy="8" r="8" fill="none" stroke="#10B981" strokeWidth="1.5" strokeOpacity="0.25" />
-                          </svg>
-                          <div className="flex justify-between mt-3">
-                            {['Sept', 'Oct', 'Nov', 'Déc', 'Jan', 'Fév'].map(m => (
-                              <span key={m} className="text-[10px] text-muted-foreground font-medium">{m}</span>
-                            ))}
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">CA</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-3xl font-bold tracking-tight leading-none text-foreground">8 450€</p>
+                            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">↑18%</span>
                           </div>
                         </div>
                       </div>
+                      <div className="grid grid-cols-2 gap-3 mb-6">
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Clients</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">18</p>
+                        </div>
+                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">Panier moyen</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">352€</p>
+                        </div>
+                      </div>
 
-                      {/* Bottom row */}
+                      {/* Segmented control */}
+                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
+                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Évolution</span>
+                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">Services</span>
+                      </div>
+
+                      {/* Charts row */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* Line chart — Réservations par semaine */}
                         <div className="bg-card rounded-2xl p-5 border border-border/15 shadow-sm">
-                          <p className="text-sm font-semibold text-foreground mb-4">Services</p>
-                          <div className="space-y-3">
-                            {[
-                              { name: 'Nettoyage Complet', pct: 38, amount: '1 843€', color: '#10B981' },
-                              { name: 'Express', pct: 28, amount: '1 358€', color: '#3B82F6' },
-                              { name: 'Rénovation', pct: 20, amount: '970€', color: '#F59E0B' },
-                              { name: 'Prestations perso', pct: 14, amount: '679€', color: '#8B5CF6' },
-                            ].map((s, i) => (
-                              <div key={i}>
-                                <div className="flex items-center justify-between mb-1.5">
-                                  <div className="flex items-center gap-2">
-                                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }} />
-                                    <span className="text-[11px] text-foreground font-medium">{s.name}</span>
-                                  </div>
-                                  <span className="text-[11px] text-muted-foreground tabular-nums font-medium">{s.pct}%</span>
-                                </div>
-                                <div className="w-full h-2.5 bg-secondary/40 rounded-full overflow-hidden">
-                                  <div className="h-full rounded-full transition-all" style={{ width: `${s.pct}%`, backgroundColor: s.color }} />
-                                </div>
-                              </div>
-                            ))}
+                          <p className="text-sm font-semibold text-foreground mb-4">Réservations par semaine</p>
+                          <div className="relative h-32">
+                            <svg viewBox="0 0 300 100" className="w-full h-full" preserveAspectRatio="none">
+                              <defs>
+                                <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.15" />
+                                  <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
+                                </linearGradient>
+                              </defs>
+                              {[25, 50, 75].map(y => (
+                                <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="hsl(var(--border))" strokeWidth="0.3" />
+                              ))}
+                              {/* Y-axis labels */}
+                              <text x="2" y="18" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">8</text>
+                              <text x="2" y="35" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">6</text>
+                              <text x="2" y="55" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">4</text>
+                              <text x="2" y="78" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">2</text>
+                              <text x="2" y="98" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">0</text>
+                              {/* Area */}
+                              <path d="M20,80 C50,75 70,68 100,55 C130,42 160,35 190,30 C220,28 250,25 280,22 L280,100 L20,100 Z" fill="url(#lineGrad)" />
+                              {/* Line */}
+                              <path d="M20,80 C50,75 70,68 100,55 C130,42 160,35 190,30 C220,28 250,25 280,22" fill="none" stroke="#3B82F6" strokeWidth="2.5" strokeLinecap="round" />
+                              <circle cx="280" cy="22" r="3.5" fill="#3B82F6" />
+                            </svg>
+                            <div className="flex justify-between mt-2 px-2">
+                              {['9 déc', '16 déc', '23 déc', '30 déc', '6 jan', '13 jan', '20 jan'].map(m => (
+                                <span key={m} className="text-[8px] text-muted-foreground">{m}</span>
+                              ))}
+                            </div>
                           </div>
                         </div>
+
+                        {/* Bar chart — CA par mois */}
                         <div className="bg-card rounded-2xl p-5 border border-border/15 shadow-sm">
-                          <p className="text-sm font-semibold text-foreground mb-4">Top clients</p>
-                          <div className="space-y-3">
-                            {[
-                              { name: 'Sophie Leroy', visits: 15, total: '1 420€', initials: 'SL', avatarBg: 'bg-violet-500' },
-                              { name: 'Jean Martin', visits: 12, total: '1 068€', initials: 'JM', avatarBg: 'bg-blue-500' },
-                              { name: 'Marie Dupont', visits: 8, total: '520€', initials: 'MD', avatarBg: 'bg-pink-500' },
-                            ].map((c, i) => (
-                              <div key={i} className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0 ${c.avatarBg}`}>
-                                  {c.initials}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-[12px] font-semibold text-foreground truncate">{c.name}</p>
-                                  <p className="text-[10px] text-muted-foreground">{c.visits} visites</p>
-                                </div>
-                                <span className="text-[12px] font-bold text-foreground tabular-nums">{c.total}</span>
-                              </div>
-                            ))}
+                          <div className="flex items-center justify-between mb-4">
+                            <p className="text-sm font-semibold text-foreground">Chiffre d'affaires par mois</p>
+                            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+18%</span>
+                          </div>
+                          <div className="relative h-32">
+                            <svg viewBox="0 0 300 100" className="w-full h-full" preserveAspectRatio="none">
+                              {[25, 50, 75].map(y => (
+                                <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="hsl(var(--border))" strokeWidth="0.3" />
+                              ))}
+                              {/* Y-axis labels */}
+                              <text x="2" y="8" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">10k</text>
+                              <text x="2" y="30" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">7.5k</text>
+                              <text x="2" y="53" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">5k</text>
+                              <text x="2" y="78" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">2.5k</text>
+                              <text x="2" y="98" fill="hsl(var(--muted-foreground))" fontSize="7" opacity="0.6">0</text>
+                              {/* Bars with rounded tops */}
+                              {[
+                                { x: 40, h: 45 },
+                                { x: 80, h: 50 },
+                                { x: 120, h: 48 },
+                                { x: 160, h: 55 },
+                                { x: 200, h: 60 },
+                                { x: 240, h: 70 },
+                              ].map((bar, i) => (
+                                <rect key={i} x={bar.x} y={100 - bar.h} width="22" height={bar.h} rx="6" ry="6" fill={i === 5 ? '#10B981' : '#10B981'} opacity={i === 5 ? 1 : 0.4} />
+                              ))}
+                              {/* Dashed target line */}
+                              <line x1="30" y1="35" x2="270" y2="35" stroke="#10B981" strokeWidth="1" strokeDasharray="4,3" opacity="0.5" />
+                            </svg>
+                            <div className="flex justify-between mt-2 px-5">
+                              {['août', 'sept.', 'oct.', 'nov.', 'déc.', 'janv.'].map((m, i) => (
+                                <span key={m} className={`text-[8px] ${i === 5 ? 'text-foreground font-bold' : 'text-muted-foreground'}`}>{m}</span>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </div>
