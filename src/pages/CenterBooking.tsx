@@ -4,7 +4,7 @@ import { BookingHeader } from '@/components/booking/BookingHeader';
 import { CalendarPicker } from '@/components/booking/CalendarPicker';
 import { ClientForm, ClientData } from '@/components/booking/ClientForm';
 import { ConfirmationView } from '@/components/booking/ConfirmationView';
-import { CenterLanding } from '@/components/booking/CenterLanding';
+import { CenterLanding, RecognizedClient } from '@/components/booking/CenterLanding';
 import { ContactRequestForm, ContactRequestData } from '@/components/booking/ContactRequestForm';
 import { ContactConfirmation } from '@/components/booking/ContactConfirmation';
 import { useCenterBySlug, Pack, PriceVariant } from '@/hooks/useCenter';
@@ -42,6 +42,9 @@ export default function CenterBooking() {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [clientData, setClientData] = useState<ClientData | null>(null);
   const [contactData, setContactData] = useState<ContactRequestData | null>(null);
+  
+  // Recognized client state
+  const [recognizedClient, setRecognizedClient] = useState<RecognizedClient | null>(null);
   
   // Determine if center is Pro or Trial (has active subscription)
   const isPro = center?.subscription_plan === 'pro' || center?.subscription_plan === 'trial';
@@ -102,7 +105,10 @@ export default function CenterBooking() {
         }
         break;
       case 'calendar':
-        if (selectedPack?.price_variants && selectedPack.price_variants.length > 0) {
+        if (recognizedClient?.service_id) {
+          // Was in recognized client flow, go back to landing
+          setCurrentStep('landing');
+        } else if (selectedPack?.price_variants && selectedPack.price_variants.length > 0) {
           setCurrentStep('select-variant');
         } else if (packs.length > 1) {
           setCurrentStep('select-pack');
@@ -116,6 +122,15 @@ export default function CenterBooking() {
       default:
         setCurrentStep('landing');
     }
+  };
+
+  const handleRecognizedClient = (client: RecognizedClient) => {
+    setRecognizedClient(client);
+    if (client.service_id) {
+      // Client has a custom service → go directly to calendar
+      setCurrentStep('calendar');
+    }
+    // If no service, CenterLanding calls onStartBooking which goes to pack selection
   };
 
   const handleStartBooking = () => {
@@ -158,9 +173,42 @@ export default function CenterBooking() {
   };
   
   const handleClientSubmit = async (data: ClientData) => {
-    if (!center || !selectedPack || !selectedDate || !selectedTime) return;
+    if (!center || !selectedDate || !selectedTime) return;
     
     setClientData(data);
+    
+    // Recognized client with custom service
+    if (recognizedClient?.service_id) {
+      const { error } = await createAppointment({
+        center_id: center.id,
+        pack_id: '', // no pack
+        client_name: data.name,
+        client_email: data.email,
+        client_phone: data.phone,
+        client_address: data.address,
+        vehicle_type: 'custom',
+        appointment_date: `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`,
+        appointment_time: selectedTime,
+        notes: data.notes,
+        duration: `${recognizedClient.service_duration_minutes}min`,
+        pack_name: recognizedClient.service_name || 'Prestation personnalisée',
+        price: recognizedClient.service_price || 0,
+        // Pass custom service data
+        custom_service_id: recognizedClient.service_id,
+        client_id: recognizedClient.client_id,
+        custom_price: recognizedClient.service_price,
+      });
+      
+      if (error) {
+        toast({ title: 'Erreur', description: 'Impossible de créer le rendez-vous.', variant: 'destructive' });
+        return;
+      }
+      setCurrentStep('confirmation');
+      return;
+    }
+    
+    // Standard pack flow
+    if (!selectedPack) return;
     
     const finalPrice = selectedVariant?.price || selectedPack.price;
     
@@ -172,24 +220,17 @@ export default function CenterBooking() {
       client_phone: data.phone,
       client_address: data.address,
       vehicle_type: selectedVariant?.name || 'berline',
-      // IMPORTANT: avoid UTC shift from toISOString(); keep local date
       appointment_date: `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`,
       appointment_time: selectedTime,
       notes: data.notes,
-      // Duration for availability calculation
       duration: selectedPack.duration || '1h',
-      // Additional data for email notifications
       pack_name: selectedPack.name,
       variant_name: selectedVariant?.name,
       price: finalPrice,
     });
     
     if (error) {
-      toast({
-        title: 'Erreur',
-        description: 'Impossible de créer le rendez-vous. Veuillez réessayer.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Erreur', description: 'Impossible de créer le rendez-vous.', variant: 'destructive' });
       return;
     }
     
@@ -306,6 +347,7 @@ export default function CenterBooking() {
           packs={packs}
           onStartBooking={handleStartBooking}
           onSelectPack={handleSelectPack}
+          onRecognizedClient={handleRecognizedClient}
           hasPacks={packs.length > 0}
           isPro={isPro}
         />
@@ -354,15 +396,24 @@ export default function CenterBooking() {
     );
   }
 
-  // Pack data for views
-  const packData = selectedPack ? {
-    id: selectedPack.id,
-    name: selectedPack.name,
-    description: selectedPack.description || '',
-    duration: selectedPack.duration || '1h',
-    price: finalPrice,
-    features: selectedPack.features || [],
-  } : null;
+  // Pack data for views (standard or recognized client)
+  const packData = recognizedClient?.service_id
+    ? {
+        id: recognizedClient.service_id,
+        name: recognizedClient.service_name || 'Prestation personnalisée',
+        description: '',
+        duration: `${recognizedClient.service_duration_minutes || 60}min`,
+        price: recognizedClient.service_price || 0,
+        features: [],
+      }
+    : selectedPack ? {
+        id: selectedPack.id,
+        name: selectedPack.name,
+        description: selectedPack.description || '',
+        duration: selectedPack.duration || '1h',
+        price: finalPrice,
+        features: selectedPack.features || [],
+      } : null;
   
   return (
     <div className="min-h-screen bg-background">
@@ -535,7 +586,16 @@ export default function CenterBooking() {
           
           {/* Client Info */}
           {currentStep === 'client-info' && (
-            <ClientForm onSubmit={handleClientSubmit} isSubmitting={submitting} />
+            <ClientForm 
+              onSubmit={handleClientSubmit} 
+              isSubmitting={submitting}
+              defaultValues={recognizedClient ? {
+                name: recognizedClient.client_name || '',
+                phone: recognizedClient.client_phone || '',
+                email: recognizedClient.client_email || '',
+                address: recognizedClient.client_address || '',
+              } : undefined}
+            />
           )}
           
           {/* Confirmation */}

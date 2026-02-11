@@ -9,6 +9,7 @@ import { User, Phone, Mail, MessageSquare, MapPin } from 'lucide-react';
 interface ClientFormProps {
   onSubmit: (data: ClientData) => void;
   isSubmitting?: boolean;
+  defaultValues?: Partial<ClientData>;
 }
 
 export interface ClientData {
@@ -19,13 +20,13 @@ export interface ClientData {
   notes: string;
 }
 
-export function ClientForm({ onSubmit, isSubmitting = false }: ClientFormProps) {
+export function ClientForm({ onSubmit, isSubmitting = false, defaultValues }: ClientFormProps) {
   const [formData, setFormData] = useState<ClientData>({
-    name: '',
-    phone: '',
-    email: '',
-    address: '',
-    notes: '',
+    name: defaultValues?.name || '',
+    phone: defaultValues?.phone || '',
+    email: defaultValues?.email || '',
+    address: defaultValues?.address || '',
+    notes: defaultValues?.notes || '',
   });
   
   const handleSubmit = (e: React.FormEvent) => {
