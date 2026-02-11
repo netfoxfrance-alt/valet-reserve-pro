@@ -66,7 +66,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
   
   // Client recognition state
   const [showClientLookup, setShowClientLookup] = useState(false);
-  const [lookupPhone, setLookupPhone] = useState('');
+  const [lookupEmail, setLookupEmail] = useState('');
   const [lookupLoading, setLookupLoading] = useState(false);
   const [recognizedClient, setRecognizedClient] = useState<RecognizedClient | null>(null);
   const [lookupNotFound, setLookupNotFound] = useState(false);
@@ -814,19 +814,19 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
     }
   };
 
-  // Client phone lookup handler
+  // Client email lookup handler
   const handleClientLookup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!lookupPhone.trim() || !center.id) return;
+    if (!lookupEmail.trim() || !center.id) return;
     
     setLookupLoading(true);
     setLookupNotFound(false);
     setRecognizedClient(null);
     
     try {
-      const { data, error } = await supabase.rpc('lookup_client_by_phone', {
+      const { data, error } = await supabase.rpc('lookup_client_by_email', {
         p_center_id: center.id,
-        p_phone: lookupPhone.trim(),
+        p_email: lookupEmail.trim(),
       });
       
       if (error) throw error;
@@ -1071,16 +1071,16 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                 }}
               >
                 <p className="text-sm font-medium mb-3" style={{ color: textColors.primary }}>
-                  Entrez votre numéro de téléphone
+                  Entrez votre adresse email
                 </p>
                 <form onSubmit={handleClientLookup} className="flex gap-2">
                   <div className="relative flex-1">
-                    <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: textColors.secondary }} />
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: textColors.secondary }} />
                     <Input
-                      type="tel"
-                      placeholder="06 12 34 56 78"
-                      value={lookupPhone}
-                      onChange={(e) => { setLookupPhone(e.target.value); setLookupNotFound(false); }}
+                      type="email"
+                      placeholder="vous@exemple.fr"
+                      value={lookupEmail}
+                      onChange={(e) => { setLookupEmail(e.target.value); setLookupNotFound(false); }}
                       className="pl-11 h-11 rounded-xl"
                       style={{
                         backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'white',
@@ -1092,7 +1092,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                   </div>
                   <Button
                     type="submit"
-                    disabled={lookupLoading || !lookupPhone.trim()}
+                    disabled={lookupLoading || !lookupEmail.trim()}
                     className="h-11 px-5 rounded-xl text-white font-medium"
                     style={{ backgroundColor: customization.colors.primary }}
                   >
@@ -1101,7 +1101,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                 </form>
                 {lookupNotFound && (
                   <p className="text-sm mt-3" style={{ color: textColors.secondary }}>
-                    Numéro non reconnu. Vous pouvez réserver normalement ci-dessous.
+                    Email non reconnu. Vous pouvez réserver normalement ci-dessous.
                   </p>
                 )}
               </Card>
@@ -1173,7 +1173,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                 </>
               )}
               <button
-                onClick={() => { setRecognizedClient(null); setShowClientLookup(false); setLookupPhone(''); }}
+                onClick={() => { setRecognizedClient(null); setShowClientLookup(false); setLookupEmail(''); }}
                 className="w-full text-center text-xs mt-3 underline"
                 style={{ color: textColors.secondary }}
               >
