@@ -1,131 +1,101 @@
 
 
-# Systeme de reconnaissance client pour prestations personnalisees
+# Securisation du parcours abonnement et experience utilisateur expiree
 
-## Recapitulatif du besoin
+## Problemes identifies
 
-Aujourd'hui, le parcours de reservation est concu pour des **formules fixes** (packs). Mais pour les pros dont la prestation depend du client (nettoyeurs de vitres, entretien recurrent...), il faut un moyen pour le **client recurrent** d'etre reconnu et de voir directement **sa prestation personnalisee** (prix, duree) sans passer par les packs standards.
+### 1. Abus de la periode d'essai
+Le fichier `create-checkout` contient `trial_period_days: 30` en dur. Si un utilisateur annule son abonnement puis revient, il obtient un nouveau trial gratuit de 30 jours. Avec des milliers d'utilisateurs, c'est un risque financier majeur.
 
-## Approche strategique retenue : Identification par telephone
+### 2. Aucune experience "degradee" pour les comptes expires
+Aujourd'hui, un utilisateur avec un abonnement expire peut quand meme acceder au dashboard complet. Il voit toutes ses donnees, mais sa page publique est fermee. Il n'y a aucun signal visuel fort pour le pousser a reprendre son abonnement.
 
-**Pourquoi le telephone et pas l'email :**
-- Le telephone est deja la cle primaire de deduplication dans `clientService.ts`
-- Les clients connaissent leur numero par coeur (pas besoin de chercher)
-- L'index unique `normalize_phone()` existe deja en base -- zero cout supplementaire
-- Portee limitee au centre : il faut connaitre le slug du pro ET le numero du client
+### 3. Redirection systematique vers le paiement a la connexion
+Quand un utilisateur existant (qui a deja eu un abonnement) se connecte et que `check-subscription` retourne `subscribed: false`, il est immediatement redirige vers Stripe Checkout. Il ne peut meme pas acceder a son dashboard pour voir ses donnees ou gerer son compte.
 
-**Pourquoi pas de lien personnalise :**
-- Les liens peuvent etre partages/exposes
-- Le pro doit gerer l'envoi de liens (friction supplementaire)
-- Le telephone est plus naturel et universel
+---
 
-**Securite : pourquoi c'est suffisant sans code de verification :**
-- Les donnees exposees sont **minimales** : uniquement le prenom + nom de la prestation + prix (jamais l'email, l'adresse ou l'historique)
-- La recherche est **scopee au centre** (il faut connaitre le slug du pro)
-- C'est le meme niveau de securite qu'un systeme de reservation chez le dentiste ou le coiffeur
-- Ajouter un SMS/email de verification ajouterait une friction enorme et tuerait l'adoption
+## Plan de resolution
 
-## Parcours utilisateur
+### Etape 1 : Empecher l'abus du trial dans `create-checkout`
 
+Modifier la fonction Edge `create-checkout` pour verifier si l'utilisateur a deja eu un abonnement (actif, annule, ou expire) avant d'offrir un trial.
+
+**Logique :**
 ```text
-Page du pro (/:slug)
-       |
-       v
-  "Vous etes deja client ?"
-  [Entrer mon numero de telephone]
-       |
-       v
-  Recherche dans clients (center_id + normalize_phone)
-       |
-  +----+----+
-  |         |
-  v         v
-Trouve    Non trouve
-  |         |
-  v         v
-A une      "Numero non reconnu.
-prestation  Continuez normalement."
-par defaut?  -> Flux packs standard
-  |
-  +----+----+
-  |         |
-  v         v
- OUI       NON
-  |         |
-  v         v
-Affiche    "Bonjour [prenom]!
-prestation  Choisissez votre formule."
-perso:      -> Flux packs standard
-"Bonjour    (infos pre-remplies)
-[prenom]!
-Votre prestation:
-[Nom] - [Prix]€ - [Duree]
-[Choisir un creneau]"
-  |
-  v
-Calendrier (duree = celle de la prestation)
-  |
-  v
-Formulaire pre-rempli (nom, tel, email, adresse)
-  |
-  v
-Confirmation
+1. Lister les subscriptions du client Stripe (status: "all")
+2. Si au moins 1 subscription existe (meme "canceled") -> pas de trial
+3. Sinon -> trial de 30 jours
 ```
 
-## Plan technique
+Concretement, remplacer le `trial_period_days: 30` fixe par une condition dynamique.
 
-### 1. Nouvelle vue SQL securisee : `public_client_lookup`
+### Etape 2 : Enrichir `check-subscription` avec `had_trial`
 
-Creer une fonction SQL `security definer` qui ne retourne que le strict minimum :
-- `client_id`
-- `first_name` (prenom seulement, extrait du champ `name`)
-- `service_name`, `service_price`, `service_duration_minutes` (depuis `custom_services`)
-- `client_name`, `client_email`, `client_phone`, `client_address` (pour pre-remplir le formulaire)
+Ajouter un champ `had_trial: true/false` dans la reponse de `check-subscription`. Ce champ indique si l'utilisateur a deja eu au moins un abonnement (trial ou paye). Le frontend utilisera cette info pour adapter les messages.
 
-La fonction prend en parametre `center_id` + `phone` normalise, et ne retourne rien si le client n'existe pas.
+### Etape 3 : Modifier le flux de connexion dans `Auth.tsx`
 
-**Avantage scalabilite** : utilise l'index existant `normalize_phone()`, zero scan de table.
+Aujourd'hui, si `subscribed: false`, l'utilisateur est redirige vers Stripe. Le nouveau comportement sera :
 
-### 2. Modifier `CenterLanding.tsx`
+```text
+Connexion reussie
+     |
+     v
+check-subscription
+     |
+  +--+--+
+  |     |
+  v     v
+ Actif  Inactif
+  |       |
+  v       +-------+--------+
+Dashboard  Jamais eu    Deja eu un abo
+           d'abo        (had_trial=true)
+             |              |
+             v              v
+          Checkout      Dashboard
+          (avec trial)  (mode degrade)
+```
 
-Ajouter un bouton/section "Vous etes deja client ?" qui ouvre un champ telephone. Quand le client soumet :
-- Appel a la fonction SQL via Supabase RPC
-- Si client trouve avec prestation : afficher un ecran personnalise avec la prestation et un bouton "Choisir un creneau"
-- Si client trouve sans prestation : message de bienvenue + redirection vers le flux packs avec infos pre-remplies
-- Si non trouve : message neutre + flux normal
+Les utilisateurs qui n'ont jamais eu d'abonnement sont rediriges vers le checkout (avec trial). Les anciens abonnes vont au dashboard en mode degrade.
 
-### 3. Modifier `CenterBooking.tsx`
+### Etape 4 : Dashboard en mode degrade pour les comptes expires
 
-Ajouter un nouvel etat pour le "mode client reconnu" :
-- Stocker les donnees du client reconnu (prestation, infos)
-- Passer la duree de la prestation au `CalendarPicker`
-- Pre-remplir le `ClientForm` avec les infos existantes
-- A la creation du RDV, utiliser `custom_service_id` + `client_id` + `custom_price`
+Creer un composant `SubscriptionBanner` affiche en haut de chaque page du dashboard quand l'abonnement est expire. Ce bandeau :
 
-### 4. Modifier `ClientForm.tsx`
+- Affiche un message clair : "Votre abonnement est inactif. Votre page publique est fermee."
+- Contient un bouton "Reactiver mon abonnement" qui ouvre Stripe Checkout (sans trial cette fois)
+- Est visuellement fort (couleur warning/orange) mais ne bloque pas l'acces aux donnees
 
-Accepter des valeurs initiales (`defaultValues`) pour pre-remplir les champs quand le client est reconnu. Les champs restent editables.
+**Pourquoi ne pas bloquer l'acces au dashboard :**
+- L'utilisateur doit pouvoir voir ses clients, factures, historique
+- Bloquer l'acces creer de la frustration et risque de perdre l'utilisateur definitivement
+- Voir ses donnees sans que la page publique fonctionne est le meilleur incitatif a re-souscrire
 
-### 5. Option dans le dashboard pro
+### Etape 5 : Stocker `had_trial` dans `useAuth` (AuthContext)
 
-Ajouter un toggle dans les reglages ou la personnalisation pour que le pro puisse activer/desactiver la reconnaissance client sur sa page. Stocke dans le champ `customization` JSONB de `centers`.
+Ajouter `hadTrial` au `SubscriptionInfo` dans le contexte d'auth pour que tous les composants puissent adapter leur comportement.
 
-### Impact sur la scalabilite
+---
 
-| Element | Impact |
-|---------|--------|
-| Fonction SQL RPC | O(1) grace a l'index `normalize_phone` |
-| Pas de table supplementaire | Zero migration lourde |
-| Pas d'auth client | Zero friction, zero gestion de comptes |
-| Scope par centre | Chaque requete est isolee, pas de table scan globale |
-| Donnees exposees minimales | Securite preservee sans verification |
+## Fichiers a modifier
 
-### Fichiers a modifier/creer
+| Fichier | Modification |
+|---------|-------------|
+| `supabase/functions/create-checkout/index.ts` | Verifier l'historique d'abonnements avant d'offrir le trial |
+| `supabase/functions/check-subscription/index.ts` | Ajouter `had_trial` dans la reponse |
+| `src/hooks/useAuth.tsx` | Ajouter `hadTrial` au `SubscriptionInfo` |
+| `src/pages/Auth.tsx` | Ne plus rediriger les anciens abonnes vers checkout |
+| `src/components/dashboard/SubscriptionBanner.tsx` | Nouveau composant : bandeau de reactivation |
+| `src/pages/Dashboard.tsx` | Afficher le bandeau si expire |
+| Autres pages dashboard | Afficher le bandeau si expire |
 
-- **Migration SQL** : fonction RPC `lookup_client_by_phone`
-- `src/components/booking/CenterLanding.tsx` : section "Deja client ?"
-- `src/pages/CenterBooking.tsx` : gestion du mode client reconnu
-- `src/components/booking/ClientForm.tsx` : support des valeurs par defaut
-- `src/hooks/useCenter.tsx` : lecture du toggle dans customization
-- Optionnel : toggle dans le dashboard (customization)
+---
+
+## Impact scalabilite
+
+- Zero table supplementaire, zero migration SQL
+- La verification de l'historique Stripe dans `create-checkout` ajoute 1 appel API Stripe (deja fait dans `check-subscription`)
+- Le champ `had_trial` est derive des donnees Stripe existantes, pas de stockage supplementaire
 
