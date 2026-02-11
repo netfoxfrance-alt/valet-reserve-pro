@@ -44,15 +44,36 @@ serve(async (req) => {
     // Check if customer already exists
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId;
+    let hadPreviousSubscription = false;
+
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
       logStep("Existing customer found", { customerId });
+
+      // Check if the customer has ever had any subscription (active, canceled, etc.)
+      const allSubscriptions = await stripe.subscriptions.list({
+        customer: customerId,
+        status: "all",
+        limit: 1,
+      });
+
+      hadPreviousSubscription = allSubscriptions.data.length > 0;
+      logStep("Subscription history check", { hadPreviousSubscription, count: allSubscriptions.data.length });
     } else {
       logStep("No existing customer, will create new one");
     }
 
     const origin = req.headers.get("origin") || "https://lovable.dev";
     
+    // Only offer trial if the user has NEVER had a subscription before
+    const subscriptionData: any = {};
+    if (!hadPreviousSubscription) {
+      subscriptionData.trial_period_days = 30;
+      logStep("Offering 30-day trial (new user)");
+    } else {
+      logStep("No trial offered (returning user)");
+    }
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -63,14 +84,12 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
-      subscription_data: {
-        trial_period_days: 30,
-      },
+      subscription_data: subscriptionData,
       success_url: `${origin}/dashboard?payment=success`,
-      cancel_url: `${origin}/dashboard/upgrade?payment=cancelled`,
+      cancel_url: `${origin}/dashboard/settings?payment=cancelled`,
     });
 
-    logStep("Checkout session created", { sessionId: session.id, url: session.url });
+    logStep("Checkout session created", { sessionId: session.id, url: session.url, withTrial: !hadPreviousSubscription });
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -80,7 +99,6 @@ serve(async (req) => {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in create-checkout", { message: errorMessage });
     
-    // Return generic error for security
     return new Response(JSON.stringify({ 
       error: "Impossible de créer la session de paiement. Veuillez réessayer." 
     }), {

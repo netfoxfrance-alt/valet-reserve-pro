@@ -6,6 +6,7 @@ interface SubscriptionInfo {
   subscribed: boolean;
   productId: string | null;
   subscriptionEnd: string | null;
+  hadTrial: boolean;
 }
 
 interface AuthContextType {
@@ -31,11 +32,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     subscribed: false,
     productId: null,
     subscriptionEnd: null,
+    hadTrial: false,
   });
 
   const checkSubscription = useCallback(async () => {
     if (!session?.access_token) {
-      setSubscription({ subscribed: false, productId: null, subscriptionEnd: null });
+      setSubscription({ subscribed: false, productId: null, subscriptionEnd: null, hadTrial: false });
       setSubscriptionLoading(false);
       return;
     }
@@ -58,6 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         subscribed: data.subscribed || false,
         productId: data.product_id || null,
         subscriptionEnd: data.subscription_end || null,
+        hadTrial: data.had_trial || false,
       });
     } catch (error) {
       console.error('Error checking subscription:', error);
@@ -127,7 +130,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    setSubscription({ subscribed: false, productId: null, subscriptionEnd: null });
+    setSubscription({ subscribed: false, productId: null, subscriptionEnd: null, hadTrial: false });
   };
 
   return (

@@ -79,8 +79,15 @@ export default function Auth() {
           description: 'Bienvenue dans votre espace.',
         });
         navigate('/dashboard', { replace: true });
+      } else if (subData?.had_trial) {
+        // Returning user (had a subscription before) — go to dashboard in degraded mode
+        toast({
+          title: 'Connexion réussie',
+          description: 'Votre abonnement est inactif. Réactivez-le depuis votre dashboard.',
+        });
+        navigate('/dashboard', { replace: true });
       } else {
-        // Not subscribed, redirect to Stripe checkout
+        // Brand new user — redirect to Stripe checkout with trial
         toast({
           title: isSignUp ? 'Compte créé !' : 'Connexion réussie',
           description: 'Activez votre essai gratuit de 30 jours.',

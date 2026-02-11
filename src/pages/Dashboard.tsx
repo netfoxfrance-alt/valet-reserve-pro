@@ -30,6 +30,7 @@ import { sendBookingEmail, getClientEmail, buildEmailPayload, EmailType } from '
 import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
 import { AppointmentDetailDialog } from '@/components/dashboard/AppointmentDetailDialog';
 import { ConfirmationCalendarDialog } from '@/components/dashboard/ConfirmationCalendarDialog';
+import { SubscriptionBanner } from '@/components/dashboard/SubscriptionBanner';
 
 // Apple-style status colors - clean and vibrant
 const statusConfig: Record<string, { label: string; color: string }> = {
@@ -830,7 +831,8 @@ export default function Dashboard() {
           onMenuClick={() => setMobileMenuOpen(true)}
         />
         
-        <main className="p-4 lg:p-8 max-w-6xl">
+        <main className="p-4 lg:p-8 max-w-6xl space-y-6">
+          <SubscriptionBanner />
           {/* Stats - Responsive 2x2 grid */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
             {stats.map((stat) => (
