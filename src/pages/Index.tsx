@@ -970,65 +970,68 @@ export default function Index() {
                 </div>
 
                 {/* Main Content Area */}
-                <div className="flex-1 p-6 sm:p-8 overflow-y-auto bg-background">
+                <div className="flex-1 p-5 sm:p-6 overflow-y-auto" style={{ background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary)/0.3) 100%)' }}>
                   
                   {/* === RÉSERVATIONS === */}
                   {dashboardTab === 'reservations' && (
                     <>
-                      <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center justify-between mb-6">
                         <div>
-                          <h3 className="text-xl font-semibold text-foreground tracking-tight">Réservations</h3>
-                          <p className="text-xs text-muted-foreground mt-1">Mardi 11 février 2026</p>
+                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Réservations</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">Mardi 11 février 2026</p>
                         </div>
-                        <button className="bg-foreground text-background px-4 py-2 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
                           + Nouveau RDV
                         </button>
                       </div>
 
-                      {/* KPI row */}
-                      <div className="grid grid-cols-3 gap-4 mb-8">
-                        <div className="rounded-2xl p-5 bg-card border border-border/15">
-                          <p className="text-[11px] text-muted-foreground mb-2">Aujourd'hui</p>
-                          <p className="text-2xl font-bold text-foreground tracking-tight leading-none">5</p>
-                        </div>
-                        <div className="rounded-2xl p-5 bg-card border border-border/15">
-                          <p className="text-[11px] text-muted-foreground mb-2">Cette semaine</p>
-                          <p className="text-2xl font-bold text-foreground tracking-tight leading-none">23</p>
-                        </div>
-                        <div className="rounded-2xl p-5 bg-card border border-border/15">
-                          <p className="text-[11px] text-muted-foreground mb-2">CA du jour</p>
-                          <div className="flex items-baseline gap-2">
-                            <p className="text-2xl font-bold text-foreground tracking-tight leading-none">340€</p>
-                            <span className="text-[10px] text-emerald-600 font-medium">↑15%</span>
+                      {/* KPI row — colorful Apple-style */}
+                      <div className="grid grid-cols-3 gap-3 mb-6">
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/20">
+                          <p className="text-[11px] text-white/70 mb-1">Aujourd'hui</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none">5</p>
+                          <div className="flex items-center gap-1.5 mt-2">
+                            <span className="w-1.5 h-1.5 bg-white/80 rounded-full animate-pulse" />
+                            <p className="text-[10px] text-white/80 font-medium">2 en attente</p>
                           </div>
+                        </div>
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/20">
+                          <p className="text-[11px] text-white/70 mb-1">Cette semaine</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none">23</p>
+                          <p className="text-[10px] text-white/70 mt-2">dont 4 demandes</p>
+                        </div>
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/20">
+                          <p className="text-[11px] text-white/70 mb-1">CA du jour</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none">340€</p>
+                          <p className="text-[10px] text-white/80 font-medium mt-2">↑ 15%</p>
                         </div>
                       </div>
 
                       {/* Segmented control */}
-                      <div className="flex gap-0 bg-secondary/40 rounded-full p-1 mb-6 w-fit">
+                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
                         <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Prochains</span>
                         <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">Demandes</span>
                         <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">Passés</span>
                       </div>
 
-                      <div className="space-y-2.5">
+                      <div className="space-y-2">
                         {[
-                          { name: 'Jean Martin', service: 'Nettoyage Complet', time: '10:00', duration: '1h30', price: '89€', status: 'Confirmé', statusColor: 'text-emerald-600 bg-emerald-50' },
-                          { name: 'Marie Dupont', service: 'Express', time: '11:30', duration: '45min', price: '35€', status: 'En attente', statusColor: 'text-orange-600 bg-orange-50' },
-                          { name: 'Pierre Bernard', service: 'Rénovation Premium', time: '14:00', duration: '3h', price: '159€', status: 'Confirmé', statusColor: 'text-emerald-600 bg-emerald-50' },
-                          { name: 'Demande entrante', service: 'Nettoyage canapé', time: '—', duration: '—', price: 'Sur devis', status: 'Demande', statusColor: 'text-blue-600 bg-blue-50' },
-                          { name: 'Sophie Leroy', service: 'Pack Intérieur', time: '16:30', duration: '1h', price: '65€', status: 'Confirmé', statusColor: 'text-emerald-600 bg-emerald-50' },
+                          { name: 'Jean Martin', service: 'Nettoyage Complet', time: '10:00', duration: '1h30', price: '89€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'JM', avatarBg: 'bg-blue-500' },
+                          { name: 'Marie Dupont', service: 'Express', time: '11:30', duration: '45min', price: '35€', status: 'En attente', statusBg: 'bg-orange-500', initials: 'MD', avatarBg: 'bg-pink-500' },
+                          { name: 'Pierre Bernard', service: 'Rénovation Premium', time: '14:00', duration: '3h', price: '159€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'PB', avatarBg: 'bg-amber-500' },
+                          { name: 'Demande entrante', service: 'Nettoyage canapé', time: '—', duration: '—', price: 'Sur devis', status: 'Demande', statusBg: 'bg-blue-500', initials: '?', avatarBg: 'bg-indigo-500' },
+                          { name: 'Sophie Leroy', service: 'Pack Intérieur', time: '16:30', duration: '1h', price: '65€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'SL', avatarBg: 'bg-violet-500' },
                         ].map((booking, i) => (
-                          <div key={i} className="flex items-center gap-4 bg-card rounded-2xl p-4 border border-border/15 hover:border-border/30 transition-all cursor-pointer">
-                            <div className="w-9 h-9 rounded-full bg-secondary/60 flex items-center justify-center text-[11px] font-semibold text-muted-foreground shrink-0">
-                              {booking.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 hover:shadow-md transition-all cursor-pointer">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 ${booking.avatarBg}`}>
+                              {booking.initials}
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-[13px] font-semibold text-foreground truncate">{booking.name}</p>
                               <p className="text-[11px] text-muted-foreground mt-0.5">{booking.service} · {booking.time} · {booking.duration}</p>
                             </div>
-                            <span className="text-[13px] font-semibold text-foreground hidden sm:block tabular-nums">{booking.price}</span>
-                            <span className={`text-[10px] px-2.5 py-1 rounded-full font-medium ${booking.statusColor}`}>
+                            <span className="text-[13px] font-bold text-foreground hidden sm:block tabular-nums">{booking.price}</span>
+                            <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold text-white ${booking.statusBg}`}>
                               {booking.status}
                             </span>
                           </div>
@@ -1039,158 +1042,164 @@ export default function Index() {
 
                   {/* === CALENDRIER === */}
                   {dashboardTab === 'calendar' && (
-                    <>
-                      <div className="flex items-center justify-between mb-8">
-                        <div>
-                          <h3 className="text-xl font-semibold text-foreground tracking-tight">Calendrier</h3>
-                          <p className="text-xs text-muted-foreground mt-1">5 clients · 8 réservations</p>
+                    <div className="flex gap-6 h-full">
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-5">
+                          <div className="flex items-center gap-3">
+                            <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                              <ChevronLeft className="w-4 h-4" />
+                            </button>
+                            <h3 className="text-base font-semibold text-foreground min-w-[130px] text-center">Février 2026</h3>
+                            <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                              <ChevronRight className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <button className="text-[11px] text-white font-semibold bg-blue-500 px-3.5 py-1.5 rounded-full shadow-sm shadow-blue-500/25 hover:bg-blue-600 transition-colors">Aujourd'hui</button>
                         </div>
-                        <div className="flex gap-0 bg-secondary/40 rounded-full p-1">
-                          <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Semaine</span>
-                          <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">Mois</span>
-                        </div>
-                      </div>
 
-                      {/* Week navigation */}
-                      <div className="flex items-center justify-center gap-6 mb-6">
-                        <button className="w-8 h-8 rounded-full bg-secondary/40 flex items-center justify-center hover:bg-secondary transition-colors">
-                          <ChevronLeft className="w-3.5 h-3.5" />
-                        </button>
-                        <h4 className="text-sm font-semibold text-foreground tracking-tight">10 - 16 Février</h4>
-                        <button className="w-8 h-8 rounded-full bg-secondary/40 flex items-center justify-center hover:bg-secondary transition-colors">
-                          <ChevronRight className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-
-                      {/* Weekly Gantt-style grid */}
-                      <div className="bg-card rounded-2xl border border-border/15 overflow-hidden">
-                        {/* Header row */}
-                        <div className="grid grid-cols-[100px_repeat(7,1fr)] border-b border-border/10">
-                          <div className="p-3 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Client</div>
-                          {[
-                            { day: 'L', num: '10' },
-                            { day: 'M', num: '11' },
-                            { day: 'M', num: '12' },
-                            { day: 'J', num: '13' },
-                            { day: 'V', num: '14' },
-                            { day: 'S', num: '15' },
-                            { day: 'D', num: '16' },
-                          ].map((d, i) => (
-                            <div key={i} className={`py-3 px-1 text-center ${d.num === '11' ? 'bg-foreground text-background rounded-t-xl' : ''}`}>
-                              <p className={`text-[10px] font-medium ${d.num === '11' ? 'text-background/70' : 'text-muted-foreground'}`}>{d.day}</p>
-                              <p className={`text-sm font-bold ${d.num === '11' ? '' : 'text-foreground'}`}>{d.num}</p>
-                            </div>
+                        <div className="grid grid-cols-7 gap-1 mb-2">
+                          {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
+                            <div key={i} className="text-center text-[11px] font-semibold text-muted-foreground py-1">{d}</div>
                           ))}
                         </div>
-
-                        {/* Rows */}
-                        {[
-                          { name: 'Jean M.', barStart: 0, barSpan: 2, barColor: 'bg-blue-500', label: 'Complet · 89€' },
-                          { name: 'Marie D.', barStart: 2, barSpan: 3, barColor: 'bg-emerald-500', label: 'Express · 35€' },
-                          { name: 'Pierre B.', barStart: 4, barSpan: 2, barColor: 'bg-orange-400', label: 'Rénovation · 159€' },
-                          { name: 'Sophie L.', barStart: 1, barSpan: 2, barColor: 'bg-violet-500', label: 'Intérieur · 65€' },
-                          { name: 'Lucas M.', barStart: -1, barSpan: 0, barColor: '', label: '' },
-                        ].map((row, i) => (
-                          <div key={i} className="grid grid-cols-[100px_repeat(7,1fr)] border-b border-border/5 last:border-0">
-                            <div className="p-3 flex items-center gap-2.5">
-                              <div className="w-7 h-7 rounded-full bg-secondary/50 flex items-center justify-center text-[9px] font-semibold text-muted-foreground shrink-0">
-                                {row.name.split(' ').map(n => n[0]).join('')}
-                              </div>
-                              <p className="text-[11px] font-medium text-foreground truncate">{row.name}</p>
+                        <div className="grid grid-cols-7 gap-1">
+                          {[26, 27, 28, 29, 30, 31].map((d, i) => (
+                            <div key={`prev-${i}`} className="aspect-square rounded-2xl flex flex-col items-center justify-start pt-2 text-[11px] text-muted-foreground/25">
+                              <span>{d}</span>
                             </div>
-                            {Array.from({ length: 7 }).map((_, j) => (
-                              <div key={j} className="py-3 px-0.5 relative flex items-center">
-                                {j === row.barStart && row.barSpan > 0 && (
-                                  <div 
-                                    className={`${row.barColor} text-white text-[9px] font-medium px-2.5 py-1.5 rounded-lg truncate cursor-pointer hover:opacity-90 transition-opacity absolute left-0 z-10`}
-                                    style={{ width: `${row.barSpan * 100}%`, minWidth: '60px' }}
-                                  >
-                                    {row.label}
+                          ))}
+                          {Array.from({ length: 28 }, (_, i) => i + 1).map(d => {
+                            const hasAppointments = [3, 5, 8, 11, 12, 15, 18, 22, 25].includes(d);
+                            const isSelected = d === 11;
+                            const count = d === 11 ? 3 : d === 15 ? 2 : d === 22 ? 4 : 1;
+                            return (
+                              <div key={d} className={`aspect-square rounded-2xl flex flex-col items-center justify-start pt-2 text-[11px] relative cursor-pointer transition-all ${
+                                isSelected ? 'bg-blue-500 text-white font-bold shadow-lg shadow-blue-500/30' : 'hover:bg-secondary/50'
+                              }`}>
+                                <span>{d}</span>
+                                {hasAppointments && (
+                                  <div className="flex gap-0.5 mt-1">
+                                    {Array.from({ length: Math.min(count, 3) }).map((_, j) => (
+                                      <div key={j} className={`w-1.5 h-1.5 rounded-full ${
+                                        isSelected ? 'bg-white/70' :
+                                        j === 0 ? 'bg-emerald-500' : j === 1 ? 'bg-orange-400' : 'bg-blue-500'
+                                      }`} />
+                                    ))}
                                   </div>
                                 )}
                               </div>
-                            ))}
-                          </div>
-                        ))}
+                            );
+                          })}
+                        </div>
+
+                        <div className="flex gap-5 mt-4 pt-3 border-t border-border/20">
+                          {[
+                            { color: 'bg-emerald-500', label: 'Confirmé' },
+                            { color: 'bg-orange-400', label: 'En attente' },
+                            { color: 'bg-blue-500', label: 'Terminé' },
+                          ].map(l => (
+                            <div key={l.label} className="flex items-center gap-2">
+                              <div className={`w-2 h-2 rounded-full ${l.color}`} />
+                              <span className="text-[10px] text-muted-foreground font-medium">{l.label}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
 
-                      {/* Legend */}
-                      <div className="flex gap-6 mt-5 justify-center">
-                        {[
-                          { color: 'bg-blue-500', label: 'Confirmé' },
-                          { color: 'bg-emerald-500', label: 'En cours' },
-                          { color: 'bg-orange-400', label: 'À venir' },
-                          { color: 'bg-violet-500', label: 'Nouveau' },
-                        ].map(l => (
-                          <div key={l.label} className="flex items-center gap-2">
-                            <div className={`w-2 h-2 rounded-full ${l.color}`} />
-                            <span className="text-[10px] text-muted-foreground">{l.label}</span>
+                      {/* Right: Selected Day Detail */}
+                      <div className="w-48 hidden lg:flex flex-col border-l border-border/20 pl-5">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+                            <span className="text-[10px] text-white font-bold">11</span>
                           </div>
-                        ))}
+                          <p className="text-sm font-semibold text-foreground">Mercredi</p>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground mb-4">3 rendez-vous · 340€</p>
+                        <div className="space-y-2.5 flex-1">
+                          {[
+                            { time: '10:00', name: 'Jean M.', service: 'Complet · 89€', color: 'bg-emerald-500', initials: 'JM' },
+                            { time: '11:30', name: 'Marie D.', service: 'Express · 35€', color: 'bg-orange-400', initials: 'MD' },
+                            { time: '14:00', name: 'Pierre B.', service: 'Rénovation · 159€', color: 'bg-emerald-500', initials: 'PB' },
+                          ].map((rdv, i) => (
+                            <div key={i} className="bg-card rounded-xl p-2.5 border border-border/20 hover:shadow-sm transition-all cursor-pointer">
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className={`w-1.5 h-1.5 rounded-full ${rdv.color}`} />
+                                <span className="text-[11px] font-semibold text-foreground">{rdv.time}</span>
+                              </div>
+                              <p className="text-[11px] font-medium text-foreground">{rdv.name}</p>
+                              <p className="text-[10px] text-muted-foreground">{rdv.service}</p>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </>
+                    </div>
                   )}
 
                   {/* === CLIENTS === */}
                   {dashboardTab === 'clients' && (
                     <>
-                      <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center justify-between mb-6">
                         <div>
-                          <h3 className="text-xl font-semibold text-foreground tracking-tight">Clients</h3>
-                          <p className="text-xs text-muted-foreground mt-1">142 clients enregistrés</p>
+                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Clients</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">142 clients enregistrés</p>
                         </div>
-                        <button className="bg-foreground text-background px-4 py-2 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
                           + Ajouter
                         </button>
                       </div>
 
-                      {/* Stats row */}
-                      <div className="grid grid-cols-3 gap-4 mb-6">
-                        <div className="rounded-2xl p-5 bg-card border border-border/15">
-                          <p className="text-[11px] text-muted-foreground mb-2">Total clients</p>
-                          <p className="text-2xl font-bold text-foreground tracking-tight leading-none">142</p>
-                        </div>
-                        <div className="rounded-2xl p-5 bg-card border border-border/15">
-                          <p className="text-[11px] text-muted-foreground mb-2">Actifs ce mois</p>
-                          <p className="text-2xl font-bold text-foreground tracking-tight leading-none">38</p>
-                        </div>
-                        <div className="rounded-2xl p-5 bg-card border border-border/15">
-                          <p className="text-[11px] text-muted-foreground mb-2">Nouveaux</p>
-                          <p className="text-2xl font-bold text-foreground tracking-tight leading-none">7</p>
-                        </div>
-                      </div>
-
                       {/* Search */}
                       <div className="relative mb-5">
-                        <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                        <div className="bg-card rounded-2xl pl-11 pr-4 py-3.5 text-xs text-muted-foreground/40 border border-border/15">
+                        <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        <div className="bg-card rounded-2xl pl-11 pr-4 py-3 text-xs text-muted-foreground/50 border border-border/20 shadow-sm">
                           Rechercher un client...
                         </div>
                       </div>
 
-                      <div className="space-y-2.5">
+                      <div className="space-y-2">
                         {[
-                          { name: 'Sophie Leroy', rdvCount: 15, totalSpent: '1 420€', lastVisit: 'Aujourd\'hui' },
-                          { name: 'Jean Martin', rdvCount: 12, totalSpent: '1 068€', lastVisit: '10 fév' },
-                          { name: 'Marie Dupont', rdvCount: 8, totalSpent: '520€', lastVisit: '8 fév' },
-                          { name: 'Pierre Bernard', rdvCount: 3, totalSpent: '477€', lastVisit: '2 fév' },
-                          { name: 'Lucas Moreau', rdvCount: 6, totalSpent: '354€', lastVisit: '28 jan' },
+                          { name: 'Sophie Leroy', rdvCount: 15, totalSpent: '1 420€', lastVisit: 'Aujourd\'hui', initials: 'SL', avatarBg: 'bg-violet-500' },
+                          { name: 'Jean Martin', rdvCount: 12, totalSpent: '1 068€', lastVisit: '10 fév', initials: 'JM', avatarBg: 'bg-blue-500' },
+                          { name: 'Marie Dupont', rdvCount: 8, totalSpent: '520€', lastVisit: '8 fév', initials: 'MD', avatarBg: 'bg-pink-500' },
+                          { name: 'Pierre Bernard', rdvCount: 3, totalSpent: '477€', lastVisit: '2 fév', initials: 'PB', avatarBg: 'bg-amber-500' },
                         ].map((client, i) => (
-                          <div key={i} className="flex items-center gap-4 bg-card rounded-2xl p-4 border border-border/15 hover:border-border/30 transition-all cursor-pointer group">
-                            <div className="w-10 h-10 rounded-full bg-secondary/50 flex items-center justify-center text-[11px] font-semibold text-muted-foreground shrink-0">
-                              {client.name.split(' ').map(n => n[0]).join('')}
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer group">
+                            <div className={`w-11 h-11 rounded-full flex items-center justify-center text-[12px] font-bold text-white shrink-0 ${client.avatarBg}`}>
+                              {client.initials}
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-[13px] font-semibold text-foreground truncate">{client.name}</p>
                               <p className="text-[11px] text-muted-foreground mt-0.5">{client.rdvCount} visites · Dernier : {client.lastVisit}</p>
                             </div>
                             <div className="text-right hidden sm:block">
-                              <p className="text-[13px] font-semibold text-foreground tabular-nums">{client.totalSpent}</p>
+                              <p className="text-[13px] font-bold text-foreground tabular-nums">{client.totalSpent}</p>
                               <p className="text-[10px] text-muted-foreground">CA total</p>
                             </div>
-                            <ChevronRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-muted-foreground/50 transition-colors shrink-0" />
+                            <ChevronRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-muted-foreground transition-colors shrink-0" />
                           </div>
                         ))}
+                      </div>
+
+                      {/* Client detail peek */}
+                      <div className="mt-4 bg-card rounded-2xl border border-border/15 overflow-hidden">
+                        <div className="bg-gradient-to-r from-violet-500 to-purple-600 px-5 pt-4 pb-8 relative">
+                          <p className="text-[11px] text-white/70 font-medium">Fiche client</p>
+                          <p className="text-base font-bold text-white mt-0.5">Sophie Leroy</p>
+                        </div>
+                        <div className="px-5 pb-5 -mt-5">
+                          <div className="grid grid-cols-3 gap-3">
+                            {[
+                              { value: '15', label: 'Visites' },
+                              { value: '1 420€', label: 'CA total' },
+                              { value: '95€', label: 'Panier moy.' },
+                            ].map((s, i) => (
+                              <div key={i} className="bg-card rounded-xl p-3 text-center border border-border/20 shadow-sm">
+                                <p className="text-lg font-bold text-foreground tracking-tight">{s.value}</p>
+                                <p className="text-[10px] text-muted-foreground mt-0.5">{s.label}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </>
                   )}
@@ -1198,62 +1207,60 @@ export default function Index() {
                   {/* === FACTURES & DEVIS === */}
                   {dashboardTab === 'invoices' && (
                     <>
-                      <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center justify-between mb-6">
                         <div>
-                          <h3 className="text-xl font-semibold text-foreground tracking-tight">Factures & Devis</h3>
-                          <p className="text-xs text-muted-foreground mt-1">Gérez vos documents</p>
+                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Factures & Devis</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">Gérez vos documents</p>
                         </div>
                         <div className="flex gap-2">
-                          <button className="bg-secondary/50 text-foreground px-3.5 py-2 rounded-full text-xs font-semibold hover:bg-secondary transition-colors">Devis</button>
-                          <button className="bg-foreground text-background px-3.5 py-2 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">+ Facture</button>
+                          <button className="bg-secondary/60 text-foreground px-3.5 py-2 rounded-full text-xs font-semibold hover:bg-secondary transition-colors">Devis</button>
+                          <button className="bg-blue-500 text-white px-3.5 py-2 rounded-full text-xs font-semibold shadow-sm shadow-blue-500/25">+ Facture</button>
                         </div>
                       </div>
 
-                      {/* KPIs */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-                        <div className="rounded-2xl p-5 bg-card border border-border/15">
-                          <p className="text-[11px] text-muted-foreground mb-2">Factures</p>
-                          <p className="text-2xl font-bold text-foreground tracking-tight leading-none">24</p>
+                      {/* KPIs — colored */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/15">
+                          <p className="text-[11px] text-white/70 mb-1">Factures</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none">24</p>
                         </div>
-                        <div className="rounded-2xl p-5 bg-card border border-border/15">
-                          <p className="text-[11px] text-muted-foreground mb-2">Devis</p>
-                          <p className="text-2xl font-bold text-foreground tracking-tight leading-none">8</p>
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/15">
+                          <p className="text-[11px] text-white/70 mb-1">Devis</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none">8</p>
                         </div>
-                        <div className="rounded-2xl p-5 bg-card border border-border/15">
-                          <p className="text-[11px] text-muted-foreground mb-2">En attente</p>
-                          <p className="text-2xl font-bold text-foreground tracking-tight leading-none">680€</p>
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-orange-400 to-orange-500 text-white shadow-lg shadow-orange-500/15">
+                          <p className="text-[11px] text-white/70 mb-1">En attente</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none">680€</p>
                         </div>
-                        <div className="rounded-2xl p-5 bg-card border border-border/15">
-                          <p className="text-[11px] text-muted-foreground mb-2">Encaissé</p>
-                          <div className="flex items-baseline gap-2">
-                            <p className="text-2xl font-bold text-foreground tracking-tight leading-none">3 240€</p>
-                            <span className="text-[10px] text-emerald-600 font-medium">ce mois</span>
-                          </div>
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/15">
+                          <p className="text-[11px] text-white/70 mb-1">Encaissé</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none">3 240€</p>
                         </div>
                       </div>
 
                       {/* Segmented control */}
-                      <div className="flex gap-0 bg-secondary/40 rounded-full p-1 mb-6 w-fit">
+                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
                         <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Tout</span>
                         <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">Factures</span>
                         <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">Devis</span>
                       </div>
 
                       {/* Invoice list */}
-                      <div className="space-y-2.5">
+                      <div className="space-y-2">
                         {[
-                          { number: 'FAC-2026-012', client: 'Jean Martin', date: '10 fév', total: '89,00 €', status: 'Payé', statusColor: 'text-emerald-600 bg-emerald-50' },
-                          { number: 'FAC-2026-011', client: 'Marie Dupont', date: '8 fév', total: '159,00 €', status: 'Envoyé', statusColor: 'text-blue-600 bg-blue-50' },
-                          { number: 'DEV-2026-005', client: 'Pierre Bernard', date: '5 fév', total: '320,00 €', status: 'En attente', statusColor: 'text-orange-600 bg-orange-50' },
-                          { number: 'FAC-2026-010', client: 'Sophie Leroy', date: '3 fév', total: '65,00 €', status: 'Payé', statusColor: 'text-emerald-600 bg-emerald-50' },
+                          { number: 'FAC-2026-012', client: 'Jean Martin', date: '10 fév', total: '89,00 €', status: 'Payé', statusBg: 'bg-emerald-500' },
+                          { number: 'FAC-2026-011', client: 'Marie Dupont', date: '8 fév', total: '159,00 €', status: 'Envoyé', statusBg: 'bg-blue-500' },
+                          { number: 'DEV-2026-005', client: 'Pierre Bernard', date: '5 fév', total: '320,00 €', status: 'En attente', statusBg: 'bg-orange-500' },
+                          { number: 'FAC-2026-010', client: 'Sophie Leroy', date: '3 fév', total: '65,00 €', status: 'Payé', statusBg: 'bg-emerald-500' },
                         ].map((inv, i) => (
-                          <div key={i} className="flex items-center gap-4 bg-card rounded-2xl px-4 py-4 border border-border/15 hover:border-border/30 transition-all cursor-pointer">
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl px-4 py-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer">
+                            <div className={`w-2 h-8 rounded-full ${inv.statusBg}`} />
                             <div className="flex-1 min-w-0">
                               <p className="text-[13px] font-semibold text-foreground">{inv.number}</p>
                               <p className="text-[11px] text-muted-foreground mt-0.5">{inv.client} · {inv.date}</p>
                             </div>
-                            <span className="text-[13px] font-semibold text-foreground tabular-nums">{inv.total}</span>
-                            <span className={`text-[10px] px-2.5 py-1 rounded-full font-medium ${inv.statusColor}`}>{inv.status}</span>
+                            <span className="text-[13px] font-bold text-foreground tabular-nums">{inv.total}</span>
+                            <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold text-white ${inv.statusBg}`}>{inv.status}</span>
                           </div>
                         ))}
                       </div>
@@ -1263,105 +1270,116 @@ export default function Index() {
                   {/* === STATISTIQUES === */}
                   {dashboardTab === 'stats' && (
                     <>
-                      {/* Month navigation */}
                       <div className="flex items-center justify-between mb-6">
-                        <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
-                          <ChevronLeft className="w-4 h-4" />
-                        </button>
-                        <h3 className="text-lg font-semibold text-foreground tracking-tight">Février 2026</h3>
-                        <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
-                          <ChevronRight className="w-4 h-4" />
-                        </button>
+                        <div>
+                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Statistiques</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">Vue d'ensemble</p>
+                        </div>
+                        <div className="flex gap-0 bg-secondary/50 rounded-full p-1">
+                          <span className="text-[11px] font-medium text-muted-foreground px-3.5 py-1.5 rounded-full cursor-pointer">7j</span>
+                          <span className="text-[11px] font-semibold bg-card shadow-sm px-3.5 py-1.5 rounded-full">30j</span>
+                          <span className="text-[11px] font-medium text-muted-foreground px-3.5 py-1.5 rounded-full cursor-pointer">12m</span>
+                        </div>
                       </div>
 
-                      {/* KPIs — 2x2 grid like reference */}
-                      <div className="grid grid-cols-2 gap-3 mb-6">
-                        <div className="rounded-2xl p-5 bg-card border border-border/30">
-                          <p className="text-[12px] text-muted-foreground mb-1">Réservations</p>
-                          <div className="flex items-baseline gap-3">
-                            <p className="text-3xl font-bold text-foreground tracking-tight leading-none">24</p>
-                            <span className="text-[11px] text-emerald-600 font-semibold">↑12%</span>
+                      {/* KPIs — colorful cards */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                        {[
+                          { value: '4 850€', label: 'Chiffre d\'affaires', change: '+18%', gradient: 'from-emerald-500 to-emerald-600', shadow: 'shadow-emerald-500/15' },
+                          { value: '127', label: 'Réservations', change: '+12%', gradient: 'from-blue-500 to-blue-600', shadow: 'shadow-blue-500/15' },
+                          { value: '89', label: 'Clients actifs', change: '+5', gradient: 'from-purple-500 to-purple-600', shadow: 'shadow-purple-500/15' },
+                          { value: '54€', label: 'Panier moyen', change: '+3€', gradient: 'from-orange-400 to-orange-500', shadow: 'shadow-orange-400/15' },
+                        ].map((stat, i) => (
+                          <div key={i} className={`rounded-2xl p-4 bg-gradient-to-br ${stat.gradient} text-white shadow-lg ${stat.shadow}`}>
+                            <p className="text-[11px] text-white/70 mb-1">{stat.label}</p>
+                            <p className="text-xl font-bold tracking-tight leading-none">{stat.value}</p>
+                            <p className="text-[10px] text-white/80 font-semibold mt-2">{stat.change}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Revenue Chart — Apple-style with vivid green gradient */}
+                      <div className="bg-card rounded-2xl p-5 mb-4 border border-border/15 shadow-sm">
+                        <div className="flex items-center justify-between mb-5">
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">Chiffre d'affaires</p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">Évolution sur 6 mois</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-lg font-bold text-foreground tracking-tight">4 850€</p>
+                            <p className="text-[10px] text-emerald-600 font-semibold">+18% vs mois dernier</p>
                           </div>
                         </div>
-                        <div className="rounded-2xl p-5 bg-card border border-border/30">
-                          <p className="text-[12px] text-muted-foreground mb-1">CA</p>
-                          <div className="flex items-baseline gap-3">
-                            <p className="text-3xl font-bold text-foreground tracking-tight leading-none">8 450€</p>
-                            <span className="text-[11px] text-emerald-600 font-semibold">↑18%</span>
+                        <div className="relative h-36">
+                          <svg viewBox="0 0 300 120" className="w-full h-full" preserveAspectRatio="none">
+                            <defs>
+                              <linearGradient id="revenueGrad2" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stopColor="#10B981" stopOpacity="0.35" />
+                                <stop offset="60%" stopColor="#10B981" stopOpacity="0.08" />
+                                <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
+                              </linearGradient>
+                            </defs>
+                            {[30, 60, 90].map(y => (
+                              <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="hsl(var(--border))" strokeWidth="0.3" />
+                            ))}
+                            <path d="M0,95 C25,88 40,78 60,72 C80,66 95,70 120,62 C145,54 160,48 180,40 C200,32 220,25 240,20 C260,15 280,12 300,8 L300,120 L0,120 Z" fill="url(#revenueGrad2)" />
+                            <path d="M0,95 C25,88 40,78 60,72 C80,66 95,70 120,62 C145,54 160,48 180,40 C200,32 220,25 240,20 C260,15 280,12 300,8" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" />
+                            <circle cx="300" cy="8" r="4" fill="#10B981" />
+                            <circle cx="300" cy="8" r="8" fill="none" stroke="#10B981" strokeWidth="1.5" strokeOpacity="0.25" />
+                          </svg>
+                          <div className="flex justify-between mt-3">
+                            {['Sept', 'Oct', 'Nov', 'Déc', 'Jan', 'Fév'].map(m => (
+                              <span key={m} className="text-[10px] text-muted-foreground font-medium">{m}</span>
+                            ))}
                           </div>
                         </div>
-                        <div className="rounded-2xl p-5 bg-card border border-border/30">
-                          <p className="text-[12px] text-muted-foreground mb-1">Clients</p>
-                          <p className="text-3xl font-bold text-foreground tracking-tight leading-none">18</p>
-                        </div>
-                        <div className="rounded-2xl p-5 bg-card border border-border/30">
-                          <p className="text-[12px] text-muted-foreground mb-1">Panier moyen</p>
-                          <p className="text-3xl font-bold text-foreground tracking-tight leading-none">352€</p>
-                        </div>
                       </div>
 
-                      {/* Tab control */}
-                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
-                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Évolution</span>
-                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">Services</span>
-                      </div>
-
-                      {/* Charts row — blue area + green bars like reference */}
+                      {/* Bottom row */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {/* Blue area chart - Reservations */}
-                        <div className="bg-card rounded-2xl p-5 border border-border/30">
-                          <p className="text-sm font-semibold text-foreground mb-4">Réservations par semaine</p>
-                          <div className="relative h-32">
-                            <svg viewBox="0 0 300 120" className="w-full h-full" preserveAspectRatio="none">
-                              <defs>
-                                <linearGradient id="blueAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                                  <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.25" />
-                                  <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.02" />
-                                </linearGradient>
-                              </defs>
-                              {[30, 60, 90].map(y => (
-                                <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="hsl(var(--border))" strokeWidth="0.3" />
-                              ))}
-                              <path d="M0,100 C30,95 50,90 75,85 C100,80 120,70 150,55 C180,40 200,35 225,30 C250,28 275,25 300,22 L300,120 L0,120 Z" fill="url(#blueAreaGrad)" />
-                              <path d="M0,100 C30,95 50,90 75,85 C100,80 120,70 150,55 C180,40 200,35 225,30 C250,28 275,25 300,22" fill="none" stroke="#3B82F6" strokeWidth="2.5" strokeLinecap="round" />
-                              <circle cx="300" cy="22" r="4" fill="#3B82F6" />
-                            </svg>
-                            <div className="absolute left-0 top-0 h-full flex flex-col justify-between py-1">
-                              {['8', '6', '4', '2'].map(v => (
-                                <span key={v} className="text-[9px] text-muted-foreground tabular-nums">{v}</span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Green bar chart */}
-                        <div className="bg-card rounded-2xl p-5 border border-border/15">
-                          <div className="flex items-center justify-between mb-4">
-                            <p className="text-sm font-semibold text-foreground">Chiffre d'affaires par mois</p>
-                            <span className="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full">+18%</span>
-                          </div>
-                          <div className="relative h-32 flex items-end gap-2 justify-between px-1">
+                        <div className="bg-card rounded-2xl p-5 border border-border/15 shadow-sm">
+                          <p className="text-sm font-semibold text-foreground mb-4">Services</p>
+                          <div className="space-y-3">
                             {[
-                              { month: 'S', h: 40 },
-                              { month: 'O', h: 45 },
-                              { month: 'N', h: 42 },
-                              { month: 'D', h: 50 },
-                              { month: 'J', h: 65 },
-                              { month: 'F', h: 85 },
-                            ].map((bar, i) => (
-                              <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
-                                <div 
-                                  className={`w-full rounded-lg transition-all ${i === 5 ? 'bg-emerald-500' : 'bg-emerald-400/60'}`}
-                                  style={{ height: `${bar.h}%` }}
-                                />
-                                <span className="text-[9px] text-muted-foreground font-medium">{bar.month}</span>
+                              { name: 'Nettoyage Complet', pct: 38, amount: '1 843€', color: '#10B981' },
+                              { name: 'Express', pct: 28, amount: '1 358€', color: '#3B82F6' },
+                              { name: 'Rénovation', pct: 20, amount: '970€', color: '#F59E0B' },
+                              { name: 'Prestations perso', pct: 14, amount: '679€', color: '#8B5CF6' },
+                            ].map((s, i) => (
+                              <div key={i}>
+                                <div className="flex items-center justify-between mb-1.5">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }} />
+                                    <span className="text-[11px] text-foreground font-medium">{s.name}</span>
+                                  </div>
+                                  <span className="text-[11px] text-muted-foreground tabular-nums font-medium">{s.pct}%</span>
+                                </div>
+                                <div className="w-full h-2.5 bg-secondary/40 rounded-full overflow-hidden">
+                                  <div className="h-full rounded-full transition-all" style={{ width: `${s.pct}%`, backgroundColor: s.color }} />
+                                </div>
                               </div>
                             ))}
-                            <div className="absolute left-0 top-0 h-full flex flex-col justify-between py-1">
-                              {['10k', '7.5k', '5k', '2.5k', '0'].map(v => (
-                                <span key={v} className="text-[8px] text-muted-foreground/50 tabular-nums">{v}</span>
-                              ))}
-                            </div>
+                          </div>
+                        </div>
+                        <div className="bg-card rounded-2xl p-5 border border-border/15 shadow-sm">
+                          <p className="text-sm font-semibold text-foreground mb-4">Top clients</p>
+                          <div className="space-y-3">
+                            {[
+                              { name: 'Sophie Leroy', visits: 15, total: '1 420€', initials: 'SL', avatarBg: 'bg-violet-500' },
+                              { name: 'Jean Martin', visits: 12, total: '1 068€', initials: 'JM', avatarBg: 'bg-blue-500' },
+                              { name: 'Marie Dupont', visits: 8, total: '520€', initials: 'MD', avatarBg: 'bg-pink-500' },
+                            ].map((c, i) => (
+                              <div key={i} className="flex items-center gap-3">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0 ${c.avatarBg}`}>
+                                  {c.initials}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-[12px] font-semibold text-foreground truncate">{c.name}</p>
+                                  <p className="text-[10px] text-muted-foreground">{c.visits} visites</p>
+                                </div>
+                                <span className="text-[12px] font-bold text-foreground tabular-nums">{c.total}</span>
+                              </div>
+                            ))}
                           </div>
                         </div>
                       </div>
@@ -1377,8 +1395,8 @@ export default function Index() {
                           <div className="flex items-center justify-between mb-3">
                             <span className="text-sm font-semibold text-foreground">Aperçu</span>
                             <div className="flex gap-1">
-                              <div className="w-7 h-7 bg-foreground rounded-lg flex items-center justify-center">
-                                <Phone className="w-3.5 h-3.5 text-background" />
+                              <div className="w-7 h-7 bg-blue-500 rounded-lg flex items-center justify-center shadow-sm shadow-blue-500/25">
+                                <Phone className="w-3.5 h-3.5 text-white" />
                               </div>
                               <div className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center">
                                 <svg className="w-3.5 h-3.5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1391,53 +1409,33 @@ export default function Index() {
                           
                           <div className="flex-1 bg-secondary/20 rounded-2xl overflow-hidden border border-border/15 shadow-sm">
                             <div className="bg-card h-full overflow-y-auto">
-                              <div className="h-24 relative bg-foreground">
-                                <img src={mockupBanner} alt="Preview" className="w-full h-full object-cover opacity-80" />
-                                <div className="absolute left-4 -bottom-6">
-                                  <div className="w-14 h-14 rounded-2xl shadow-lg ring-4 ring-card overflow-hidden bg-foreground">
+                              <div className="h-28 relative">
+                                <img src={mockupBanner} alt="Preview" className="w-full h-full object-cover" />
+                                <div className="absolute left-1/2 -translate-x-1/2 -bottom-7">
+                                  <div className="w-16 h-16 rounded-2xl shadow-lg ring-4 ring-card overflow-hidden">
                                     <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
                                   </div>
                                 </div>
-                                <div className="absolute right-3 -bottom-5">
-                                  <div className="w-9 h-9 bg-secondary/80 rounded-full flex items-center justify-center border border-border/20 shadow-sm">
-                                    <Phone className="w-3.5 h-3.5 text-foreground" />
-                                  </div>
-                                </div>
                               </div>
-                              <div className="px-4 pt-9 pb-4">
-                                <h3 className="text-sm font-bold text-foreground mb-0.5">GOCLEANING</h3>
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-[9px] text-emerald-600 font-semibold">Ouvert</span>
-                                  <span className="text-[9px] text-muted-foreground">· Ferme à 19h</span>
+                              <div className="px-4 pt-10 pb-4">
+                                <h3 className="text-sm font-bold text-foreground text-center mb-0.5">GOCLEANING</h3>
+                                <p className="text-[9px] text-muted-foreground text-center mb-2">Nettoyage automobile premium</p>
+                                <div className="flex justify-center mb-3">
+                                  <span className="inline-flex items-center gap-1 text-[8px] bg-emerald-500 text-white px-2.5 py-0.5 rounded-full font-semibold">
+                                    <span className="w-1 h-1 bg-white rounded-full" />Ouvert
+                                  </span>
                                 </div>
-                                <div className="flex items-center gap-1 mb-3">
-                                  {Array.from({ length: 5 }).map((_, i) => (
-                                    <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
-                                  ))}
-                                  <span className="text-[10px] text-muted-foreground ml-1">4.9</span>
-                                </div>
-                                
-                                {/* Gallery grid like reference */}
-                                <p className="text-[10px] font-semibold text-foreground mb-2">Nos formules</p>
                                 <div className="grid grid-cols-2 gap-1.5 mb-3">
-                                  <div className="rounded-xl overflow-hidden relative aspect-[4/3]">
-                                    <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                                    <div className="absolute bottom-2 left-2">
-                                      <p className="text-[9px] text-white font-medium">Express</p>
-                                      <p className="text-[11px] text-white font-bold">35€</p>
-                                    </div>
+                                  <div className="bg-secondary/30 rounded-xl p-2.5 text-left border border-border/10">
+                                    <p className="text-[9px] font-medium">Express</p>
+                                    <p className="text-[12px] font-bold text-foreground">35€</p>
                                   </div>
-                                  <div className="rounded-xl overflow-hidden relative aspect-[4/3]">
-                                    <img src={mockupBanner} alt="" className="w-full h-full object-cover" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                                    <div className="absolute bottom-2 left-2">
-                                      <p className="text-[9px] text-white font-medium">Complet</p>
-                                      <p className="text-[11px] text-white font-bold">89€</p>
-                                    </div>
+                                  <div className="bg-secondary/30 rounded-xl p-2.5 text-left border border-border/10">
+                                    <p className="text-[9px] font-medium">Complet</p>
+                                    <p className="text-[12px] font-bold text-foreground">89€</p>
                                   </div>
                                 </div>
-                                <button className="w-full bg-foreground text-background py-2.5 rounded-xl text-[10px] font-semibold">Réserver</button>
+                                <button className="w-full bg-blue-500 text-white py-2.5 rounded-xl text-[10px] font-semibold shadow-sm shadow-blue-500/25">Réserver</button>
                               </div>
                             </div>
                           </div>
@@ -1455,43 +1453,30 @@ export default function Index() {
                                 { id: 'seo', label: 'SEO' },
                               ].map(tab => (
                                 <button key={tab.id} onClick={() => setMockupTab(tab.id as any)}
-                                  className={`flex-1 py-3 text-[11px] font-semibold text-center transition-colors border-b-2 ${mockupTab === tab.id ? 'border-foreground text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+                                  className={`flex-1 py-3 text-[11px] font-semibold text-center transition-colors border-b-2 ${mockupTab === tab.id ? 'border-blue-500 text-blue-500' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
                                 >
                                   {tab.label}
                                 </button>
                               ))}
                             </div>
-                            <div className="p-4 space-y-4 overflow-y-auto max-h-[320px]">
+                            <div className="p-4 space-y-4 overflow-y-auto max-h-[280px]">
                               {mockupTab === 'design' && (
                                 <>
                                   <div>
-                                    <p className="text-[12px] font-semibold text-foreground mb-2">Bannière</p>
-                                    <div className="rounded-xl overflow-hidden mb-3 shadow-sm">
-                                      <img src={mockupCarCleaning} alt="Banner" className="w-full h-28 object-cover" />
+                                    <p className="text-[11px] font-semibold text-foreground mb-2">Bannière</p>
+                                    <div className="rounded-xl overflow-hidden mb-2.5 shadow-sm">
+                                      <img src={mockupBanner} alt="Banner" className="w-full h-16 object-cover" />
                                     </div>
-                                    <button className="inline-flex items-center gap-2 text-[11px] font-semibold text-foreground bg-secondary px-4 py-2 rounded-full hover:bg-secondary/80 transition-colors">
-                                      <Upload className="w-3.5 h-3.5" />
-                                      Changer
-                                    </button>
+                                    <button className="text-[11px] font-semibold text-blue-500 bg-blue-50 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors">Modifier</button>
                                   </div>
                                   <div>
-                                    <p className="text-[12px] font-semibold text-foreground mb-3">Couleurs</p>
-                                    <div className="flex gap-4 mb-3">
+                                    <p className="text-[11px] font-semibold text-foreground mb-2.5">Couleur principale</p>
+                                    <div className="flex gap-3">
                                       {[
-                                        { label: 'Bleu', colors: ['#60A5FA', '#3B82F6'] },
-                                        { label: 'Rouge', colors: ['#F87171', '#EF4444'] },
-                                        { label: 'Vert', colors: ['#34D399', '#10B981'] },
-                                        { label: 'Violet', colors: ['#A78BFA', '#8B5CF6'] },
-                                        { label: 'Orange', colors: ['#FBBF24', '#F59E0B'] },
-                                      ].map((palette, i) => (
-                                        <div key={i} className="flex flex-col items-center gap-1.5 cursor-pointer group">
-                                          <div className={`flex gap-0.5 p-1 rounded-full transition-all ${i === 2 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background' : 'group-hover:scale-110'}`}>
-                                            {palette.colors.map((c, j) => (
-                                              <div key={j} className="w-4 h-4 rounded-full" style={{ backgroundColor: c }} />
-                                            ))}
-                                          </div>
-                                          <span className="text-[9px] text-muted-foreground font-medium">{palette.label}</span>
-                                        </div>
+                                        '#3B82F6', '#EF4444', '#10B981', '#8B5CF6', '#F59E0B', '#EC4899',
+                                      ].map((c, i) => (
+                                        <div key={i} className={`w-8 h-8 rounded-full cursor-pointer transition-all shadow-sm ${i === 2 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background scale-110' : 'hover:scale-110'}`}
+                                          style={{ backgroundColor: c }} />
                                       ))}
                                     </div>
                                   </div>
@@ -1552,32 +1537,32 @@ export default function Index() {
                   {/* === FORMULES === */}
                   {dashboardTab === 'formules' && (
                     <>
-                      <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center justify-between mb-6">
                         <div>
-                          <h3 className="text-xl font-semibold text-foreground tracking-tight">Formules & Prestations</h3>
-                          <p className="text-xs text-muted-foreground mt-1">Gérez vos offres</p>
+                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Formules & Prestations</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">Gérez vos offres</p>
                         </div>
-                        <button className="bg-foreground text-background px-4 py-2 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
                           + Ajouter
                         </button>
                       </div>
 
-                      <p className="text-xs font-semibold text-foreground mb-3">Formules</p>
-                      <div className="space-y-2.5 mb-8">
+                      <p className="text-xs font-semibold text-foreground mb-2.5">Formules</p>
+                      <div className="space-y-2 mb-6">
                         {[
-                          { name: 'Lavage Express', desc: 'Extérieur uniquement · 45min', price: '35€' },
-                          { name: 'Nettoyage Complet', desc: 'Intérieur + extérieur · 1h30', price: '89€' },
-                          { name: 'Rénovation Premium', desc: 'Polish + céramique · 3h', price: '159€' },
+                          { name: 'Lavage Express', desc: 'Extérieur uniquement · 45min', price: '35€', color: 'from-blue-500 to-blue-600' },
+                          { name: 'Nettoyage Complet', desc: 'Intérieur + extérieur · 1h30', price: '89€', color: 'from-emerald-500 to-emerald-600' },
+                          { name: 'Rénovation Premium', desc: 'Polish + céramique · 3h', price: '159€', color: 'from-purple-500 to-purple-600' },
                         ].map((pack, i) => (
-                          <div key={i} className="flex items-center gap-4 bg-card rounded-2xl p-4 border border-border/15 hover:border-border/30 transition-all cursor-pointer group">
-                            <div className="w-10 h-10 bg-secondary/50 rounded-xl flex items-center justify-center shrink-0">
-                              <Car className="w-4 h-4 text-muted-foreground" />
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer group">
+                            <div className={`w-10 h-10 bg-gradient-to-br ${pack.color} rounded-xl flex items-center justify-center shrink-0 shadow-sm`}>
+                              <Car className="w-4 h-4 text-white" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-[13px] font-semibold text-foreground">{pack.name}</p>
                               <p className="text-[11px] text-muted-foreground mt-0.5">{pack.desc}</p>
                             </div>
-                            <span className="text-[14px] font-semibold text-foreground tabular-nums">{pack.price}</span>
+                            <span className="text-[14px] font-bold text-foreground tabular-nums">{pack.price}</span>
                             <div className="w-9 h-5 bg-emerald-500 rounded-full relative shrink-0 cursor-pointer">
                               <div className="absolute right-[3px] top-[3px] w-3.5 h-3.5 bg-white rounded-full shadow-sm" />
                             </div>
@@ -1586,22 +1571,22 @@ export default function Index() {
                       </div>
 
                       <p className="text-xs font-semibold text-foreground mb-1.5">Prestations personnalisées</p>
-                      <p className="text-[11px] text-muted-foreground mb-3">Tarifs sur mesure par client</p>
-                      <div className="space-y-2.5">
+                      <p className="text-[11px] text-muted-foreground mb-2.5">Tarifs sur mesure par client</p>
+                      <div className="space-y-2">
                         {[
-                          { name: 'Nettoyage canapé 3 places', client: 'Marie Dupont', duration: '2h', price: '120€' },
-                          { name: 'Détachage moquette salon', client: 'Pierre Bernard', duration: '1h30', price: '80€' },
+                          { name: 'Nettoyage canapé 3 places', client: 'Marie Dupont', duration: '2h', price: '120€', avatarBg: 'bg-pink-500', initials: 'MD' },
+                          { name: 'Détachage moquette salon', client: 'Pierre Bernard', duration: '1h30', price: '80€', avatarBg: 'bg-amber-500', initials: 'PB' },
                         ].map((service, i) => (
-                          <div key={i} className="flex items-center gap-4 bg-card rounded-2xl p-4 border border-border/15 hover:border-border/30 transition-all cursor-pointer group">
-                            <div className="w-10 h-10 rounded-full bg-secondary/50 flex items-center justify-center text-[11px] font-semibold text-muted-foreground shrink-0">
-                              {service.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer group">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 ${service.avatarBg}`}>
+                              {service.initials}
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-[13px] font-semibold text-foreground">{service.name}</p>
                               <p className="text-[11px] text-muted-foreground mt-0.5">Pour {service.client} · {service.duration}</p>
                             </div>
-                            <span className="text-[14px] font-semibold text-foreground tabular-nums">{service.price}</span>
-                            <ChevronRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-muted-foreground/50 transition-colors shrink-0" />
+                            <span className="text-[14px] font-bold text-foreground tabular-nums">{service.price}</span>
+                            <ChevronRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-muted-foreground transition-colors shrink-0" />
                           </div>
                         ))}
                       </div>
