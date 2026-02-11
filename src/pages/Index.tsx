@@ -24,6 +24,7 @@ export default function Index() {
   const [mobileTab, setMobileTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings' | 'dispo'>('mypage');
   const [mockupTab, setMockupTab] = useState<'design' | 'formules' | 'elements' | 'seo'>('design');
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
+  const [mockupPageStyle, setMockupPageStyle] = useState<'banner' | 'minimal'>('banner');
   const { toast } = useToast();
 
   const handleStartTrial = async () => {
@@ -1548,55 +1549,108 @@ export default function Index() {
                               <div className="absolute top-3 left-1/2 -translate-x-1/2 w-24 h-5 bg-foreground rounded-full z-10" />
                               
                               <div className="rounded-[2rem] overflow-hidden bg-card h-[420px] sm:h-[480px] overflow-y-auto">
-                                {/* Banner */}
-                                <div className="h-28 relative">
-                                  <img src={mockupBanner} alt="Preview" className="w-full h-full object-cover" />
-                                  <div className="absolute top-4 left-4">
-                                    <div className="w-10 h-10 rounded-xl shadow-lg overflow-hidden bg-card">
-                                      <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
-                                    </div>
-                                  </div>
-                                  <div className="absolute top-4 right-4">
-                                    <div className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm">
-                                      <Phone className="w-3.5 h-3.5 text-foreground" />
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                {/* Content */}
-                                <div className="px-5 pt-5 pb-6">
-                                  <h3 className="text-[15px] font-bold text-foreground text-center mb-1 tracking-tight">GOCLEANING</h3>
-                                  <div className="flex items-center justify-center gap-2 mb-1.5">
-                                    <span className="text-[11px] text-emerald-500 font-semibold">Ouvert</span>
-                                    <span className="text-[10px] text-muted-foreground">· Ferme à 19h</span>
-                                  </div>
-                                  <div className="flex items-center justify-center gap-0.5 mb-5">
-                                    {[...Array(5)].map((_, i) => (
-                                      <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
-                                    ))}
-                                    <span className="text-[10px] text-muted-foreground ml-1 font-medium">4.9</span>
-                                  </div>
-                                  
-                                  {/* Formules as visual cards */}
-                                  <p className="text-[11px] font-semibold text-foreground mb-2.5 tracking-tight">Nos formules</p>
-                                  <div className="grid grid-cols-2 gap-2 mb-4">
-                                    {[
-                                      { name: 'Express', price: '35€' },
-                                      { name: 'Complet', price: '89€' },
-                                    ].map((f, i) => (
-                                      <div key={i} className="rounded-xl overflow-hidden relative h-20 shadow-sm">
-                                        <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                                        <div className="absolute bottom-2 left-2.5">
-                                          <p className="text-[10px] text-white font-medium">{f.name}</p>
-                                          <p className="text-[12px] text-white font-bold">{f.price}</p>
+                                {mockupPageStyle === 'banner' ? (
+                                  <>
+                                    {/* Banner header */}
+                                    <div className="h-28 relative">
+                                      <img src={mockupBanner} alt="Preview" className="w-full h-full object-cover" />
+                                      <div className="absolute top-4 left-4">
+                                        <div className="w-10 h-10 rounded-xl shadow-lg overflow-hidden bg-card">
+                                          <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
                                         </div>
                                       </div>
-                                    ))}
-                                  </div>
-                                  
-                                  <button className="w-full bg-foreground text-background py-3 rounded-2xl text-[12px] font-semibold shadow-sm">Réserver</button>
-                                </div>
+                                      <div className="absolute top-4 right-4">
+                                        <div className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm">
+                                          <Phone className="w-3.5 h-3.5 text-foreground" />
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="px-5 pt-5 pb-6">
+                                      <h3 className="text-[15px] font-bold text-foreground text-center mb-1 tracking-tight">GOCLEANING</h3>
+                                      <div className="flex items-center justify-center gap-2 mb-1.5">
+                                        <span className="text-[11px] text-emerald-500 font-semibold">Ouvert</span>
+                                        <span className="text-[10px] text-muted-foreground">· Ferme à 19h</span>
+                                      </div>
+                                      <div className="flex items-center justify-center gap-0.5 mb-5">
+                                        {[...Array(5)].map((_, i) => (
+                                          <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                                        ))}
+                                        <span className="text-[10px] text-muted-foreground ml-1 font-medium">4.9</span>
+                                      </div>
+                                      
+                                      <p className="text-[11px] font-semibold text-foreground mb-2.5 tracking-tight">Nos formules</p>
+                                      <div className="grid grid-cols-2 gap-2 mb-4">
+                                        {[
+                                          { name: 'Express', price: '35€' },
+                                          { name: 'Complet', price: '89€' },
+                                        ].map((f, i) => (
+                                          <div key={i} className="rounded-xl overflow-hidden relative h-20 shadow-sm">
+                                            <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                                            <div className="absolute bottom-2 left-2.5">
+                                              <p className="text-[10px] text-white font-medium">{f.name}</p>
+                                              <p className="text-[12px] text-white font-bold">{f.price}</p>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                      
+                                      <button className="w-full bg-foreground text-background py-3 rounded-2xl text-[12px] font-semibold shadow-sm">Réserver</button>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    {/* Minimal header */}
+                                    <div className="flex items-center justify-between px-4 py-3 border-b border-border/10">
+                                      <div className="flex items-center gap-2.5">
+                                        <div className="w-8 h-8 rounded-lg overflow-hidden shadow-sm">
+                                          <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
+                                        </div>
+                                        <span className="text-[12px] font-bold text-foreground tracking-tight">GOCLEANING</span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <div className="w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center">
+                                          <Phone className="w-3 h-3 text-white" />
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="px-5 pt-5 pb-6">
+                                      <h3 className="text-[17px] font-bold text-foreground mb-1 tracking-tight">GOCLEANING</h3>
+                                      <p className="text-[10px] text-muted-foreground mb-2">Nettoyage automobile premium</p>
+                                      <div className="flex items-center gap-2 mb-1.5">
+                                        <span className="text-[11px] text-emerald-500 font-semibold">Ouvert</span>
+                                        <span className="text-[10px] text-muted-foreground">· Ferme à 19h</span>
+                                      </div>
+                                      <div className="flex items-center gap-0.5 mb-5">
+                                        {[...Array(5)].map((_, i) => (
+                                          <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                                        ))}
+                                        <span className="text-[10px] text-muted-foreground ml-1 font-medium">4.9</span>
+                                      </div>
+                                      
+                                      <p className="text-[11px] font-semibold text-foreground mb-2.5 tracking-tight">Nos formules</p>
+                                      <div className="grid grid-cols-2 gap-2 mb-4">
+                                        {[
+                                          { name: 'Express', price: '35€' },
+                                          { name: 'Complet', price: '89€' },
+                                        ].map((f, i) => (
+                                          <div key={i} className="rounded-xl overflow-hidden relative h-20 shadow-sm">
+                                            <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                                            <div className="absolute bottom-2 left-2.5">
+                                              <p className="text-[10px] text-white font-medium">{f.name}</p>
+                                              <p className="text-[12px] text-white font-bold">{f.price}</p>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                      
+                                      <button className="w-full bg-foreground text-background py-3 rounded-2xl text-[12px] font-semibold shadow-sm">Réserver</button>
+                                    </div>
+                                  </>
+                                )}
                               </div>
                               
                               {/* Home indicator */}
@@ -1688,20 +1742,20 @@ export default function Index() {
                                 <div>
                                   <p className="text-sm font-semibold text-foreground mb-3">Style de page</p>
                                   <div className="grid grid-cols-2 gap-3">
-                                    <div className="border border-border/20 rounded-2xl p-4 cursor-pointer hover:border-border/40 transition-colors">
+                                    <div onClick={() => setMockupPageStyle('banner')} className={`rounded-2xl p-4 cursor-pointer transition-colors ${mockupPageStyle === 'banner' ? 'border-2 border-foreground' : 'border border-border/20 hover:border-border/40'}`}>
                                       <div className="h-16 bg-secondary/30 rounded-xl mb-2 overflow-hidden">
                                         <div className="w-full h-8 bg-secondary/60" />
                                         <div className="flex justify-center -mt-3">
                                           <div className="w-6 h-6 rounded-lg bg-secondary border-2 border-card" />
                                         </div>
                                       </div>
-                                      <p className="text-[11px] font-medium text-center text-muted-foreground">Banner</p>
+                                      <p className={`text-[11px] text-center ${mockupPageStyle === 'banner' ? 'font-semibold text-foreground' : 'font-medium text-muted-foreground'}`}>Banner</p>
                                     </div>
-                                    <div className="border-2 border-foreground rounded-2xl p-4 cursor-pointer">
+                                    <div onClick={() => setMockupPageStyle('minimal')} className={`rounded-2xl p-4 cursor-pointer transition-colors ${mockupPageStyle === 'minimal' ? 'border-2 border-foreground' : 'border border-border/20 hover:border-border/40'}`}>
                                       <div className="h-16 bg-foreground rounded-xl mb-2 flex items-center justify-center">
                                         <div className="w-10 h-1 bg-white/40 rounded-full" />
                                       </div>
-                                      <p className="text-[11px] font-semibold text-center text-foreground">Minimal</p>
+                                      <p className={`text-[11px] text-center ${mockupPageStyle === 'minimal' ? 'font-semibold text-foreground' : 'font-medium text-muted-foreground'}`}>Minimal</p>
                                     </div>
                                   </div>
                                 </div>
