@@ -82,7 +82,7 @@ serve(async (req) => {
 
     if (customers.data.length === 0) {
       logStep("No customer found, user is not subscribed");
-      return new Response(JSON.stringify({ subscribed: false }), {
+      return new Response(JSON.stringify({ subscribed: false, had_trial: false }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       });
@@ -147,10 +147,15 @@ serve(async (req) => {
       }
     }
 
+    // had_trial = true if the user has ever had any subscription (even canceled)
+    const hadTrial = subscriptions.data.length > 0;
+    logStep("Had trial check", { hadTrial, totalSubscriptions: subscriptions.data.length });
+
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
       product_id: productId,
-      subscription_end: subscriptionEnd
+      subscription_end: subscriptionEnd,
+      had_trial: hadTrial,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
