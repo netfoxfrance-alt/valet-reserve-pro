@@ -13,11 +13,25 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
+export interface RecognizedClient {
+  client_id: string;
+  first_name: string;
+  client_name: string;
+  client_email: string | null;
+  client_phone: string | null;
+  client_address: string | null;
+  service_id: string | null;
+  service_name: string | null;
+  service_price: number | null;
+  service_duration_minutes: number | null;
+}
+
 interface CenterLandingProps {
   center: Center;
   packs: Pack[];
   onStartBooking: () => void;
   onSelectPack?: (pack: Pack) => void;
+  onRecognizedClient?: (client: RecognizedClient) => void;
   hasPacks: boolean;
   isPro: boolean;
   isPreview?: boolean;
@@ -37,7 +51,7 @@ const DEFAULT_HOURS = [
   { day: 0, start: '09:00', end: '19:00', enabled: false },
 ];
 
-export function CenterLanding({ center, packs, onStartBooking, onSelectPack, hasPacks, isPro, isPreview = false }: CenterLandingProps) {
+export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onRecognizedClient, hasPacks, isPro, isPreview = false }: CenterLandingProps) {
   const { toast } = useToast();
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
@@ -49,6 +63,16 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
   const [lightboxImages, setLightboxImages] = useState<string[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [hoursOpen, setHoursOpen] = useState(false);
+  
+  // Client recognition state
+  const [showClientLookup, setShowClientLookup] = useState(false);
+  const [lookupPhone, setLookupPhone] = useState('');
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [recognizedClient, setRecognizedClient] = useState<RecognizedClient | null>(null);
+  const [lookupNotFound, setLookupNotFound] = useState(false);
+
+  // Check if client recognition is enabled
+  const clientRecognitionEnabled = (center.customization as any)?.settings?.client_recognition !== false;
 
   // Check if center is currently open
   const now = new Date();
@@ -790,7 +814,38 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
     }
   };
 
-  // Render block by type
+  // Client phone lookup handler
+  const handleClientLookup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!lookupPhone.trim() || !center.id) return;
+    
+    setLookupLoading(true);
+    setLookupNotFound(false);
+    setRecognizedClient(null);
+    
+    try {
+      const { data, error } = await supabase.rpc('lookup_client_by_phone', {
+        p_center_id: center.id,
+        p_phone: lookupPhone.trim(),
+      });
+      
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        const client = data[0] as RecognizedClient;
+        setRecognizedClient(client);
+      } else {
+        setLookupNotFound(true);
+      }
+    } catch (err) {
+      console.error('Client lookup error:', err);
+      setLookupNotFound(true);
+    } finally {
+      setLookupLoading(false);
+    }
+  };
+
+
   const renderBlock = (block: PageBlock) => {
     switch (block.type) {
       case 'formules':
@@ -989,6 +1044,142 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, has
                 {renderBlock(block)}
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Client Recognition Section */}
+        {isPro && clientRecognitionEnabled && !recognizedClient && (
+          <div className="mb-8">
+            {!showClientLookup ? (
+              <button
+                onClick={() => setShowClientLookup(true)}
+                className="w-full py-3 px-4 rounded-2xl text-sm font-medium transition-all duration-300 hover:scale-[1.01]"
+                style={{
+                  backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+                  color: textColors.secondary,
+                  border: `1px solid ${customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'}`,
+                }}
+              >
+                🔄 Vous êtes déjà client ? Identifiez-vous
+              </button>
+            ) : (
+              <Card
+                className="p-5 rounded-2xl"
+                style={{
+                  backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
+                  borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
+                }}
+              >
+                <p className="text-sm font-medium mb-3" style={{ color: textColors.primary }}>
+                  Entrez votre numéro de téléphone
+                </p>
+                <form onSubmit={handleClientLookup} className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: textColors.secondary }} />
+                    <Input
+                      type="tel"
+                      placeholder="06 12 34 56 78"
+                      value={lookupPhone}
+                      onChange={(e) => { setLookupPhone(e.target.value); setLookupNotFound(false); }}
+                      className="pl-11 h-11 rounded-xl"
+                      style={{
+                        backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'white',
+                        borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.2)' : undefined,
+                        color: textColors.primary,
+                      }}
+                      required
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={lookupLoading || !lookupPhone.trim()}
+                    className="h-11 px-5 rounded-xl text-white font-medium"
+                    style={{ backgroundColor: customization.colors.primary }}
+                  >
+                    {lookupLoading ? '...' : 'Valider'}
+                  </Button>
+                </form>
+                {lookupNotFound && (
+                  <p className="text-sm mt-3" style={{ color: textColors.secondary }}>
+                    Numéro non reconnu. Vous pouvez réserver normalement ci-dessous.
+                  </p>
+                )}
+              </Card>
+            )}
+          </div>
+        )}
+
+        {/* Recognized Client Card */}
+        {recognizedClient && (
+          <div className="mb-8">
+            <Card
+              className="p-6 rounded-2xl"
+              style={{
+                backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
+                borderColor: customization.colors.primary + '40',
+                boxShadow: `0 0 0 1px ${customization.colors.primary}20`,
+              }}
+            >
+              <p className="text-lg font-semibold mb-1" style={{ color: textColors.primary }}>
+                Bonjour {recognizedClient.first_name} ! 👋
+              </p>
+              {recognizedClient.service_name ? (
+                <>
+                  <p className="text-sm mb-4" style={{ color: textColors.secondary }}>
+                    Votre prestation personnalisée :
+                  </p>
+                  <div
+                    className="flex items-center justify-between p-4 rounded-xl mb-4"
+                    style={{
+                      backgroundColor: customization.colors.primary + '10',
+                    }}
+                  >
+                    <div>
+                      <p className="font-semibold" style={{ color: textColors.primary }}>
+                        {recognizedClient.service_name}
+                      </p>
+                      <p className="text-sm flex items-center gap-1 mt-1" style={{ color: textColors.secondary }}>
+                        <Clock className="w-3.5 h-3.5" />
+                        {recognizedClient.service_duration_minutes} min
+                      </p>
+                    </div>
+                    <p className="text-2xl font-bold" style={{ color: customization.colors.primary }}>
+                      {recognizedClient.service_price}€
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => onRecognizedClient?.(recognizedClient)}
+                    className="w-full h-12 text-base font-semibold rounded-xl text-white"
+                    style={{ backgroundColor: customization.colors.primary }}
+                  >
+                    Choisir un créneau
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm mb-4" style={{ color: textColors.secondary }}>
+                    Choisissez votre formule ci-dessous.
+                  </p>
+                  <Button
+                    onClick={() => {
+                      onRecognizedClient?.(recognizedClient);
+                      onStartBooking();
+                    }}
+                    className="w-full h-12 text-base font-semibold rounded-xl text-white"
+                    style={{ backgroundColor: customization.colors.primary }}
+                  >
+                    Voir les formules
+                  </Button>
+                </>
+              )}
+              <button
+                onClick={() => { setRecognizedClient(null); setShowClientLookup(false); setLookupPhone(''); }}
+                className="w-full text-center text-xs mt-3 underline"
+                style={{ color: textColors.secondary }}
+              >
+                Ce n'est pas moi
+              </button>
+            </Card>
           </div>
         )}
 

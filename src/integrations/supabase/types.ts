@@ -947,6 +947,21 @@ export type Database = {
         }
         Returns: boolean
       }
+      lookup_client_by_phone: {
+        Args: { p_center_id: string; p_phone: string }
+        Returns: {
+          client_address: string
+          client_email: string
+          client_id: string
+          client_name: string
+          client_phone: string
+          first_name: string
+          service_duration_minutes: number
+          service_id: string
+          service_name: string
+          service_price: number
+        }[]
+      }
       normalize_phone: { Args: { phone: string }; Returns: string }
     }
     Enums: {

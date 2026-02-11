@@ -229,12 +229,14 @@ export function useCreateAppointment() {
     appointment_date: string;
     appointment_time: string;
     notes?: string;
-    // Duration in text format like "1h", "1h30", "2h" - will be converted to minutes
     duration?: string;
-    // Additional data for email
     pack_name?: string;
     variant_name?: string;
     price?: number;
+    // Custom service fields for recognized clients
+    custom_service_id?: string | null;
+    client_id?: string | null;
+    custom_price?: number | null;
   }) => {
     setLoading(true);
     
@@ -261,8 +263,9 @@ export function useCreateAppointment() {
       .from('appointments')
       .insert({
         center_id: data.center_id,
-        pack_id: data.pack_id,
-        client_id: null, // Sera associé plus tard par le pro si besoin
+        pack_id: data.pack_id || null,
+        client_id: data.client_id || null,
+        custom_service_id: data.custom_service_id || null,
         client_name: data.client_name,
         client_email: data.client_email,
         client_phone: data.client_phone,
@@ -272,9 +275,7 @@ export function useCreateAppointment() {
         appointment_time: data.appointment_time,
         notes: data.notes,
         duration_minutes,
-        // Store final price for accurate revenue stats (handles variants)
-        custom_price: finalPrice,
-        // New: RDV en attente de validation (pas confirmé automatiquement)
+        custom_price: data.custom_price !== undefined && data.custom_price !== null ? data.custom_price : finalPrice,
         status: 'pending_validation',
       });
 
