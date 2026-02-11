@@ -985,7 +985,7 @@ export default function Index() {
                         </button>
                       </div>
 
-                      {/* KPI row — clean Apple-style */}
+                      {/* KPI row */}
                       <div className="grid grid-cols-3 gap-3 mb-6">
                         <div className="rounded-2xl p-4 bg-card border border-border/30">
                           <p className="text-[11px] text-muted-foreground mb-1">Aujourd'hui</p>
@@ -1016,14 +1016,14 @@ export default function Index() {
 
                       <div className="space-y-2">
                         {[
-                          { name: 'Jean Martin', service: 'Nettoyage Complet', time: '10:00', duration: '1h30', price: '89€', status: 'Confirmé', statusColor: 'text-emerald-600 bg-emerald-50', initials: 'JM' },
-                          { name: 'Marie Dupont', service: 'Express', time: '11:30', duration: '45min', price: '35€', status: 'En attente', statusColor: 'text-orange-600 bg-orange-50', initials: 'MD' },
-                          { name: 'Pierre Bernard', service: 'Rénovation Premium', time: '14:00', duration: '3h', price: '159€', status: 'Confirmé', statusColor: 'text-emerald-600 bg-emerald-50', initials: 'PB' },
-                          { name: 'Demande entrante', service: 'Nettoyage canapé', time: '—', duration: '—', price: 'Sur devis', status: 'Demande', statusColor: 'text-blue-600 bg-blue-50', initials: '?' },
-                          { name: 'Sophie Leroy', service: 'Pack Intérieur', time: '16:30', duration: '1h', price: '65€', status: 'Confirmé', statusColor: 'text-emerald-600 bg-emerald-50', initials: 'SL' },
+                          { name: 'Jean Martin', service: 'Nettoyage Complet', time: '10:00', duration: '1h30', price: '89€', status: 'Confirmé', statusColor: 'text-emerald-600 bg-emerald-50', initials: 'JM', avatarBg: 'bg-blue-50 text-blue-600' },
+                          { name: 'Marie Dupont', service: 'Express', time: '11:30', duration: '45min', price: '35€', status: 'En attente', statusColor: 'text-orange-600 bg-orange-50', initials: 'MD', avatarBg: 'bg-violet-50 text-violet-600' },
+                          { name: 'Pierre Bernard', service: 'Rénovation Premium', time: '14:00', duration: '3h', price: '159€', status: 'Confirmé', statusColor: 'text-emerald-600 bg-emerald-50', initials: 'PB', avatarBg: 'bg-amber-50 text-amber-600' },
+                          { name: 'Demande entrante', service: 'Nettoyage canapé', time: '—', duration: '—', price: 'Sur devis', status: 'Demande', statusColor: 'text-blue-600 bg-blue-50', initials: '?', avatarBg: 'bg-secondary text-muted-foreground' },
+                          { name: 'Sophie Leroy', service: 'Pack Intérieur', time: '16:30', duration: '1h', price: '65€', status: 'Confirmé', statusColor: 'text-emerald-600 bg-emerald-50', initials: 'SL', avatarBg: 'bg-emerald-50 text-emerald-600' },
                         ].map((booking, i) => (
-                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/30 hover:shadow-md transition-all cursor-pointer">
-                            <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-[11px] font-semibold text-foreground shrink-0">
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/30 hover:shadow-md hover:border-border/50 transition-all cursor-pointer">
+                            <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 ${booking.avatarBg}`}>
                               {booking.initials}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -1117,16 +1117,13 @@ export default function Index() {
                         <p className="text-[11px] text-muted-foreground mb-4">3 rendez-vous · 340€</p>
                         <div className="space-y-2.5 flex-1">
                           {[
-                            { time: '10:00', name: 'Jean M.', service: 'Complet · 89€', color: 'bg-emerald-500', initials: 'JM' },
-                            { time: '11:30', name: 'Marie D.', service: 'Express · 35€', color: 'bg-orange-400', initials: 'MD' },
-                            { time: '14:00', name: 'Pierre B.', service: 'Rénovation · 159€', color: 'bg-emerald-500', initials: 'PB' },
+                            { time: '10:00', name: 'Jean M.', service: 'Complet · 89€', color: 'border-l-emerald-500 bg-emerald-50/50', initials: 'JM' },
+                            { time: '11:30', name: 'Marie D.', service: 'Express · 35€', color: 'border-l-orange-400 bg-orange-50/50', initials: 'MD' },
+                            { time: '14:00', name: 'Pierre B.', service: 'Rénovation · 159€', color: 'border-l-blue-500 bg-blue-50/50', initials: 'PB' },
                           ].map((rdv, i) => (
-                            <div key={i} className="bg-card rounded-xl p-2.5 border border-border/20 hover:shadow-sm transition-all cursor-pointer">
-                              <div className="flex items-center gap-2 mb-1">
-                                <div className={`w-1.5 h-1.5 rounded-full ${rdv.color}`} />
-                                <span className="text-[11px] font-semibold text-foreground">{rdv.time}</span>
-                              </div>
-                              <p className="text-[11px] font-medium text-foreground">{rdv.name}</p>
+                            <div key={i} className={`rounded-xl p-2.5 border-l-[3px] ${rdv.color} hover:shadow-sm transition-all cursor-pointer`}>
+                              <span className="text-[11px] font-bold text-foreground">{rdv.time}</span>
+                              <p className="text-[11px] font-medium text-foreground mt-0.5">{rdv.name}</p>
                               <p className="text-[10px] text-muted-foreground">{rdv.service}</p>
                             </div>
                           ))}
@@ -1175,14 +1172,14 @@ export default function Index() {
 
                       <div className="space-y-2">
                         {[
-                          { name: 'Sophie Leroy', rdvCount: 15, totalSpent: '1 420€', lastVisit: 'Aujourd\'hui', initials: 'SL' },
-                          { name: 'Jean Martin', rdvCount: 12, totalSpent: '1 068€', lastVisit: '10 fév', initials: 'JM' },
-                          { name: 'Marie Dupont', rdvCount: 8, totalSpent: '520€', lastVisit: '8 fév', initials: 'MD' },
-                          { name: 'Pierre Bernard', rdvCount: 3, totalSpent: '477€', lastVisit: '2 fév', initials: 'PB' },
-                          { name: 'Lucas Moreau', rdvCount: 6, totalSpent: '354€', lastVisit: '28 jan', initials: 'LM' },
+                          { name: 'Sophie Leroy', rdvCount: 15, totalSpent: '1 420€', lastVisit: 'Aujourd\'hui', initials: 'SL', avatarBg: 'bg-rose-50 text-rose-600' },
+                          { name: 'Jean Martin', rdvCount: 12, totalSpent: '1 068€', lastVisit: '10 fév', initials: 'JM', avatarBg: 'bg-blue-50 text-blue-600' },
+                          { name: 'Marie Dupont', rdvCount: 8, totalSpent: '520€', lastVisit: '8 fév', initials: 'MD', avatarBg: 'bg-violet-50 text-violet-600' },
+                          { name: 'Pierre Bernard', rdvCount: 3, totalSpent: '477€', lastVisit: '2 fév', initials: 'PB', avatarBg: 'bg-amber-50 text-amber-600' },
+                          { name: 'Lucas Moreau', rdvCount: 6, totalSpent: '354€', lastVisit: '28 jan', initials: 'LM', avatarBg: 'bg-emerald-50 text-emerald-600' },
                         ].map((client, i) => (
-                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/30 hover:shadow-md transition-all cursor-pointer group">
-                            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-[11px] font-semibold text-foreground shrink-0">
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/30 hover:shadow-md hover:border-border/50 transition-all cursor-pointer group">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 ${client.avatarBg}`}>
                               {client.initials}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -1278,13 +1275,13 @@ export default function Index() {
                         </div>
                       </div>
 
-                      {/* KPIs — clean Apple-style */}
+                      {/* KPIs */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
                         {[
-                          { value: '4 850€', label: 'Chiffre d\'affaires', change: '+18%' },
-                          { value: '127', label: 'Réservations', change: '+12%' },
-                          { value: '89', label: 'Clients actifs', change: '+5' },
-                          { value: '54€', label: 'Panier moyen', change: '+3€' },
+                          { value: '4 850€', label: 'Chiffre d\'affaires', change: '+18%', icon: '💰' },
+                          { value: '127', label: 'Réservations', change: '+12%', icon: '📅' },
+                          { value: '89', label: 'Clients actifs', change: '+5', icon: '👥' },
+                          { value: '54€', label: 'Panier moyen', change: '+3€', icon: '🛒' },
                         ].map((stat, i) => (
                           <div key={i} className="rounded-2xl p-4 bg-card border border-border/30">
                             <p className="text-[11px] text-muted-foreground mb-1">{stat.label}</p>
@@ -1361,12 +1358,12 @@ export default function Index() {
                           <p className="text-sm font-semibold text-foreground mb-4">Top clients</p>
                           <div className="space-y-3">
                             {[
-                              { name: 'Sophie Leroy', visits: 15, total: '1 420€', initials: 'SL' },
-                              { name: 'Jean Martin', visits: 12, total: '1 068€', initials: 'JM' },
-                              { name: 'Marie Dupont', visits: 8, total: '520€', initials: 'MD' },
+                              { name: 'Sophie Leroy', visits: 15, total: '1 420€', initials: 'SL', avatarBg: 'bg-rose-50 text-rose-600' },
+                              { name: 'Jean Martin', visits: 12, total: '1 068€', initials: 'JM', avatarBg: 'bg-blue-50 text-blue-600' },
+                              { name: 'Marie Dupont', visits: 8, total: '520€', initials: 'MD', avatarBg: 'bg-violet-50 text-violet-600' },
                             ].map((c, i) => (
                               <div key={i} className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-[10px] font-semibold text-foreground shrink-0">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${c.avatarBg}`}>
                                   {c.initials}
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -1546,13 +1543,13 @@ export default function Index() {
                       <p className="text-xs font-semibold text-foreground mb-2.5">Formules</p>
                       <div className="space-y-2 mb-6">
                         {[
-                          { name: 'Lavage Express', desc: 'Extérieur uniquement · 45min', price: '35€' },
-                          { name: 'Nettoyage Complet', desc: 'Intérieur + extérieur · 1h30', price: '89€' },
-                          { name: 'Rénovation Premium', desc: 'Polish + céramique · 3h', price: '159€' },
+                          { name: 'Lavage Express', desc: 'Extérieur uniquement · 45min', price: '35€', iconBg: 'bg-blue-50' },
+                          { name: 'Nettoyage Complet', desc: 'Intérieur + extérieur · 1h30', price: '89€', iconBg: 'bg-emerald-50' },
+                          { name: 'Rénovation Premium', desc: 'Polish + céramique · 3h', price: '159€', iconBg: 'bg-amber-50' },
                         ].map((pack, i) => (
-                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/30 hover:shadow-md transition-all cursor-pointer group">
-                            <div className="w-10 h-10 bg-secondary rounded-xl flex items-center justify-center shrink-0">
-                              <Car className="w-4 h-4 text-foreground" />
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/30 hover:shadow-md hover:border-border/50 transition-all cursor-pointer group">
+                            <div className={`w-10 h-10 ${pack.iconBg} rounded-xl flex items-center justify-center shrink-0`}>
+                              <Car className="w-4 h-4 text-foreground/70" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-[13px] font-semibold text-foreground">{pack.name}</p>
@@ -1570,11 +1567,11 @@ export default function Index() {
                       <p className="text-[11px] text-muted-foreground mb-2.5">Tarifs sur mesure par client</p>
                       <div className="space-y-2">
                         {[
-                          { name: 'Nettoyage canapé 3 places', client: 'Marie Dupont', duration: '2h', price: '120€', initials: 'MD' },
-                          { name: 'Détachage moquette salon', client: 'Pierre Bernard', duration: '1h30', price: '80€', initials: 'PB' },
+                          { name: 'Nettoyage canapé 3 places', client: 'Marie Dupont', duration: '2h', price: '120€', initials: 'MD', avatarBg: 'bg-violet-50 text-violet-600' },
+                          { name: 'Détachage moquette salon', client: 'Pierre Bernard', duration: '1h30', price: '80€', initials: 'PB', avatarBg: 'bg-amber-50 text-amber-600' },
                         ].map((service, i) => (
-                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/30 hover:shadow-md transition-all cursor-pointer group">
-                            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-[11px] font-semibold text-foreground shrink-0">
+                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/30 hover:shadow-md hover:border-border/50 transition-all cursor-pointer group">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 ${service.avatarBg}`}>
                               {service.initials}
                             </div>
                             <div className="flex-1 min-w-0">
