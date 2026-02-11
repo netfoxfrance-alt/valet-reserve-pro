@@ -57,7 +57,7 @@ serve(async (req) => {
     );
 
     // Admin bypass - always return subscribed for admin emails
-    const adminEmails = ["melvin.puyoo@gmail.com"];
+    const adminEmails = ["contact@netfox-agency.com"];
     if (adminEmails.includes(userEmail.toLowerCase())) {
       logStep("Admin user detected, bypassing Stripe check");
       
