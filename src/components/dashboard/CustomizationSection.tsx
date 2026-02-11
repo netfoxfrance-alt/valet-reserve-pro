@@ -5,10 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CenterCustomization, defaultCustomization, defaultBlocks } from '@/types/customization';
+import { CenterCustomization, defaultCustomization, defaultBlocks, HeaderStyle } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, Search, MapPin, Tag, Package, Layers } from 'lucide-react';
+import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, Search, MapPin, Tag, Package, Layers, PanelTop, Minus } from 'lucide-react';
 import { BlocksEditor } from './BlocksEditor';
 import { cn } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
@@ -174,7 +174,36 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
 
           {/* Design Tab - Banner, Colors only (simplified) */}
           <TabsContent value="design" className="space-y-6">
-            {/* Banner Section */}
+            {/* Header Style Selector */}
+            <div>
+              <Label className="text-sm font-medium mb-3 block">Style de page</Label>
+              <div className="grid grid-cols-2 gap-3">
+                {([
+                  { value: 'banner' as HeaderStyle, label: 'Bannière', desc: 'Image de couverture grande', icon: PanelTop },
+                  { value: 'minimal' as HeaderStyle, label: 'Minimal', desc: 'Header discret avec logo', icon: Minus },
+                ]).map((style) => (
+                  <button
+                    key={style.value}
+                    onClick={() => updateLayout({ header_style: style.value })}
+                    className={cn(
+                      "flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all hover:scale-[1.02]",
+                      (local.layout.header_style || 'banner') === style.value
+                        ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                        : "border-border hover:border-muted-foreground"
+                    )}
+                  >
+                    <style.icon className="w-6 h-6" />
+                    <div className="text-center">
+                      <p className="font-medium text-sm">{style.label}</p>
+                      <p className="text-[10px] text-muted-foreground leading-tight">{style.desc}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Banner Section - only show when header_style is banner */}
+            {(local.layout.header_style || 'banner') === 'banner' && (
             <div>
               <Label className="text-sm font-medium mb-3 block">Bannière</Label>
               {local.cover_url ? (
@@ -251,6 +280,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 Le logo se configure dans Paramètres → Informations
               </p>
             </div>
+            )}
 
             {/* Color Presets */}
             <div>

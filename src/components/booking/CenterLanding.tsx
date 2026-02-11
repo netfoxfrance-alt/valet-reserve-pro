@@ -889,6 +889,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
 
   // Check if there's a cover image
   const hasCover = Boolean(customization.cover_url);
+  const headerStyle = customization.layout.header_style || 'banner';
+  const isMinimalHeader = headerStyle === 'minimal';
 
   return (
     <div 
@@ -900,8 +902,55 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
     >
 
       {/* Header Section */}
-      {hasCover ? (
-        // With cover image
+      {isMinimalHeader ? (
+        // Minimal header - discrete bar with logo + phone CTA
+        <div 
+          className="border-b"
+          style={{
+            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.03)' : 'white',
+            borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+          }}
+        >
+          <div className={cn("max-w-5xl mx-auto px-4 py-3", !isPreview && "lg:px-8")}>
+            <div className="flex items-center justify-between gap-3">
+              {/* Left: Logo + Name */}
+              <div className="flex items-center gap-3 min-w-0">
+                {center.logo_url && (
+                  <img
+                    src={center.logo_url}
+                    alt={center.name}
+                    className="max-w-[100px] max-h-[36px] lg:max-w-[120px] lg:max-h-[40px] w-auto h-auto object-contain flex-shrink-0"
+                  />
+                )}
+                {!center.logo_url && (
+                  <h1 
+                    className="text-base font-semibold tracking-tight truncate"
+                    style={{ color: textColors.primary }}
+                  >
+                    {center.name}
+                  </h1>
+                )}
+              </div>
+              
+              {/* Right: Phone CTA */}
+              {center.phone && (
+                <a
+                  href={`tel:${center.phone}`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 hover:opacity-90 active:scale-[0.97] flex-shrink-0"
+                  style={{ 
+                    backgroundColor: customization.colors.primary,
+                    color: 'white',
+                  }}
+                >
+                  <Phone className="w-4 h-4" />
+                  <span className="hidden sm:inline">Appeler</span>
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : hasCover ? (
+        // With cover image (banner style)
         <div className="relative mb-6">
           <img
             src={customization.cover_url!}
@@ -938,7 +987,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
           </div>
         </div>
       ) : (
-        // Without cover image - Clean minimal header
+        // Without cover image - Clean minimal header (banner style without image)
         <div 
           className="pt-8 pb-6 mb-6"
           style={{
@@ -998,10 +1047,41 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
         </div>
       )}
 
+      {/* Minimal header: add name, tagline and status below the bar */}
+      {isMinimalHeader && (
+        <div className={cn("max-w-5xl mx-auto px-4 pt-6 pb-2", !isPreview && "lg:px-8")}>
+          <div className={cn("flex flex-col items-center text-center", !isPreview && "lg:items-start lg:text-left")}>
+            <h1 
+              className={cn("text-2xl font-bold tracking-tight mb-1", !isPreview && "lg:text-3xl")}
+              style={{ color: textColors.primary }}
+            >
+              {center.name}
+            </h1>
+            {customization.texts.tagline && (
+              <p 
+                className={cn("text-sm mb-3", !isPreview && "lg:text-base")}
+                style={{ color: textColors.secondary }}
+              >
+                {customization.texts.tagline}
+              </p>
+            )}
+            <div 
+              className={cn(
+                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium",
+                isOpen ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-500"
+              )}
+            >
+              <span className={cn("w-2 h-2 rounded-full", isOpen ? "bg-green-500" : "bg-red-500")} />
+              {isOpen ? 'Ouvert' : 'Fermé'}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Content Area */}
       <div className={cn("max-w-5xl mx-auto px-4", !isPreview && "lg:px-8")}>
         {/* Open status badge (when cover exists) */}
-        {hasCover && (
+        {hasCover && !isMinimalHeader && (
           <div className={cn("flex justify-center mb-4", !isPreview && "lg:justify-start")}>
             <div 
               className={cn(

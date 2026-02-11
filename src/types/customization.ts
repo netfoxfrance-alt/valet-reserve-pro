@@ -23,6 +23,9 @@ export type ReviewPlatform = 'google' | 'tripadvisor';
 // Display style for info blocks (phone, address, hours)
 export type InfoBlockStyle = 'minimal' | 'pill' | 'card';
 
+// Header style for the public page
+export type HeaderStyle = 'banner' | 'minimal';
+
 export interface PageBlock {
   id: string;
   type: BlockType;
@@ -56,6 +59,7 @@ export interface CenterCustomization {
   };
   layout: {
     dark_mode: boolean;
+    header_style: HeaderStyle;
   };
   social: {
     instagram: string;
@@ -117,6 +121,7 @@ export const defaultCustomization: CenterCustomization = {
   },
   layout: {
     dark_mode: false,
+    header_style: 'banner',
   },
   social: {
     instagram: '',
