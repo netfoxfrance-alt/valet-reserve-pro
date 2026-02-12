@@ -56,9 +56,9 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Admin bypass - always return subscribed for admin emails
-    const adminEmails = ["contact@netfox-agency.com"];
-    if (adminEmails.includes(userEmail.toLowerCase())) {
+    // Pro bypass - always return subscribed for whitelisted emails
+    const proBypassEmails = ["contact@netfox-agency.com", "sf.autodetail@hotmail.com"];
+    if (proBypassEmails.includes(userEmail.toLowerCase())) {
       logStep("Admin user detected, bypassing Stripe check");
       
       // Ensure admin is marked as pro in database
