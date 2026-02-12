@@ -365,7 +365,7 @@ export default function Index() {
               <div className="grid grid-cols-2 gap-3 max-w-[280px] mx-auto mb-6">
                 {/* Colors - with cursor */}
                 <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30 relative">
-                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Couleurs</p>
+                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">{t('mockup.colors')}</p>
                   <div className="flex gap-1.5">
                     {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500'].map((bg, i) => (
                       <div key={i} className={`w-5 h-5 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-1 ring-offset-card' : ''}`} />
@@ -382,11 +382,11 @@ export default function Index() {
                 
                 {/* Disponibilités */}
                 <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30">
-                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Disponibilités</p>
+                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">{t('mockup.availability')}</p>
                   <div className="space-y-1">
                     {[
-                      { day: 'Lun', hours: '9h-18h', active: true },
-                      { day: 'Sam', hours: 'Fermé', active: false },
+                      { day: t('mockup.mon'), hours: '9h-18h', active: true },
+                      { day: t('mockup.sat'), hours: t('mockup.closed'), active: false },
                     ].map((d, i) => (
                       <div key={i} className="flex items-center gap-1">
                         <span className="text-[8px] w-5 text-muted-foreground">{d.day}</span>
@@ -403,14 +403,14 @@ export default function Index() {
                     <Type className="w-3 h-3 text-primary" />
                   </div>
                   <div>
-                    <p className="text-[9px] text-muted-foreground">Texte</p>
-                    <p className="text-[10px] font-medium text-foreground">Ajouter</p>
+                    <p className="text-[9px] text-muted-foreground">{t('mockup.text')}</p>
+                    <p className="text-[10px] font-medium text-foreground">{t('mockup.addText')}</p>
                   </div>
                 </div>
                 
                 {/* Galerie */}
                 <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30">
-                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Galerie</p>
+                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">{t('mockup.gallery')}</p>
                   <div className="flex gap-1">
                     <div className="w-7 h-7 bg-secondary rounded overflow-hidden">
                       <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
@@ -452,14 +452,14 @@ export default function Index() {
                   <div className="px-5 pb-5 text-center">
                     <h3 className="text-lg font-bold text-foreground mb-1">Clean Premium</h3>
                     <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-                      Nettoyage premium à domicile, 7j/7.
+                      {t('mockup.premiumDescShort')}
                     </p>
                     
                     {/* Open badge */}
                     <div className="flex justify-center mb-4">
                       <span className="inline-flex items-center gap-1.5 text-[10px] bg-white dark:bg-card border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full font-medium shadow-sm">
                         <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                        Ouvert
+                        {t('mockup.open')}
                       </span>
                     </div>
                     
@@ -475,8 +475,8 @@ export default function Index() {
                     {/* Formules section */}
                     <div className="text-left mb-4">
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-sm font-semibold text-foreground">Nos formules</h4>
-                        <span className="text-[10px] text-primary font-medium">Voir tout →</span>
+                        <h4 className="text-sm font-semibold text-foreground">{t('mockup.ourPackages')}</h4>
+                        <span className="text-[10px] text-primary font-medium">{t('mockup.seeAll')}</span>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="bg-card border border-border/60 rounded-lg p-3">
@@ -492,7 +492,7 @@ export default function Index() {
                     
                     {/* CTA Button */}
                     <button className="w-full bg-neutral-800 dark:bg-neutral-700 text-white py-3 rounded-xl text-sm font-semibold shadow-lg">
-                      Réserver maintenant
+                       {t('mockup.bookNow')}
                     </button>
                   </div>
                 </div>
@@ -530,14 +530,14 @@ export default function Index() {
                     <div className="px-6 pb-6 text-center">
                       <h3 className="text-xl font-bold text-foreground mb-1">Clean Premium</h3>
                       <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                        Nettoyage premium à domicile, 7j/7.
+                        {t('mockup.premiumDescShort')}
                       </p>
                       
                       {/* Open badge */}
                       <div className="flex justify-center mb-5">
                         <span className="inline-flex items-center gap-2 text-xs bg-white dark:bg-card border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 px-4 py-1.5 rounded-full font-medium shadow-sm">
                           <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                          Ouvert
+                           {t('mockup.open')}
                         </span>
                       </div>
                       
@@ -569,15 +569,15 @@ export default function Index() {
                         </div>
                         <div className="flex items-center gap-3 text-sm text-primary">
                           <Droplets className="w-4 h-4 text-primary" />
-                          <span className="font-medium">Voir nos produits utilisés →</span>
+                          <span className="font-medium">{t('mockup.seeProducts')}</span>
                         </div>
                       </div>
                       
                       {/* Formules section - "Voir toutes" style */}
                       <div className="text-left mb-5">
                         <div className="flex items-center justify-between mb-3">
-                          <h4 className="text-base font-semibold text-foreground">Nos formules</h4>
-                          <span className="text-xs text-primary font-medium">Voir tout →</span>
+                          <h4 className="text-base font-semibold text-foreground">{t('mockup.ourPackages')}</h4>
+                          <span className="text-xs text-primary font-medium">{t('mockup.seeAll')}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                           <div className="bg-card border border-border/60 rounded-xl p-4">
@@ -593,7 +593,7 @@ export default function Index() {
                       
                       {/* CTA Button */}
                       <button className="w-full bg-neutral-800 dark:bg-neutral-700 text-white py-4 rounded-2xl text-base font-semibold shadow-lg">
-                        Réserver maintenant
+                        {t('mockup.bookNow')}
                       </button>
                     </div>
                   </div>
@@ -607,7 +607,7 @@ export default function Index() {
                   style={{ animationDelay: '0s' }}
                 >
                   <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm relative">
-                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">Couleurs</p>
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">{t('mockup.colors')}</p>
                     <div className="flex gap-2">
                       {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500'].map((bg, i) => (
                         <div key={i} className={`w-7 h-7 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''} shadow-sm`} />
@@ -630,13 +630,13 @@ export default function Index() {
                   style={{ animationDelay: '0.15s' }}
                 >
                   <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
-                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">Disponibilités</p>
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">{t('mockup.availability')}</p>
                     <div className="space-y-1.5">
                       {[
-                        { day: 'Lun', hours: '9h-18h', active: true },
-                        { day: 'Mar', hours: '9h-18h', active: true },
-                        { day: 'Mer', hours: '14h-18h', active: true },
-                        { day: 'Sam', hours: 'Fermé', active: false },
+                        { day: t('mockup.mon'), hours: '9h-18h', active: true },
+                        { day: t('mockup.tue'), hours: '9h-18h', active: true },
+                        { day: t('mockup.wed'), hours: '14h-18h', active: true },
+                        { day: t('mockup.sat'), hours: t('mockup.closed'), active: false },
                       ].map((d, i) => (
                         <div key={i} className="flex items-center gap-2">
                           <span className="text-[9px] w-6 text-muted-foreground">{d.day}</span>
@@ -656,7 +656,7 @@ export default function Index() {
                   style={{ animationDelay: '0.25s' }}
                 >
                   <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm w-40">
-                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">Formules</p>
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">{t('mockup.packages')}</p>
                     <div className="space-y-2">
                       <div className="flex justify-between items-center text-xs">
                         <span className="text-foreground font-medium">Express</span>
@@ -671,7 +671,7 @@ export default function Index() {
                         <span className="text-primary font-bold">129€</span>
                       </div>
                       <button className="w-full text-[10px] text-primary font-medium py-1.5 border border-dashed border-primary/40 rounded-lg mt-1 hover:bg-primary/5 transition-colors">
-                        + Ajouter
+                        {t('mockup.add')}
                       </button>
                     </div>
                   </div>
@@ -687,8 +687,8 @@ export default function Index() {
                       <Type className="w-4 h-4 text-primary" />
                     </div>
                     <div>
-                      <p className="text-[10px] text-muted-foreground">Texte</p>
-                      <p className="text-xs font-medium text-foreground">Ajouter du contenu</p>
+                      <p className="text-[10px] text-muted-foreground">{t('mockup.text')}</p>
+                      <p className="text-xs font-medium text-foreground">{t('mockup.addContent')}</p>
                     </div>
                   </div>
                 </div>
@@ -699,7 +699,7 @@ export default function Index() {
                   style={{ animationDelay: '0.5s' }}
                 >
                   <div className="bg-card rounded-2xl p-3 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
-                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">Galerie</p>
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">{t('mockup.gallery')}</p>
                     <div className="flex gap-1.5">
                       <div className="w-10 h-10 bg-secondary rounded-lg overflow-hidden">
                         <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
@@ -1073,11 +1073,11 @@ export default function Index() {
                             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                           </svg>
                           <div>
-                            <p className="text-[12px] font-semibold text-foreground">Connecter à Google Agenda</p>
-                            <p className="text-[10px] text-muted-foreground">Synchronisez vos rendez-vous automatiquement</p>
+                            <p className="text-[12px] font-semibold text-foreground">{t('mockup.connectGoogle')}</p>
+                            <p className="text-[10px] text-muted-foreground">{t('mockup.syncAuto')}</p>
                           </div>
                         </div>
-                        <button className="text-[11px] text-white font-semibold bg-blue-500 px-3.5 py-1.5 rounded-full shadow-sm shadow-blue-500/25 hover:bg-blue-600 transition-colors shrink-0">Connecter</button>
+                        <button className="text-[11px] text-white font-semibold bg-blue-500 px-3.5 py-1.5 rounded-full shadow-sm shadow-blue-500/25 hover:bg-blue-600 transition-colors shrink-0">{t('mockup.connect')}</button>
                       </div>
 
                       <div className="flex gap-6 flex-1">
@@ -1087,12 +1087,12 @@ export default function Index() {
                             <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
                               <ChevronLeft className="w-4 h-4" />
                             </button>
-                            <h3 className="text-base font-semibold text-foreground min-w-[130px] text-center">Février 2026</h3>
+                            <h3 className="text-base font-semibold text-foreground min-w-[130px] text-center">{t('mockup.february2026')}</h3>
                             <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
                               <ChevronRight className="w-4 h-4" />
                             </button>
                           </div>
-                          <button className="text-[11px] text-white font-semibold bg-blue-500 px-3.5 py-1.5 rounded-full shadow-sm shadow-blue-500/25 hover:bg-blue-600 transition-colors">Aujourd'hui</button>
+                          <button className="text-[11px] text-white font-semibold bg-blue-500 px-3.5 py-1.5 rounded-full shadow-sm shadow-blue-500/25 hover:bg-blue-600 transition-colors">{t('common.today')}</button>
                         </div>
 
                         <div className="grid grid-cols-7 gap-1 mb-2">
@@ -1132,9 +1132,9 @@ export default function Index() {
 
                         <div className="flex gap-5 mt-4 pt-3 border-t border-border/20">
                           {[
-                            { color: 'bg-emerald-500', label: 'Confirmé' },
-                            { color: 'bg-orange-400', label: 'En attente' },
-                            { color: 'bg-blue-500', label: 'Terminé' },
+                            { color: 'bg-emerald-500', label: t('mockup.confirmed') },
+                            { color: 'bg-orange-400', label: t('mockup.pending') },
+                            { color: 'bg-blue-500', label: t('mockup.completed') },
                           ].map(l => (
                             <div key={l.label} className="flex items-center gap-2">
                               <div className={`w-2 h-2 rounded-full ${l.color}`} />
@@ -1150,9 +1150,9 @@ export default function Index() {
                           <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
                             <span className="text-[10px] text-white font-bold">11</span>
                           </div>
-                          <p className="text-sm font-semibold text-foreground">Mercredi</p>
+                          <p className="text-sm font-semibold text-foreground">{t('mockup.wednesday')}</p>
                         </div>
-                        <p className="text-[11px] text-muted-foreground mb-4">3 rendez-vous · 340€</p>
+                        <p className="text-[11px] text-muted-foreground mb-4">3 {t('mockup.appointmentsCount')} · 340€</p>
                         <div className="space-y-2.5 flex-1">
                           {[
                             { time: '10:00', name: 'Jean M.', service: 'Complet · 89€', color: 'bg-emerald-500', initials: 'JM' },
@@ -1181,20 +1181,20 @@ export default function Index() {
                         <>
                           <div className="flex items-center justify-between mb-6">
                             <div>
-                              <h3 className="text-lg font-semibold text-foreground tracking-tight">Clients</h3>
-                              <p className="text-xs text-muted-foreground mt-0.5">142 clients enregistrés</p>
+                              <h3 className="text-lg font-semibold text-foreground tracking-tight">{t('mockup.clients')}</h3>
+                              <p className="text-xs text-muted-foreground mt-0.5">142 {t('mockup.registeredClients')}</p>
                             </div>
                             <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
-                              + Ajouter
+                              {t('mockup.add')}
                             </button>
                           </div>
 
                           {/* Stats overview at top */}
                           <div className="grid grid-cols-3 gap-3 mb-5">
                             {[
-                              { value: '142', label: 'Clients' },
-                              { value: '8 640€', label: 'CA total' },
-                              { value: '61€', label: 'Panier moy.' },
+                              { value: '142', label: t('mockup.clients') },
+                              { value: '8 640€', label: t('mockup.totalRevenue') },
+                              { value: '61€', label: t('mockup.avgBasket') },
                             ].map((s, i) => (
                               <div key={i} className="rounded-2xl p-3 sm:p-4 bg-card border border-border/30 shadow-sm text-center">
                                 <p className="text-lg sm:text-xl font-bold text-foreground tracking-tight">{s.value}</p>
@@ -1207,19 +1207,19 @@ export default function Index() {
                           <div className="relative mb-5">
                             <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                             <div className="bg-card rounded-2xl pl-11 pr-4 py-3 text-xs text-muted-foreground/50 border border-border/20 shadow-sm">
-                              Rechercher un client...
+                              {t('mockup.searchClient')}
                             </div>
                           </div>
 
                           {/* Hint */}
                           <p className="text-[11px] text-center text-muted-foreground mb-3 flex items-center justify-center gap-1.5">
                             <MousePointer2 className="w-3 h-3" />
-                            Cliquez sur un client pour voir sa fiche complète
+                            {t('mockup.clickClientHint')}
                           </p>
 
                           <div className="space-y-2">
                             {[
-                              { name: 'Sophie Leroy', rdvCount: 15, totalSpent: '1 420€', lastVisit: 'Aujourd\'hui', initials: 'SL', avatarBg: 'bg-violet-500' },
+                              { name: 'Sophie Leroy', rdvCount: 15, totalSpent: '1 420€', lastVisit: t('common.today'), initials: 'SL', avatarBg: 'bg-violet-500' },
                               { name: 'Jean Martin', rdvCount: 12, totalSpent: '1 068€', lastVisit: '10 fév', initials: 'JM', avatarBg: 'bg-blue-500' },
                               { name: 'Marie Dupont', rdvCount: 8, totalSpent: '520€', lastVisit: '8 fév', initials: 'MD', avatarBg: 'bg-pink-500' },
                               { name: 'Pierre Bernard', rdvCount: 3, totalSpent: '477€', lastVisit: '2 fév', initials: 'PB', avatarBg: 'bg-amber-500' },
@@ -1230,11 +1230,11 @@ export default function Index() {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <p className="text-[13px] font-semibold text-foreground truncate">{client.name}</p>
-                                  <p className="text-[11px] text-muted-foreground mt-0.5">{client.rdvCount} visites · Dernier : {client.lastVisit}</p>
+                                  <p className="text-[11px] text-muted-foreground mt-0.5">{client.rdvCount} {t('mockup.visits')} · {t('mockup.lastVisitLabel')} {client.lastVisit}</p>
                                 </div>
                                 <div className="text-right hidden sm:block">
                                   <p className="text-[13px] font-bold text-foreground tabular-nums">{client.totalSpent}</p>
-                                  <p className="text-[10px] text-muted-foreground">CA total</p>
+                                  <p className="text-[10px] text-muted-foreground">{t('mockup.totalRevenue')}</p>
                                 </div>
                                 <ChevronRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-muted-foreground transition-colors shrink-0" />
                               </div>
@@ -1247,7 +1247,7 @@ export default function Index() {
                           {/* Back button */}
                           <button onClick={() => setShowClientDetail(false)} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground mb-4 transition-colors">
                             <ChevronLeft className="w-4 h-4" />
-                            Retour aux clients
+                            {t('mockup.backToClients')}
                           </button>
 
                           {/* Client header */}
@@ -1269,16 +1269,16 @@ export default function Index() {
                                 </span>
                               </div>
                             </div>
-                            <span className="text-[10px] bg-blue-500/10 text-blue-600 px-2.5 py-1 rounded-full font-medium shrink-0 hidden sm:inline">Via réservation</span>
+                            <span className="text-[10px] bg-blue-500/10 text-blue-600 px-2.5 py-1 rounded-full font-medium shrink-0 hidden sm:inline">{t('mockup.viaBooking')}</span>
                           </div>
 
                           {/* Client KPIs */}
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
                             {[
-                              { value: '15', label: 'Réservations' },
-                              { value: '1 420€', label: 'CA total' },
-                              { value: '3', label: 'Factures' },
-                              { value: '1', label: 'Devis' },
+                              { value: '15', label: t('mockup.reservations') },
+                              { value: '1 420€', label: t('mockup.totalRevenue') },
+                              { value: '3', label: t('mockup.invoices') },
+                              { value: '1', label: t('mockup.quotes') },
                             ].map((s, i) => (
                               <div key={i} className="rounded-2xl p-3 bg-card border border-border/30 shadow-sm text-center">
                                 <p className="text-xl font-bold text-foreground tracking-tight">{s.value}</p>
@@ -1289,7 +1289,7 @@ export default function Index() {
 
                           {/* Default service */}
                           <div className="bg-primary/5 border border-primary/15 rounded-2xl p-3.5 mb-5">
-                            <p className="text-[10px] text-muted-foreground mb-1">Prestation par défaut</p>
+                            <p className="text-[10px] text-muted-foreground mb-1">{t('mockup.defaultService')}</p>
                             <p className="text-[13px] font-semibold text-foreground flex items-center gap-2">
                               <Sparkles className="w-3.5 h-3.5 text-primary" />
                               Nettoyage Complet · 1h30 · 89€
@@ -1298,14 +1298,14 @@ export default function Index() {
 
                           {/* Notes */}
                           <div className="bg-secondary/30 rounded-2xl p-3.5 mb-5">
-                            <p className="text-[10px] text-muted-foreground mb-1">Notes</p>
-                            <p className="text-[12px] text-foreground">Cliente fidèle, préfère les créneaux du matin. Véhicule : Tesla Model 3 blanc.</p>
+                            <p className="text-[10px] text-muted-foreground mb-1">{t('mockup.notes')}</p>
+                            <p className="text-[12px] text-foreground">{t('mockup.loyalClientNote')}</p>
                           </div>
 
                           {/* Tabs: Prestations / Factures */}
                           <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-4 w-fit">
-                            <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Prestations</span>
-                            <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">Factures & Devis</span>
+                            <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">{t('mockup.services')}</span>
+                            <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.invoicesQuotes')}</span>
                           </div>
 
                           {/* Appointments history */}
@@ -1339,49 +1339,49 @@ export default function Index() {
                     <>
                       <div className="flex items-center justify-between mb-6">
                         <div>
-                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Factures & Devis</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">Gérez vos documents</p>
+                          <h3 className="text-lg font-semibold text-foreground tracking-tight">{t('mockup.invoicesQuotes')}</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">{t('mockup.manageDocuments')}</p>
                         </div>
                         <div className="flex gap-2">
-                          <button className="bg-secondary/60 text-foreground px-3.5 py-2 rounded-full text-xs font-semibold hover:bg-secondary transition-colors">Devis</button>
-                          <button className="bg-blue-500 text-white px-3.5 py-2 rounded-full text-xs font-semibold shadow-sm shadow-blue-500/25">+ Facture</button>
+                          <button className="bg-secondary/60 text-foreground px-3.5 py-2 rounded-full text-xs font-semibold hover:bg-secondary transition-colors">{t('mockup.quotes')}</button>
+                          <button className="bg-blue-500 text-white px-3.5 py-2 rounded-full text-xs font-semibold shadow-sm shadow-blue-500/25">{t('mockup.newInvoice')}</button>
                         </div>
                       </div>
 
                       {/* KPIs — clean */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">Factures</p>
+                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.invoices')}</p>
                           <p className="text-2xl font-bold tracking-tight leading-none text-foreground">24</p>
                         </div>
                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">Devis</p>
+                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.quotes')}</p>
                           <p className="text-2xl font-bold tracking-tight leading-none text-foreground">8</p>
                         </div>
                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">En attente</p>
+                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.pending')}</p>
                           <p className="text-2xl font-bold tracking-tight leading-none text-foreground">680€</p>
                         </div>
                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">Encaissé</p>
+                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.collected')}</p>
                           <p className="text-2xl font-bold tracking-tight leading-none text-foreground">3 240€</p>
                         </div>
                       </div>
 
                       {/* Segmented control */}
                       <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
-                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Tout</span>
-                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">Factures</span>
-                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">Devis</span>
+                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">{t('mockup.all')}</span>
+                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">{t('mockup.invoices')}</span>
+                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">{t('mockup.quotes')}</span>
                       </div>
 
                       {/* Invoice list */}
                       <div className="space-y-2">
                         {[
-                          { number: 'FAC-2026-012', client: 'Jean Martin', date: '10 fév', total: '89,00 €', status: 'Payé', statusBg: 'bg-emerald-500' },
-                          { number: 'FAC-2026-011', client: 'Marie Dupont', date: '8 fév', total: '159,00 €', status: 'Envoyé', statusBg: 'bg-blue-500' },
-                          { number: 'DEV-2026-005', client: 'Pierre Bernard', date: '5 fév', total: '320,00 €', status: 'En attente', statusBg: 'bg-orange-500' },
-                          { number: 'FAC-2026-010', client: 'Sophie Leroy', date: '3 fév', total: '65,00 €', status: 'Payé', statusBg: 'bg-emerald-500' },
+                          { number: 'FAC-2026-012', client: 'Jean Martin', date: '10 fév', total: '89,00 €', status: t('mockup.paid'), statusBg: 'bg-emerald-500' },
+                          { number: 'FAC-2026-011', client: 'Marie Dupont', date: '8 fév', total: '159,00 €', status: t('mockup.sent'), statusBg: 'bg-blue-500' },
+                          { number: 'DEV-2026-005', client: 'Pierre Bernard', date: '5 fév', total: '320,00 €', status: t('mockup.pending'), statusBg: 'bg-orange-500' },
+                          { number: 'FAC-2026-010', client: 'Sophie Leroy', date: '3 fév', total: '65,00 €', status: t('mockup.paid'), statusBg: 'bg-emerald-500' },
                         ].map((inv, i) => (
                           <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl px-4 py-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer">
                             <div className={`w-2 h-8 rounded-full ${inv.statusBg}`} />
@@ -1405,7 +1405,7 @@ export default function Index() {
                         <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
                           <ChevronLeft className="w-4 h-4" />
                         </button>
-                        <h3 className="text-lg font-semibold text-foreground tracking-tight">Janvier 2025</h3>
+                        <h3 className="text-lg font-semibold text-foreground tracking-tight">{t('mockup.january2025')}</h3>
                         <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
                           <ChevronRight className="w-4 h-4" />
                         </button>
@@ -1414,14 +1414,14 @@ export default function Index() {
                       {/* KPIs — clean white cards with borders */}
                       <div className="grid grid-cols-2 gap-3 mb-3">
                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">Réservations</p>
+                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.reservations')}</p>
                           <div className="flex items-center gap-2">
                             <p className="text-3xl font-bold tracking-tight leading-none text-foreground">24</p>
                             <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">↑12%</span>
                           </div>
                         </div>
                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">CA</p>
+                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.revenue')}</p>
                           <div className="flex items-center gap-2">
                             <p className="text-3xl font-bold tracking-tight leading-none text-foreground">8 450€</p>
                             <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">↑18%</span>
@@ -1430,26 +1430,26 @@ export default function Index() {
                       </div>
                       <div className="grid grid-cols-2 gap-3 mb-6">
                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">Clients</p>
+                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.clients')}</p>
                           <p className="text-3xl font-bold tracking-tight leading-none text-foreground">18</p>
                         </div>
                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">Panier moyen</p>
+                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.avgBasketStat')}</p>
                           <p className="text-3xl font-bold tracking-tight leading-none text-foreground">352€</p>
                         </div>
                       </div>
 
                       {/* Segmented control */}
                       <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
-                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Évolution</span>
-                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">Services</span>
+                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">{t('mockup.evolution')}</span>
+                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.servicesTab')}</span>
                       </div>
 
                       {/* Charts row */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {/* Line chart — Réservations par semaine */}
                         <div className="bg-card rounded-2xl p-5 border border-border/15 shadow-sm">
-                          <p className="text-sm font-semibold text-foreground mb-4">Réservations par semaine</p>
+                          <p className="text-sm font-semibold text-foreground mb-4">{t('mockup.weeklyBookings')}</p>
                           <div className="relative h-32">
                             <svg viewBox="0 0 300 100" className="w-full h-full" preserveAspectRatio="none">
                               <defs>
@@ -1484,7 +1484,7 @@ export default function Index() {
                         {/* Bar chart — CA par mois */}
                         <div className="bg-card rounded-2xl p-5 border border-border/15 shadow-sm">
                           <div className="flex items-center justify-between mb-4">
-                            <p className="text-sm font-semibold text-foreground">Chiffre d'affaires par mois</p>
+                            <p className="text-sm font-semibold text-foreground">{t('mockup.monthlyRevenue')}</p>
                             <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+18%</span>
                           </div>
                           <div className="relative h-32">
@@ -1530,7 +1530,7 @@ export default function Index() {
                         {/* Left: iPhone-style Preview */}
                         <div className="flex flex-col order-2 lg:order-1">
                           <div className="flex items-center justify-between mb-4">
-                            <span className="text-base font-semibold text-foreground tracking-tight">Aperçu</span>
+                            <span className="text-base font-semibold text-foreground tracking-tight">{t('mockup.preview')}</span>
                             <div className="flex gap-2">
                               <div className="w-8 h-8 bg-secondary/40 rounded-full flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors">
                                 <Phone className="w-4 h-4 text-muted-foreground" />
@@ -1566,10 +1566,10 @@ export default function Index() {
                                     </div>
                                     <div className="px-5 pt-4 pb-5">
                                       <h3 className="text-[15px] font-bold text-foreground text-center mb-0.5 tracking-tight">GOCLEANING</h3>
-                                      <p className="text-[9px] text-muted-foreground text-center mb-2">Nettoyage automobile premium · Paris</p>
+                                      <p className="text-[9px] text-muted-foreground text-center mb-2">{t('mockup.premiumAutoParis')}</p>
                                       <div className="flex items-center justify-center gap-2 mb-1.5">
-                                        <span className="inline-flex items-center gap-1 text-[9px] text-emerald-600 font-semibold"><span className="w-1 h-1 bg-emerald-500 rounded-full" />Ouvert</span>
-                                        <span className="text-[9px] text-muted-foreground">· Ferme à 19h</span>
+                                        <span className="inline-flex items-center gap-1 text-[9px] text-emerald-600 font-semibold"><span className="w-1 h-1 bg-emerald-500 rounded-full" />{t('mockup.open')}</span>
+                                        <span className="text-[9px] text-muted-foreground">· {t('mockup.closesAt')}</span>
                                       </div>
                                       <div className="flex items-center justify-center gap-0.5 mb-4">
                                         {[...Array(5)].map((_, i) => <Star key={i} className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />)}
@@ -1580,7 +1580,7 @@ export default function Index() {
                                           <div key={i} className="w-7 h-7 rounded-full bg-secondary/40 flex items-center justify-center"><Icon className="w-3 h-3 text-muted-foreground" /></div>
                                         ))}
                                       </div>
-                                      <p className="text-[10px] font-semibold text-foreground mb-2 tracking-tight">Nos formules</p>
+                                      <p className="text-[10px] font-semibold text-foreground mb-2 tracking-tight">{t('mockup.ourPackages')}</p>
                                       <div className="grid grid-cols-2 gap-2 mb-4">
                                         {[{ name: 'Express', price: '35€' }, { name: 'Complet', price: '89€' }].map((f, i) => (
                                           <div key={i} className="rounded-2xl overflow-hidden relative h-[85px] shadow-sm">
@@ -1593,7 +1593,7 @@ export default function Index() {
                                           </div>
                                         ))}
                                       </div>
-                                      <button className="w-full bg-foreground text-background py-3 rounded-2xl text-[11px] font-semibold shadow-sm">Réserver</button>
+                                      <button className="w-full bg-foreground text-background py-3 rounded-2xl text-[11px] font-semibold shadow-sm">{t('mockup.book')}</button>
                                     </div>
                                   </>
                                 ) : (
@@ -1615,18 +1615,18 @@ export default function Index() {
                                     <div className="px-5 pt-5 pb-5">
                                       {/* Brand info */}
                                       <h3 className="text-[17px] font-bold text-foreground mb-0.5 tracking-tight leading-tight">GOCLEANING</h3>
-                                      <p className="text-[10px] text-muted-foreground mb-2.5 leading-relaxed">Nettoyage automobile premium à domicile. Intérieur, extérieur & rénovation complète.</p>
+                                      <p className="text-[10px] text-muted-foreground mb-2.5 leading-relaxed">{t('mockup.premiumAutoFull')}</p>
                                       
                                       <div className="flex items-center gap-3 mb-2">
                                         <div className="flex items-center gap-1">
-                                          <span className="inline-flex items-center gap-1 text-[9px] text-emerald-600 font-semibold"><span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />Ouvert</span>
-                                          <span className="text-[9px] text-muted-foreground">· Ferme à 19h</span>
+                                          <span className="inline-flex items-center gap-1 text-[9px] text-emerald-600 font-semibold"><span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />{t('mockup.open')}</span>
+                                          <span className="text-[9px] text-muted-foreground">· {t('mockup.closesAt')}</span>
                                         </div>
                                       </div>
                                       
                                       <div className="flex items-center gap-1 mb-4">
                                         {[...Array(5)].map((_, i) => <Star key={i} className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />)}
-                                        <span className="text-[9px] text-muted-foreground ml-1 font-medium">4.9 (122 avis)</span>
+                                        <span className="text-[9px] text-muted-foreground ml-1 font-medium">4.9 (122 {t('mockup.reviews')})</span>
                                       </div>
 
                                       {/* Social icons */}
@@ -1639,7 +1639,7 @@ export default function Index() {
                                       </div>
                                       
                                       {/* Formules */}
-                                      <p className="text-[10px] font-semibold text-foreground mb-2.5 tracking-tight">Nos formules</p>
+                                      <p className="text-[10px] font-semibold text-foreground mb-2.5 tracking-tight">{t('mockup.ourPackages')}</p>
                                       <div className="grid grid-cols-2 gap-2 mb-3">
                                         {[
                                           { name: 'Express', desc: 'Extérieur', price: '35€' },
@@ -1661,7 +1661,7 @@ export default function Index() {
                                         ))}
                                       </div>
                                       
-                                      <button className="w-full bg-foreground text-background py-3 rounded-2xl text-[11px] font-semibold shadow-sm mt-2">Réserver</button>
+                                      <button className="w-full bg-foreground text-background py-3 rounded-2xl text-[11px] font-semibold shadow-sm mt-2">{t('mockup.book')}</button>
                                     </div>
                                   </>
                                 )}
@@ -1677,15 +1677,15 @@ export default function Index() {
 
                         {/* Right: Customization controls */}
                         <div className="flex flex-col order-1 lg:order-2">
-                          <span className="text-base font-semibold text-foreground mb-4 tracking-tight">Personnalisation</span>
+                          <span className="text-base font-semibold text-foreground mb-4 tracking-tight">{t('mockup.customization')}</span>
                           
                           {/* Tabs with icons */}
                           <div className="flex items-center justify-between border-b border-border/15 mb-5">
                             {[
-                              { id: 'design', label: 'Design', icon: <Palette className="w-4 h-4" /> },
-                              { id: 'formules', label: 'Formules', icon: <Tag className="w-4 h-4" /> },
-                              { id: 'elements', label: 'Éléments', icon: <Settings className="w-4 h-4" /> },
-                              { id: 'seo', label: 'SEO', icon: <Globe className="w-4 h-4" /> },
+                              { id: 'design', label: t('mockup.design'), icon: <Palette className="w-4 h-4" /> },
+                              { id: 'formules', label: t('mockup.formulas'), icon: <Tag className="w-4 h-4" /> },
+                              { id: 'elements', label: t('mockup.elements'), icon: <Settings className="w-4 h-4" /> },
+                              { id: 'seo', label: t('mockup.seo'), icon: <Globe className="w-4 h-4" /> },
                             ].map(tab => (
                               <button key={tab.id} onClick={() => setMockupTab(tab.id as any)}
                                 className={`flex flex-col items-center gap-1.5 pb-3 px-3 transition-colors border-b-2 ${mockupTab === tab.id ? 'border-foreground text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
@@ -1907,20 +1907,20 @@ export default function Index() {
                     <>
                       <div className="flex items-center justify-between mb-6">
                         <div>
-                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Formules & Prestations</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">Gérez vos offres</p>
+                          <h3 className="text-lg font-semibold text-foreground tracking-tight">{t('mockup.formulasAndServices')}</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">{t('mockup.manageOffers')}</p>
                         </div>
                         <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
-                          + Ajouter
+                          {t('mockup.add')}
                         </button>
                       </div>
 
-                      <p className="text-xs font-semibold text-foreground mb-2.5">Formules</p>
+                      <p className="text-xs font-semibold text-foreground mb-2.5">{t('mockup.formulas')}</p>
                       <div className="space-y-2 mb-6">
                         {[
-                          { name: 'Lavage Express', desc: 'Extérieur uniquement · 45min', price: '35€', color: 'from-blue-500 to-blue-600' },
-                          { name: 'Nettoyage Complet', desc: 'Intérieur + extérieur · 1h30', price: '89€', color: 'from-emerald-500 to-emerald-600' },
-                          { name: 'Rénovation Premium', desc: 'Polish + céramique · 3h', price: '159€', color: 'from-purple-500 to-purple-600' },
+                          { name: 'Lavage Express', desc: `${t('mockup.exteriorOnly')} · 45min`, price: '35€', color: 'from-blue-500 to-blue-600' },
+                          { name: 'Nettoyage Complet', desc: `${t('mockup.intExt')} · 1h30`, price: '89€', color: 'from-emerald-500 to-emerald-600' },
+                          { name: 'Rénovation Premium', desc: `${t('mockup.polishCeramic')} · 3h`, price: '159€', color: 'from-purple-500 to-purple-600' },
                         ].map((pack, i) => (
                           <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer group">
                             <div className={`w-10 h-10 bg-gradient-to-br ${pack.color} rounded-xl flex items-center justify-center shrink-0 shadow-sm`}>
@@ -1938,8 +1938,8 @@ export default function Index() {
                         ))}
                       </div>
 
-                      <p className="text-xs font-semibold text-foreground mb-1.5">Prestations personnalisées</p>
-                      <p className="text-[11px] text-muted-foreground mb-2.5">Tarifs sur mesure par client</p>
+                      <p className="text-xs font-semibold text-foreground mb-1.5">{t('mockup.customServices')}</p>
+                      <p className="text-[11px] text-muted-foreground mb-2.5">{t('mockup.customRates')}</p>
                       <div className="space-y-2">
                         {[
                           { name: 'Nettoyage canapé 3 places', client: 'Marie Dupont', duration: '2h', price: '120€', avatarBg: 'bg-pink-500', initials: 'MD' },
@@ -1951,7 +1951,7 @@ export default function Index() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-[13px] font-semibold text-foreground">{service.name}</p>
-                              <p className="text-[11px] text-muted-foreground mt-0.5">Pour {service.client} · {service.duration}</p>
+                              <p className="text-[11px] text-muted-foreground mt-0.5">{t('mockup.forClient')} {service.client} · {service.duration}</p>
                             </div>
                             <span className="text-[14px] font-bold text-foreground tabular-nums">{service.price}</span>
                             <ChevronRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-muted-foreground transition-colors shrink-0" />
