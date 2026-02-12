@@ -9,41 +9,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Calendar as CalendarIcon, 
-  Plus,
-  X,
-  Clock,
-  User,
-  Ban,
-  Loader2,
-  GripVertical,
-  Trash2,
-  ArrowRight
+  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight
 } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter } from '@/hooks/useCenter';
 import { useBlockedPeriods } from '@/hooks/useAvailability';
-import { 
-  format, 
-  addMonths, 
-  subMonths, 
-  startOfMonth, 
-  endOfMonth, 
-  startOfWeek, 
-  endOfWeek, 
-  addDays, 
-  isSameMonth, 
-  isSameDay, 
-  isToday,
-  parseISO,
-  isBefore
-} from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, isToday, parseISO, isBefore } from 'date-fns';
+import { fr, enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from 'react-i18next';
 
 interface BlockedPeriod {
   id: string;
@@ -62,6 +38,8 @@ const statusColors: Record<string, string> = {
 };
 
 export default function DashboardCalendar() {
+  const { t, i18n } = useTranslation();
+  const dateLocale = i18n.language === 'en' ? enUS : fr;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -131,9 +109,9 @@ export default function DashboardCalendar() {
     setLoadingReschedule(false);
     
     if (error) {
-      toast.error('Erreur lors du déplacement');
+      toast.error(t('calendar.moveError'));
     } else {
-      toast.success('Rendez-vous déplacé');
+      toast.success(t('calendar.moved'));
       setAppointmentToReschedule(null);
       setSelectedAppointment(null);
       // Refetch to update the calendar with new date/time
@@ -150,9 +128,9 @@ export default function DashboardCalendar() {
     setLoadingBlock(false);
     
     if (error) {
-      toast.error('Erreur lors du blocage');
+      toast.error(t('calendar.blockError'));
     } else {
-      toast.success('Période bloquée');
+      toast.success(t('calendar.blocked'));
       setShowBlockDialog(false);
       setBlockForm({ start_date: '', end_date: '', reason: '' });
     }
@@ -162,9 +140,9 @@ export default function DashboardCalendar() {
   const removeBlockedPeriod = async (id: string) => {
     const { error } = await deleteBlockedPeriod(id);
     if (error) {
-      toast.error('Erreur lors de la suppression');
+      toast.error(t('calendar.unblockError'));
     } else {
-      toast.success('Période débloquée');
+      toast.success(t('calendar.unblocked'));
     }
   };
 
@@ -174,13 +152,13 @@ export default function DashboardCalendar() {
   const handleUpdateStatus = async (id: string, status: Appointment['status']) => {
     const { error } = await updateStatus(id, status);
     if (error) {
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(t('calendar.statusUpdateError'));
     } else {
-      toast.success('Statut mis à jour');
+      toast.success(t('calendar.statusUpdated'));
     }
   };
 
-  const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+  const weekDays = t('calendar.weekDays', { returnObjects: true }) as string[];
 
   return (
     <div className="min-h-screen bg-background">
@@ -189,7 +167,7 @@ export default function DashboardCalendar() {
       
       <div className="lg:pl-64">
         <DashboardHeader 
-          title="Calendrier" 
+          title={t('calendar.title')} 
           subtitle={center?.name}
           onMenuClick={() => setMobileMenuOpen(true)}
         />
@@ -202,7 +180,7 @@ export default function DashboardCalendar() {
                 <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
               <h2 className="text-lg sm:text-xl font-bold text-foreground min-w-[140px] sm:min-w-[180px] text-center capitalize">
-                {format(currentMonth, 'MMMM yyyy', { locale: fr })}
+                {format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}
               </h2>
               <Button variant="outline" size="icon" onClick={nextMonth} className="h-9 w-9 rounded-xl">
                 <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -212,7 +190,7 @@ export default function DashboardCalendar() {
             <div className="flex gap-2">
               <Button variant="outline" onClick={goToToday} className="rounded-xl flex-1 sm:flex-none h-9 text-sm">
                 <CalendarIcon className="w-4 h-4 mr-1.5" />
-                Aujourd'hui
+                {t('calendar.today')}
               </Button>
               <Button 
                 variant="outline" 
@@ -227,7 +205,7 @@ export default function DashboardCalendar() {
                 className="rounded-xl flex-1 sm:flex-none h-9 text-sm"
               >
                 <Ban className="w-4 h-4 mr-1.5" />
-                <span className="hidden sm:inline">Bloquer</span>
+                <span className="hidden sm:inline">{t('calendar.block')}</span>
               </Button>
             </div>
           </div>
@@ -312,15 +290,15 @@ export default function DashboardCalendar() {
               <div className="flex flex-wrap gap-3 sm:gap-5 mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-border">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-amber-400" />
-                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">Attente</span>
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">{t('calendar.pending')}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">Confirmé</span>
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">{t('calendar.confirmed')}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-blue-400" />
-                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">Terminé</span>
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">{t('calendar.completed')}</span>
                 </div>
               </div>
             </Card>
@@ -330,8 +308,8 @@ export default function DashboardCalendar() {
               <Card className="p-4 sm:p-5 rounded-2xl">
                 <h3 className="font-semibold text-base sm:text-lg text-foreground mb-3 sm:mb-4">
                   {selectedDate 
-                    ? format(selectedDate, "EEE d MMM", { locale: fr }) 
-                    : "Sélectionnez un jour"
+                    ? format(selectedDate, "EEE d MMM", { locale: dateLocale }) 
+                    : t('calendar.selectDay')
                   }
                 </h3>
                 
@@ -388,7 +366,7 @@ export default function DashboardCalendar() {
                     ) : (
                       <div className="text-center py-6 sm:py-8 text-muted-foreground">
                         <CalendarIcon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-2 sm:mb-3 opacity-30" />
-                        <p className="text-sm">Aucun RDV</p>
+                        <p className="text-sm">{t('calendar.noAppointments')}</p>
                       </div>
                     )}
                   </>
@@ -398,13 +376,13 @@ export default function DashboardCalendar() {
               {/* Blocked periods */}
               {blockedPeriods.length > 0 && (
                 <Card className="p-5 rounded-2xl">
-                  <h3 className="font-semibold text-foreground mb-3">Périodes bloquées</h3>
+                  <h3 className="font-semibold text-foreground mb-3">{t('calendar.blockedPeriods')}</h3>
                   <div className="space-y-2">
                     {blockedPeriods.map(period => (
                       <div key={period.id} className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-950/30 rounded-lg">
                         <div>
                           <p className="text-sm font-medium text-foreground">
-                            {format(parseISO(period.start_date), "d MMM", { locale: fr })} → {format(parseISO(period.end_date), "d MMM", { locale: fr })}
+                            {format(parseISO(period.start_date), "d MMM", { locale: dateLocale })} → {format(parseISO(period.end_date), "d MMM", { locale: dateLocale })}
                           </p>
                           {period.reason && (
                             <p className="text-xs text-muted-foreground">{period.reason}</p>
@@ -436,9 +414,9 @@ export default function DashboardCalendar() {
       }}>
         <DialogContent className="max-w-md rounded-2xl">
         <DialogHeader>
-            <DialogTitle>Détails du rendez-vous</DialogTitle>
+            <DialogTitle>{t('calendar.appointmentDetails')}</DialogTitle>
             <DialogDescription className="sr-only">
-              Voir et gérer les détails de cette réservation
+              {t('calendar.appointmentDetailsDesc')}
             </DialogDescription>
           </DialogHeader>
           
@@ -452,7 +430,7 @@ export default function DashboardCalendar() {
                   </div>
                   <div className="flex items-center gap-1 text-sm text-muted-foreground">
                     <Clock className="w-3.5 h-3.5" />
-                    {format(parseISO(selectedAppointment.appointment_date), "d MMM", { locale: fr })} à {selectedAppointment.appointment_time.slice(0, 5)}
+                    {format(parseISO(selectedAppointment.appointment_date), "d MMM", { locale: dateLocale })} {t('common.to')} {selectedAppointment.appointment_time.slice(0, 5)}
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground ml-6">{selectedAppointment.client_phone}</p>
@@ -477,7 +455,7 @@ export default function DashboardCalendar() {
                   }}
                 >
                   <ArrowRight className="w-4 h-4 mr-2" />
-                  Déplacer
+                  {t('calendar.move')}
                 </Button>
                 
                 {selectedAppointment.status === 'pending' && (
@@ -489,7 +467,7 @@ export default function DashboardCalendar() {
                       setSelectedAppointment(null);
                     }}
                   >
-                    Confirmer
+                    {t('status.confirmed')}
                   </Button>
                 )}
                 
@@ -502,7 +480,7 @@ export default function DashboardCalendar() {
                       setSelectedAppointment(null);
                     }}
                   >
-                    Terminer
+                    {t('dashboard.finish')}
                   </Button>
                 )}
               </div>
@@ -516,7 +494,7 @@ export default function DashboardCalendar() {
                     setSelectedAppointment(null);
                   }}
                 >
-                  Annuler le rendez-vous
+                  {t('calendar.cancelAppointment')}
                 </Button>
               )}
               
@@ -527,21 +505,21 @@ export default function DashboardCalendar() {
                   className="w-full rounded-xl text-red-500 hover:text-red-600 hover:bg-red-50"
                   disabled={loadingDelete}
                   onClick={async () => {
-                    if (confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?')) {
+                    if (confirm(t('calendar.deleteConfirmPrompt'))) {
                       setLoadingDelete(true);
                       const { error } = await deleteAppointment(selectedAppointment.id);
                       setLoadingDelete(false);
                       if (error) {
-                        toast.error('Erreur lors de la suppression');
+                        toast.error(t('calendar.deleteError'));
                       } else {
-                        toast.success('Rendez-vous supprimé');
+                        toast.success(t('calendar.deleted'));
                         setSelectedAppointment(null);
                       }
                     }
                   }}
                 >
                   {loadingDelete ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
-                  Supprimer
+                  {t('common.delete')}
                 </Button>
               </div>
             </div>
@@ -549,7 +527,7 @@ export default function DashboardCalendar() {
         </DialogContent>
       </Dialog>
 
-      {/* Reschedule Dialog - Clean dedicated dialog */}
+      {/* Reschedule Dialog */}
       <Dialog open={!!appointmentToReschedule} onOpenChange={(open) => {
         if (!open) {
           setAppointmentToReschedule(null);
@@ -557,18 +535,18 @@ export default function DashboardCalendar() {
       }}>
         <DialogContent className="max-w-md rounded-2xl">
         <DialogHeader>
-            <DialogTitle className="text-xl">Déplacer la réservation</DialogTitle>
+            <DialogTitle className="text-xl">{t('calendar.reschedule')}</DialogTitle>
             <DialogDescription>
               {appointmentToReschedule 
-                ? `Déplacer la réservation de ${appointmentToReschedule.client_name}`
-                : 'Choisissez une nouvelle date et heure'
+                ? t('calendar.rescheduleDesc', { name: appointmentToReschedule.client_name })
+                : t('calendar.chooseNewDateTime')
               }
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-5 py-2">
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Nouvelle date</Label>
+              <Label className="text-sm font-medium">{t('calendar.newDate')}</Label>
               <Input
                 type="date"
                 value={rescheduleForm.date}
@@ -578,7 +556,7 @@ export default function DashboardCalendar() {
             </div>
             
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Nouvelle heure</Label>
+              <Label className="text-sm font-medium">{t('calendar.newTime')}</Label>
               <Input
                 type="time"
                 value={rescheduleForm.time}
@@ -594,14 +572,14 @@ export default function DashboardCalendar() {
               onClick={() => setAppointmentToReschedule(null)}
               className="rounded-xl flex-1 sm:flex-none"
             >
-              Annuler
+              {t('common.cancel')}
             </Button>
             <Button 
               onClick={handleReschedule}
               disabled={loadingReschedule || !rescheduleForm.date || !rescheduleForm.time}
               className="rounded-xl flex-1 sm:flex-none min-w-[120px]"
             >
-              {loadingReschedule ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Déplacer'}
+              {loadingReschedule ? <Loader2 className="w-4 h-4 animate-spin" /> : t('calendar.rescheduleAction')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -611,16 +589,16 @@ export default function DashboardCalendar() {
       <Dialog open={showBlockDialog} onOpenChange={setShowBlockDialog}>
         <DialogContent className="max-w-md rounded-2xl">
         <DialogHeader>
-            <DialogTitle>Bloquer une période</DialogTitle>
+            <DialogTitle>{t('calendar.blockPeriod')}</DialogTitle>
             <DialogDescription className="sr-only">
-              Définir une période pendant laquelle aucun rendez-vous ne peut être pris
+              {t('calendar.blockPeriodDesc')}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Date de début</Label>
+                <Label>{t('calendar.startDate')}</Label>
                 <Input
                   type="date"
                   value={blockForm.start_date}
@@ -629,7 +607,7 @@ export default function DashboardCalendar() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Date de fin</Label>
+                <Label>{t('calendar.endDate')}</Label>
                 <Input
                   type="date"
                   value={blockForm.end_date}
@@ -640,7 +618,7 @@ export default function DashboardCalendar() {
             </div>
             
             <div className="space-y-2">
-              <Label>Raison (optionnel)</Label>
+              <Label>{t('calendar.reason')}</Label>
               <Input
                 value={blockForm.reason}
                 onChange={(e) => setBlockForm(prev => ({ ...prev, reason: e.target.value }))}
@@ -652,14 +630,14 @@ export default function DashboardCalendar() {
           
           <DialogFooter className="gap-2">
             <Button variant="ghost" onClick={() => setShowBlockDialog(false)} className="rounded-xl">
-              Annuler
+              {t('common.cancel')}
             </Button>
             <Button 
               onClick={handleBlockPeriod}
               disabled={loadingBlock || !blockForm.start_date || !blockForm.end_date}
               className="rounded-xl"
             >
-              {loadingBlock ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Bloquer'}
+              {loadingBlock ? <Loader2 className="w-4 h-4 animate-spin" /> : t('calendar.block')}
             </Button>
           </DialogFooter>
         </DialogContent>
