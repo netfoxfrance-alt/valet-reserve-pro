@@ -66,7 +66,7 @@ export default function DashboardSettings() {
         phone: center.phone || '',
       });
       setLogoUrl(center.logo_url);
-      setEmailLanguage((center as any).email_language || 'fr');
+      setEmailLanguage((center as any).email_language || i18n.language || 'fr');
       setSlug(center.slug || '');
       setSlugInput(center.slug || '');
       if (center.customization) {
