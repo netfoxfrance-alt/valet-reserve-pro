@@ -786,7 +786,7 @@ export default function Dashboard() {
           centerAddress={center?.address || undefined}
           open={confirmDialogOpen}
           onOpenChange={setConfirmDialogOpen}
-          onAddToCalendar={(apt) => markAsSynced(apt.id)}
+          onAddToCalendar={() => markAsSynced(justConfirmedAppointment.id)}
         />
       )}
     </div>
