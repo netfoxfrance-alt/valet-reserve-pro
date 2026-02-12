@@ -62,13 +62,8 @@ export default function Index() {
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">
             <Link to="/auth">
-              <Button variant="ghost" size="sm" className="text-xs sm:text-sm px-2 sm:px-4">
-                Connexion
-              </Button>
-            </Link>
-            <Link to="/auth">
               <Button size="sm" className="text-xs sm:text-sm px-3 sm:px-4">
-                S'inscrire
+                Connexion
               </Button>
             </Link>
           </div>

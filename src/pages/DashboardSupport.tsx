@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
+import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,7 @@ export default function DashboardSupport() {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,8 +63,9 @@ export default function DashboardSupport() {
   return (
     <div className="min-h-screen bg-background">
       <DashboardSidebar />
+      <MobileSidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
       <div className="lg:pl-64">
-        <DashboardHeader title="Support" />
+        <DashboardHeader title="Support" onMenuClick={() => setSidebarOpen(true)} />
         <main className="p-4 sm:p-6 max-w-2xl mx-auto">
           <div className="mb-6">
             <div className="flex items-center gap-3 mb-2">

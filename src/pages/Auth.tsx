@@ -172,12 +172,20 @@ export default function Auth() {
           </form>
           
         </Card>
-        
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          <Link to="/" className="text-foreground font-medium hover:underline">
-            ← Retour à l'accueil
-          </Link>
-        </p>
+
+        <div className="text-center mt-6 space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Toujours pas de compte ?{' '}
+            <a href="/" className="text-primary font-medium hover:underline">
+              Essayer 30 jours gratuitement et sans engagement
+            </a>
+          </p>
+          <p className="text-sm text-muted-foreground">
+            <Link to="/" className="text-foreground font-medium hover:underline">
+              ← Retour à l'accueil
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
