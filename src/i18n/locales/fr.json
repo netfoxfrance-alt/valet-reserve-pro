@@ -480,7 +480,8 @@
     "upgradeToPro": "Passer à Pro",
     "renewalOn": "Renouvellement le {{date}}",
     "limitedAccess": "Accès limité aux fonctionnalités",
-    "saveChanges": "Enregistrer les modifications"
+    "saveChanges": "Enregistrer les modifications",
+    "mustBeLoggedIn": "Vous devez être connecté."
   },
   "support": {
     "title": "Support",
@@ -554,6 +555,23 @@
     "googleTitle": "Titre Google",
     "keywords": "Mots-clés",
     "logoInSettings": "Le logo se configure dans Paramètres → Informations"
+  },
+  "appointmentDetail": {
+    "addToCalendar": "Ajouter au calendrier",
+    "detailsFor": "Détails du rendez-vous pour {{name}}",
+    "appointmentDetails": "Détails du rendez-vous",
+    "service": "Prestation",
+    "vehicle": "Véhicule",
+    "clientContact": "Coordonnées client",
+    "defaultService": "Prestation par défaut",
+    "bookings": "Réservations",
+    "totalRevenue": "CA total",
+    "avgBasket": "Panier moyen",
+    "lastVisit": "Dernière visite",
+    "clientNotes": "Notes client",
+    "serviceHistory": "Historique des prestations",
+    "noServices": "Aucune prestation pour ce client",
+    "clientNotInFile": "Ce client n'est pas encore dans votre fichier clients"
   },
   "clientDetail": {
     "viaBooking": "Via réservation",

@@ -11,25 +11,18 @@ import {
   Car, FileText, ExternalLink, User, CalendarPlus, Copy, Check
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
 import { useState } from 'react';
 import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
+import { useTranslation } from 'react-i18next';
 
-const statusConfig: Record<string, { label: string; color: string }> = {
-  pending_validation: { label: 'En attente', color: 'bg-amber-100 text-amber-700' },
-  pending: { label: 'En attente', color: 'bg-amber-100 text-amber-700' },
-  confirmed: { label: 'Confirmé', color: 'bg-emerald-100 text-emerald-700' },
-  completed: { label: 'Terminé', color: 'bg-slate-100 text-slate-600' },
-  cancelled: { label: 'Annulé', color: 'bg-red-100 text-red-600' },
-  refused: { label: 'Refusé', color: 'bg-red-100 text-red-600' },
-};
-
-const vehicleLabels: Record<string, string> = {
-  citadine: 'Citadine',
-  berline: 'Berline',
-  suv: 'SUV / 4x4',
-  utilitaire: 'Utilitaire',
-  standard: 'Standard',
+const statusColors: Record<string, string> = {
+  pending_validation: 'bg-amber-100 text-amber-700',
+  pending: 'bg-amber-100 text-amber-700',
+  confirmed: 'bg-emerald-100 text-emerald-700',
+  completed: 'bg-slate-100 text-slate-600',
+  cancelled: 'bg-red-100 text-red-600',
+  refused: 'bg-red-100 text-red-600',
 };
 
 interface AppointmentDetailDialogProps {
@@ -47,14 +40,16 @@ export function AppointmentDetailDialog({
   open, 
   onOpenChange 
 }: AppointmentDetailDialogProps) {
+  const { t, i18n } = useTranslation();
+  const dateLocale = i18n.language === 'en' ? enUS : fr;
   const { appointments: clientHistory, loading, stats } = useClientHistory(client?.id || null);
   const [copiedPhone, setCopiedPhone] = useState(false);
 
   if (!appointment) return null;
 
-  const status = statusConfig[appointment.status] || statusConfig.pending;
+  const statusColor = statusColors[appointment.status] || statusColors.pending;
   const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price ?? 0;
-  const serviceName = appointment.custom_service?.name || appointment.pack?.name || 'Service';
+  const serviceName = appointment.custom_service?.name || appointment.pack?.name || t('customServices.title');
 
   const handleCopyPhone = async () => {
     const phone = client?.phone || appointment.client_phone;
@@ -83,7 +78,6 @@ export function AppointmentDetailDialog({
     window.open(url, '_blank');
   };
 
-  // Use client data if available, otherwise fall back to appointment data
   const displayPhone = client?.phone || appointment.client_phone;
   const displayEmail = client?.email || appointment.client_email;
   const displayAddress = client?.address || appointment.client_address;
@@ -101,7 +95,7 @@ export function AppointmentDetailDialog({
               </div>
               <div>
                 <p className="text-xl font-semibold">{appointment.client_name}</p>
-                <Badge className={`${status.color} text-xs mt-1`}>{status.label}</Badge>
+                <Badge className={`${statusColor} text-xs mt-1`}>{t(`status.${appointment.status}`)}</Badge>
               </div>
             </DialogTitle>
             <Button
@@ -111,11 +105,11 @@ export function AppointmentDetailDialog({
               className="gap-2"
             >
               <CalendarPlus className="w-4 h-4" />
-              <span className="hidden sm:inline">Ajouter au calendrier</span>
+              <span className="hidden sm:inline">{t('appointmentDetail.addToCalendar')}</span>
             </Button>
           </div>
           <DialogDescription className="sr-only">
-            Détails du rendez-vous pour {appointment.client_name}
+            {t('appointmentDetail.detailsFor', { name: appointment.client_name })}
           </DialogDescription>
         </DialogHeader>
 
@@ -124,39 +118,39 @@ export function AppointmentDetailDialog({
           <Card variant="elevated" className="p-4">
             <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
               <Calendar className="w-4 h-4 text-primary" />
-              Détails du rendez-vous
+              {t('appointmentDetail.appointmentDetails')}
             </h4>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-muted-foreground">Date</p>
+                <p className="text-muted-foreground">{t('common.date')}</p>
                 <p className="font-medium text-foreground">
-                  {format(parseISO(appointment.appointment_date), 'EEEE d MMMM yyyy', { locale: fr })}
+                  {format(parseISO(appointment.appointment_date), 'EEEE d MMMM yyyy', { locale: dateLocale })}
                 </p>
               </div>
               <div>
-                <p className="text-muted-foreground">Heure</p>
+                <p className="text-muted-foreground">{t('common.time')}</p>
                 <p className="font-medium text-foreground">{appointment.appointment_time.slice(0, 5)}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Prestation</p>
+                <p className="text-muted-foreground">{t('appointmentDetail.service')}</p>
                 <p className="font-medium text-foreground">{serviceName}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Prix</p>
+                <p className="text-muted-foreground">{t('common.price')}</p>
                 <p className="font-bold text-lg text-foreground">{price}€</p>
               </div>
               <div className="flex items-center gap-2">
                 <Car className="w-4 h-4 text-muted-foreground" />
                 <div>
-                  <p className="text-muted-foreground">Véhicule</p>
+                  <p className="text-muted-foreground">{t('appointmentDetail.vehicle')}</p>
                   <p className="font-medium text-foreground">
-                    {vehicleLabels[appointment.vehicle_type] || appointment.vehicle_type}
+                    {t(`vehicles.${appointment.vehicle_type}`, { defaultValue: appointment.vehicle_type })}
                   </p>
                 </div>
               </div>
               {appointment.duration_minutes && (
                 <div>
-                  <p className="text-muted-foreground">Durée</p>
+                  <p className="text-muted-foreground">{t('common.duration')}</p>
                   <p className="font-medium text-foreground">{appointment.duration_minutes} min</p>
                 </div>
               )}
@@ -165,18 +159,18 @@ export function AppointmentDetailDialog({
               <div className="mt-4 pt-4 border-t border-border">
                 <p className="text-muted-foreground text-sm mb-1 flex items-center gap-2">
                   <FileText className="w-4 h-4" />
-                  Notes
+                  {t('common.notes')}
                 </p>
                 <p className="text-foreground">{appointment.notes}</p>
               </div>
             )}
           </Card>
 
-          {/* Contact Info - Clickable */}
+          {/* Contact Info */}
           <Card variant="elevated" className="p-4">
             <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
               <User className="w-4 h-4 text-primary" />
-              Coordonnées client
+              {t('appointmentDetail.clientContact')}
             </h4>
             <div className="space-y-3">
               {displayPhone && (
@@ -191,25 +185,13 @@ export function AppointmentDetailDialog({
                     <span className="font-medium">{displayPhone}</span>
                     <ExternalLink className="w-3 h-3 text-muted-foreground" />
                   </a>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleCopyPhone}
-                    className="h-8 px-2"
-                  >
-                    {copiedPhone ? (
-                      <Check className="w-4 h-4 text-emerald-500" />
-                    ) : (
-                      <Copy className="w-4 h-4" />
-                    )}
+                  <Button variant="ghost" size="sm" onClick={handleCopyPhone} className="h-8 px-2">
+                    {copiedPhone ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                   </Button>
                 </div>
               )}
               {displayEmail && displayEmail !== 'non-fourni@example.com' && (
-                <a 
-                  href={`mailto:${displayEmail}`} 
-                  className="flex items-center gap-2 text-foreground hover:text-primary transition-colors"
-                >
+                <a href={`mailto:${displayEmail}`} className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
                   <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
                     <Mail className="w-4 h-4 text-blue-500" />
                   </div>
@@ -228,13 +210,12 @@ export function AppointmentDetailDialog({
             </div>
           </Card>
 
-          {/* Client Stats (if client linked) */}
+          {/* Client Stats */}
           {client && (
             <>
-              {/* Default Service */}
               {client.default_service && (
                 <div className="bg-primary/5 rounded-xl p-4">
-                  <p className="text-sm text-muted-foreground mb-1">Prestation par défaut</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('appointmentDetail.defaultService')}</p>
                   <p className="font-medium text-primary flex items-center gap-2">
                     <Sparkles className="w-4 h-4" />
                     {client.default_service.name} • {client.default_service.duration_minutes}min • {client.default_service.price}€
@@ -242,43 +223,40 @@ export function AppointmentDetailDialog({
                 </div>
               )}
 
-              {/* Stats */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <Card variant="elevated" className="p-3 text-center">
                   <Calendar className="w-5 h-5 mx-auto text-primary mb-1" />
                   <p className="text-xl font-bold">{stats.totalAppointments}</p>
-                  <p className="text-xs text-muted-foreground">Réservations</p>
+                  <p className="text-xs text-muted-foreground">{t('appointmentDetail.bookings')}</p>
                 </Card>
                 <Card variant="elevated" className="p-3 text-center">
                   <Euro className="w-5 h-5 mx-auto text-green-600 mb-1" />
                   <p className="text-xl font-bold">{stats.totalRevenue}€</p>
-                  <p className="text-xs text-muted-foreground">CA total</p>
+                  <p className="text-xs text-muted-foreground">{t('appointmentDetail.totalRevenue')}</p>
                 </Card>
                 <Card variant="elevated" className="p-3 text-center">
                   <TrendingUp className="w-5 h-5 mx-auto text-blue-600 mb-1" />
                   <p className="text-xl font-bold">{stats.avgPrice}€</p>
-                  <p className="text-xs text-muted-foreground">Panier moyen</p>
+                  <p className="text-xs text-muted-foreground">{t('appointmentDetail.avgBasket')}</p>
                 </Card>
                 <Card variant="elevated" className="p-3 text-center">
                   <Clock className="w-5 h-5 mx-auto text-purple-600 mb-1" />
                   <p className="text-xl font-bold">
-                    {stats.lastVisit ? format(parseISO(stats.lastVisit), 'd MMM', { locale: fr }) : '-'}
+                    {stats.lastVisit ? format(parseISO(stats.lastVisit), 'd MMM', { locale: dateLocale }) : '-'}
                   </p>
-                  <p className="text-xs text-muted-foreground">Dernière visite</p>
+                  <p className="text-xs text-muted-foreground">{t('appointmentDetail.lastVisit')}</p>
                 </Card>
               </div>
 
-              {/* Notes */}
               {client.notes && (
                 <div className="bg-secondary/30 rounded-xl p-4">
-                  <p className="text-sm text-muted-foreground mb-1">Notes client</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('appointmentDetail.clientNotes')}</p>
                   <p className="text-foreground">{client.notes}</p>
                 </div>
               )}
 
-              {/* Client History */}
               <div>
-                <h4 className="font-semibold text-foreground mb-3">Historique des prestations</h4>
+                <h4 className="font-semibold text-foreground mb-3">{t('appointmentDetail.serviceHistory')}</h4>
                 {loading ? (
                   <div className="space-y-2">
                     {[1, 2, 3].map(i => <Skeleton key={i} className="h-16" />)}
@@ -286,29 +264,26 @@ export function AppointmentDetailDialog({
                 ) : clientHistory.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
                     <Calendar className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    <p>Aucune prestation pour ce client</p>
+                    <p>{t('appointmentDetail.noServices')}</p>
                   </div>
                 ) : (
                   <div className="space-y-2 max-h-48 overflow-y-auto">
                     {clientHistory.slice(0, 5).map((apt) => {
-                      const aptStatus = statusConfig[apt.status] || statusConfig.pending;
+                      const aptStatusColor = statusColors[apt.status] || statusColors.pending;
                       const aptPrice = apt.custom_price || apt.pack?.price || 0;
                       const aptServiceName = apt.custom_service?.name || apt.pack?.name || 'Service';
                       
                       return (
-                        <div
-                          key={apt.id}
-                          className="flex items-center justify-between gap-3 p-3 bg-secondary/20 rounded-xl"
-                        >
+                        <div key={apt.id} className="flex items-center justify-between gap-3 p-3 bg-secondary/20 rounded-xl">
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-foreground truncate">{aptServiceName}</p>
                             <p className="text-sm text-muted-foreground">
-                              {format(parseISO(apt.appointment_date), 'd MMMM yyyy', { locale: fr })} à {apt.appointment_time.slice(0, 5)}
+                              {format(parseISO(apt.appointment_date), 'd MMMM yyyy', { locale: dateLocale })}
                             </p>
                           </div>
                           <div className="flex items-center gap-2 flex-shrink-0">
                             <span className="font-semibold text-foreground">{aptPrice}€</span>
-                            <Badge className={`${aptStatus.color} text-xs`}>{aptStatus.label}</Badge>
+                            <Badge className={`${aptStatusColor} text-xs`}>{t(`status.${apt.status}`)}</Badge>
                           </div>
                         </div>
                       );
@@ -319,11 +294,10 @@ export function AppointmentDetailDialog({
             </>
           )}
 
-          {/* If no client linked, show a note */}
           {!client && (
             <div className="text-center py-4 text-muted-foreground bg-muted/30 rounded-xl">
               <User className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">Ce client n'est pas encore dans votre fichier clients</p>
+              <p className="text-sm">{t('appointmentDetail.clientNotInFile')}</p>
             </div>
           )}
         </div>
