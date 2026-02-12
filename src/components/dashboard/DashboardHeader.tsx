@@ -1,6 +1,7 @@
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/ui/Logo';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 interface DashboardHeaderProps {
   title: string;
@@ -30,6 +31,7 @@ export function DashboardHeader({ title, subtitle, onMenuClick }: DashboardHeade
       </div>
       
       <div className="flex items-center gap-2">
+        <LanguageSwitcher />
         <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-sm font-medium text-primary-foreground">
           AC
         </div>
