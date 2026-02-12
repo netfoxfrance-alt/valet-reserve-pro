@@ -287,6 +287,42 @@ export type Database = {
         }
         Relationships: []
       }
+      client_services: {
+        Row: {
+          client_id: string
+          created_at: string
+          id: string
+          service_id: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          id?: string
+          service_id: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          id?: string
+          service_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_services_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_services_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "custom_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           address: string | null
