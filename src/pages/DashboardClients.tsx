@@ -17,9 +17,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { Search, Phone, Mail, MapPin, Plus, Pencil, Trash2, Loader2, Eye } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
+import { useTranslation } from 'react-i18next';
 
 export default function DashboardClients() {
+  const { t, i18n } = useTranslation();
+  const dateLocale = i18n.language === 'en' ? enUS : fr;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchClient, setSearchClient] = useState('');
   const { center } = useMyCenter();
@@ -159,17 +162,17 @@ export default function DashboardClients() {
               {/* KPI Cards - Clean Apple style, no icons */}
               <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
                 <Card variant="elevated" className="p-5 rounded-2xl">
-                  <p className="text-sm font-medium text-muted-foreground mb-1">Total clients</p>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">{t('clients.totalClients')}</p>
                   <p className="text-3xl font-bold text-foreground tracking-tight">{totalClients}</p>
                 </Card>
 
                 <Card variant="elevated" className="p-5 rounded-2xl">
-                  <p className="text-sm font-medium text-muted-foreground mb-1">Réservation</p>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">{t('clients.booking')}</p>
                   <p className="text-3xl font-bold text-foreground tracking-tight">{bookingClients}</p>
                 </Card>
 
                 <Card variant="elevated" className="p-5 rounded-2xl">
-                  <p className="text-sm font-medium text-muted-foreground mb-1">Manuel</p>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">{t('clients.manual')}</p>
                   <p className="text-3xl font-bold text-foreground tracking-tight">{manualClients}</p>
                 </Card>
               </div>
@@ -179,7 +182,7 @@ export default function DashboardClients() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
-                    placeholder="Rechercher un client..."
+                    placeholder={t('clients.searchClient')}
                     value={searchClient}
                     onChange={(e) => setSearchClient(e.target.value)}
                     className="pl-9 w-full sm:w-80"
@@ -189,7 +192,7 @@ export default function DashboardClients() {
                   <DialogTrigger asChild>
                     <Button>
                       <Plus className="w-4 h-4 mr-2" />
-                      Nouveau client
+                      {t('clients.newClient')}
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-lg">
@@ -282,12 +285,12 @@ export default function DashboardClients() {
                 {filteredClients.length === 0 ? (
                   <div className="text-center py-12">
                     <h4 className="font-medium text-foreground mb-1">
-                      {searchClient ? 'Aucun client trouvé' : 'Aucun client pour le moment'}
+                      {searchClient ? t('clients.noClientFound') : t('clients.noClients')}
                     </h4>
                     <p className="text-sm text-muted-foreground mb-4">
                       {searchClient
-                        ? 'Essayez avec un autre terme de recherche'
-                        : 'Les clients seront ajoutés automatiquement lors des réservations'}
+                        ? t('clients.tryOtherSearch')
+                        : t('clients.clientsAutoAdded')}
                     </p>
                     {!searchClient && (
                       <Button onClick={() => setIsCreateOpen(true)}>
@@ -318,7 +321,7 @@ export default function DashboardClients() {
                                   ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400' 
                                   : 'bg-muted text-muted-foreground'
                               }`}>
-                                {client.source === 'booking' ? 'Résa' : 'Manuel'}
+                                {client.source === 'booking' ? t('clients.resa') : t('clients.manualShort')}
                               </span>
                             </div>
                             <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground mt-1">

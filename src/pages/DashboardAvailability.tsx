@@ -11,40 +11,12 @@ import { Plus, X, Coffee, Loader2, Car } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useScheduleAvailability } from '@/hooks/useScheduleAvailability';
 import { useMyCenter } from '@/hooks/useCenter';
-
-const dayLabels: { [key: string]: string } = {
-  lundi: 'Lundi',
-  mardi: 'Mardi',
-  mercredi: 'Mercredi',
-  jeudi: 'Jeudi',
-  vendredi: 'Vendredi',
-  samedi: 'Samedi',
-  dimanche: 'Dimanche',
-};
-
-const dayLabelsShort: { [key: string]: string } = {
-  lundi: 'Lun',
-  mardi: 'Mar',
-  mercredi: 'Mer',
-  jeudi: 'Jeu',
-  vendredi: 'Ven',
-  samedi: 'Sam',
-  dimanche: 'Dim',
-};
+import { useTranslation } from 'react-i18next';
 
 const dayOrder = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
 
-const bufferOptions = [
-  { value: '0', label: 'Aucun' },
-  { value: '15', label: '15 minutes' },
-  { value: '30', label: '30 minutes' },
-  { value: '45', label: '45 minutes' },
-  { value: '60', label: '1 heure' },
-  { value: '90', label: '1h30' },
-  { value: '120', label: '2 heures' },
-];
-
 export default function DashboardAvailability() {
+  const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { center, updateCenter } = useMyCenter();
   const [appointmentBuffer, setAppointmentBuffer] = useState('0');
@@ -60,6 +32,16 @@ export default function DashboardAvailability() {
     removeSlot,
     saveSchedule,
   } = useScheduleAvailability();
+
+  const bufferOptions = [
+    { value: '0', label: t('availability.bufferNone') },
+    { value: '15', label: t('availability.buffer15') },
+    { value: '30', label: t('availability.buffer30') },
+    { value: '45', label: t('availability.buffer45') },
+    { value: '60', label: t('availability.buffer60') },
+    { value: '90', label: t('availability.buffer90') },
+    { value: '120', label: t('availability.buffer120') },
+  ];
   
   // Load buffer from center customization
   useEffect(() => {
@@ -88,7 +70,6 @@ export default function DashboardAvailability() {
     setBufferSaving(false);
   };
 
-  // Format slots for display
   const formatSlotsPreview = (slots: { start: string; end: string }[]) => {
     if (slots.length === 1) {
       return `${slots[0].start.replace(':', 'h')} - ${slots[0].end.replace(':', 'h')}`;
@@ -103,7 +84,7 @@ export default function DashboardAvailability() {
         <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
         <div className="lg:pl-64">
           <DashboardHeader 
-            title="Disponibilités" 
+            title={t('availability.title')} 
             onMenuClick={() => setMobileMenuOpen(true)}
           />
           <main className="p-4 lg:p-8 flex items-center justify-center min-h-[50vh]">
@@ -121,7 +102,7 @@ export default function DashboardAvailability() {
       
       <div className="lg:pl-64">
         <DashboardHeader 
-          title="Disponibilités" 
+          title={t('availability.title')} 
           onMenuClick={() => setMobileMenuOpen(true)}
         />
         
@@ -134,14 +115,14 @@ export default function DashboardAvailability() {
               </div>
               <div className="flex-1">
                 <Label htmlFor="buffer" className="text-base font-medium">
-                  Temps de déplacement
+                  {t('availability.travelTime')}
                 </Label>
                 <p className="text-sm text-muted-foreground mt-0.5 mb-3">
-                  Temps minimum entre chaque rendez-vous pour vos trajets
+                  {t('availability.travelTimeDesc')}
                 </p>
                 <Select value={appointmentBuffer} onValueChange={handleBufferChange} disabled={bufferSaving}>
                   <SelectTrigger id="buffer" className="w-48 rounded-xl">
-                    <SelectValue placeholder="Sélectionner..." />
+                    <SelectValue placeholder="..." />
                   </SelectTrigger>
                   <SelectContent>
                     {bufferOptions.map(opt => (
@@ -154,8 +135,8 @@ export default function DashboardAvailability() {
           </Card>
           
           <div className="mb-6 sm:mb-8">
-            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Horaires d'ouverture</h2>
-            <p className="text-sm text-muted-foreground">Définissez vos plages horaires disponibles pour les réservations. Ajoutez des pauses si nécessaire.</p>
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">{t('availability.openingHours')}</h2>
+            <p className="text-sm text-muted-foreground">{t('availability.openingHoursDesc')}</p>
           </div>
           
           <Card variant="elevated" className="divide-y divide-border rounded-2xl overflow-hidden">
@@ -165,10 +146,8 @@ export default function DashboardAvailability() {
               
               return (
                 <div key={day} className="p-4 sm:p-5">
-                  {/* Day header with toggle */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      {/* Apple-style toggle with green checkmark */}
                       <button
                         type="button"
                         onClick={() => toggleDay(day)}
@@ -189,8 +168,8 @@ export default function DashboardAvailability() {
                         "font-medium text-sm sm:text-base transition-colors",
                         daySchedule.enabled ? "text-foreground" : "text-muted-foreground"
                       )}>
-                        <span className="sm:hidden">{dayLabelsShort[day]}</span>
-                        <span className="hidden sm:inline">{dayLabels[day]}</span>
+                        <span className="sm:hidden">{t(`availability.daysShort.${day}`)}</span>
+                        <span className="hidden sm:inline">{t(`availability.days.${day}`)}</span>
                       </span>
                     </div>
                     
@@ -205,28 +184,24 @@ export default function DashboardAvailability() {
                     <div className="space-y-2 ml-0 sm:ml-12">
                       {daySchedule.slots.map((slot, slotIndex) => (
                         <div key={slotIndex} className="flex items-center gap-2">
-                          {/* Slot indicator */}
                           {slotIndex > 0 && (
                             <div className="flex items-center gap-1 text-xs text-muted-foreground mr-1">
                               <Coffee className="w-3 h-3" />
                             </div>
                           )}
-                          
                           <input
                             type="time"
                             value={slot.start}
                             onChange={(e) => updateSlotTime(day, slotIndex, 'start', e.target.value)}
                             className="flex-1 sm:flex-none sm:w-28 px-2 sm:px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm"
                           />
-                          <span className="text-muted-foreground text-sm">à</span>
+                          <span className="text-muted-foreground text-sm">{t('common.to')}</span>
                           <input
                             type="time"
                             value={slot.end}
                             onChange={(e) => updateSlotTime(day, slotIndex, 'end', e.target.value)}
                             className="flex-1 sm:flex-none sm:w-28 px-2 sm:px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm"
                           />
-                          
-                          {/* Remove slot button (only if more than one slot) */}
                           {daySchedule.slots.length > 1 && (
                             <button
                               type="button"
@@ -238,20 +213,18 @@ export default function DashboardAvailability() {
                           )}
                         </div>
                       ))}
-                      
-                      {/* Add break/slot button */}
                       <button
                         type="button"
                         onClick={() => addSlot(day)}
                         className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors mt-2"
                       >
                         <Plus className="w-3.5 h-3.5" />
-                        <span>Ajouter une pause</span>
+                        <span>{t('availability.addBreak')}</span>
                       </button>
                     </div>
                   ) : (
                     <div className="ml-0 sm:ml-12">
-                      <span className="text-muted-foreground text-sm">Fermé</span>
+                      <span className="text-muted-foreground text-sm">{t('availability.closed')}</span>
                     </div>
                   )}
                 </div>
@@ -269,10 +242,10 @@ export default function DashboardAvailability() {
               {saving ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Enregistrement...
+                  {t('common.saving')}
                 </>
               ) : (
-                'Enregistrer les modifications'
+                t('availability.saveChanges')
               )}
             </Button>
           </div>

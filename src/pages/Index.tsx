@@ -17,6 +17,8 @@ import mockupCarCleaning from '@/assets/mockup-car-cleaning.jpg';
 import mockupLogoClean from '@/assets/mockup-logo-cleaning.png';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export default function Index() {
   const [dashboardTab, setDashboardTab] = useState<'reservations' | 'calendar' | 'clients' | 'invoices' | 'stats' | 'mypage' | 'formules'>('reservations');
@@ -26,6 +28,7 @@ export default function Index() {
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const [mockupPageStyle, setMockupPageStyle] = useState<'banner' | 'minimal'>('minimal');
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const handleStartTrial = async () => {
     setIsCheckoutLoading(true);
@@ -61,9 +64,10 @@ export default function Index() {
             <Logo size="lg" />
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">
+            <LanguageSwitcher variant="ghost" />
             <Link to="/auth">
               <Button size="sm" className="text-xs sm:text-sm px-3 sm:px-4">
-                Connexion
+                {t('landing.login')}
               </Button>
             </Link>
           </div>
@@ -77,13 +81,13 @@ export default function Index() {
             {/* Left: Text - Hidden on mobile, shown on lg+ */}
             <div className="text-center lg:text-left hidden lg:block">
               <h1 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-[1.1]">
-                Votre activité de nettoyage.
+                {t('landing.heroTitle1')}
                 <br />
-                <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">Un seul lien.</span>
+                <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">{t('landing.heroTitle2')}</span>
               </h1>
               
               <p className="opacity-0 animate-fade-in-up stagger-2 text-base sm:text-lg md:text-xl text-muted-foreground max-w-lg mx-auto lg:mx-0 mb-8 leading-relaxed">
-                Présentez vos prestations, recevez des demandes et gérez vos rendez-vous. Le tout dans une page professionnelle à votre image.
+                {t('landing.heroDesc')}
               </p>
               
               <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-8">
@@ -100,7 +104,7 @@ export default function Index() {
                     </>
                   ) : (
                     <>
-                      Essayer gratuitement 30 jours
+                      {t('landing.tryFree30')}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </>
                   )}
@@ -111,11 +115,11 @@ export default function Index() {
               <div className="opacity-0 animate-fade-in-up stagger-4 flex items-center gap-6 justify-center lg:justify-start text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-emerald-500" />
-                  <span>30 jours gratuits</span>
+                  <span>{t('landing.free30days')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-emerald-500" />
-                  <span>Sans engagement</span>
+                  <span>{t('landing.noCommitment')}</span>
                 </div>
               </div>
             </div>
@@ -123,13 +127,13 @@ export default function Index() {
             {/* Mobile: Text + CTA above mockup */}
             <div className="text-center lg:hidden">
               <h1 className="opacity-0 animate-fade-in-up text-3xl sm:text-4xl font-semibold text-foreground tracking-tight mb-4 leading-[1.1]">
-                Votre activité de nettoyage.
+                {t('landing.heroTitle1')}
                 <br />
-                <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">Un seul lien.</span>
+                <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">{t('landing.heroTitle2')}</span>
               </h1>
               
               <p className="opacity-0 animate-fade-in-up stagger-1 text-base text-muted-foreground max-w-sm mx-auto mb-6 leading-relaxed">
-                Présentez votre activité, recevez des demandes et gérez vos rendez-vous.
+                {t('landing.heroDescMobile')}
               </p>
 
               <Button 
@@ -144,21 +148,21 @@ export default function Index() {
                     Chargement...
                   </>
                 ) : (
-                  <>
-                    Essayer gratuitement 30 jours
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </>
-                )}
-              </Button>
+                    <>
+                      {t('landing.tryFree30')}
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </>
+                  )}
+                </Button>
               
               <div className="flex items-center gap-4 justify-center text-sm text-muted-foreground mb-8">
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-emerald-500" />
-                  <span>30 jours gratuits</span>
+                  <span>{t('landing.free30days')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-emerald-500" />
-                  <span>Sans engagement</span>
+                  <span>{t('landing.noCommitment')}</span>
                 </div>
               </div>
             </div>
@@ -346,10 +350,10 @@ export default function Index() {
           {/* Section Header - Minimal Apple style */}
           <div className="text-center mb-10 sm:mb-16 lg:mb-20">
             <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4">
-              Personnalisez votre page en quelques clics.
+              {t('landing.section1Title')}
             </h2>
             <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base lg:text-lg max-w-lg mx-auto">
-              Modifiez visuellement votre page à votre image et ajoutez facilement vos informations, liens et disponibilités...
+              {t('landing.section1Desc')}
             </p>
           </div>
 
@@ -796,10 +800,10 @@ export default function Index() {
           </div>
           
           <h2 className="opacity-0 animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
-            Gérez votre activité
+            {t('landing.section2Title')}
           </h2>
           <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-base sm:text-lg mb-8 max-w-2xl leading-relaxed">
-            Réservations, calendrier, clients, factures, statistiques... Un tableau de bord complet pour piloter votre activité.
+            {t('landing.section2Desc')}
           </p>
 
           {/* Dashboard Tabs Preview - Interactive */}
