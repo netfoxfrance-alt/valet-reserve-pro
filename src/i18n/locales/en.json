@@ -480,7 +480,8 @@
     "upgradeToPro": "Upgrade to Pro",
     "renewalOn": "Renewal on {{date}}",
     "limitedAccess": "Limited feature access",
-    "saveChanges": "Save changes"
+    "saveChanges": "Save changes",
+    "mustBeLoggedIn": "You must be logged in."
   },
   "support": {
     "title": "Support",
@@ -554,6 +555,23 @@
     "googleTitle": "Google title",
     "keywords": "Keywords",
     "logoInSettings": "The logo is configured in Settings → Information"
+  },
+  "appointmentDetail": {
+    "addToCalendar": "Add to calendar",
+    "detailsFor": "Appointment details for {{name}}",
+    "appointmentDetails": "Appointment details",
+    "service": "Service",
+    "vehicle": "Vehicle",
+    "clientContact": "Client contact",
+    "defaultService": "Default service",
+    "bookings": "Bookings",
+    "totalRevenue": "Total revenue",
+    "avgBasket": "Avg. basket",
+    "lastVisit": "Last visit",
+    "clientNotes": "Client notes",
+    "serviceHistory": "Service history",
+    "noServices": "No services for this client",
+    "clientNotInFile": "This client is not yet in your client file"
   },
   "clientDetail": {
     "viaBooking": "Via booking",

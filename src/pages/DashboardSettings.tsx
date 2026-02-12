@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { Sparkles, Upload, Trash2, Loader2, CreditCard, Crown, ExternalLink, Link2, Check, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CenterCustomization, defaultCustomization } from '@/types/customization';
+import { useTranslation } from 'react-i18next';
 
 // Generate a clean slug from text
 const generateSlug = (text: string): string => {
@@ -30,6 +31,7 @@ const generateSlug = (text: string): string => {
 };
 
 export default function DashboardSettings() {
+  const { t, i18n } = useTranslation();
   const { center, loading, updateCenter } = useMyCenter();
   const { user, session, subscription } = useAuth();
   const { toast } = useToast();
@@ -78,71 +80,56 @@ export default function DashboardSettings() {
     setSaving(false);
     
     if (error) {
-      toast({ title: 'Erreur', description: error, variant: 'destructive' });
+      toast({ title: t('common.error'), description: error, variant: 'destructive' });
     } else {
-      toast({ title: 'Enregistré', description: 'Vos modifications ont été sauvegardées.' });
+      toast({ title: t('common.saved'), description: t('settings.changesSaved') });
     }
   };
 
   const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('handleLogoUpload triggered', event.target.files);
     const file = event.target.files?.[0];
-    if (!file) {
-      console.log('No file selected');
-      return;
-    }
+    if (!file) return;
     if (!user) {
-      console.log('No user');
-      toast({ title: 'Erreur', description: 'Vous devez être connecté.', variant: 'destructive' });
+      toast({ title: t('common.error'), description: t('settings.mustBeLoggedIn'), variant: 'destructive' });
       return;
     }
 
-    console.log('File selected:', file.name, file.type, file.size);
-
-    // Validate file type
     if (!file.type.startsWith('image/')) {
-      toast({ title: 'Erreur', description: 'Veuillez sélectionner une image.', variant: 'destructive' });
+      toast({ title: t('common.error'), description: t('settings.selectImage'), variant: 'destructive' });
       return;
     }
 
-    // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
-      toast({ title: 'Erreur', description: 'L\'image doit faire moins de 2 Mo.', variant: 'destructive' });
+      toast({ title: t('common.error'), description: t('settings.imageTooBig'), variant: 'destructive' });
       return;
     }
 
     setUploadingLogo(true);
 
     try {
-      // Create unique filename
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}/logo.${fileExt}`;
 
-      // Upload to storage
       const { error: uploadError } = await supabase.storage
         .from('center-logos')
         .upload(fileName, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('center-logos')
         .getPublicUrl(fileName);
 
-      // Update center with logo URL
       const { error: updateError } = await updateCenter({ logo_url: publicUrl });
-      
       if (updateError) throw new Error(updateError);
 
       setLogoUrl(publicUrl);
-      toast({ title: 'Logo mis à jour', description: 'Votre logo a été téléchargé avec succès.' });
+      toast({ title: t('settings.logoUpdated'), description: t('settings.logoUploadSuccess') });
     } catch (error: any) {
       console.error('Logo upload error:', error);
-      toast({ title: 'Erreur', description: 'Impossible de télécharger le logo.', variant: 'destructive' });
+      toast({ title: t('common.error'), description: t('settings.logoUploadError'), variant: 'destructive' });
     } finally {
       setUploadingLogo(false);
-      // reset input value handled by browser via label-triggered input
       event.target.value = '';
     }
   };
@@ -152,21 +139,19 @@ export default function DashboardSettings() {
 
     setUploadingLogo(true);
     try {
-      // Remove from storage
       const { error: deleteError } = await supabase.storage
         .from('center-logos')
         .remove([`${user.id}/logo.png`, `${user.id}/logo.jpg`, `${user.id}/logo.jpeg`, `${user.id}/logo.webp`]);
 
       if (deleteError) console.warn('Delete warning:', deleteError);
 
-      // Update center
       const { error: updateError } = await updateCenter({ logo_url: null });
       if (updateError) throw new Error(updateError);
 
       setLogoUrl(null);
-      toast({ title: 'Logo supprimé' });
+      toast({ title: t('settings.logoDeleted') });
     } catch (error: any) {
-      toast({ title: 'Erreur', description: 'Impossible de supprimer le logo.', variant: 'destructive' });
+      toast({ title: t('common.error'), description: t('settings.logoDeleteError'), variant: 'destructive' });
     } finally {
       setUploadingLogo(false);
     }
@@ -174,11 +159,7 @@ export default function DashboardSettings() {
 
   const handleManageSubscription = async () => {
     if (!session?.access_token) {
-      toast({
-        title: 'Erreur',
-        description: 'Vous devez être connecté.',
-        variant: 'destructive',
-      });
+      toast({ title: t('common.error'), description: t('settings.mustBeLoggedIn'), variant: 'destructive' });
       return;
     }
 
@@ -186,14 +167,10 @@ export default function DashboardSettings() {
 
     try {
       const { data, error } = await supabase.functions.invoke('customer-portal', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
+        headers: { Authorization: `Bearer ${session.access_token}` },
       });
 
-      if (error) {
-        throw new Error(error.message);
-      }
+      if (error) throw new Error(error.message);
 
       if (data?.url) {
         window.open(data.url, '_blank');
@@ -202,11 +179,7 @@ export default function DashboardSettings() {
       }
     } catch (error) {
       console.error('Error opening customer portal:', error);
-      toast({
-        title: 'Erreur',
-        description: 'Impossible d\'ouvrir le portail de gestion.',
-        variant: 'destructive',
-      });
+      toast({ title: t('common.error'), description: t('settings.portalError'), variant: 'destructive' });
     } finally {
       setOpeningPortal(false);
     }
@@ -231,26 +204,21 @@ export default function DashboardSettings() {
       
       <div className="lg:pl-64">
         <DashboardHeader 
-          title="Paramètres" 
+          title={t('settings.title')} 
           onMenuClick={() => setMobileMenuOpen(true)}
         />
         
         <main className="p-4 lg:p-8 max-w-2xl">
           {/* Logo Section */}
           <section className="mb-6 sm:mb-8">
-            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Logo du centre</h2>
-            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">Apparaît sur votre page de réservation.</p>
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">{t('settings.centerLogo')}</h2>
+            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">{t('settings.logoDesc')}</p>
             
             <Card variant="elevated" className="p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-                {/* Logo Preview */}
                 <div className="relative">
                   {logoUrl ? (
-                    <img 
-                      src={logoUrl} 
-                      alt="Logo" 
-                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border border-border"
-                    />
+                    <img src={logoUrl} alt="Logo" className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border border-border" />
                   ) : (
                     <div className="w-20 h-20 sm:w-24 sm:h-24 bg-primary rounded-xl flex items-center justify-center">
                       <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-primary-foreground" />
@@ -263,16 +231,8 @@ export default function DashboardSettings() {
                   )}
                 </div>
 
-                {/* Upload Controls */}
                 <div className="flex flex-col gap-2 items-center sm:items-start">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleLogoUpload}
-                    className="sr-only"
-                    id="logo-upload"
-                  />
-
+                  <input type="file" accept="image/*" onChange={handleLogoUpload} className="sr-only" id="logo-upload" />
                   <Label
                     htmlFor="logo-upload"
                     className={cn(
@@ -282,23 +242,17 @@ export default function DashboardSettings() {
                     )}
                   >
                     <Upload className="w-4 h-4" />
-                    {logoUrl ? 'Changer le logo' : 'Ajouter un logo'}
+                    {logoUrl ? t('settings.changeLogo') : t('settings.addLogo')}
                   </Label>
 
                   {logoUrl && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleRemoveLogo}
-                      disabled={uploadingLogo}
-                      className="text-destructive hover:text-destructive"
-                    >
+                    <Button variant="ghost" size="sm" onClick={handleRemoveLogo} disabled={uploadingLogo} className="text-destructive hover:text-destructive">
                       <Trash2 className="w-4 h-4" />
-                      Supprimer
+                      {t('settings.removeLogo')}
                     </Button>
                   )}
                   <p className="text-xs text-muted-foreground text-center sm:text-left">
-                    JPG, PNG ou WebP. Max 2 Mo.
+                    {t('settings.logoFormat')}
                   </p>
                 </div>
               </div>
@@ -307,8 +261,8 @@ export default function DashboardSettings() {
 
           {/* Slug Section */}
           <section className="mb-6 sm:mb-8">
-            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Lien de votre page</h2>
-            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">L'URL personnalisée de votre page publique.</p>
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">{t('settings.pageLink')}</h2>
+            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">{t('settings.pageLinkDesc')}</p>
             
             <Card variant="elevated" className="p-4 sm:p-6">
               {!isEditingSlug ? (
@@ -319,22 +273,17 @@ export default function DashboardSettings() {
                     </div>
                     <div>
                       <p className="font-medium text-foreground">cleaningpage.com/{slug}</p>
-                      <p className="text-sm text-muted-foreground">Votre lien public</p>
+                      <p className="text-sm text-muted-foreground">{t('settings.yourPublicLink')}</p>
                     </div>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsEditingSlug(true)}
-                    className="w-full sm:w-auto"
-                  >
-                    Modifier
+                  <Button variant="outline" size="sm" onClick={() => setIsEditingSlug(true)} className="w-full sm:w-auto">
+                    {t('common.edit')}
                   </Button>
                 </div>
               ) : (
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="slug">Nouveau lien</Label>
+                    <Label htmlFor="slug">{t('settings.newLink')}</Label>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground whitespace-nowrap">cleaningpage.com/</span>
                       <div className="relative flex-1">
@@ -346,7 +295,6 @@ export default function DashboardSettings() {
                             setSlugInput(cleaned);
                             setSlugAvailable(null);
                             
-                            // Check availability after a short delay
                             if (cleaned.length >= 3 && cleaned !== slug) {
                               setIsCheckingSlug(true);
                               const timeoutId = setTimeout(async () => {
@@ -383,61 +331,38 @@ export default function DashboardSettings() {
                       </div>
                     </div>
                     {slugAvailable === false && (
-                      <p className="text-xs text-destructive">Ce lien est déjà pris</p>
+                      <p className="text-xs text-destructive">{t('settings.linkTaken')}</p>
                     )}
                     {slugInput.length > 0 && slugInput.length < 3 && (
-                      <p className="text-xs text-muted-foreground">Minimum 3 caractères</p>
+                      <p className="text-xs text-muted-foreground">{t('settings.minChars')}</p>
                     )}
                   </div>
                   <div className="flex gap-2 justify-end">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setIsEditingSlug(false);
-                        setSlugInput(slug);
-                        setSlugAvailable(null);
-                      }}
-                    >
-                      Annuler
+                    <Button variant="ghost" size="sm" onClick={() => { setIsEditingSlug(false); setSlugInput(slug); setSlugAvailable(null); }}>
+                      {t('common.cancel')}
                     </Button>
                     <Button
                       variant="premium"
                       size="sm"
-                      disabled={
-                        savingSlug || 
-                        slugInput.length < 3 || 
-                        slugInput === slug || 
-                        slugAvailable === false ||
-                        isCheckingSlug
-                      }
+                      disabled={savingSlug || slugInput.length < 3 || slugInput === slug || slugAvailable === false || isCheckingSlug}
                       onClick={async () => {
                         if (slugInput.length < 3 || slugAvailable === false) return;
-                        
                         setSavingSlug(true);
                         const { error } = await updateCenter({ slug: slugInput });
                         setSavingSlug(false);
-                        
                         if (error) {
-                          toast({ 
-                            title: 'Erreur', 
-                            description: error.includes('unique') ? 'Ce lien est déjà pris' : error, 
-                            variant: 'destructive' 
-                          });
+                          toast({ title: t('common.error'), description: error.includes('unique') ? t('settings.linkTaken') : error, variant: 'destructive' });
                         } else {
                           setSlug(slugInput);
                           setIsEditingSlug(false);
-                          toast({ title: 'Lien mis à jour', description: `Votre nouvelle URL est cleaningpage.com/${slugInput}` });
+                          toast({ title: t('settings.linkUpdated'), description: t('settings.newUrlIs', { slug: slugInput }) });
                         }
                       }}
                     >
                       {savingSlug ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Enregistrement...
-                        </>
+                        <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t('common.saving')}</>
                       ) : (
-                        'Enregistrer'
+                        t('common.save')
                       )}
                     </Button>
                   </div>
@@ -447,43 +372,29 @@ export default function DashboardSettings() {
           </section>
 
           <section className="mb-6 sm:mb-8">
-            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Informations du centre</h2>
-            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">Ces informations seront affichées aux clients.</p>
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">{t('settings.centerInfo')}</h2>
+            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">{t('settings.centerInfoDesc')}</p>
             
             <Card variant="elevated" className="p-4 sm:p-6 space-y-4 sm:space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="name">Nom du centre</Label>
-                <Input
-                  id="name"
-                  value={settings.name}
-                  onChange={(e) => setSettings({ ...settings, name: e.target.value })}
-                />
+                <Label htmlFor="name">{t('settings.businessName')}</Label>
+                <Input id="name" value={settings.name} onChange={(e) => setSettings({ ...settings, name: e.target.value })} />
               </div>
-              
               <div className="space-y-2">
-                <Label htmlFor="address">Adresse</Label>
-                <Input
-                  id="address"
-                  value={settings.address}
-                  onChange={(e) => setSettings({ ...settings, address: e.target.value })}
-                />
+                <Label htmlFor="address">{t('common.address')}</Label>
+                <Input id="address" value={settings.address} onChange={(e) => setSettings({ ...settings, address: e.target.value })} />
               </div>
-              
               <div className="space-y-2">
-                <Label htmlFor="phone">Téléphone</Label>
-                <Input
-                  id="phone"
-                  value={settings.phone}
-                  onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
-                />
+                <Label htmlFor="phone">{t('common.phone')}</Label>
+                <Input id="phone" value={settings.phone} onChange={(e) => setSettings({ ...settings, phone: e.target.value })} />
               </div>
             </Card>
           </section>
           
           {/* Subscription Section */}
           <section className="mb-6 sm:mb-8">
-            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Abonnement</h2>
-            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">Gérez votre abonnement CleaningPage.</p>
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">{t('settings.subscription')}</h2>
+            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">{t('settings.subscriptionDesc')}</p>
             
             <Card variant="elevated" className="p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -504,38 +415,26 @@ export default function DashboardSettings() {
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {subscription.subscribed 
-                        ? `Renouvellement le ${new Date(subscription.subscriptionEnd!).toLocaleDateString('fr-FR')}`
-                        : 'Accès limité aux fonctionnalités'
+                        ? t('settings.renewalOn', { date: new Date(subscription.subscriptionEnd!).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'fr-FR') })
+                        : t('settings.limitedAccess')
                       }
                     </p>
                   </div>
                 </div>
 
                 {subscription.subscribed ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleManageSubscription}
-                    disabled={openingPortal}
-                    className="w-full sm:w-auto"
-                  >
+                  <Button variant="outline" size="sm" onClick={handleManageSubscription} disabled={openingPortal} className="w-full sm:w-auto">
                     {openingPortal ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Ouverture...
-                      </>
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t('settings.opening')}</>
                     ) : (
-                      <>
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        Gérer l'abonnement
-                      </>
+                      <><ExternalLink className="w-4 h-4 mr-2" />{t('settings.manageSubscription')}</>
                     )}
                   </Button>
                 ) : (
                   <Link to="/dashboard/upgrade" className="w-full sm:w-auto">
                     <Button variant="premium" size="sm" className="w-full">
                       <Crown className="w-4 h-4 mr-2" />
-                      Passer à Pro
+                      {t('settings.upgradeToPro')}
                     </Button>
                   </Link>
                 )}
@@ -543,10 +442,9 @@ export default function DashboardSettings() {
             </Card>
           </section>
           
-          
           <div className="flex justify-end">
             <Button variant="premium" onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
-              {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}
+              {saving ? t('common.saving') : t('settings.saveChanges')}
             </Button>
           </div>
         </main>
