@@ -17,7 +17,7 @@ import { useMyClients, Client } from '@/hooks/useClients';
 import { useMyCustomServices, formatDuration, CustomService } from '@/hooks/useCustomServices';
 import { useCalendarSync } from '@/hooks/useCalendarSync';
 import { format, isToday, isTomorrow, parseISO, startOfDay, isBefore, addDays, addMonths, startOfMonth, endOfMonth, isSameMonth } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import {
@@ -31,23 +31,16 @@ import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
 import { AppointmentDetailDialog } from '@/components/dashboard/AppointmentDetailDialog';
 import { ConfirmationCalendarDialog } from '@/components/dashboard/ConfirmationCalendarDialog';
 import { SubscriptionBanner } from '@/components/dashboard/SubscriptionBanner';
+import { useTranslation } from 'react-i18next';
 
-// Apple-style status colors - clean and vibrant
-const statusConfig: Record<string, { label: string; color: string }> = {
-  pending_validation: { label: 'En attente', color: 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400' },
-  pending: { label: 'En attente', color: 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400' },
-  confirmed: { label: 'Confirmé', color: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400' },
-  completed: { label: 'Terminé', color: 'bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400' },
-  cancelled: { label: 'Annulé', color: 'bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-400' },
-  refused: { label: 'Refusé', color: 'bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-400' },
-};
-
-const vehicleLabels: Record<string, string> = {
-  citadine: 'Citadine',
-  berline: 'Berline',
-  suv: 'SUV / 4x4',
-  utilitaire: 'Utilitaire',
-  standard: 'Standard',
+// Status colors only - labels come from translations
+const statusColorMap: Record<string, string> = {
+  pending_validation: 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400',
+  pending: 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400',
+  confirmed: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400',
+  completed: 'bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400',
+  cancelled: 'bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-400',
+  refused: 'bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-400',
 };
 
 function AppointmentRow({ appointment, centerAddress, isSynced, onUpdateStatus, onConfirmAppointment, onRefuseAppointment, onCancelAppointment, onSendEmail, onViewDetails, onAddToCalendar }: { 
@@ -62,19 +55,21 @@ function AppointmentRow({ appointment, centerAddress, isSynced, onUpdateStatus, 
   onViewDetails: (appointment: Appointment) => void;
   onAddToCalendar: (appointment: Appointment) => void;
 }) {
-  const status = statusConfig[appointment.status] || statusConfig.pending_validation;
+  const { t, i18n } = useTranslation();
+  const dateLocale = i18n.language === 'en' ? enUS : fr;
+  const statusColor = statusColorMap[appointment.status] || statusColorMap.pending_validation;
+  const statusLabel = t(`status.${appointment.status}`);
   const date = parseISO(appointment.appointment_date);
   
-  let dateLabel = format(date, "EEE d MMM", { locale: fr });
-  if (isToday(date)) dateLabel = "Aujourd'hui";
-  if (isTomorrow(date)) dateLabel = "Demain";
+  let dateLabel = format(date, "EEE d MMM", { locale: dateLocale });
+  if (isToday(date)) dateLabel = t('common.today');
+  if (isTomorrow(date)) dateLabel = t('common.tomorrow');
   
   const canSendEmail = Boolean(appointment.client_email && appointment.client_email !== 'non-fourni@example.com');
   const hasCustomService = Boolean(appointment.custom_service_id);
   const serviceName = appointment.custom_service?.name || appointment.pack?.name;
   const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
 
-  // Generate Google Calendar URL for this appointment with ALL client info
   const handleAddToCalendar = () => {
     const url = generateAppointmentCalendarUrl({
       id: appointment.id,
@@ -100,7 +95,6 @@ function AppointmentRow({ appointment, centerAddress, isSynced, onUpdateStatus, 
       className="group flex flex-col sm:flex-row sm:items-center gap-4 p-5 bg-card border border-border/50 rounded-2xl hover:border-border hover:shadow-md transition-all duration-200 cursor-pointer"
       onClick={() => onViewDetails(appointment)}
     >
-      {/* Left: Avatar + Client info */}
       <div className="flex items-center gap-4 flex-1 min-w-0">
         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0 shadow-sm">
           <span className="text-base font-bold text-primary">
@@ -114,14 +108,12 @@ function AppointmentRow({ appointment, centerAddress, isSynced, onUpdateStatus, 
               <span className="font-medium text-foreground/80">{appointment.pack.name}</span>
             )}
             <span className="hidden sm:inline">•</span>
-            <span className="capitalize">{vehicleLabels[appointment.vehicle_type] || appointment.vehicle_type}</span>
+            <span className="capitalize">{t(`vehicles.${appointment.vehicle_type}`) || appointment.vehicle_type}</span>
           </div>
         </div>
       </div>
       
-      {/* Right: Date, price, status, actions */}
       <div className="flex items-center gap-3 sm:gap-5 flex-wrap sm:flex-nowrap">
-        {/* Date & time pill */}
         <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 rounded-xl">
           <Calendar className="w-4 h-4 text-muted-foreground" />
           <div className="text-sm">
@@ -130,104 +122,58 @@ function AppointmentRow({ appointment, centerAddress, isSynced, onUpdateStatus, 
           </div>
         </div>
         
-        {/* Price - Use fallback logic: custom_price > custom_service.price > pack.price */}
         {(price !== undefined && price !== null) && (
           <div className="hidden sm:block text-right min-w-[60px]">
             <p className="text-lg font-bold text-foreground">{price}€</p>
           </div>
         )}
         
-        {/* Status badge - Apple style */}
-        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${status.color}`}>
-          {status.label}
+        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${statusColor}`}>
+          {statusLabel}
         </span>
         
-        {/* Actions - stop propagation to prevent opening detail dialog */}
         <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
-          {/* Actions menu (manual emails) - only for confirmed appointments */}
           {appointment.status === 'confirmed' && canSendEmail && serviceName && price !== undefined && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 rounded-xl"
-                  title="Actions"
-                >
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl" title="Actions">
                   <MoreHorizontal className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-64">
                 <DropdownMenuItem onClick={() => onSendEmail(appointment, 'reminder')}>
                   <Mail className="w-4 h-4 mr-2" />
-                  Envoyer un email de rappel
+                  {t('dashboard.sendReminderEmail')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
           
-          {/* Pending validation: Confirm or Refuse */}
           {(appointment.status === 'pending_validation' || appointment.status === 'pending') && (
             <>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-xl text-primary hover:text-primary hover:bg-primary/10"
-                onClick={() => onConfirmAppointment(appointment)}
-                title="Confirmer"
-              >
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-primary hover:text-primary hover:bg-primary/10" onClick={() => onConfirmAppointment(appointment)}>
                 <Check className="w-4 h-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10"
-                onClick={() => onRefuseAppointment(appointment)}
-                title="Refuser"
-              >
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onRefuseAppointment(appointment)}>
                 <X className="w-4 h-4" />
               </Button>
             </>
           )}
-          {/* Confirmed: Add to calendar, complete, or cancel */}
           {appointment.status === 'confirmed' && (
             <>
               {isSynced ? (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 rounded-xl text-primary hover:text-primary hover:bg-primary/10"
-                  onClick={handleAddToCalendar}
-                  title="Déjà ajouté à l'agenda (cliquez pour rajouter)"
-                >
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-primary hover:text-primary hover:bg-primary/10" onClick={handleAddToCalendar}>
                   <CalendarCheck className="w-4 h-4" />
                 </Button>
               ) : (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10"
-                  onClick={handleAddToCalendar}
-                  title="Ajouter à Google Agenda"
-                >
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10" onClick={handleAddToCalendar}>
                   <CalendarPlus className="w-4 h-4" />
                 </Button>
               )}
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 rounded-xl text-xs font-medium"
-                onClick={() => onUpdateStatus(appointment.id, 'completed')}
-              >
-                Terminer
+              <Button variant="outline" size="sm" className="h-9 rounded-xl text-xs font-medium" onClick={() => onUpdateStatus(appointment.id, 'completed')}>
+                {t('dashboard.finish')}
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10"
-                onClick={() => onCancelAppointment(appointment)}
-                title="Annuler"
-              >
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onCancelAppointment(appointment)}>
                 <X className="w-4 h-4" />
               </Button>
             </>
@@ -243,11 +189,11 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
   clients: Client[];
   services: CustomService[];
 }) {
+  const { t } = useTranslation();
   const { packs } = useMyPacks();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState('');
-  // Service type: 'pack' for classic formulas, 'custom' for personalized services
   const [serviceType, setServiceType] = useState<'pack' | 'custom'>('pack');
   const [form, setForm] = useState({
     client_name: '',
@@ -274,12 +220,10 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
           client_email: client.email || '',
           client_phone: client.phone || '',
           client_address: client.address || '',
-          // Pre-fill with default service if available
           custom_service_id: client.default_service_id || '',
           custom_price: client.default_service?.price?.toString() || '',
           pack_id: '',
         });
-        // If client has a default custom service, select custom type
         if (client.default_service_id) {
           setServiceType('custom');
         }
@@ -331,7 +275,7 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.client_name || !form.client_phone) {
-      toast.error('Veuillez remplir le nom et téléphone');
+      toast.error(t('dashboard.fillNamePhone'));
       return;
     }
     setLoading(true);
@@ -347,12 +291,10 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
       vehicle_type: 'standard',
     };
 
-    // Link client if selected
     if (selectedClientId) {
       payload.client_id = selectedClientId;
     }
 
-    // Add service based on type
     if (serviceType === 'custom' && form.custom_service_id) {
       payload.custom_service_id = form.custom_service_id;
       payload.custom_price = parseFloat(form.custom_price) || selectedCustomService?.price;
@@ -365,7 +307,6 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
     await onAdd(payload);
     setLoading(false);
     setOpen(false);
-    // Reset form
     setSelectedClientId('');
     setServiceType('pack');
     setForm({
@@ -387,27 +328,26 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
       <DialogTrigger asChild>
         <Button className="rounded-xl shadow-sm">
           <Plus className="w-4 h-4 mr-2" />
-          Nouvelle réservation
+          {t('dashboard.newReservation')}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-lg rounded-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl">Ajouter une réservation</DialogTitle>
+          <DialogTitle className="text-xl">{t('dashboard.addReservation')}</DialogTitle>
           <DialogDescription className="sr-only">
-            Formulaire pour créer une nouvelle réservation
+            {t('dashboard.formDescription')}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-5 mt-4">
-          {/* Client selection - if we have registered clients */}
           {clients.length > 0 && (
             <div className="space-y-2">
-              <Label>Client enregistré</Label>
+              <Label>{t('dashboard.registeredClient')}</Label>
               <Select value={selectedClientId || "new"} onValueChange={(v) => handleClientSelect(v === "new" ? "" : v)}>
                 <SelectTrigger className="h-11 rounded-xl">
-                  <SelectValue placeholder="Nouveau client ou sélectionner..." />
+                  <SelectValue placeholder={t('dashboard.selectOrNew')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="new">Nouveau client</SelectItem>
+                  <SelectItem value="new">{t('dashboard.newClient')}</SelectItem>
                   {clients.map((client) => (
                     <SelectItem key={client.id} value={client.id}>
                       <div className="flex items-center gap-2">
@@ -426,42 +366,30 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
             </div>
           )}
 
-          {/* Service type selector - toggle between packs and custom services */}
           <div className="space-y-3">
-            <Label>Type de prestation</Label>
+            <Label>{t('dashboard.serviceType')}</Label>
             <div className="flex bg-muted/60 rounded-xl p-1">
-              <button
-                type="button"
-                onClick={() => handleServiceTypeChange('pack')}
+              <button type="button" onClick={() => handleServiceTypeChange('pack')}
                 className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                  serviceType === 'pack' 
-                    ? 'bg-background text-foreground shadow-sm' 
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                Formules
+                  serviceType === 'pack' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                }`}>
+                {t('dashboard.formulas')}
               </button>
               {services.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => handleServiceTypeChange('custom')}
+                <button type="button" onClick={() => handleServiceTypeChange('custom')}
                   className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                    serviceType === 'custom' 
-                      ? 'bg-background text-foreground shadow-sm' 
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  Prestations perso
+                    serviceType === 'custom' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                  }`}>
+                  {t('dashboard.customServiceShort')}
                 </button>
               )}
             </div>
 
-            {/* Pack selector */}
             {serviceType === 'pack' && (
               <div className="space-y-2">
                 <Select value={form.pack_id} onValueChange={handlePackChange}>
                   <SelectTrigger className="h-11 rounded-xl">
-                    <SelectValue placeholder="Sélectionner une formule" />
+                    <SelectValue placeholder={t('dashboard.selectFormula')} />
                   </SelectTrigger>
                   <SelectContent>
                     {packs.map((pack) => (
@@ -475,19 +403,18 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
                   <div className="bg-primary/5 rounded-lg p-3 text-sm">
                     <p className="font-medium text-primary">{selectedPack.name}</p>
                     <p className="text-muted-foreground">
-                      {selectedPack.duration || 'Durée variable'} • {selectedPack.price}€
+                      {selectedPack.duration || t('common.duration')} • {selectedPack.price}€
                     </p>
                   </div>
                 )}
               </div>
             )}
 
-            {/* Custom service selector */}
             {serviceType === 'custom' && services.length > 0 && (
               <div className="space-y-2">
                 <Select value={form.custom_service_id} onValueChange={handleCustomServiceChange}>
                   <SelectTrigger className="h-11 rounded-xl">
-                    <SelectValue placeholder="Sélectionner une prestation" />
+                    <SelectValue placeholder={t('dashboard.selectService')} />
                   </SelectTrigger>
                   <SelectContent>
                     {services.map((service) => (
@@ -509,86 +436,44 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
             )}
           </div>
 
-          {/* Client info - only editable for new clients */}
           <div className="space-y-2">
-            <Label htmlFor="client_name">Nom du client *</Label>
-            <Input
-              id="client_name"
-              value={form.client_name}
-              onChange={(e) => setForm({ ...form, client_name: e.target.value })}
-              placeholder="Jean Dupont"
-              className="h-11 rounded-xl"
-              disabled={!!selectedClientId}
-            />
+            <Label htmlFor="client_name">{t('dashboard.clientName')}</Label>
+            <Input id="client_name" value={form.client_name} onChange={(e) => setForm({ ...form, client_name: e.target.value })} placeholder="Jean Dupont" className="h-11 rounded-xl" disabled={!!selectedClientId} />
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="client_phone">Téléphone *</Label>
-              <Input
-                id="client_phone"
-                value={form.client_phone}
-                onChange={(e) => setForm({ ...form, client_phone: e.target.value })}
-                placeholder="06 12 34 56 78"
-                className="h-11 rounded-xl"
-                disabled={!!selectedClientId}
-              />
+              <Label htmlFor="client_phone">{t('dashboard.phoneStar')}</Label>
+              <Input id="client_phone" value={form.client_phone} onChange={(e) => setForm({ ...form, client_phone: e.target.value })} placeholder="06 12 34 56 78" className="h-11 rounded-xl" disabled={!!selectedClientId} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="client_email">Email</Label>
-              <Input
-                id="client_email"
-                type="email"
-                value={form.client_email}
-                onChange={(e) => setForm({ ...form, client_email: e.target.value })}
-                placeholder="jean@email.com"
-                className="h-11 rounded-xl"
-                disabled={!!selectedClientId}
-              />
+              <Label htmlFor="client_email">{t('common.email')}</Label>
+              <Input id="client_email" type="email" value={form.client_email} onChange={(e) => setForm({ ...form, client_email: e.target.value })} placeholder="jean@email.com" className="h-11 rounded-xl" disabled={!!selectedClientId} />
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="appointment_date">Date *</Label>
-              <Input
-                id="appointment_date"
-                type="date"
-                value={form.appointment_date}
-                onChange={(e) => setForm({ ...form, appointment_date: e.target.value })}
-                className="h-11 rounded-xl"
-              />
+              <Label htmlFor="appointment_date">{t('dashboard.dateStar')}</Label>
+              <Input id="appointment_date" type="date" value={form.appointment_date} onChange={(e) => setForm({ ...form, appointment_date: e.target.value })} className="h-11 rounded-xl" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="appointment_time">Heure *</Label>
-              <Input
-                id="appointment_time"
-                type="time"
-                value={form.appointment_time}
-                onChange={(e) => setForm({ ...form, appointment_time: e.target.value })}
-                className="h-11 rounded-xl"
-              />
+              <Label htmlFor="appointment_time">{t('dashboard.timeStar')}</Label>
+              <Input id="appointment_time" type="time" value={form.appointment_time} onChange={(e) => setForm({ ...form, appointment_time: e.target.value })} className="h-11 rounded-xl" />
             </div>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes</Label>
-            <Textarea
-              id="notes"
-              value={form.notes}
-              onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              placeholder="Informations supplémentaires..."
-              rows={2}
-              className="rounded-xl resize-none"
-            />
+            <Label htmlFor="notes">{t('common.notes')}</Label>
+            <Textarea id="notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder={t('dashboard.additionalInfo')} rows={2} className="rounded-xl resize-none" />
           </div>
           
           <div className="flex justify-end gap-3 pt-2">
             <Button type="button" variant="ghost" onClick={() => setOpen(false)} className="rounded-xl">
-              Annuler
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={loading} className="rounded-xl min-w-[120px]">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Ajouter'}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : t('common.add')}
             </Button>
           </div>
         </form>
@@ -600,6 +485,8 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
 type FilterType = 'all' | 'today' | 'week' | 'month' | 'pending';
 
 export default function Dashboard() {
+  const { t, i18n } = useTranslation();
+  const dateLocale = i18n.language === 'en' ? enUS : fr;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [filter, setFilter] = useState<FilterType>('all');
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -644,25 +531,17 @@ export default function Dashboard() {
 
   const filteredAppointments = (() => {
     switch (filter) {
-      case 'today':
-        return todayAppointments;
-      case 'week':
-        return weekAppointments;
-      case 'month':
-        return monthAppointments;
-      case 'pending':
-        return pendingAppointments;
-      default:
-        return upcomingAppointments;
+      case 'today': return todayAppointments;
+      case 'week': return weekAppointments;
+      case 'month': return monthAppointments;
+      case 'pending': return pendingAppointments;
+      default: return upcomingAppointments;
     }
   })();
 
-  // Group appointments by date for better visualization
   const groupedAppointments = filteredAppointments.reduce((groups, appointment) => {
     const date = appointment.appointment_date;
-    if (!groups[date]) {
-      groups[date] = [];
-    }
+    if (!groups[date]) groups[date] = [];
     groups[date].push(appointment);
     return groups;
   }, {} as Record<string, Appointment[]>);
@@ -672,28 +551,26 @@ export default function Dashboard() {
   const handleUpdateStatus = async (id: string, status: Appointment['status']) => {
     const { error } = await updateStatus(id, status);
     if (error) {
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(t('dashboard.statusUpdateError'));
     } else {
-      toast.success('Statut mis à jour');
+      toast.success(t('dashboard.statusUpdated'));
     }
   };
 
   const handleAddAppointment = async (data: any) => {
     const { error } = await createAppointment(data);
     if (error) {
-      toast.error('Erreur lors de la création');
+      toast.error(t('dashboard.createError'));
     } else {
-      toast.success('Réservation ajoutée');
+      toast.success(t('dashboard.reservationAdded'));
     }
   };
 
-  // Open appointment detail dialog and find associated client
   const handleViewDetails = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setDetailDialogOpen(true);
   };
 
-  // Find the client associated with the selected appointment
   const selectedClient = selectedAppointment 
     ? clients.find(c => 
         c.id === selectedAppointment.client_id || 
@@ -704,119 +581,83 @@ export default function Dashboard() {
 
   const handleSendEmail = async (appointment: Appointment, kind: 'confirmation' | 'reminder') => {
     if (!center) return;
-    
     const serviceName = appointment.custom_service?.name || appointment.pack?.name;
     const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
-    
     if (!serviceName || price === undefined) {
-      toast.error('Informations de prestation manquantes');
+      toast.error(t('dashboard.missingServiceInfo'));
       return;
     }
-
     const clientEmail = await getClientEmail(appointment.client_email, appointment.client_id);
     if (!clientEmail) {
-      toast.error("Aucun email client valide");
+      toast.error(t('dashboard.noValidEmail'));
       return;
     }
-    
-    const toastId = toast.loading(kind === 'reminder' ? 'Envoi du rappel…' : 'Envoi de la confirmation…');
-    
-    const payload = buildEmailPayload(
-      center.id,
-      appointment,
-      clientEmail,
-      serviceName,
-      price,
-      kind as EmailType
-    );
-    
+    const toastId = toast.loading(kind === 'reminder' ? t('dashboard.sendingReminder') : t('dashboard.sendingConfirmation'));
+    const payload = buildEmailPayload(center.id, appointment, clientEmail, serviceName, price, kind as EmailType);
     const result = await sendBookingEmail(payload);
     toast.dismiss(toastId);
-    
     if (result.success) {
-      toast.success(kind === 'reminder' ? 'Email de rappel envoyé' : 'Email de confirmation envoyé');
+      toast.success(kind === 'reminder' ? t('dashboard.reminderSent') : t('dashboard.confirmationSent'));
     } else {
-      toast.error("Échec de l'envoi");
+      toast.error(t('dashboard.emailFailed'));
     }
   };
 
-  // Helper to send email for status change (fire-and-forget)
-  const sendStatusEmail = async (
-    appointment: Appointment,
-    emailType: EmailType
-  ) => {
+  const sendStatusEmail = async (appointment: Appointment, emailType: EmailType) => {
     if (!center) return;
-    
     const serviceName = appointment.custom_service?.name || appointment.pack?.name;
     const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
-    
     if (!serviceName || price === undefined) return;
-    
     const clientEmail = await getClientEmail(appointment.client_email, appointment.client_id);
     if (!clientEmail) return;
-    
-    const payload = buildEmailPayload(
-      center.id,
-      appointment,
-      clientEmail,
-      serviceName,
-      price,
-      emailType
-    );
-    
-    // Fire-and-forget: don't await, don't block UI
+    const payload = buildEmailPayload(center.id, appointment, clientEmail, serviceName, price, emailType);
     sendBookingEmail(payload).catch(() => {});
   };
 
-  // Confirm appointment: update status + send confirmation email + show calendar dialog
   const handleConfirmAppointment = async (appointment: Appointment) => {
     const { error } = await updateStatus(appointment.id, 'confirmed');
     if (error) {
-      toast.error('Erreur lors de la confirmation');
+      toast.error(t('dashboard.confirmError'));
       return;
     }
-    // Open confirmation dialog with calendar add option
     setJustConfirmedAppointment(appointment);
     setConfirmDialogOpen(true);
-    // Send confirmation email (fire-and-forget)
     sendStatusEmail(appointment, 'confirmation');
   };
 
-  // Refuse appointment: update status + send refusal email
   const handleRefuseAppointment = async (appointment: Appointment) => {
     const { error } = await updateStatus(appointment.id, 'refused');
     if (error) {
-      toast.error('Erreur lors du refus');
+      toast.error(t('dashboard.refuseError'));
       return;
     }
-    toast.success('Demande refusée');
+    toast.success(t('dashboard.refused'));
     sendStatusEmail(appointment, 'refused');
   };
 
-  // Cancel appointment: update status + send cancellation email
   const handleCancelAppointment = async (appointment: Appointment) => {
     const { error } = await updateStatus(appointment.id, 'cancelled');
     if (error) {
-      toast.error('Erreur lors de l\'annulation');
+      toast.error(t('dashboard.cancelError'));
       return;
     }
-    toast.success('Rendez-vous annulé');
+    toast.success(t('dashboard.cancelled'));
     sendStatusEmail(appointment, 'cancelled');
   };
 
   const stats = [
-    { name: "Aujourd'hui", value: todayAppointments.length, highlight: todayAppointments.length > 0 },
-    { name: 'En attente', value: pendingAppointments.length, highlight: pendingAppointments.length > 0, isWarning: true },
-    { name: 'Semaine', value: weekAppointments.length, highlight: false },
-    { name: 'À venir', value: upcomingAppointments.length, highlight: false },
+    { name: t('dashboard.todayStat'), value: todayAppointments.length, highlight: todayAppointments.length > 0 },
+    { name: t('dashboard.pendingStat'), value: pendingAppointments.length, highlight: pendingAppointments.length > 0, isWarning: true },
+    { name: t('dashboard.weekStat'), value: weekAppointments.length, highlight: false },
+    { name: t('dashboard.upcomingStat'), value: upcomingAppointments.length, highlight: false },
   ];
 
   const filters: { key: FilterType; label: string }[] = [
-    { key: 'all', label: 'À venir' },
-    { key: 'today', label: "Aujourd'hui" },
-    { key: 'week', label: 'Semaine' },
-    { key: 'month', label: 'Mois' },
-    { key: 'pending', label: 'En attente' },
+    { key: 'all', label: t('dashboard.upcoming') },
+    { key: 'today', label: t('dashboard.todayStat') },
+    { key: 'week', label: t('dashboard.thisWeek') },
+    { key: 'month', label: t('dashboard.thisMonth') },
+    { key: 'pending', label: t('dashboard.pendingStat') },
   ];
   
   return (
@@ -826,21 +667,16 @@ export default function Dashboard() {
       
       <div className="lg:pl-64">
         <DashboardHeader 
-          title="Réservations" 
+          title={t('nav.reservations')} 
           subtitle={center?.name}
           onMenuClick={() => setMobileMenuOpen(true)}
         />
         
         <main className="p-4 lg:p-8 max-w-6xl space-y-6">
           <SubscriptionBanner />
-          {/* Stats - Responsive 2x2 grid */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
             {stats.map((stat) => (
-              <Card 
-                key={stat.name} 
-                variant="elevated" 
-                className="p-4 sm:p-5 rounded-2xl hover:shadow-lg transition-all duration-200"
-              >
+              <Card key={stat.name} variant="elevated" className="p-4 sm:p-5 rounded-2xl hover:shadow-lg transition-all duration-200">
                 <div className="flex items-center justify-between mb-1 sm:mb-2">
                   <p className="text-xs sm:text-sm font-medium text-muted-foreground">{stat.name}</p>
                   {stat.highlight && (
@@ -852,26 +688,24 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* Header with filters */}
           <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg sm:text-xl font-bold text-foreground">Planning</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-foreground">{t('dashboard.planning')}</h2>
                 <p className="text-xs sm:text-sm text-muted-foreground">
-                  {filteredAppointments.length} réservation{filteredAppointments.length !== 1 ? 's' : ''}
+                  {t('dashboard.reservationCount', { count: filteredAppointments.length })}
                 </p>
               </div>
               <AddAppointmentDialog onAdd={handleAddAppointment} clients={clients} services={services} />
             </div>
             
-            {/* Filter tabs - scrollable on mobile */}
             <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
               <div className="flex bg-muted/60 rounded-xl p-1 shrink-0">
                 {filters.map(({ key, label }) => (
                   <button
                     key={key}
                     onClick={() => setFilter(key)}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
+                    className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
                       filter === key 
                         ? 'bg-background text-foreground shadow-sm' 
                         : 'text-muted-foreground hover:text-foreground'
@@ -881,81 +715,51 @@ export default function Dashboard() {
                   </button>
                 ))}
               </div>
-              
-              {/* Month navigation */}
-              {filter === 'month' && (
-                <div className="flex items-center gap-1 sm:gap-2 ml-auto shrink-0">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl"
-                    onClick={() => setCurrentMonth(addMonths(currentMonth, -1))}
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </Button>
-                  <span className="text-xs sm:text-sm font-medium min-w-[100px] sm:min-w-[120px] text-center capitalize">
-                    {format(currentMonth, 'MMM yyyy', { locale: fr })}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl"
-                    onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              )}
             </div>
           </div>
           
-          {/* Appointments list grouped by date */}
           {loading ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map((i) => (
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => (
                 <Skeleton key={i} className="h-24 rounded-2xl" />
               ))}
             </div>
           ) : filteredAppointments.length === 0 ? (
-            <Card variant="elevated" className="p-10 text-center rounded-2xl border-0">
-              <div className="w-16 h-16 mx-auto rounded-2xl bg-muted/60 flex items-center justify-center mb-4">
-                <Calendar className="w-8 h-8 text-muted-foreground" />
+            <Card variant="elevated" className="p-8 sm:p-12 text-center rounded-2xl">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Calendar className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground/50" />
               </div>
-              <h3 className="font-semibold text-lg text-foreground mb-2">Aucune réservation</h3>
-              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-                {filter === 'all' 
-                  ? "Ajoutez une réservation manuellement ou partagez votre page pour recevoir des demandes."
-                  : "Aucune réservation pour cette période."
-                }
-              </p>
+              <h3 className="text-lg font-semibold text-foreground mb-2">{t('dashboard.noAppointments')}</h3>
+              <p className="text-sm text-muted-foreground">{t('dashboard.appointmentsWillAppear')}</p>
             </Card>
           ) : (
             <div className="space-y-6">
-              {sortedDates.map((dateStr) => {
+              {sortedDates.map(dateStr => {
+                const dateAppts = groupedAppointments[dateStr].sort(
+                  (a, b) => a.appointment_time.localeCompare(b.appointment_time)
+                );
                 const date = parseISO(dateStr);
-                let dateLabel = format(date, "EEEE d MMMM", { locale: fr });
-                if (isToday(date)) dateLabel = "Aujourd'hui";
-                if (isTomorrow(date)) dateLabel = "Demain";
+                let sectionTitle = format(date, "EEEE d MMMM", { locale: dateLocale });
+                if (isToday(date)) sectionTitle = t('common.today');
+                if (isTomorrow(date)) sectionTitle = t('common.tomorrow');
                 
                 return (
                   <div key={dateStr}>
-                    <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 px-1 capitalize">
-                      {dateLabel}
-                    </h3>
-                    <div className="space-y-2">
-                      {groupedAppointments[dateStr].map((appointment) => (
-                        <AppointmentRow 
-                          key={appointment.id} 
-                          appointment={appointment}
+                    <h3 className="text-sm font-semibold text-muted-foreground mb-3 capitalize">{sectionTitle}</h3>
+                    <div className="space-y-3">
+                      {dateAppts.map(apt => (
+                        <AppointmentRow
+                          key={apt.id}
+                          appointment={apt}
                           centerAddress={center?.address || undefined}
-                          isSynced={checkIsSynced(appointment.id)}
+                          isSynced={checkIsSynced(apt.id)}
                           onUpdateStatus={handleUpdateStatus}
                           onConfirmAppointment={handleConfirmAppointment}
                           onRefuseAppointment={handleRefuseAppointment}
                           onCancelAppointment={handleCancelAppointment}
                           onSendEmail={handleSendEmail}
                           onViewDetails={handleViewDetails}
-                          onAddToCalendar={(apt) => markAsSynced(apt.id)}
+                          onAddToCalendar={() => markAsSynced(apt.id)}
                         />
                       ))}
                     </div>
@@ -967,24 +771,24 @@ export default function Dashboard() {
         </main>
       </div>
       
-      {/* Appointment Detail Dialog */}
-      <AppointmentDetailDialog
-        appointment={selectedAppointment}
-        client={selectedClient}
-        centerAddress={center?.address}
-        open={detailDialogOpen}
-        onOpenChange={setDetailDialogOpen}
-      />
-
-      {/* Confirmation Calendar Dialog */}
-      <ConfirmationCalendarDialog
-        open={confirmDialogOpen}
-        onOpenChange={setConfirmDialogOpen}
-        appointment={justConfirmedAppointment}
-        centerAddress={center?.address}
-        isAlreadySynced={justConfirmedAppointment ? checkIsSynced(justConfirmedAppointment.id) : false}
-        onAddToCalendar={() => justConfirmedAppointment && markAsSynced(justConfirmedAppointment.id)}
-      />
+      {selectedAppointment && (
+        <AppointmentDetailDialog
+          appointment={selectedAppointment}
+          client={selectedClient}
+          open={detailDialogOpen}
+          onOpenChange={setDetailDialogOpen}
+        />
+      )}
+      
+      {justConfirmedAppointment && (
+        <ConfirmationCalendarDialog
+          appointment={justConfirmedAppointment}
+          centerAddress={center?.address || undefined}
+          open={confirmDialogOpen}
+          onOpenChange={setConfirmDialogOpen}
+          onAddToCalendar={(apt) => markAsSynced(apt.id)}
+        />
+      )}
     </div>
   );
 }
