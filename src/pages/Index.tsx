@@ -2080,8 +2080,15 @@ export default function Index() {
       
       {/* Footer */}
       <footer className="py-8 sm:py-10 px-4 sm:px-6 border-t border-border/50">
-        <div className="max-w-5xl mx-auto flex items-center justify-center">
-          <p className="text-sm text-muted-foreground">
+        <div className="max-w-5xl mx-auto flex flex-col items-center gap-3">
+          <div className="flex items-center gap-4 text-xs text-muted-foreground/60">
+            <Link to="/confidentialite" className="hover:text-muted-foreground transition-colors">Confidentialité</Link>
+            <span>·</span>
+            <Link to="/cgv" className="hover:text-muted-foreground transition-colors">CGV</Link>
+            <span>·</span>
+            <Link to="/mentions-legales" className="hover:text-muted-foreground transition-colors">Mentions légales</Link>
+          </div>
+          <p className="text-xs text-muted-foreground/40">
             © 2024 CleaningPage. Tous droits réservés.
           </p>
         </div>
