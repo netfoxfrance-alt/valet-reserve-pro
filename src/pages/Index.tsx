@@ -47,8 +47,8 @@ export default function Index() {
     } catch (err) {
       console.error('Error creating checkout:', err);
       toast({
-        title: 'Erreur',
-        description: 'Impossible de démarrer l\'essai. Veuillez réessayer.',
+        title: t('common.error'),
+        description: t('landing.startError'),
         variant: 'destructive',
       });
       setIsCheckoutLoading(false);
@@ -99,8 +99,8 @@ export default function Index() {
                 >
                   {isCheckoutLoading ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Chargement...
+                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                     {t('mockup.loading')}
                     </>
                   ) : (
                     <>
@@ -144,8 +144,8 @@ export default function Index() {
               >
                 {isCheckoutLoading ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Chargement...
+                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                     {t('mockup.loading')}
                   </>
                 ) : (
                     <>
@@ -198,15 +198,15 @@ export default function Index() {
                     <div className="px-4 pb-5 pt-12 text-center">
                       {/* Name & Description */}
                       <h3 className="text-base font-bold text-foreground mb-1">GOCLEANING</h3>
-                      <p className="text-[10px] text-muted-foreground leading-relaxed mb-3 px-2">
-                        Nettoyage automobile premium à domicile, 7j/7. Qualité garantie.
+                       <p className="text-[10px] text-muted-foreground leading-relaxed mb-3 px-2">
+                         {t('mockup.premiumDesc')}
                       </p>
                       
                       {/* Ouvert badge */}
                       <div className="flex justify-center mb-3">
                         <span className="inline-flex items-center gap-1.5 text-[10px] bg-white border border-border/60 text-emerald-600 px-3 py-1.5 rounded-full font-medium shadow-sm">
                           <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                          Ouvert
+                           {t('mockup.open')}
                         </span>
                       </div>
                       
@@ -236,7 +236,7 @@ export default function Index() {
                         </div>
                         <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                           <Clock className="w-3 h-3" />
-                          <span>Lun - Sam : 9h00 - 19h00</span>
+                          <span>{t('mockup.mon')} - {t('mockup.sat')} : 9h00 - 19h00</span>
                         </div>
                         <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                           <MapPin className="w-3 h-3" />
@@ -246,7 +246,7 @@ export default function Index() {
                       
                       {/* Formules section */}
                       <div className="mb-4">
-                        <p className="text-xs font-semibold text-foreground text-left mb-2">Nos formules</p>
+                        <p className="text-xs font-semibold text-foreground text-left mb-2">{t('mockup.ourPackages')}</p>
                         <div className="grid grid-cols-2 gap-2">
                           <div className="bg-secondary/30 rounded-xl p-3 text-left border border-border/30">
                             <p className="text-[11px] font-medium text-foreground mb-0.5">Express</p>
@@ -260,9 +260,9 @@ export default function Index() {
                       </div>
                       
                       {/* CTA */}
-                      <button className="w-full bg-zinc-800 hover:bg-zinc-900 text-white rounded-xl py-3 text-xs font-semibold transition-colors">
-                        Réserver maintenant
-                      </button>
+                       <button className="w-full bg-zinc-800 hover:bg-zinc-900 text-white rounded-xl py-3 text-xs font-semibold transition-colors">
+                         {t('mockup.bookNow')}
+                       </button>
                     </div>
                   </div>
                 </div>
@@ -279,7 +279,7 @@ export default function Index() {
                       </div>
                       <div>
                         <p className="text-sm sm:text-lg font-bold text-foreground">4 280€</p>
-                        <p className="text-[8px] sm:text-[9px] text-muted-foreground">ce mois-ci</p>
+                        <p className="text-[8px] sm:text-[9px] text-muted-foreground">{t('landing.thisMonth')}</p>
                       </div>
                     </div>
                   </div>
@@ -297,7 +297,7 @@ export default function Index() {
                       </div>
                       <div>
                         <p className="text-sm sm:text-lg font-bold text-foreground">47</p>
-                        <p className="text-[8px] sm:text-[9px] text-muted-foreground">réservations</p>
+                        <p className="text-[8px] sm:text-[9px] text-muted-foreground">{t('landing.bookings')}</p>
                       </div>
                     </div>
                   </div>
@@ -315,7 +315,7 @@ export default function Index() {
                       </div>
                       <div>
                         <p className="text-sm sm:text-lg font-bold text-foreground">1.2k</p>
-                        <p className="text-[8px] sm:text-[9px] text-muted-foreground">vues ce mois</p>
+                        <p className="text-[8px] sm:text-[9px] text-muted-foreground">{t('landing.viewsThisMonth')}</p>
                       </div>
                     </div>
                   </div>
@@ -331,7 +331,7 @@ export default function Index() {
                       <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-amber-400 text-amber-400" />
                       <div>
                         <p className="text-xs sm:text-sm font-bold text-foreground">4.9</p>
-                        <p className="text-[7px] sm:text-[8px] text-muted-foreground">312 avis</p>
+                        <p className="text-[7px] sm:text-[8px] text-muted-foreground">312 {t('landing.reviews')}</p>
                       </div>
                     </div>
                   </div>
@@ -725,12 +725,12 @@ export default function Index() {
         <div className="max-w-3xl mx-auto text-center">
           {/* Section Header */}
           <div className="mb-12 sm:mb-16">
-            <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4">
-              Partagez votre lien de partout.
-            </h2>
-            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-md mx-auto">
-              et convertissez vos visiteurs en réservations.
-            </p>
+             <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4">
+               {t('mockup.shareTitle')}
+             </h2>
+             <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-md mx-auto">
+               {t('mockup.shareDesc')}
+             </p>
           </div>
 
           {/* Minimal Visual Composition */}
@@ -744,7 +744,7 @@ export default function Index() {
                   </div>
                   <div className="text-left flex-1 min-w-0">
                     <p className="text-sm sm:text-base font-semibold text-foreground truncate">
-                      cleaningpage.com/<span className="text-primary">vous</span>
+                      cleaningpage.com/<span className="text-primary">{t('mockup.shareYou')}</span>
                     </p>
                   </div>
                 </div>
@@ -796,7 +796,7 @@ export default function Index() {
           {/* Section Label */}
           <div className="flex items-center gap-2 text-muted-foreground mb-4 opacity-0 animate-fade-in-up">
             <Shield className="w-4 h-4" />
-            <span className="text-xs font-medium uppercase tracking-wider">Gestion</span>
+            <span className="text-xs font-medium uppercase tracking-wider">{t('mockup.management')}</span>
           </div>
           
           <h2 className="opacity-0 animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
@@ -808,20 +808,20 @@ export default function Index() {
 
           {/* Dashboard Tabs Preview - Interactive */}
           <div className="text-center mb-4 opacity-0 animate-fade-in-up stagger-3">
-            <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-              <MousePointer2 className="w-4 h-4" />
-              Cliquez sur un onglet pour découvrir chaque interface
+             <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+               <MousePointer2 className="w-4 h-4" />
+               {t('mockup.clickTab')}
             </p>
           </div>
           <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-wrap gap-2 sm:gap-3 mb-10 justify-center">
             {[
-              { icon: Calendar, label: 'Réservations', tab: 'reservations' as const, badge: '3' },
-              { icon: CalendarDays, label: 'Calendrier', tab: 'calendar' as const, badge: null },
-              { icon: Users, label: 'Clients', tab: 'clients' as const, badge: null },
-              { icon: Star, label: 'Factures', tab: 'invoices' as const, badge: null },
-              { icon: BarChart3, label: 'Statistiques', tab: 'stats' as const, badge: null },
-              { icon: Globe, label: 'Ma Page', tab: 'mypage' as const, badge: null },
-              { icon: Droplets, label: 'Formules', tab: 'formules' as const, badge: null },
+               { icon: Calendar, label: t('mockup.reservations'), tab: 'reservations' as const, badge: '3' },
+               { icon: CalendarDays, label: t('mockup.calendar'), tab: 'calendar' as const, badge: null },
+               { icon: Users, label: t('mockup.clients'), tab: 'clients' as const, badge: null },
+               { icon: Star, label: t('mockup.invoices'), tab: 'invoices' as const, badge: null },
+               { icon: BarChart3, label: t('mockup.statistics'), tab: 'stats' as const, badge: null },
+               { icon: Globe, label: t('mockup.myPage'), tab: 'mypage' as const, badge: null },
+               { icon: Droplets, label: t('mockup.formulas'), tab: 'formules' as const, badge: null },
             ].map((item) => (
               <button 
                 key={item.label}
@@ -873,20 +873,20 @@ export default function Index() {
                   {/* Sidebar Groups */}
                   <nav className="flex-1 space-y-4">
                     <div>
-                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">Activité</p>
+                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">{t('mockup.activity')}</p>
                       <div className="space-y-0.5">
                         {[
-                          { icon: Calendar, label: 'Réservations', tab: 'reservations' as const, badge: '3' },
-                          { icon: CalendarDays, label: 'Calendrier', tab: 'calendar' as const },
-                          { icon: Mail, label: 'Demandes', tab: 'reservations' as const, badge: '2' },
+                           { icon: Calendar, label: t('mockup.reservations'), tab: 'reservations' as const, badge: '3' },
+                           { icon: CalendarDays, label: t('mockup.calendar'), tab: 'calendar' as const },
+                           { icon: Mail, label: t('mockup.requests'), tab: 'reservations' as const, badge: '2' },
                         ].map((item) => (
                           <button
                             key={item.label}
                             onClick={() => setDashboardTab(item.tab)}
                             className={`w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg text-xs transition-all ${
-                              dashboardTab === item.tab && item.label === 'Réservations'
-                                ? 'bg-foreground text-background font-medium' 
-                                : dashboardTab === item.tab && item.label === 'Calendrier'
+                             dashboardTab === item.tab && item.label === t('mockup.reservations')
+                                 ? 'bg-foreground text-background font-medium' 
+                                 : dashboardTab === item.tab && item.label === t('mockup.calendar')
                                 ? 'bg-foreground text-background font-medium'
                                 : 'text-muted-foreground hover:bg-card/50'
                             }`}
@@ -906,11 +906,11 @@ export default function Index() {
                     </div>
                     
                     <div>
-                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">Clients</p>
+                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">{t('mockup.clients')}</p>
                       <div className="space-y-0.5">
                         {[
-                          { icon: Users, label: 'Clients', tab: 'clients' as const },
-                          { icon: Star, label: 'Factures & Devis', tab: 'invoices' as const },
+                           { icon: Users, label: t('mockup.clients'), tab: 'clients' as const },
+                           { icon: Star, label: t('mockup.invoicesQuotes'), tab: 'invoices' as const },
                         ].map((item) => (
                           <button
                             key={item.label}
@@ -929,19 +929,19 @@ export default function Index() {
                     </div>
                     
                     <div>
-                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">Configuration</p>
+                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">{t('mockup.configuration')}</p>
                       <div className="space-y-0.5">
                         {[
-                          { icon: Globe, label: 'Ma Page', tab: 'mypage' as const },
-                          { icon: Droplets, label: 'Formules', tab: 'formules' as const },
-                          { icon: Clock, label: 'Disponibilités', tab: 'reservations' as const },
-                          { icon: Settings, label: 'Paramètres', tab: 'reservations' as const },
+                           { icon: Globe, label: t('mockup.myPage'), tab: 'mypage' as const },
+                           { icon: Droplets, label: t('mockup.formulas'), tab: 'formules' as const },
+                           { icon: Clock, label: t('mockup.availabilityLabel'), tab: 'reservations' as const },
+                           { icon: Settings, label: t('mockup.settingsLabel'), tab: 'reservations' as const },
                         ].map((item) => (
                           <button
                             key={item.label}
                             onClick={() => setDashboardTab(item.tab)}
                             className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs transition-all ${
-                              dashboardTab === item.tab && (item.label === 'Ma Page' || item.label === 'Formules')
+                              dashboardTab === item.tab && (item.label === t('mockup.myPage') || item.label === t('mockup.formulas'))
                                 ? 'bg-foreground text-background font-medium' 
                                 : 'text-muted-foreground hover:bg-card/50'
                             }`}
@@ -954,7 +954,7 @@ export default function Index() {
                     </div>
                     
                     <div>
-                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">Insights</p>
+                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">{t('mockup.insights')}</p>
                       <div className="space-y-0.5">
                         <button
                           onClick={() => setDashboardTab('stats')}
@@ -965,7 +965,7 @@ export default function Index() {
                           }`}
                         >
                           <BarChart3 className="w-3.5 h-3.5" />
-                          Statistiques
+                          {t('mockup.statistics')}
                         </button>
                       </div>
                     </div>
@@ -978,12 +978,12 @@ export default function Index() {
                         <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center">
                           <Link2 className="w-3 h-3 text-primary-foreground" />
                         </div>
-                        <span className="text-[10px] font-semibold text-foreground">Votre lien</span>
+                        <span className="text-[10px] font-semibold text-foreground">{t('mockup.yourLink')}</span>
                       </div>
                       <p className="text-[9px] text-primary font-medium truncate">cleaningpage.com/clean-auto-pro</p>
                       <div className="flex items-center gap-1.5 mt-1.5">
                         <ExternalLink className="w-3 h-3 text-primary" />
-                        <span className="text-[8px] text-primary font-medium">Copier le lien</span>
+                        <span className="text-[8px] text-primary font-medium">{t('mockup.copyLink')}</span>
                       </div>
                     </div>
                   </div>
@@ -997,50 +997,50 @@ export default function Index() {
                     <>
                       <div className="flex items-center justify-between mb-6">
                         <div>
-                          <h3 className="text-lg font-semibold text-foreground tracking-tight">Réservations</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">Mardi 11 février 2026</p>
-                        </div>
-                        <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
-                          + Nouveau RDV
-                        </button>
+                           <h3 className="text-lg font-semibold text-foreground tracking-tight">{t('mockup.reservations')}</h3>
+                           <p className="text-xs text-muted-foreground mt-0.5">{t('mockup.wednesday')} 11 {t('mockup.february2026').toLowerCase()}</p>
+                         </div>
+                         <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
+                           {t('mockup.newBooking')}
+                         </button>
                       </div>
 
                       {/* KPI row — clean widget style */}
                       <div className="grid grid-cols-3 gap-3 mb-6">
                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">Aujourd'hui</p>
-                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">5</p>
-                          <div className="flex items-center gap-1.5 mt-2">
-                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                            <p className="text-[10px] text-muted-foreground font-medium">2 en attente</p>
-                          </div>
-                        </div>
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">Cette semaine</p>
-                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">23</p>
-                          <p className="text-[10px] text-muted-foreground mt-2">dont 4 demandes</p>
-                        </div>
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">CA du jour</p>
-                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">340€</p>
-                          <p className="text-[10px] text-emerald-600 font-semibold mt-2">↑ 15%</p>
-                        </div>
+                           <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.today')}</p>
+                           <p className="text-3xl font-bold tracking-tight leading-none text-foreground">5</p>
+                           <div className="flex items-center gap-1.5 mt-2">
+                             <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                             <p className="text-[10px] text-muted-foreground font-medium">2 {t('mockup.pendingCount')}</p>
+                           </div>
+                         </div>
+                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                           <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.thisWeek')}</p>
+                           <p className="text-3xl font-bold tracking-tight leading-none text-foreground">23</p>
+                           <p className="text-[10px] text-muted-foreground mt-2">{t('mockup.includingRequests', { count: 4 })}</p>
+                         </div>
+                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                           <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.dailyRevenue')}</p>
+                           <p className="text-3xl font-bold tracking-tight leading-none text-foreground">340€</p>
+                           <p className="text-[10px] text-emerald-600 font-semibold mt-2">↑ 15%</p>
+                         </div>
                       </div>
 
                       {/* Segmented control */}
                       <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
-                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">Prochains</span>
-                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">Demandes</span>
-                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">Passés</span>
+                         <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">{t('mockup.upcoming')}</span>
+                         <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.requestsTab')}</span>
+                         <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.past')}</span>
                       </div>
 
                       <div className="space-y-2">
                         {[
-                          { name: 'Jean Martin', service: 'Nettoyage Complet', time: '10:00', duration: '1h30', price: '89€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'JM', avatarBg: 'bg-blue-500' },
-                          { name: 'Marie Dupont', service: 'Express', time: '11:30', duration: '45min', price: '35€', status: 'En attente', statusBg: 'bg-orange-500', initials: 'MD', avatarBg: 'bg-pink-500' },
-                          { name: 'Pierre Bernard', service: 'Rénovation Premium', time: '14:00', duration: '3h', price: '159€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'PB', avatarBg: 'bg-amber-500' },
-                          { name: 'Demande entrante', service: 'Nettoyage canapé', time: '—', duration: '—', price: 'Sur devis', status: 'Demande', statusBg: 'bg-blue-500', initials: '?', avatarBg: 'bg-indigo-500' },
-                          { name: 'Sophie Leroy', service: 'Pack Intérieur', time: '16:30', duration: '1h', price: '65€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'SL', avatarBg: 'bg-violet-500' },
+                           { name: 'Jean Martin', service: 'Nettoyage Complet', time: '10:00', duration: '1h30', price: '89€', status: t('mockup.confirmed'), statusBg: 'bg-emerald-500', initials: 'JM', avatarBg: 'bg-blue-500' },
+                           { name: 'Marie Dupont', service: 'Express', time: '11:30', duration: '45min', price: '35€', status: t('mockup.pending'), statusBg: 'bg-orange-500', initials: 'MD', avatarBg: 'bg-pink-500' },
+                           { name: 'Pierre Bernard', service: 'Rénovation Premium', time: '14:00', duration: '3h', price: '159€', status: t('mockup.confirmed'), statusBg: 'bg-emerald-500', initials: 'PB', avatarBg: 'bg-amber-500' },
+                           { name: t('mockup.incomingRequest'), service: t('mockup.couchCleaning'), time: '—', duration: '—', price: t('mockup.onQuote'), status: t('mockup.request'), statusBg: 'bg-blue-500', initials: '?', avatarBg: 'bg-indigo-500' },
+                           { name: 'Sophie Leroy', service: 'Pack Intérieur', time: '16:30', duration: '1h', price: '65€', status: t('mockup.confirmed'), statusBg: 'bg-emerald-500', initials: 'SL', avatarBg: 'bg-violet-500' },
                         ].map((booking, i) => (
                           <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 hover:shadow-md transition-all cursor-pointer">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 ${booking.avatarBg}`}>
@@ -1973,11 +1973,11 @@ export default function Index() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10 sm:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4 px-2">
-              Un seul plan, tout inclus
-            </h2>
-            <p className="text-base sm:text-lg text-muted-foreground px-2">
-              Essayez gratuitement pendant 30 jours, sans engagement.
-            </p>
+               {t('landing.pricingTitle')}
+             </h2>
+             <p className="text-base sm:text-lg text-muted-foreground px-2">
+               {t('landing.pricingDesc')}
+             </p>
           </div>
           
           <div className="max-w-lg mx-auto">
@@ -1985,33 +1985,22 @@ export default function Index() {
             <Card variant="elevated" className="p-5 sm:p-8 rounded-xl sm:rounded-2xl ring-2 ring-foreground relative hover:shadow-xl transition-shadow duration-300 overflow-hidden">
               {/* Premium trial banner */}
               <div className="absolute top-0 left-0 right-0 bg-foreground text-primary-foreground py-2 sm:py-2.5 px-4 text-center">
-                <p className="text-xs sm:text-sm font-medium">30 jours d'essai gratuit</p>
+                <p className="text-xs sm:text-sm font-medium">{t('landing.trialBanner')}</p>
               </div>
               
               <div className="mb-4 sm:mb-6 mt-8 sm:mt-10">
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-1">CleaningPage Pro</h3>
-                <p className="text-muted-foreground text-xs sm:text-sm">Tout ce qu'il faut pour développer votre activité</p>
+                 <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-1">{t('landing.proName')}</h3>
+                 <p className="text-muted-foreground text-xs sm:text-sm">{t('landing.proDesc')}</p>
               </div>
               
               <div className="mb-4 sm:mb-6">
                 <span className="text-3xl sm:text-4xl font-semibold text-foreground">39€</span>
-                <span className="text-muted-foreground text-sm sm:text-base ml-2">/ mois</span>
-                <p className="text-xs text-muted-foreground mt-1">après les 30 jours d'essai</p>
+                 <span className="text-muted-foreground text-sm sm:text-base ml-2">{t('landing.perMonth')}</span>
+                 <p className="text-xs text-muted-foreground mt-1">{t('landing.afterTrial')}</p>
               </div>
               
               <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
-                {[
-                  'Page professionnelle personnalisée',
-                  'Lien unique partageable',
-                  'Tableau de bord complet',
-                  'Réservation automatique 24h/24',
-                  'Agenda intégré avec créneaux',
-                  'Gestion du planning',
-                  'Base de données clients',
-                  'Statistiques détaillées',
-                  'Offres illimitées et personnalisables',
-                  'Qualification client avancée',
-                ].map((feature) => (
+                 {(t('landing.features', { returnObjects: true }) as string[]).map((feature: string) => (
                   <li key={feature} className="flex items-start gap-2.5 sm:gap-3">
                     <div className="w-4 h-4 sm:w-5 sm:h-5 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary" />
@@ -2029,18 +2018,18 @@ export default function Index() {
               >
                 {isCheckoutLoading ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Chargement...
+                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                     {t('mockup.loading')}
                   </>
                 ) : (
                   <>
-                    Essayer gratuitement 30 jours
+                     {t('landing.tryFree30')}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </>
                 )}
               </Button>
               
-              <p className="text-center text-xs text-muted-foreground mt-3">Sans engagement · Annulez à tout moment</p>
+              <p className="text-center text-xs text-muted-foreground mt-3">{t('landing.noCommitmentCancel')}</p>
             </Card>
           </div>
         </div>
@@ -2050,12 +2039,12 @@ export default function Index() {
       {/* CTA */}
       <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 px-2">
-            Prêt à développer votre activité ?
-          </h2>
-          <p className="text-base sm:text-lg text-muted-foreground mb-8 sm:mb-10 leading-relaxed px-2">
-            Essayez gratuitement pendant 30 jours, sans engagement.
-          </p>
+           <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 px-2">
+             {t('landing.ctaTitle')}
+           </h2>
+           <p className="text-base sm:text-lg text-muted-foreground mb-8 sm:mb-10 leading-relaxed px-2">
+             {t('landing.pricingDesc')}
+           </p>
           <Button 
             size="lg" 
             className="rounded-full px-6 sm:px-8 text-sm sm:text-base bg-emerald-500 hover:bg-emerald-600"
@@ -2064,12 +2053,12 @@ export default function Index() {
           >
             {isCheckoutLoading ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Chargement...
+                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                 {t('mockup.loading')}
               </>
             ) : (
               <>
-                Essayer gratuitement 30 jours
+                {t('landing.tryFree30')}
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
               </>
             )}
@@ -2081,15 +2070,15 @@ export default function Index() {
       <footer className="py-8 sm:py-10 px-4 sm:px-6 border-t border-border/50">
         <div className="max-w-5xl mx-auto flex flex-col items-center gap-3">
           <div className="flex items-center gap-4 text-xs text-muted-foreground/60">
-            <Link to="/confidentialite" className="hover:text-muted-foreground transition-colors">Confidentialité</Link>
-            <span>·</span>
-            <Link to="/cgv" className="hover:text-muted-foreground transition-colors">CGV</Link>
-            <span>·</span>
-            <Link to="/mentions-legales" className="hover:text-muted-foreground transition-colors">Mentions légales</Link>
-          </div>
-          <p className="text-xs text-muted-foreground/40">
-            © 2024 CleaningPage. Tous droits réservés.
-          </p>
+             <Link to="/confidentialite" className="hover:text-muted-foreground transition-colors">{t('landing.privacy')}</Link>
+             <span>·</span>
+             <Link to="/cgv" className="hover:text-muted-foreground transition-colors">{t('landing.terms')}</Link>
+             <span>·</span>
+             <Link to="/mentions-legales" className="hover:text-muted-foreground transition-colors">{t('landing.legalNotices')}</Link>
+           </div>
+           <p className="text-xs text-muted-foreground/40">
+             {t('landing.allRightsReserved')}
+           </p>
         </div>
       </footer>
     </div>
