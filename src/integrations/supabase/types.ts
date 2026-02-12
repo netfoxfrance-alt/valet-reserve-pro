@@ -228,6 +228,7 @@ export type Database = {
           created_at: string | null
           customization: Json | null
           email: string | null
+          email_language: string
           ical_token: string | null
           id: string
           logo_url: string | null
@@ -248,6 +249,7 @@ export type Database = {
           created_at?: string | null
           customization?: Json | null
           email?: string | null
+          email_language?: string
           ical_token?: string | null
           id?: string
           logo_url?: string | null
@@ -268,6 +270,7 @@ export type Database = {
           created_at?: string | null
           customization?: Json | null
           email?: string | null
+          email_language?: string
           ical_token?: string | null
           id?: string
           logo_url?: string | null
