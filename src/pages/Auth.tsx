@@ -8,6 +8,7 @@ import { Mail, Lock, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from 'react-i18next';
 
 export default function Auth() {
   const navigate = useNavigate();
