@@ -7,7 +7,7 @@ import { Appointment } from '@/hooks/useAppointments';
 import { Client } from '@/hooks/useClients';
 import { useClientHistory } from '@/hooks/useClientHistory';
 import { 
-  Phone, Mail, MapPin, Euro, Calendar, TrendingUp, Clock, Sparkles, 
+  Phone, Mail, MapPin, Euro, Calendar, TrendingUp, Clock, 
   Car, FileText, ExternalLink, User, CalendarPlus, Copy, Check
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
@@ -213,15 +213,6 @@ export function AppointmentDetailDialog({
           {/* Client Stats */}
           {client && (
             <>
-              {client.default_service && (
-                <div className="bg-primary/5 rounded-xl p-4">
-                  <p className="text-sm text-muted-foreground mb-1">{t('appointmentDetail.defaultService')}</p>
-                  <p className="font-medium text-primary flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" />
-                    {client.default_service.name} • {client.default_service.duration_minutes}min • {client.default_service.price}€
-                  </p>
-                </div>
-              )}
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <Card variant="elevated" className="p-3 text-center">
