@@ -481,7 +481,12 @@
     "renewalOn": "Renouvellement le {{date}}",
     "limitedAccess": "Accès limité aux fonctionnalités",
     "saveChanges": "Enregistrer les modifications",
-    "mustBeLoggedIn": "Vous devez être connecté."
+    "mustBeLoggedIn": "Vous devez être connecté.",
+    "emailLanguage": "Langue des emails",
+    "emailLanguageDesc": "Choisissez dans quelle langue les emails de confirmation et de notification seront envoyés à vos clients.",
+    "emailLanguageFr": "Français",
+    "emailLanguageEn": "Anglais",
+    "emailLanguageSaved": "Langue des emails mise à jour"
   },
   "support": {
     "title": "Support",

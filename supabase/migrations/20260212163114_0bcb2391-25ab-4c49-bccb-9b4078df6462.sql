@@ -1,0 +1,1 @@
+ALTER TABLE public.centers ADD COLUMN email_language text NOT NULL DEFAULT 'fr';

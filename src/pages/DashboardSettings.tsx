@@ -18,6 +18,8 @@ import { Sparkles, Upload, Trash2, Loader2, CreditCard, Crown, ExternalLink, Lin
 import { Link } from 'react-router-dom';
 import { CenterCustomization, defaultCustomization } from '@/types/customization';
 import { useTranslation } from 'react-i18next';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Globe } from 'lucide-react';
 
 // Generate a clean slug from text
 const generateSlug = (text: string): string => {
@@ -45,6 +47,7 @@ export default function DashboardSettings() {
     phone: '',
   });
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [emailLanguage, setEmailLanguage] = useState('fr');
   const [customization, setCustomization] = useState<CenterCustomization>(defaultCustomization);
   
   // Slug editing state
@@ -63,6 +66,7 @@ export default function DashboardSettings() {
         phone: center.phone || '',
       });
       setLogoUrl(center.logo_url);
+      setEmailLanguage((center as any).email_language || 'fr');
       setSlug(center.slug || '');
       setSlugInput(center.slug || '');
       if (center.customization) {
@@ -391,6 +395,46 @@ export default function DashboardSettings() {
             </Card>
           </section>
           
+          {/* Email Language Section */}
+          <section className="mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">{t('settings.emailLanguage')}</h2>
+            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">{t('settings.emailLanguageDesc')}</p>
+            
+            <Card variant="elevated" className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Globe className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-foreground">{emailLanguage === 'en' ? t('settings.emailLanguageEn') : t('settings.emailLanguageFr')}</p>
+                    <p className="text-sm text-muted-foreground">{t('settings.emailLanguageDesc')}</p>
+                  </div>
+                </div>
+                <Select
+                  value={emailLanguage}
+                  onValueChange={async (value) => {
+                    setEmailLanguage(value);
+                    const { error } = await updateCenter({ email_language: value } as any);
+                    if (error) {
+                      toast({ title: t('common.error'), description: error, variant: 'destructive' });
+                    } else {
+                      toast({ title: t('settings.emailLanguageSaved') });
+                    }
+                  }}
+                >
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fr">🇫🇷 {t('settings.emailLanguageFr')}</SelectItem>
+                    <SelectItem value="en">🇬🇧 {t('settings.emailLanguageEn')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </Card>
+          </section>
+
           {/* Subscription Section */}
           <section className="mb-6 sm:mb-8">
             <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">{t('settings.subscription')}</h2>

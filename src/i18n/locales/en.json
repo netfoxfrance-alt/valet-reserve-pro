@@ -481,7 +481,12 @@
     "renewalOn": "Renewal on {{date}}",
     "limitedAccess": "Limited feature access",
     "saveChanges": "Save changes",
-    "mustBeLoggedIn": "You must be logged in."
+    "mustBeLoggedIn": "You must be logged in.",
+    "emailLanguage": "Email language",
+    "emailLanguageDesc": "Choose in which language confirmation and notification emails will be sent to your clients.",
+    "emailLanguageFr": "French",
+    "emailLanguageEn": "English",
+    "emailLanguageSaved": "Email language updated"
   },
   "support": {
     "title": "Support",
