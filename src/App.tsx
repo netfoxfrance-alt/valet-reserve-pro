@@ -19,6 +19,7 @@ import DashboardStats from "./pages/DashboardStats";
 import DashboardMyPage from "./pages/DashboardMyPage";
 import DashboardInvoices from "./pages/DashboardInvoices";
 import DashboardClients from "./pages/DashboardClients";
+import DashboardSupport from "./pages/DashboardSupport";
 
 import CompleteSignup from "./pages/CompleteSignup";
 import NotFound from "./pages/NotFound";
@@ -98,6 +99,11 @@ const App = () => (
             <Route path="/dashboard/clients" element={
               <ProtectedRoute>
                 <DashboardClients />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/support" element={
+              <ProtectedRoute>
+                <DashboardSupport />
               </ProtectedRoute>
             } />
             

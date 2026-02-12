@@ -90,9 +90,44 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const data: BookingEmailRequest = await req.json();
+    const data = await req.json();
 
-    // Validation des données
+    // Handle support request separately
+    if (data.type === 'support_request') {
+      const { to, subject, centerName, userEmail, message } = data;
+      if (!to || !subject || !message) {
+        return new Response(
+          JSON.stringify({ error: 'Missing support request fields' }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const supportHtml = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #111827;">Nouvelle demande de support</h2>
+          <p><strong>Centre :</strong> ${centerName}</p>
+          <p><strong>Email :</strong> ${userEmail}</p>
+          <p><strong>Sujet :</strong> ${subject}</p>
+          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;" />
+          <p style="white-space: pre-wrap;">${message}</p>
+        </div>
+      `;
+
+      await resend.emails.send({
+        from: "CleaningPage Support <onboarding@resend.dev>",
+        to: [to],
+        replyTo: userEmail,
+        subject: subject,
+        html: supportHtml,
+      });
+
+      return new Response(
+        JSON.stringify({ success: true }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validation des données (booking emails)
     const validation = validateRequest(data);
     if (!validation.valid) {
       console.error('[Validation Error]', validation.error);

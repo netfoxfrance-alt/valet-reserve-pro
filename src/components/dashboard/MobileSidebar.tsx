@@ -8,7 +8,6 @@ import { useMyCenter } from '@/hooks/useCenter';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { useTawkTo } from '@/components/TawkTo';
 
 const navigationGroups = [
   {
@@ -54,7 +53,6 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
   const { signOut, subscription } = useAuth();
   const { center } = useMyCenter();
   const { toast } = useToast();
-  const { openChat } = useTawkTo();
   const [copied, setCopied] = useState(false);
   
   // Find which group has the active route
@@ -248,13 +246,19 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
             <Settings className="w-5 h-5" />
             Paramètres
           </Link>
-          <button 
-            onClick={openChat}
-            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-all w-full"
+          <Link
+            to="/dashboard/support"
+            onClick={handleNavClick}
+            className={cn(
+              "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all w-full",
+              location.pathname === '/dashboard/support'
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            )}
           >
             <Headphones className="w-5 h-5" />
             Support
-          </button>
+          </Link>
           <button 
             onClick={handleLogout}
             className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-all w-full"
