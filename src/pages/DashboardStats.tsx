@@ -13,7 +13,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, parseISO, startOfMonth, endOfMonth, subMonths, addMonths, isWithinInterval, startOfWeek, endOfWeek, subWeeks, eachWeekOfInterval, eachMonthOfInterval } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
+import { useTranslation } from 'react-i18next';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
 // Apple-style vibrant chart colors
@@ -22,6 +23,8 @@ const COLORS = ['#34C759', '#007AFF', '#5856D6', '#FF9500', '#AF52DE', '#FF3B30'
 type DetailType = 'reservations' | 'revenue' | 'clients' | 'completed' | null;
 
 export default function DashboardStats() {
+  const { t, i18n } = useTranslation();
+  const dateLocale = i18n.language === 'en' ? enUS : fr;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [detailDialog, setDetailDialog] = useState<DetailType>(null);
@@ -207,10 +210,10 @@ export default function DashboardStats() {
   }, [detailDialog, stats.appointments]);
 
   const detailTitle = {
-    reservations: 'Toutes les réservations',
-    revenue: 'Détail du chiffre d\'affaires',
-    clients: 'Clients uniques',
-    completed: 'Réservations terminées',
+    reservations: t('stats.allReservations'),
+    revenue: t('stats.revenueDetail'),
+    clients: t('stats.uniqueClients'),
+    completed: t('stats.completedReservations'),
   };
 
   const navigateMonth = (direction: 'prev' | 'next') => {
@@ -279,7 +282,7 @@ export default function DashboardStats() {
                   className="p-4 sm:p-5 cursor-pointer group hover:shadow-lg transition-all duration-200 rounded-2xl"
                   onClick={() => setDetailDialog('reservations')}
                 >
-                  <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Réservations</p>
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">{t('stats.reservations')}</p>
                   <div className="flex items-baseline gap-2 sm:gap-3">
                     <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{stats.thisMonthCount}</p>
                     {stats.countChange !== 0 && (
@@ -300,7 +303,7 @@ export default function DashboardStats() {
                   className="p-4 sm:p-5 cursor-pointer group hover:shadow-lg transition-all duration-200 rounded-2xl"
                   onClick={() => setDetailDialog('revenue')}
                 >
-                  <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">CA</p>
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">{t('stats.revenue')}</p>
                   <div className="flex items-baseline gap-2 sm:gap-3">
                     <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{stats.thisMonthRevenue.toLocaleString('fr-FR')}€</p>
                     {stats.revenueChange !== 0 && (
@@ -321,21 +324,21 @@ export default function DashboardStats() {
                   className="p-4 sm:p-5 cursor-pointer group hover:shadow-lg transition-all duration-200 rounded-2xl"
                   onClick={() => setDetailDialog('clients')}
                 >
-                  <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Clients</p>
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">{t('stats.clients')}</p>
                   <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{stats.uniqueClients}</p>
                 </Card>
 
                 {/* Panier moyen */}
                 <Card variant="elevated" className="p-4 sm:p-5 rounded-2xl">
-                  <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Panier moyen</p>
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">{t('stats.avgBasket')}</p>
                   <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{stats.avgBasket}€</p>
                 </Card>
               </div>
 
               <Tabs defaultValue="evolution" className="space-y-4 sm:space-y-6">
                 <TabsList className="w-full rounded-xl grid grid-cols-2 h-10">
-                  <TabsTrigger value="evolution" className="rounded-lg text-sm">Évolution</TabsTrigger>
-                  <TabsTrigger value="formules" className="rounded-lg text-sm">Services</TabsTrigger>
+                  <TabsTrigger value="evolution" className="rounded-lg text-sm">{t('stats.evolution')}</TabsTrigger>
+                  <TabsTrigger value="formules" className="rounded-lg text-sm">{t('stats.services')}</TabsTrigger>
                 </TabsList>
 
                 {/* Evolution Tab */}
@@ -343,7 +346,7 @@ export default function DashboardStats() {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {/* Weekly Chart */}
                     <Card variant="elevated" className="p-4 sm:p-6 rounded-2xl">
-                      <h3 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">Réservations par semaine</h3>
+                      <h3 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">{t('stats.weeklyReservations')}</h3>
                       <div className="h-48 sm:h-64">
                         <ResponsiveContainer width="100%" height="100%">
                           <AreaChart data={weeklyData}>
@@ -378,7 +381,7 @@ export default function DashboardStats() {
 
                     {/* Revenue Chart - Apple green */}
                     <Card variant="elevated" className="p-4 sm:p-6 rounded-2xl">
-                      <h3 className="font-semibold text-foreground mb-4">Chiffre d'affaires par mois</h3>
+                      <h3 className="font-semibold text-foreground mb-4">{t('stats.monthlyRevenue')}</h3>
                       <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                           <BarChart data={monthlyData}>
@@ -403,34 +406,34 @@ export default function DashboardStats() {
 
                   {/* Total stats - Clickable */}
                   <Card variant="elevated" className="p-4 sm:p-6">
-                    <h3 className="font-semibold text-foreground mb-4">Récapitulatif du mois</h3>
+                    <h3 className="font-semibold text-foreground mb-4">{t('stats.monthlySummary')}</h3>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                       <div 
                         className="text-center p-4 bg-secondary/30 rounded-xl cursor-pointer hover:bg-secondary/50 transition-colors"
                         onClick={() => setDetailDialog('reservations')}
                       >
                         <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.thisMonthCount}</p>
-                        <p className="text-sm text-muted-foreground">Total réservations</p>
+                        <p className="text-sm text-muted-foreground">{t('stats.totalReservations')}</p>
                       </div>
                       <div 
                         className="text-center p-4 bg-secondary/30 rounded-xl cursor-pointer hover:bg-secondary/50 transition-colors"
                         onClick={() => setDetailDialog('revenue')}
                       >
                         <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.thisMonthRevenue.toLocaleString('fr-FR')}€</p>
-                        <p className="text-sm text-muted-foreground">CA du mois</p>
+                        <p className="text-sm text-muted-foreground">{t('stats.monthlyCA')}</p>
                       </div>
                       <div 
                         className="text-center p-4 bg-secondary/30 rounded-xl cursor-pointer hover:bg-secondary/50 transition-colors"
                         onClick={() => setDetailDialog('completed')}
                       >
                         <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.completedCount}</p>
-                        <p className="text-sm text-muted-foreground">Terminées</p>
+                        <p className="text-sm text-muted-foreground">{t('stats.completed')}</p>
                       </div>
                       <div className="text-center p-4 bg-secondary/30 rounded-xl">
                         <p className="text-2xl sm:text-3xl font-bold text-foreground">
                           {uniqueClientsCount > 0 ? Math.round(stats.thisMonthCount / uniqueClientsCount * 10) / 10 : 0}
                         </p>
-                        <p className="text-sm text-muted-foreground">Visites/client</p>
+                        <p className="text-sm text-muted-foreground">{t('stats.visitsPerClient')}</p>
                       </div>
                     </div>
                   </Card>
@@ -441,10 +444,10 @@ export default function DashboardStats() {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     {/* Pie Chart */}
                     <Card variant="elevated" className="p-4 sm:p-6">
-                      <h3 className="font-semibold text-foreground mb-4">Répartition des services</h3>
+                      <h3 className="font-semibold text-foreground mb-4">{t('stats.serviceDistribution')}</h3>
                       {serviceDistribution.length === 0 ? (
                         <div className="h-64 flex items-center justify-center">
-                          <p className="text-muted-foreground">Aucune donnée disponible</p>
+                          <p className="text-muted-foreground">{t('stats.noDataAvailable')}</p>
                         </div>
                       ) : (
                         <div className="h-64">
@@ -479,9 +482,9 @@ export default function DashboardStats() {
 
                     {/* Service list */}
                     <Card variant="elevated" className="p-4 sm:p-6">
-                      <h3 className="font-semibold text-foreground mb-4">Performance par service</h3>
+                      <h3 className="font-semibold text-foreground mb-4">{t('stats.servicePerformance')}</h3>
                       {serviceDistribution.length === 0 ? (
-                        <p className="text-muted-foreground text-center py-8">Aucune donnée disponible</p>
+                        <p className="text-muted-foreground text-center py-8">{t('stats.noDataAvailable')}</p>
                       ) : (
                         <div className="space-y-3">
                           {serviceDistribution.map((service, index) => {
@@ -555,13 +558,13 @@ export default function DashboardStats() {
                   <div className="text-right">
                     <p className="font-semibold text-foreground">{getAppointmentPrice(apt)}€</p>
                     <p className="text-xs text-muted-foreground">
-                      {apt.status === 'completed' ? 'Terminé' : apt.status === 'confirmed' ? 'Confirmé' : 'En attente'}
+                      {t(`status.${apt.status}`)}
                     </p>
                   </div>
                 </div>
               ))}
               {detailAppointments.length === 0 && (
-                <p className="text-center text-muted-foreground py-8">Aucune donnée pour cette période</p>
+                <p className="text-center text-muted-foreground py-8">{t('stats.noData')}</p>
               )}
             </div>
           </ScrollArea>

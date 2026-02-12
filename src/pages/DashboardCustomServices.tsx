@@ -12,8 +12,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useMyCustomServices, formatDuration, CustomService } from '@/hooks/useCustomServices';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Pencil, Trash2, Clock, Euro, FileText, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function DashboardCustomServices() {
+  const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { services, loading, createService, updateService, deleteService } = useMyCustomServices();
   const { toast } = useToast();
@@ -46,7 +48,7 @@ export default function DashboardCustomServices() {
 
   const handleCreate = async () => {
     if (!newName.trim() || !newPrice) {
-      toast({ title: "Erreur", description: "Nom et prix requis", variant: "destructive" });
+      toast({ title: t('common.error'), description: t('customServices.nameAndPriceRequired'), variant: "destructive" });
       return;
     }
     setCreating(true);
@@ -59,9 +61,9 @@ export default function DashboardCustomServices() {
     setCreating(false);
 
     if (error) {
-      toast({ title: "Erreur", description: error, variant: "destructive" });
+      toast({ title: t('common.error'), description: error, variant: "destructive" });
     } else {
-      toast({ title: "Prestation créée" });
+      toast({ title: t('customServices.serviceCreated') });
       resetCreateForm();
       setIsCreateOpen(false);
     }
@@ -88,9 +90,9 @@ export default function DashboardCustomServices() {
     setSaving(false);
 
     if (error) {
-      toast({ title: "Erreur", description: error, variant: "destructive" });
+      toast({ title: t('common.error'), description: error, variant: "destructive" });
     } else {
-      toast({ title: "Prestation modifiée" });
+      toast({ title: t('customServices.serviceUpdated') });
       setEditingService(null);
     }
   };
@@ -98,9 +100,9 @@ export default function DashboardCustomServices() {
   const handleDelete = async (id: string) => {
     const { error } = await deleteService(id);
     if (error) {
-      toast({ title: "Erreur", description: error, variant: "destructive" });
+      toast({ title: t('common.error'), description: error, variant: "destructive" });
     } else {
-      toast({ title: "Prestation supprimée" });
+      toast({ title: t('customServices.serviceDeleted') });
     }
   };
 
@@ -110,32 +112,30 @@ export default function DashboardCustomServices() {
       <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
 
       <div className="lg:pl-64">
-        <DashboardHeader title="Prestations" onMenuClick={() => setMobileMenuOpen(true)} />
+        <DashboardHeader title={t('customServices.title')} onMenuClick={() => setMobileMenuOpen(true)} />
 
         <main className="p-4 lg:p-8">
           <div className="max-w-4xl space-y-6">
             {/* Header - responsive stack on mobile */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold">Prestations personnalisées</h1>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Créez des services sur mesure pour vos clients réguliers
-                </p>
+                <h1 className="text-xl sm:text-2xl font-bold">{t('customServices.customServices')}</h1>
+                <p className="text-sm text-muted-foreground mt-1">{t('customServices.createDesc')}</p>
               </div>
               <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                 <DialogTrigger asChild>
                   <Button className="w-full sm:w-auto">
                     <Plus className="h-4 w-4 mr-2" />
-                    Nouvelle prestation
+                    {t('customServices.newService')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle>Nouvelle prestation</DialogTitle>
+                    <DialogTitle>{t('customServices.newService')}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 pt-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Nom de la prestation</Label>
+                      <Label htmlFor="name">{t('customServices.serviceName')}</Label>
                       <Input
                         id="name"
                         placeholder="Ex: Nettoyage vitres bureau"
@@ -145,7 +145,7 @@ export default function DashboardCustomServices() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Durée</Label>
+                      <Label>{t('common.duration')}</Label>
                       <div className="flex gap-3">
                         <div className="flex items-center gap-2 flex-1">
                           <Input
@@ -173,7 +173,7 @@ export default function DashboardCustomServices() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="price">Prix (€)</Label>
+                      <Label htmlFor="price">{t('customServices.priceLabel')}</Label>
                       <Input
                         id="price"
                         type="number"
@@ -186,10 +186,10 @@ export default function DashboardCustomServices() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="description">Description (optionnelle)</Label>
+                      <Label htmlFor="description">{t('customServices.descriptionOptional')}</Label>
                       <Textarea
                         id="description"
-                        placeholder="Détails de la prestation..."
+                        placeholder="..."
                         value={newDescription}
                         onChange={(e) => setNewDescription(e.target.value)}
                         className="rounded-xl resize-none"
@@ -198,7 +198,7 @@ export default function DashboardCustomServices() {
                     </div>
                     <Button onClick={handleCreate} className="w-full h-11 rounded-xl" disabled={creating}>
                       {creating && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                      Créer la prestation
+                      {t('customServices.createAction')}
                     </Button>
                   </div>
                 </DialogContent>
@@ -215,13 +215,13 @@ export default function DashboardCustomServices() {
               <Card variant="elevated" className="rounded-2xl">
                 <CardContent className="py-12 text-center">
                   <FileText className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-                  <p className="font-medium text-foreground">Aucune prestation</p>
+                  <p className="font-medium text-foreground">{t('customServices.noServices')}</p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Créez votre première prestation
+                    {t('customServices.createFirst')}
                   </p>
                   <Button onClick={() => setIsCreateOpen(true)} className="mt-4">
                     <Plus className="h-4 w-4 mr-2" />
-                    Créer une prestation
+                    {t('customServices.createService')}
                   </Button>
                 </CardContent>
               </Card>
@@ -274,11 +274,11 @@ export default function DashboardCustomServices() {
       <Dialog open={!!editingService} onOpenChange={(open) => !open && setEditingService(null)}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Modifier la prestation</DialogTitle>
+            <DialogTitle>{t('customServices.editService')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-4">
             <div className="space-y-2">
-              <Label htmlFor="editName">Nom de la prestation</Label>
+              <Label htmlFor="editName">{t('customServices.serviceName')}</Label>
               <Input
                 id="editName"
                 value={editName}
@@ -287,7 +287,7 @@ export default function DashboardCustomServices() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Durée</Label>
+              <Label>{t('common.duration')}</Label>
               <div className="flex gap-3">
                 <div className="flex items-center gap-2 flex-1">
                   <Input
@@ -315,7 +315,7 @@ export default function DashboardCustomServices() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="editPrice">Prix (€)</Label>
+              <Label htmlFor="editPrice">{t('customServices.priceLabel')}</Label>
               <Input
                 id="editPrice"
                 type="number"
@@ -327,7 +327,7 @@ export default function DashboardCustomServices() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="editDescription">Description (optionnelle)</Label>
+              <Label htmlFor="editDescription">{t('customServices.descriptionOptional')}</Label>
               <Textarea
                 id="editDescription"
                 value={editDescription}
@@ -338,7 +338,7 @@ export default function DashboardCustomServices() {
             </div>
             <Button onClick={handleSave} className="w-full h-11 rounded-xl" disabled={saving}>
               {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Enregistrer
+              {t('common.save')}
             </Button>
           </div>
         </DialogContent>

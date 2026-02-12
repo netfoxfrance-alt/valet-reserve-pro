@@ -35,6 +35,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { InvoiceFormDialog } from '@/components/invoices/InvoiceFormDialog';
 import { InvoicePreviewDialog } from '@/components/invoices/InvoicePreviewDialog';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,16 +47,17 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const statusConfig: Record<string, { label: string; color: string }> = {
-  draft: { label: 'Brouillon', color: 'bg-muted text-muted-foreground' },
-  sent: { label: 'Envoyé', color: 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400' },
-  accepted: { label: 'Accepté', color: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400' },
-  rejected: { label: 'Refusé', color: 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-400' },
-  paid: { label: 'Payé', color: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400' },
-  cancelled: { label: 'Annulé', color: 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-400' },
+const statusColors: Record<string, string> = {
+  draft: 'bg-muted text-muted-foreground',
+  sent: 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400',
+  accepted: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400',
+  rejected: 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-400',
+  paid: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400',
+  cancelled: 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-400',
 };
 
 export default function DashboardInvoices() {
+  const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { center, loading: centerLoading } = useMyCenter();
   const { invoices, loading, deleteInvoice, convertQuoteToInvoice, updateInvoice } = useInvoices();
@@ -196,8 +198,8 @@ export default function DashboardInvoices() {
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold">Factures & Devis</h1>
-              <p className="text-muted-foreground">Gérez vos factures et devis</p>
+              <h1 className="text-2xl font-bold">{t('invoices.title')}</h1>
+              <p className="text-muted-foreground">{t('invoices.manage')}</p>
             </div>
             <Button 
               onClick={() => handleCreate()}
@@ -211,16 +213,16 @@ export default function DashboardInvoices() {
           {/* Stats - Apple style: clean, no heavy icons */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="p-5 rounded-2xl">
-              <p className="text-sm font-medium text-muted-foreground mb-1">Factures</p>
+              <p className="text-sm font-medium text-muted-foreground mb-1">{t('invoices.invoices')}</p>
               <p className="text-3xl font-bold tracking-tight">{stats.totalInvoices}</p>
             </Card>
             <Card className="p-5 rounded-2xl">
-              <p className="text-sm font-medium text-muted-foreground mb-1">Devis</p>
+              <p className="text-sm font-medium text-muted-foreground mb-1">{t('invoices.quotes')}</p>
               <p className="text-3xl font-bold tracking-tight">{stats.totalQuotes}</p>
             </Card>
             <Card className="p-5 rounded-2xl">
               <div className="flex items-center justify-between mb-1">
-                <p className="text-sm font-medium text-muted-foreground">En attente</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('invoices.pending')}</p>
                 {stats.pendingAmount > 0 && (
                   <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
                 )}
@@ -229,7 +231,7 @@ export default function DashboardInvoices() {
             </Card>
             <Card className="p-5 rounded-2xl">
               <div className="flex items-center justify-between mb-1">
-                <p className="text-sm font-medium text-muted-foreground">Encaissé</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('invoices.collected')}</p>
                 {stats.paidAmount > 0 && (
                   <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">
                     ✓
@@ -246,9 +248,9 @@ export default function DashboardInvoices() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
                   <TabsList className="rounded-xl">
-                    <TabsTrigger value="all" className="rounded-lg">Tout</TabsTrigger>
-                    <TabsTrigger value="invoices" className="rounded-lg">Factures</TabsTrigger>
-                    <TabsTrigger value="quotes" className="rounded-lg">Devis</TabsTrigger>
+                    <TabsTrigger value="all" className="rounded-lg">{t('common.all')}</TabsTrigger>
+                    <TabsTrigger value="invoices" className="rounded-lg">{t('invoices.invoices')}</TabsTrigger>
+                    <TabsTrigger value="quotes" className="rounded-lg">{t('invoices.quotes')}</TabsTrigger>
                   </TabsList>
                 </Tabs>
                 <div className="relative">
@@ -273,14 +275,14 @@ export default function DashboardInvoices() {
                 <div className="text-center py-12">
                   <FileText className="w-12 h-12 mx-auto text-muted-foreground/50 mb-4" />
                   <p className="text-muted-foreground">
-                    {searchQuery ? 'Aucun résultat trouvé' : 'Aucune facture ou devis'}
+                    {searchQuery ? t('invoices.noResults') : t('invoices.noInvoices')}
                   </p>
                   <Button 
                     variant="outline" 
                     className="mt-4"
                     onClick={() => handleCreate('invoice')}
                   >
-                    Créer votre première facture
+                    {t('invoices.createFirstInvoice')}
                   </Button>
                 </div>
               ) : (
@@ -304,8 +306,8 @@ export default function DashboardInvoices() {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="font-medium">{invoice.number}</span>
-                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusConfig[invoice.status]?.color || 'bg-muted text-muted-foreground'}`}>
-                              {statusConfig[invoice.status]?.label || invoice.status}
+                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[invoice.status] || 'bg-muted text-muted-foreground'}`}>
+                              {t(`invoices.${invoice.status}`) || invoice.status}
                             </span>
                           </div>
                           <p className="text-sm text-muted-foreground truncate">
