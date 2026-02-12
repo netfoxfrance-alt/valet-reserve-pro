@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Client } from '@/hooks/useClients';
 import { useClientHistory } from '@/hooks/useClientHistory';
 import { useClientInvoices } from '@/hooks/useClientInvoices';
+import { useClientServices } from '@/hooks/useClientServices';
+import { useMyCustomServices } from '@/hooks/useCustomServices';
 import { Phone, Mail, MapPin, Euro, Calendar, TrendingUp, Clock, Sparkles, FileText, FileCheck } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
@@ -39,6 +41,11 @@ export function ClientDetailDialog({ client, open, onOpenChange }: ClientDetailD
   const dateLocale = i18n.language === 'en' ? enUS : fr;
   const { appointments, loading: loadingAppointments, stats } = useClientHistory(client?.id || null);
   const { invoices, loading: loadingInvoices, stats: invoiceStats } = useClientInvoices(client?.id || null);
+  const { serviceIds } = useClientServices(client?.id || null);
+  const { services } = useMyCustomServices();
+
+  // Resolve service objects from IDs
+  const clientServices = services.filter(s => serviceIds.includes(s.id));
 
   if (!client) return null;
 
@@ -67,10 +74,16 @@ export function ClientDetailDialog({ client, open, onOpenChange }: ClientDetailD
             {client.address && <span className="flex items-center gap-2 text-muted-foreground"><MapPin className="w-4 h-4" />{client.address}</span>}
           </div>
 
-          {client.default_service && (
+          {clientServices.length > 0 && (
             <div className="bg-primary/5 rounded-xl p-4">
-              <p className="text-sm text-muted-foreground mb-1">{t('clientDetail.defaultService')}</p>
-              <p className="font-medium text-primary flex items-center gap-2"><Sparkles className="w-4 h-4" />{client.default_service.name} • {client.default_service.duration_minutes}min • {client.default_service.price}€</p>
+              <p className="text-sm text-muted-foreground mb-2">{t('clientDetail.defaultService')}</p>
+              <div className="space-y-1.5">
+                {clientServices.map(svc => (
+                  <p key={svc.id} className="font-medium text-primary flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />{svc.name} • {svc.duration_minutes}min • {svc.price}€
+                  </p>
+                ))}
+              </div>
             </div>
           )}
 

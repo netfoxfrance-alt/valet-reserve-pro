@@ -220,13 +220,10 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
           client_email: client.email || '',
           client_phone: client.phone || '',
           client_address: client.address || '',
-          custom_service_id: client.default_service_id || '',
-          custom_price: client.default_service?.price?.toString() || '',
+          custom_service_id: '',
+          custom_price: '',
           pack_id: '',
         });
-        if (client.default_service_id) {
-          setServiceType('custom');
-        }
       }
     } else {
       setForm({
@@ -353,11 +350,6 @@ function AddAppointmentDialog({ onAdd, clients, services }: {
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-primary" />
                         <span>{client.name}</span>
-                        {client.default_service && (
-                          <span className="text-xs text-muted-foreground">
-                            ({client.default_service.name})
-                          </span>
-                        )}
                       </div>
                     </SelectItem>
                   ))}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -8,10 +9,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+import { Checkbox } from '@/components/ui/checkbox';
 import { useMyCenter } from '@/hooks/useCenter';
 import { useMyClients, Client } from '@/hooks/useClients';
 import { useMyCustomServices, formatDuration } from '@/hooks/useCustomServices';
+import { useClientServices } from '@/hooks/useClientServices';
 import { ClientDetailDialog } from '@/components/clients/ClientDetailDialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
@@ -38,9 +41,9 @@ export default function DashboardClients() {
     email: '',
     phone: '',
     address: '',
-    default_service_id: '',
     notes: ''
   });
+  const [newServiceIds, setNewServiceIds] = useState<string[]>([]);
 
   // Edit states
   const [editingClient, setEditingClient] = useState<Client | null>(null);
@@ -49,11 +52,13 @@ export default function DashboardClients() {
     email: '',
     phone: '',
     address: '',
-    default_service_id: '',
     notes: ''
   });
   const [saving, setSaving] = useState(false);
   const [viewingClient, setViewingClient] = useState<Client | null>(null);
+
+  // Multi-service management for editing
+  const { serviceIds: editServiceIds, setServices: saveEditServices, refetch: refetchEditServices } = useClientServices(editingClient?.id || null);
   // Filter clients
   const filteredClients = clients.filter(c =>
     c.name.toLowerCase().includes(searchClient.toLowerCase()) ||
@@ -67,7 +72,8 @@ export default function DashboardClients() {
   const bookingClients = clients.filter(c => c.source === 'booking').length;
 
   const resetCreateForm = () => {
-    setNewClient({ name: '', email: '', phone: '', address: '', default_service_id: '', notes: '' });
+    setNewClient({ name: '', email: '', phone: '', address: '', notes: '' });
+    setNewServiceIds([]);
   };
 
   const handleCreate = async () => {
@@ -76,14 +82,23 @@ export default function DashboardClients() {
       return;
     }
     setCreating(true);
-    const { error } = await createClient({
+    const { error, data: createdClient } = await createClient({
       name: newClient.name.trim(),
       email: newClient.email.trim() || undefined,
       phone: newClient.phone.trim() || undefined,
       address: newClient.address.trim() || undefined,
-      default_service_id: newClient.default_service_id || null,
       notes: newClient.notes.trim() || undefined,
     });
+
+    // Save services for the new client
+    if (!error && createdClient && newServiceIds.length > 0) {
+      const clientId = (createdClient as any).id;
+      if (clientId) {
+        await supabase
+          .from('client_services')
+          .insert(newServiceIds.map(sid => ({ client_id: clientId, service_id: sid })));
+      }
+    }
     setCreating(false);
 
     if (error) {
@@ -102,7 +117,6 @@ export default function DashboardClients() {
       email: client.email || '',
       phone: client.phone || '',
       address: client.address || '',
-      default_service_id: client.default_service_id || '',
       notes: client.notes || ''
     });
   };
@@ -115,9 +129,13 @@ export default function DashboardClients() {
       email: editForm.email.trim() || null,
       phone: editForm.phone.trim() || null,
       address: editForm.address.trim() || null,
-      default_service_id: editForm.default_service_id || null,
       notes: editForm.notes.trim() || null,
     });
+
+    // Save services
+    if (!error) {
+      await saveEditServices(editServiceIds);
+    }
     setSaving(false);
 
     if (error) {
@@ -239,29 +257,28 @@ export default function DashboardClients() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Prestation par défaut</Label>
-                        <Select
-                          value={newClient.default_service_id || "none"}
-                          onValueChange={(v) => setNewClient({ ...newClient, default_service_id: v === "none" ? "" : v })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Aucune prestation" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="none">Aucune</SelectItem>
+                        <Label>Prestations personnalisées</Label>
+                        {services.length === 0 ? (
+                          <p className="text-xs text-muted-foreground">
+                            Créez d'abord une prestation dans Configuration → Prestations
+                          </p>
+                        ) : (
+                          <div className="space-y-2 max-h-40 overflow-y-auto border rounded-lg p-3">
                             {services.map((s) => (
-                              <SelectItem key={s.id} value={s.id}>
-                                {s.name} - {formatDuration(s.duration_minutes)} - {s.price}€
-                              </SelectItem>
+                              <label key={s.id} className="flex items-center gap-3 cursor-pointer hover:bg-secondary/30 rounded-lg p-1.5 transition-colors">
+                                <Checkbox
+                                  checked={newServiceIds.includes(s.id)}
+                                  onCheckedChange={(checked) => {
+                                    setNewServiceIds(prev =>
+                                      checked ? [...prev, s.id] : prev.filter(id => id !== s.id)
+                                    );
+                                  }}
+                                />
+                                <span className="text-sm text-foreground">{s.name} - {formatDuration(s.duration_minutes)} - {s.price}€</span>
+                              </label>
                             ))}
-                          </SelectContent>
-                        </Select>
-                        <p className="text-xs text-muted-foreground">
-                          {services.length === 0 
-                            ? "Créez d'abord une prestation dans Configuration → Prestations"
-                            : "Prestation utilisée par défaut pour ce client"
-                          }
-                        </p>
+                          </div>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <Label>Notes</Label>
@@ -338,11 +355,6 @@ export default function DashboardClients() {
                                 </a>
                               )}
                             </div>
-                            {client.default_service && (
-                              <p className="text-xs text-emerald-600 mt-1 truncate">
-                                {client.default_service.name} • {client.default_service.price}€
-                              </p>
-                            )}
                           </div>
                         </div>
                         <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
@@ -413,23 +425,27 @@ export default function DashboardClients() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Prestation par défaut</Label>
-              <Select
-                value={editForm.default_service_id || "none"}
-                onValueChange={(v) => setEditForm({ ...editForm, default_service_id: v === "none" ? "" : v })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Aucune prestation" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Aucune</SelectItem>
+              <Label>Prestations personnalisées</Label>
+              {services.length === 0 ? (
+                <p className="text-xs text-muted-foreground">Aucune prestation disponible</p>
+              ) : (
+                <div className="space-y-2 max-h-40 overflow-y-auto border rounded-lg p-3">
                   {services.map((s) => (
-                    <SelectItem key={s.id} value={s.id}>
-                      {s.name} - {formatDuration(s.duration_minutes)} - {s.price}€
-                    </SelectItem>
+                    <label key={s.id} className="flex items-center gap-3 cursor-pointer hover:bg-secondary/30 rounded-lg p-1.5 transition-colors">
+                      <Checkbox
+                        checked={editServiceIds.includes(s.id)}
+                        onCheckedChange={(checked) => {
+                          const newIds = checked
+                            ? [...editServiceIds, s.id]
+                            : editServiceIds.filter(id => id !== s.id);
+                          saveEditServices(newIds);
+                        }}
+                      />
+                      <span className="text-sm text-foreground">{s.name} - {formatDuration(s.duration_minutes)} - {s.price}€</span>
+                    </label>
                   ))}
-                </SelectContent>
-              </Select>
+                </div>
+              )}
             </div>
             <div className="space-y-2">
               <Label>Notes</Label>
