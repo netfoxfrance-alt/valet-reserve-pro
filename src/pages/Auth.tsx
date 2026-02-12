@@ -18,6 +18,7 @@ export default function Auth() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   // Redirect authenticated users based on subscription status
   useEffect(() => {
@@ -114,7 +115,7 @@ export default function Auth() {
       <div className="w-full max-w-md animate-fade-in-up">
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">
-            Connexion
+            {t('auth.login')}
           </h1>
         </div>
         
@@ -128,13 +129,13 @@ export default function Auth() {
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('common.email')}</Label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="vous@exemple.fr"
+                  placeholder={t('auth.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-12 h-12 rounded-xl"
@@ -144,7 +145,7 @@ export default function Auth() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password">{t('auth.password')}</Label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
@@ -167,7 +168,7 @@ export default function Auth() {
               className="w-full"
               disabled={isLoading}
             >
-              {isLoading ? 'Connexion...' : 'Se connecter'}
+              {isLoading ? t('auth.loggingIn') : t('auth.loginAction')}
             </Button>
           </form>
           
@@ -175,14 +176,14 @@ export default function Auth() {
 
         <div className="text-center mt-6 space-y-3">
           <p className="text-sm text-muted-foreground">
-            Toujours pas de compte ?{' '}
+            {t('auth.noAccountYet')}{' '}
             <a href="/" className="text-primary font-medium hover:underline">
-              Essayer 30 jours gratuitement et sans engagement
+              {t('auth.tryFree')}
             </a>
           </p>
           <p className="text-sm text-muted-foreground">
             <Link to="/" className="text-foreground font-medium hover:underline">
-              ← Retour à l'accueil
+              {t('auth.backToHome')}
             </Link>
           </p>
         </div>
