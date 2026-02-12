@@ -8,8 +8,9 @@ import { useMyCenter } from '@/hooks/useCenter';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { useTranslation } from 'react-i18next';
 
-const navigationGroups = [
+const getNavigationGroups = (t: (key: string) => string) => [
   {
     label: 'Activité',
     items: [
@@ -53,6 +54,8 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
   const { signOut, subscription } = useAuth();
   const { center } = useMyCenter();
   const { toast } = useToast();
+  const { t } = useTranslation();
+  const navigationGroups = getNavigationGroups(t);
   const [copied, setCopied] = useState(false);
   
   // Find which group has the active route
@@ -98,8 +101,8 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
       navigator.clipboard.writeText(bookingUrl);
       setCopied(true);
       toast({
-        title: 'Lien copié !',
-        description: 'Partagez ce lien avec vos clients.',
+        title: t('nav.linkCopied'),
+        description: t('nav.shareLinkDesc'),
       });
       setTimeout(() => setCopied(false), 2000);
     }
@@ -129,18 +132,18 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
             {isPro ? (
               <div className="bg-primary/10 text-primary px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-2">
                 <Crown className="w-4 h-4" />
-                Plan Pro actif
+                {t('nav.proActive')}
               </div>
             ) : (
               <Link to="/dashboard/upgrade" onClick={() => onOpenChange(false)}>
                 <div className="bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/15 transition-colors px-3 py-2.5 rounded-xl cursor-pointer">
                   <div className="flex items-center gap-2 mb-1">
                     <AlertCircle className="w-4 h-4 text-amber-500" />
-                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">Essai gratuit</span>
+                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">{t('nav.freeTrial')}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-foreground">Activer Pro</span>
-                    <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">30 jours gratuits →</span>
+                    <span className="text-sm font-medium text-foreground">{t('nav.activatePro')}</span>
+                    <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">{t('nav.freeTrialDays')}</span>
                   </div>
                 </div>
               </Link>
@@ -154,7 +157,7 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
             <div className="bg-primary/5 rounded-xl p-3">
               <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
                 <Share2 className="w-4 h-4" />
-                Votre lien client
+                {t('nav.yourClientLink')}
               </div>
               <div className="flex gap-2">
               <code className="flex-1 text-xs bg-background rounded-lg px-2 py-1.5 text-muted-foreground truncate">
@@ -244,7 +247,7 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
             )}
           >
             <Settings className="w-5 h-5" />
-            Paramètres
+            {t('nav.settings')}
           </Link>
           <Link
             to="/dashboard/support"
@@ -257,14 +260,14 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
             )}
           >
             <Headphones className="w-5 h-5" />
-            Support
+            {t('nav.support')}
           </Link>
           <button 
             onClick={handleLogout}
             className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-all w-full"
           >
             <LogOut className="w-5 h-5" />
-            Déconnexion
+            {t('nav.logout')}
           </button>
         </div>
       </SheetContent>
