@@ -12,12 +12,11 @@ import { supabase } from '@/integrations/supabase/client';
 export default function Auth() {
   const navigate = useNavigate();
   const { user, session, subscription, checkSubscription } = useAuth();
-  const { signIn, signUp } = useAuth();
+  const { signIn } = useAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Redirect authenticated users based on subscription status
@@ -42,14 +41,10 @@ export default function Auth() {
       return;
     }
 
-    const { error } = isSignUp 
-      ? await signUp(email, password)
-      : await signIn(email, password);
+    const { error } = await signIn(email, password);
 
     if (error) {
-      if (error.message.includes('User already registered')) {
-        setError('Cet email est déjà utilisé. Connectez-vous ou utilisez un autre email.');
-      } else if (error.message.includes('Invalid login credentials')) {
+      if (error.message.includes('Invalid login credentials')) {
         setError('Email ou mot de passe incorrect.');
       } else {
         setError(error.message);
@@ -89,7 +84,7 @@ export default function Auth() {
       } else {
         // Brand new user — redirect to Stripe checkout with trial
         toast({
-          title: isSignUp ? 'Compte créé !' : 'Connexion réussie',
+          title: 'Connexion réussie',
           description: 'Activez votre essai gratuit de 30 jours.',
         });
         
@@ -119,7 +114,7 @@ export default function Auth() {
       <div className="w-full max-w-md animate-fade-in-up">
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">
-            {isSignUp ? 'Créer un compte' : 'Connexion'}
+            Connexion
           </h1>
         </div>
         
@@ -163,9 +158,6 @@ export default function Auth() {
                   minLength={8}
                 />
               </div>
-              {isSignUp && (
-                <p className="text-xs text-muted-foreground">Minimum 8 caractères</p>
-              )}
             </div>
             
             <Button 
@@ -175,28 +167,10 @@ export default function Auth() {
               className="w-full"
               disabled={isLoading}
             >
-              {isLoading 
-                ? (isSignUp ? 'Création...' : 'Connexion...') 
-                : (isSignUp ? 'Créer mon compte' : 'Se connecter')
-              }
+              {isLoading ? 'Connexion...' : 'Se connecter'}
             </Button>
           </form>
           
-          <div className="mt-6 text-center">
-            <button 
-              type="button"
-              onClick={() => {
-                setIsSignUp(!isSignUp);
-                setError(null);
-              }}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {isSignUp 
-                ? 'Déjà un compte ? Connectez-vous' 
-                : "Pas encore de compte ? Inscrivez-vous"
-              }
-            </button>
-          </div>
         </Card>
         
         <p className="text-center text-sm text-muted-foreground mt-6">
