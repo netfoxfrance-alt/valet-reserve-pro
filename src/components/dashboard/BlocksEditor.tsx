@@ -781,24 +781,25 @@ export function BlocksEditor({
         <div className="space-y-3">
           <Label className="text-sm font-medium text-muted-foreground">Réseaux sociaux & liens</Label>
           {social.instagram?.trim() && (
-            <div className="border rounded-xl bg-background border-border p-3 sm:p-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20">
+            <div className="border rounded-xl bg-background border-border overflow-hidden">
+              <div className="flex items-center gap-3 p-3 sm:p-4">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20">
                   <Instagram className="w-4 h-4 text-pink-600" />
                 </div>
                 <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-muted-foreground mb-1">Instagram</p>
                   <Input
                     value={social.instagram === ' ' ? '' : social.instagram}
                     onChange={(e) => onUpdateSocial({ ...social, instagram: e.target.value || ' ' })}
-                    placeholder="@username ou URL complète"
-                    className="h-8 text-sm border-0 bg-transparent p-0 focus-visible:ring-0"
+                    placeholder="@username ou https://instagram.com/..."
+                    className="h-8 text-sm"
                   />
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => onUpdateSocial({ ...social, instagram: '' })}
-                  className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
+                  className="h-8 w-8 p-0 text-destructive hover:text-destructive flex-shrink-0 self-end"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -806,26 +807,27 @@ export function BlocksEditor({
             </div>
           )}
           {social.tiktok?.trim() && (
-            <div className="border rounded-xl bg-background border-border p-3 sm:p-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'hsl(var(--primary) / 0.1)' }}>
+            <div className="border rounded-xl bg-background border-border overflow-hidden">
+              <div className="flex items-center gap-3 p-3 sm:p-4">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-foreground/5">
                   <svg className="w-4 h-4 text-foreground" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-muted-foreground mb-1">TikTok</p>
                   <Input
                     value={social.tiktok === ' ' ? '' : social.tiktok}
                     onChange={(e) => onUpdateSocial({ ...social, tiktok: e.target.value || ' ' })}
-                    placeholder="@username ou URL complète"
-                    className="h-8 text-sm border-0 bg-transparent p-0 focus-visible:ring-0"
+                    placeholder="@username ou https://tiktok.com/@..."
+                    className="h-8 text-sm"
                   />
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => onUpdateSocial({ ...social, tiktok: '' })}
-                  className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
+                  className="h-8 w-8 p-0 text-destructive hover:text-destructive flex-shrink-0 self-end"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -833,26 +835,27 @@ export function BlocksEditor({
             </div>
           )}
           {social.facebook?.trim() && (
-            <div className="border rounded-xl bg-background border-border p-3 sm:p-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-blue-500/10">
+            <div className="border rounded-xl bg-background border-border overflow-hidden">
+              <div className="flex items-center gap-3 p-3 sm:p-4">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-blue-500/10">
                   <svg className="w-4 h-4 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-muted-foreground mb-1">Facebook</p>
                   <Input
                     value={social.facebook === ' ' ? '' : social.facebook}
                     onChange={(e) => onUpdateSocial({ ...social, facebook: e.target.value || ' ' })}
-                    placeholder="URL de votre page Facebook"
-                    className="h-8 text-sm border-0 bg-transparent p-0 focus-visible:ring-0"
+                    placeholder="https://facebook.com/votrepage"
+                    className="h-8 text-sm"
                   />
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => onUpdateSocial({ ...social, facebook: '' })}
-                  className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
+                  className="h-8 w-8 p-0 text-destructive hover:text-destructive flex-shrink-0 self-end"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -860,24 +863,25 @@ export function BlocksEditor({
             </div>
           )}
           {social.email?.trim() && (
-            <div className="border rounded-xl bg-background border-border p-3 sm:p-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'hsl(var(--primary) / 0.1)' }}>
+            <div className="border rounded-xl bg-background border-border overflow-hidden">
+              <div className="flex items-center gap-3 p-3 sm:p-4">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'hsl(var(--primary) / 0.1)' }}>
                   <Mail className="w-4 h-4 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-muted-foreground mb-1">Adresse email</p>
                   <Input
                     value={social.email === ' ' ? '' : social.email}
                     onChange={(e) => onUpdateSocial({ ...social, email: e.target.value || ' ' })}
-                    placeholder="votre@email.com"
-                    className="h-8 text-sm border-0 bg-transparent p-0 focus-visible:ring-0"
+                    placeholder="contact@votreentreprise.com"
+                    className="h-8 text-sm"
                   />
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => onUpdateSocial({ ...social, email: '' })}
-                  className="h-7 w-7 p-0 text-destructive hover:text-destructive flex-shrink-0"
+                  className="h-8 w-8 p-0 text-destructive hover:text-destructive flex-shrink-0 self-end"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
