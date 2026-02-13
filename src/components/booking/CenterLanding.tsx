@@ -241,41 +241,58 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
               : pack.price;
 
             return (
-              <Card 
+              <div 
                 key={pack.id}
-                className="p-4 sm:p-5 transition-all duration-300 cursor-pointer group hover:shadow-xl hover:scale-[1.02] animate-fade-in"
-                style={{
-                  backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
-                  borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
-                  animationDelay: `${index * 0.05}s`,
-                }}
+                className="group cursor-pointer animate-fade-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
                 onClick={() => onSelectPack?.(pack)}
               >
-                <div className="flex flex-col gap-2">
-                  <p 
-                    className="font-semibold text-sm sm:text-base leading-tight group-hover:text-primary transition-colors"
-                    style={{ color: textColors.primary }}
-                  >
-                    {pack.name}
-                  </p>
-                  <p 
-                    className="text-lg sm:text-xl font-bold"
-                    style={{ color: customization.colors.primary }}
-                  >
-                    {hasVariants ? `${minPrice}€` : `${pack.price}€`}
-                  </p>
+                {/* Image card */}
+                <div 
+                  className="relative rounded-2xl overflow-hidden mb-3 transition-transform duration-300 group-hover:scale-[1.03]"
+                  style={{
+                    aspectRatio: pack.image_url ? '4/3' : undefined,
+                    backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.06)' : 'hsl(var(--secondary) / 0.4)',
+                  }}
+                >
+                  {pack.image_url ? (
+                    <img
+                      src={pack.image_url}
+                      alt={pack.name}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="w-full aspect-[4/3] flex items-center justify-center">
+                      <span className="text-3xl font-bold opacity-15" style={{ color: textColors.primary }}>
+                        {pack.name.charAt(0)}
+                      </span>
+                    </div>
+                  )}
+                  {/* Overlay with price */}
+                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-3 pt-8">
+                    <div className="flex items-end justify-between">
+                      <p className="text-white font-semibold text-sm leading-tight drop-shadow-sm">
+                        {pack.name}
+                      </p>
+                      <p className="text-white font-bold text-base drop-shadow-sm">
+                        {hasVariants ? `${minPrice}€` : `${pack.price}€`}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                
+                {/* Duration below */}
                 {pack.duration && (
                   <p 
-                    className="text-xs mt-3 flex items-center gap-1"
+                    className="text-xs flex items-center gap-1 px-1"
                     style={{ color: textColors.secondary }}
                   >
-                    <Clock className="w-3.5 h-3.5" />
+                    <Clock className="w-3 h-3" />
                     {pack.duration}
+                    {hasVariants && <span className="ml-auto opacity-60">dès {minPrice}€</span>}
                   </p>
                 )}
-              </Card>
+              </div>
             );
           })}
         </div>
