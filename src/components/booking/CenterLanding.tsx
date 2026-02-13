@@ -130,20 +130,15 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
       .sort((a, b) => a.order - b.order);
   }, [customization.blocks]);
 
-  // Quick action blocks (phone, address) - displayed at the top
-  // In minimal header mode, phone is already in the header bar, so exclude it
-  const quickActions = useMemo(() => {
+  // All blocks in user-defined order - respect exact order from dashboard
+  const orderedBlocks = useMemo(() => {
     const isMinimal = (customization.layout.header_style || 'banner') === 'minimal';
     return activeBlocks.filter(b => {
+      // In minimal header mode, phone is already in the header bar
       if (b.type === 'phone' && isMinimal) return false;
-      return ['phone', 'address'].includes(b.type);
+      return true;
     });
   }, [activeBlocks, customization.layout.header_style]);
-
-  // All other blocks in user-defined order (excluding quick actions)
-  const orderedBlocks = useMemo(() => {
-    return activeBlocks.filter(b => !['phone', 'address'].includes(b.type));
-  }, [activeBlocks]);
 
   // Get text colors based on dark mode
   const textColors = useMemo(() => ({
@@ -386,6 +381,9 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
 
   // Links block renderer
   const renderLinks = (block: PageBlock) => {
+    const linksContent = renderCustomLinks();
+    if (!linksContent) return null;
+    
     return (
       <div key={block.id} className="mb-6">
         <h2 
@@ -394,7 +392,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
         >
           {block.title}
         </h2>
-        {renderCustomLinks()}
+        {linksContent}
       </div>
     );
   };
@@ -547,7 +545,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
     );
   };
 
-  // Render individual info block with its own style
+  // Render individual info block with its own style - 3 clearly distinct styles
   const renderInfoBlock = (block: PageBlock, content: string | null, icon: React.ReactNode, href?: string) => {
     if (!content) return null;
     
@@ -555,44 +553,45 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
     const Wrapper = href ? 'a' : 'div';
     const wrapperProps = href ? { href, ...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {}) } : {};
 
-    // Style: Minimal - clean, understated
+    // Style 1: Minimal - simple text with icon, no background
     if (style === 'minimal') {
       return (
         <Wrapper
           {...wrapperProps}
-          className="flex items-center gap-2 text-sm transition-opacity hover:opacity-70"
+          className="flex items-center gap-2.5 py-2 text-sm transition-opacity hover:opacity-70 cursor-pointer"
           style={{ color: textColors.secondary }}
         >
-          <span className="w-5 h-5 flex items-center justify-center" style={{ color: customization.colors.primary }}>
+          <span className="w-5 h-5 flex items-center justify-center flex-shrink-0" style={{ color: customization.colors.primary }}>
             {icon}
           </span>
-          <span>{content}</span>
+          <span className="truncate">{content}</span>
         </Wrapper>
       );
     }
 
-    // Style: Pill - compact badge
+    // Style 2: Pill - bordered badge with light colored background & accent
     if (style === 'pill') {
       return (
         <Wrapper
           {...wrapperProps}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="flex items-center justify-center gap-3 w-full py-3.5 px-5 rounded-2xl font-medium text-sm transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] hover:shadow-lg cursor-pointer"
           style={{ 
-            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
-            color: textColors.primary,
+            backgroundColor: customization.colors.primary + '12',
+            color: customization.colors.primary,
+            border: `1px solid ${customization.colors.primary}25`,
           }}
         >
-          <span style={{ color: customization.colors.primary }}>{icon}</span>
-          <span>{content}</span>
+          <span className="flex-shrink-0">{icon}</span>
+          <span className="truncate">{content}</span>
         </Wrapper>
       );
     }
 
-    // Style: Card - full card with label
+    // Style 3: Card - full card with icon container, shadow, and chevron
     return (
       <Wrapper
         {...wrapperProps}
-        className="flex items-center gap-3 p-4 rounded-2xl transition-all hover:scale-[1.01] active:scale-[0.99]"
+        className="flex items-center gap-3 p-4 rounded-2xl transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] hover:shadow-lg cursor-pointer"
         style={{ 
           backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'white',
           border: `1px solid ${customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'}`,
@@ -600,61 +599,35 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
         }}
       >
         <div 
-          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+          className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
           style={{ backgroundColor: customization.colors.primary + '15' }}
         >
           <span style={{ color: customization.colors.primary }}>{icon}</span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-medium" style={{ color: textColors.primary }}>{content}</p>
+          <p className="font-medium truncate" style={{ color: textColors.primary }}>{content}</p>
         </div>
         {href && <ChevronRight className="w-4 h-4 flex-shrink-0" style={{ color: textColors.secondary }} />}
       </Wrapper>
     );
   };
 
-  // Render phone block - Always as a nice button
+  // Render phone block with style support
   const renderPhone = (block: PageBlock) => {
     if (!center.phone) return null;
-    
     return (
       <div key={block.id} className="mb-4">
-        <a
-          href={`tel:${center.phone}`}
-          className="flex items-center justify-center gap-3 w-full py-3.5 px-5 rounded-2xl font-medium text-sm transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] hover:shadow-lg"
-          style={{ 
-            backgroundColor: customization.colors.primary + '12',
-            color: customization.colors.primary,
-            border: `1px solid ${customization.colors.primary}25`,
-          }}
-        >
-          <Phone className="w-5 h-5" />
-          <span>Appeler · {center.phone}</span>
-        </a>
+        {renderInfoBlock(block, `Appeler · ${center.phone}`, <Phone className="w-5 h-5" />, `tel:${center.phone}`)}
       </div>
     );
   };
 
-  // Render address block - Nice button style
+  // Render address block with style support
   const renderAddress = (block: PageBlock) => {
     if (!center.address) return null;
-    
     return (
       <div key={block.id} className="mb-4">
-        <a
-          href={`https://maps.google.com/?q=${encodeURIComponent(center.address)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-3 w-full py-3.5 px-5 rounded-2xl font-medium text-sm transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] hover:shadow-lg"
-          style={{ 
-            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)',
-            color: textColors.primary,
-            border: `1px solid ${customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'}`,
-          }}
-        >
-          <MapPin className="w-5 h-5" style={{ color: customization.colors.primary }} />
-          <span className="truncate">{center.address}</span>
-        </a>
+        {renderInfoBlock(block, center.address, <MapPin className="w-5 h-5" />, `https://maps.google.com/?q=${encodeURIComponent(center.address)}`)}
       </div>
     );
   };
@@ -913,20 +886,37 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
     }
   };
 
-  // Social icons
+  // Social icons - smart URL handling: detect full URLs vs usernames
+  const buildSocialUrl = (value: string | undefined, platform: string): string | null => {
+    if (!value || !value.trim()) return null;
+    const v = value.trim();
+    // If it's already a full URL, use it directly
+    if (v.startsWith('http://') || v.startsWith('https://')) return v;
+    // If it's an email (for mailto)
+    if (platform === 'email') return `mailto:${v}`;
+    // Otherwise treat as username
+    const cleaned = v.replace(/^@/, '');
+    switch (platform) {
+      case 'instagram': return `https://instagram.com/${cleaned}`;
+      case 'tiktok': return `https://tiktok.com/@${cleaned}`;
+      case 'facebook': return `https://facebook.com/${cleaned}`;
+      default: return null;
+    }
+  };
+
   const socialLinks = [
-    { key: 'instagram', url: customization.social.instagram ? `https://instagram.com/${customization.social.instagram}` : null, icon: Instagram },
-    { key: 'tiktok', url: customization.social.tiktok ? `https://tiktok.com/@${customization.social.tiktok}` : null, icon: () => (
+    { key: 'instagram', url: buildSocialUrl(customization.social.instagram, 'instagram'), icon: Instagram },
+    { key: 'tiktok', url: buildSocialUrl(customization.social.tiktok, 'tiktok'), icon: () => (
       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
         <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
       </svg>
     )},
-    { key: 'facebook', url: customization.social.facebook ? `https://facebook.com/${customization.social.facebook}` : null, icon: () => (
+    { key: 'facebook', url: buildSocialUrl(customization.social.facebook, 'facebook'), icon: () => (
       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
       </svg>
     )},
-    { key: 'email', url: customization.social.email ? `mailto:${customization.social.email}` : null, icon: Mail },
+    { key: 'email', url: buildSocialUrl(customization.social.email, 'email'), icon: Mail },
   ].filter(s => s.url);
 
   // Check if there's a cover image
@@ -1160,16 +1150,6 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
           </div>
         )}
 
-        {/* Quick Action Buttons (Phone, Address) */}
-        {quickActions.length > 0 && (
-          <div className={cn("flex flex-col gap-3 mb-8", !isPreview && "lg:flex-row")}>
-            {quickActions.map(block => (
-              <div key={block.id} className={cn(!isPreview && "lg:flex-1")}>
-                {renderBlock(block)}
-              </div>
-            ))}
-          </div>
-        )}
 
         {/* Client Recognition Section */}
         {isPro && clientRecognitionEnabled && !recognizedClient && (
