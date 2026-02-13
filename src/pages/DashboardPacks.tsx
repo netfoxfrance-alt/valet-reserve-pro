@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
 import { useMyPacks, Pack, useMyCenter } from '@/hooks/useCenter';
+import { useAuth } from '@/hooks/useAuth';
 import { Pencil, Clock, Plus, Trash2, Loader2, ChevronDown, ChevronUp, Image as ImageIcon, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { VariantsEditor } from '@/components/dashboard/VariantsEditor';
@@ -41,6 +42,7 @@ interface PriceVariant {
 export default function DashboardPacks() {
   const { packs, loading, createPack, updatePack, deletePack } = useMyPacks();
   const { center } = useMyCenter();
+  const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -204,13 +206,13 @@ export default function DashboardPacks() {
 
   // Image upload handler
   const handleImageUpload = async (file: File, target: 'new' | 'edit') => {
-    if (!center) return;
+    if (!center || !user) return;
     
     const targetId = target === 'edit' && editingId ? editingId : 'new';
     setUploadingImage(targetId);
     
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${center.id}/${targetId}-${Date.now()}.${fileExt}`;
+    const fileExt = file.name.split('.').pop()?.toLowerCase();
+    const fileName = `${user.id}/${targetId}-${Date.now()}.${fileExt}`;
     
     const { error: uploadError } = await supabase.storage
       .from('center-gallery')
