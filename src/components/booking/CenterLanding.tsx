@@ -1359,7 +1359,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
         {/* Footer */}
         <div className="text-center pt-8 mt-8 pb-24 border-t" style={{ borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)' }}>
           <p className="text-xs" style={{ color: textColors.secondary }}>
-            Propulsé par <span className="font-medium">CleaningPage</span>
+            Propulsé par <a href="https://www.cleaningpage.com" target="_blank" rel="noopener noreferrer" className="font-medium hover:underline">CleaningPage</a>
           </p>
         </div>
       </div>
