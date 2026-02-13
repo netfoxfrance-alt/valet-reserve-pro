@@ -475,39 +475,46 @@ export default function CenterBooking() {
                       onClick={() => handleSelectPack(pack)}
                     >
                       {/* Image */}
-                      <div className="relative rounded-2xl overflow-hidden mb-3 transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-xl">
+                      <div className="relative rounded-2xl overflow-hidden mb-2.5 transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl" style={{ aspectRatio: '4/3' }}>
                         {pack.image_url ? (
-                          <div className="aspect-[4/3]">
+                          <>
                             <img
                               src={pack.image_url}
                               alt={pack.name}
                               className="w-full h-full object-cover"
                               loading="lazy"
                             />
-                          </div>
-                        ) : (
-                          <div className="aspect-[4/3] bg-secondary/40 flex items-center justify-center">
-                            <span className="text-4xl font-bold text-muted-foreground/20">
-                              {pack.name.charAt(0)}
-                            </span>
-                          </div>
-                        )}
-                        {/* Overlay */}
-                        <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-4 pt-10">
-                          <div className="flex items-end justify-between gap-2">
-                            <div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                            <div className="absolute bottom-0 inset-x-0 p-4">
                               {pack.description && (
                                 <p className="text-white/70 text-xs mb-0.5 line-clamp-1">{pack.description}</p>
                               )}
-                              <p className="text-white font-semibold text-sm sm:text-base leading-tight">
+                              <p className="text-white font-bold text-base sm:text-lg leading-tight mb-0.5">
                                 {pack.name}
                               </p>
+                              <p className="text-white/90 font-semibold text-lg sm:text-xl">
+                                {hasVariants ? `dès ${minPrice}€` : `${pack.price}€`}
+                              </p>
                             </div>
-                            <p className="text-white font-bold text-lg sm:text-xl flex-shrink-0">
-                              {hasVariants ? `${minPrice}€` : `${pack.price}€`}
+                          </>
+                        ) : (
+                          <div className="w-full h-full flex flex-col justify-end p-4 bg-gradient-to-br from-secondary/60 to-secondary/20 border border-border/40 rounded-2xl">
+                            <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-auto mt-3">
+                              <span className="text-xl font-bold text-primary">
+                                {pack.name.charAt(0)}
+                              </span>
+                            </div>
+                            {pack.description && (
+                              <p className="text-muted-foreground text-xs mb-0.5 line-clamp-1">{pack.description}</p>
+                            )}
+                            <p className="font-bold text-base sm:text-lg text-foreground leading-tight mb-0.5">
+                              {pack.name}
+                            </p>
+                            <p className="font-semibold text-lg text-primary">
+                              {hasVariants ? `dès ${minPrice}€` : `${pack.price}€`}
                             </p>
                           </div>
-                        </div>
+                        )}
                       </div>
                       {/* Info below */}
                       <div className="flex items-center justify-between px-1">

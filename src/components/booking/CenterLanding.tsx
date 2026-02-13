@@ -249,37 +249,58 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
               >
                 {/* Image card */}
                 <div 
-                  className="relative rounded-2xl overflow-hidden mb-3 transition-transform duration-300 group-hover:scale-[1.03]"
-                  style={{
-                    aspectRatio: pack.image_url ? '4/3' : undefined,
-                    backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.06)' : 'hsl(var(--secondary) / 0.4)',
-                  }}
+                  className="relative rounded-2xl overflow-hidden mb-2.5 transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl"
+                  style={{ aspectRatio: '4/3' }}
                 >
                   {pack.image_url ? (
-                    <img
-                      src={pack.image_url}
-                      alt={pack.name}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
+                    <>
+                      <img
+                        src={pack.image_url}
+                        alt={pack.name}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                      {/* Strong gradient overlay for text readability */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                      <div className="absolute bottom-0 inset-x-0 p-3.5">
+                        <p className="text-white font-bold text-base sm:text-lg leading-tight drop-shadow-lg mb-0.5">
+                          {pack.name}
+                        </p>
+                        <p className="text-white/90 font-semibold text-lg sm:text-xl drop-shadow-lg">
+                          {hasVariants ? `dès ${minPrice}€` : `${pack.price}€`}
+                        </p>
+                      </div>
+                    </>
                   ) : (
-                    <div className="w-full aspect-[4/3] flex items-center justify-center">
-                      <span className="text-3xl font-bold opacity-15" style={{ color: textColors.primary }}>
-                        {pack.name.charAt(0)}
-                      </span>
-                    </div>
-                  )}
-                  {/* Overlay with price */}
-                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-3 pt-8">
-                    <div className="flex items-end justify-between">
-                      <p className="text-white font-semibold text-sm leading-tight drop-shadow-sm">
+                    /* No-image: elegant gradient card */
+                    <div
+                      className="w-full h-full flex flex-col justify-end p-3.5"
+                      style={{
+                        background: customization.layout.dark_mode
+                          ? `linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)`
+                          : `linear-gradient(145deg, ${customization.colors.primary}10 0%, ${customization.colors.primary}05 100%)`,
+                        borderWidth: '1px',
+                        borderStyle: 'solid',
+                        borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+                        borderRadius: '1rem',
+                      }}
+                    >
+                      <div 
+                        className="w-10 h-10 rounded-xl flex items-center justify-center mb-auto mt-3 ml-0.5"
+                        style={{ backgroundColor: customization.colors.primary + '18' }}
+                      >
+                        <span className="text-lg font-bold" style={{ color: customization.colors.primary }}>
+                          {pack.name.charAt(0)}
+                        </span>
+                      </div>
+                      <p className="font-bold text-base sm:text-lg leading-tight mb-0.5" style={{ color: textColors.primary }}>
                         {pack.name}
                       </p>
-                      <p className="text-white font-bold text-base drop-shadow-sm">
-                        {hasVariants ? `${minPrice}€` : `${pack.price}€`}
+                      <p className="font-semibold text-lg" style={{ color: customization.colors.primary }}>
+                        {hasVariants ? `dès ${minPrice}€` : `${pack.price}€`}
                       </p>
                     </div>
-                  </div>
+                  )}
                 </div>
                 {/* Duration below */}
                 {pack.duration && (
@@ -289,7 +310,6 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                   >
                     <Clock className="w-3 h-3" />
                     {pack.duration}
-                    {hasVariants && <span className="ml-auto opacity-60">dès {minPrice}€</span>}
                   </p>
                 )}
               </div>
