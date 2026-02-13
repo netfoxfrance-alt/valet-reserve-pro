@@ -921,11 +921,13 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
               {/* Left: Logo + Name */}
               <div className="flex items-center gap-3 min-w-0">
                 {center.logo_url && (
-                  <img
-                    src={center.logo_url}
-                    alt={center.name}
-                    className="max-w-[100px] max-h-[36px] lg:max-w-[120px] lg:max-h-[40px] w-auto h-auto object-contain flex-shrink-0 rounded-lg"
-                  />
+                  <div className="flex-shrink-0 rounded-xl overflow-hidden">
+                    <img
+                      src={center.logo_url}
+                      alt={center.name}
+                      className="max-w-[100px] max-h-[36px] lg:max-w-[120px] lg:max-h-[40px] w-auto h-auto object-contain"
+                    />
+                  </div>
                 )}
                 {!center.logo_url && (
                   <h1 
@@ -969,11 +971,11 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
             <div className="max-w-5xl mx-auto px-4 lg:px-8">
               <div className="flex items-end gap-4">
                 {center.logo_url && (
-                  <div className="bg-white/95 p-2 rounded-xl shadow-md flex-shrink-0">
+                  <div className="flex-shrink-0 rounded-2xl overflow-hidden shadow-md">
                     <img
                       src={center.logo_url}
                       alt={center.name}
-                      className="max-w-[100px] max-h-[50px] lg:max-w-[140px] lg:max-h-[70px] w-auto h-auto object-contain rounded-lg"
+                      className="max-w-[100px] max-h-[60px] lg:max-w-[140px] lg:max-h-[80px] w-auto h-auto object-contain"
                     />
                   </div>
                 )}
@@ -1006,13 +1008,13 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
               "flex flex-col items-center text-center",
               !isPreview && "lg:flex-row lg:text-left lg:items-center lg:gap-6"
             )}>
-              {center.logo_url && (
-                <div className={cn("mb-4", !isPreview && "lg:mb-0")}>
+               {center.logo_url && (
+                <div className={cn("mb-4 rounded-2xl overflow-hidden inline-block", !isPreview && "lg:mb-0")}>
                   <img
                     src={center.logo_url}
                     alt={center.name}
                     className={cn(
-                      "max-w-[160px] max-h-[80px] w-auto h-auto object-contain rounded-xl",
+                      "max-w-[160px] max-h-[80px] w-auto h-auto object-contain",
                       !isPreview && "lg:max-w-[180px] lg:max-h-[90px]"
                     )}
                   />
