@@ -461,7 +461,7 @@ export default function CenterBooking() {
                 />
               )}
               
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {packs.map((pack) => {
                   const hasVariants = pack.price_variants && pack.price_variants.length > 0;
                   const minPrice = hasVariants 
@@ -469,58 +469,61 @@ export default function CenterBooking() {
                     : pack.price;
 
                   return (
-                    <Card 
+                    <div 
                       key={pack.id}
-                      variant="elevated"
-                      className={`p-5 sm:p-6 cursor-pointer transition-all hover:shadow-lg hover:border-primary/40 ${
-                        selectedPack?.id === pack.id ? 'border-primary ring-2 ring-primary/20' : ''
-                      }`}
+                      className="group cursor-pointer"
                       onClick={() => handleSelectPack(pack)}
                     >
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <h3 className="font-semibold text-lg text-foreground">{pack.name}</h3>
-                          {pack.description && (
-                            <p className="text-sm text-muted-foreground mt-1">{pack.description}</p>
-                          )}
-                        </div>
-                        <div className="text-right">
-                          <p className="text-2xl font-bold text-foreground">{minPrice}€</p>
-                          {hasVariants && (
-                            <p className="text-xs text-muted-foreground">à partir de</p>
-                          )}
-                          {pack.duration && !hasVariants && (
-                            <p className="text-sm text-muted-foreground">{pack.duration}</p>
-                          )}
+                      {/* Image */}
+                      <div className="relative rounded-2xl overflow-hidden mb-3 transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-xl">
+                        {pack.image_url ? (
+                          <div className="aspect-[4/3]">
+                            <img
+                              src={pack.image_url}
+                              alt={pack.name}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          </div>
+                        ) : (
+                          <div className="aspect-[4/3] bg-secondary/40 flex items-center justify-center">
+                            <span className="text-4xl font-bold text-muted-foreground/20">
+                              {pack.name.charAt(0)}
+                            </span>
+                          </div>
+                        )}
+                        {/* Overlay */}
+                        <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-4 pt-10">
+                          <div className="flex items-end justify-between gap-2">
+                            <div>
+                              {pack.description && (
+                                <p className="text-white/70 text-xs mb-0.5 line-clamp-1">{pack.description}</p>
+                              )}
+                              <p className="text-white font-semibold text-sm sm:text-base leading-tight">
+                                {pack.name}
+                              </p>
+                            </div>
+                            <p className="text-white font-bold text-lg sm:text-xl flex-shrink-0">
+                              {hasVariants ? `${minPrice}€` : `${pack.price}€`}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                      
-                      {hasVariants && (
-                        <div className="flex flex-wrap gap-1.5 mb-3">
-                          {pack.price_variants.slice(0, 3).map((v, i) => (
-                            <span key={i} className="text-xs bg-secondary/50 px-2 py-1 rounded">
-                              {v.name}: {v.price}€
-                            </span>
-                          ))}
-                          {pack.price_variants.length > 3 && (
-                            <span className="text-xs text-muted-foreground px-2 py-1">
-                              +{pack.price_variants.length - 3}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      
-                      {pack.features && pack.features.length > 0 && (
-                        <ul className="space-y-1.5 mt-4 pt-4 border-t border-border/50">
-                          {pack.features.slice(0, 4).map((feature, i) => (
-                            <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </Card>
+                      {/* Info below */}
+                      <div className="flex items-center justify-between px-1">
+                        {pack.duration && (
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {pack.duration}
+                          </p>
+                        )}
+                        {hasVariants && (
+                          <p className="text-xs text-muted-foreground">
+                            {pack.price_variants.length} options
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   );
                 })}
               </div>
@@ -529,55 +532,87 @@ export default function CenterBooking() {
 
           {/* Variant Selection */}
           {currentStep === 'select-variant' && selectedPack && (
-            <div>
-              <div className="text-center mb-8">
+            <div className="max-w-3xl mx-auto">
+              {/* Hero image */}
+              {selectedPack.image_url && (
+                <div className="rounded-2xl overflow-hidden mb-8 shadow-lg">
+                  <img
+                    src={selectedPack.image_url}
+                    alt={selectedPack.name}
+                    className="w-full aspect-[16/9] sm:aspect-[2/1] object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              )}
+
+              {/* Title & description */}
+              <div className="mb-8">
                 <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
                   {selectedPack.name}
                 </h1>
-                <p className="text-muted-foreground">
-                  Sélectionnez votre catégorie
-                </p>
+                {selectedPack.description && (
+                  <p className="text-muted-foreground text-base">
+                    {selectedPack.description}
+                  </p>
+                )}
               </div>
-              
-              <div className="grid gap-3 sm:grid-cols-2">
+
+              {/* Features as specs row */}
+              {selectedPack.features && selectedPack.features.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+                  {selectedPack.features.map((feature, i) => (
+                    <div 
+                      key={i} 
+                      className="flex items-center gap-2.5 p-3 rounded-xl bg-secondary/30"
+                    >
+                      <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                      <span className="text-sm text-foreground">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Duration info */}
+              {selectedPack.duration && (
+                <div className="flex items-center gap-2 text-muted-foreground mb-6">
+                  <Clock className="w-4 h-4" />
+                  <span className="text-sm">Durée estimée : {selectedPack.duration}</span>
+                </div>
+              )}
+
+              {/* Variant selection heading */}
+              <div className="mb-4">
+                <h2 className="text-lg font-semibold text-foreground">
+                  Sélectionnez votre catégorie
+                </h2>
+              </div>
+
+              {/* Variants grid - Apple style cards */}
+              <div className="grid grid-cols-2 gap-3">
                 {selectedPack.price_variants.map((variant, index) => (
                   <Card 
                     key={index}
                     variant="elevated"
-                    className={`p-5 cursor-pointer transition-all hover:shadow-lg hover:border-primary/40 ${
-                      selectedVariant?.name === variant.name ? 'border-primary ring-2 ring-primary/20' : ''
+                    className={`p-4 sm:p-5 cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] ${
+                      selectedVariant?.name === variant.name ? 'ring-2 ring-primary shadow-lg' : ''
                     }`}
                     onClick={() => handleSelectVariant(variant)}
                   >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h3 className="font-semibold text-lg text-foreground">{variant.name}</h3>
-                        {selectedPack.duration && (
-                          <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                            <Clock className="w-4 h-4" />
-                            {selectedPack.duration}
-                          </p>
-                        )}
-                      </div>
-                      <p className="text-2xl font-bold text-foreground">{variant.price}€</p>
-                    </div>
+                    <p className="font-semibold text-sm sm:text-base text-foreground uppercase tracking-wide mb-1">
+                      {variant.name}
+                    </p>
+                    {selectedPack.duration && (
+                      <p className="text-xs text-muted-foreground flex items-center gap-1 mb-3">
+                        <Clock className="w-3 h-3" />
+                        {selectedPack.duration}
+                      </p>
+                    )}
+                    <p className="text-2xl sm:text-3xl font-bold text-foreground">
+                      {variant.price}€
+                    </p>
                   </Card>
                 ))}
               </div>
-
-              {selectedPack.features && selectedPack.features.length > 0 && (
-                <Card variant="elevated" className="mt-6 p-5">
-                  <p className="text-sm font-medium text-foreground mb-3">Ce qui est inclus :</p>
-                  <ul className="grid sm:grid-cols-2 gap-2">
-                    {selectedPack.features.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
-              )}
             </div>
           )}
           
