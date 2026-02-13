@@ -222,7 +222,7 @@ export default function DashboardSettings() {
               <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
                 <div className="relative">
                   {logoUrl ? (
-                    <img src={logoUrl} alt="Logo" className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border border-border" />
+                    <img src={logoUrl} alt="Logo" className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border border-border" />
                   ) : (
                     <div className="w-20 h-20 sm:w-24 sm:h-24 bg-primary rounded-xl flex items-center justify-center">
                       <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-primary-foreground" />

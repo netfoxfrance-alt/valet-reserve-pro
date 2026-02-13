@@ -193,7 +193,7 @@ export function InvoicePreviewDialog({ open, onOpenChange, invoice, center }: In
                   <img 
                     src={center.logo_url} 
                     alt={center.name}
-                    className="max-h-16 max-w-[200px] object-contain mb-3"
+                    className="max-h-16 max-w-[200px] object-contain mb-3 rounded-lg"
                   />
                 )}
                 <h2 className="text-xl font-bold">{center.name}</h2>

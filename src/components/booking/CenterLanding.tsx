@@ -924,7 +924,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                   <img
                     src={center.logo_url}
                     alt={center.name}
-                    className="max-w-[100px] max-h-[36px] lg:max-w-[120px] lg:max-h-[40px] w-auto h-auto object-contain flex-shrink-0"
+                    className="max-w-[100px] max-h-[36px] lg:max-w-[120px] lg:max-h-[40px] w-auto h-auto object-contain flex-shrink-0 rounded-lg"
                   />
                 )}
                 {!center.logo_url && (
@@ -973,7 +973,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                     <img
                       src={center.logo_url}
                       alt={center.name}
-                      className="max-w-[100px] max-h-[50px] lg:max-w-[140px] lg:max-h-[70px] w-auto h-auto object-contain"
+                      className="max-w-[100px] max-h-[50px] lg:max-w-[140px] lg:max-h-[70px] w-auto h-auto object-contain rounded-lg"
                     />
                   </div>
                 )}
@@ -1012,7 +1012,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                     src={center.logo_url}
                     alt={center.name}
                     className={cn(
-                      "max-w-[160px] max-h-[80px] w-auto h-auto object-contain",
+                      "max-w-[160px] max-h-[80px] w-auto h-auto object-contain rounded-xl",
                       !isPreview && "lg:max-w-[180px] lg:max-h-[90px]"
                     )}
                   />
