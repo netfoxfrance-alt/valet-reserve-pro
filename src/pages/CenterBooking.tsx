@@ -283,6 +283,7 @@ export default function CenterBooking() {
 
   // Error state - center not found
   if (error || !center) {
+    console.error('[CenterBooking] Error loading center:', { slug, error, center, userAgent: navigator.userAgent });
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card variant="elevated" className="p-8 max-w-md text-center">
@@ -293,6 +294,9 @@ export default function CenterBooking() {
           <p className="text-muted-foreground mb-6">
             Ce lien n'existe pas ou a été désactivé.
           </p>
+          <Button variant="outline" onClick={() => window.location.reload()} className="mr-2">
+            Réessayer
+          </Button>
           <Link to="/">
             <Button variant="outline">Retour à l'accueil</Button>
           </Link>
