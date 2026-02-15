@@ -86,9 +86,11 @@ export default function Index() {
                 <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">{t('landing.heroTitle2')}</span>
               </h1>
               
-              <p className="opacity-0 animate-fade-in-up stagger-2 text-base sm:text-lg md:text-xl text-muted-foreground max-w-lg mx-auto lg:mx-0 mb-8 leading-relaxed">
-                {t('landing.heroDesc')}
-              </p>
+              <div className="opacity-0 animate-fade-in-up stagger-2 max-w-lg mx-auto lg:mx-0 mb-8 space-y-1">
+                <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">{t('landing.heroDescLine1')}</p>
+                <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">{t('landing.heroDescLine2')}</p>
+                <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">{t('landing.heroDescLine3')}</p>
+              </div>
               
               <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-8">
                 <Button 
@@ -132,9 +134,11 @@ export default function Index() {
                 <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">{t('landing.heroTitle2')}</span>
               </h1>
               
-              <p className="opacity-0 animate-fade-in-up stagger-1 text-base text-muted-foreground max-w-sm mx-auto mb-6 leading-relaxed">
-                {t('landing.heroDescMobile')}
-              </p>
+              <div className="opacity-0 animate-fade-in-up stagger-1 max-w-sm mx-auto mb-6 space-y-1">
+                <p className="text-base text-muted-foreground leading-relaxed">{t('landing.heroDescMobile1')}</p>
+                <p className="text-base text-muted-foreground leading-relaxed">{t('landing.heroDescMobile2')}</p>
+                <p className="text-base text-muted-foreground leading-relaxed">{t('landing.heroDescMobile3')}</p>
+              </div>
 
               <Button 
                 size="lg" 
