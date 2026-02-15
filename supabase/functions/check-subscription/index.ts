@@ -57,7 +57,7 @@ serve(async (req) => {
     );
 
     // Pro bypass - always return subscribed for whitelisted emails
-    const proBypassEmails = ["contact@netfox-agency.com", "sf.autodetail@hotmail.com", "contact@vitclean.net"];
+    const proBypassEmails = ["contact@netfox-agency.com", "sf.autodetail@hotmail.com"];
     if (proBypassEmails.includes(userEmail.toLowerCase())) {
       logStep("Admin user detected, bypassing Stripe check");
       
