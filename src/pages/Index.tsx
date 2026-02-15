@@ -171,12 +171,64 @@ export default function Index() {
               </div>
             </div>
 
-            {/* Right: Main Page Card + Stats Widgets - Linktree Style */}
+            {/* Right: Main Page Card + Dashboard Card + Stats Widgets */}
             <div className="flex justify-center lg:justify-end mt-8 lg:mt-0">
               <div className="relative w-[340px] sm:w-[420px] md:w-[520px] h-[640px] sm:h-[540px] md:h-[600px]">
                 
-                {/* Main Page Card - Full CleaningPage profile like the reference */}
-                <div className="absolute top-8 sm:top-4 left-1/2 -translate-x-1/2 z-20">
+                {/* Dashboard Card - Behind, tilted right */}
+                <div className="absolute top-6 sm:top-2 left-1/2 -translate-x-[35%] z-10 hidden sm:block">
+                  <div 
+                    className="bg-card rounded-[1.5rem] overflow-hidden w-[230px] shadow-xl shadow-black/15 ring-1 ring-border/40"
+                    style={{ transform: 'rotate(6deg)' }}
+                  >
+                    {/* Dashboard Header */}
+                    <div className="px-4 pt-4 pb-2 border-b border-border/30">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-6 h-6 bg-primary/10 rounded-lg flex items-center justify-center">
+                          <BarChart3 className="w-3 h-3 text-primary" />
+                        </div>
+                        <p className="text-[11px] font-semibold text-foreground">{t('landing.heroDashTitle')}</p>
+                      </div>
+                      {/* Mini stats row */}
+                      <div className="grid grid-cols-3 gap-2 mb-1">
+                        <div className="text-center">
+                          <p className="text-sm font-bold text-foreground">47</p>
+                          <p className="text-[7px] text-muted-foreground">{t('landing.heroDashRdv')}</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-sm font-bold text-emerald-600">4.2k€</p>
+                          <p className="text-[7px] text-muted-foreground">{t('landing.heroDashCa')}</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-sm font-bold text-foreground">32</p>
+                          <p className="text-[7px] text-muted-foreground">{t('landing.heroDashClients')}</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Upcoming appointments */}
+                    <div className="px-3 py-3 space-y-2">
+                      <p className="text-[9px] font-medium text-muted-foreground uppercase tracking-wide">{t('landing.heroDashUpcoming')}</p>
+                      {[
+                        { name: 'Martin D.', time: '09:00', service: 'Nettoyage complet', color: 'bg-emerald-500' },
+                        { name: 'Sophie L.', time: '11:30', service: 'Intérieur express', color: 'bg-primary' },
+                        { name: 'Pierre B.', time: '14:00', service: 'Nettoyage sièges', color: 'bg-amber-500' },
+                      ].map((apt, i) => (
+                        <div key={i} className="flex items-center gap-2 p-2 rounded-xl bg-secondary/40 border border-border/20">
+                          <div className={`w-1 h-8 ${apt.color} rounded-full`} />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[10px] font-medium text-foreground truncate">{apt.name}</p>
+                            <p className="text-[8px] text-muted-foreground truncate">{apt.service}</p>
+                          </div>
+                          <span className="text-[9px] font-medium text-muted-foreground">{apt.time}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Main Page Card - Full CleaningPage profile */}
+                <div className="absolute top-8 sm:top-4 left-1/2 -translate-x-[60%] sm:-translate-x-[65%] z-20">
                   <div 
                     className="bg-card rounded-[2rem] overflow-hidden w-[250px] sm:w-[270px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
                     style={{ transform: 'rotate(-3deg)' }}
@@ -190,8 +242,6 @@ export default function Index() {
                           className="w-full h-full object-cover"
                         />
                       </div>
-
-                      {/* Logo overlay - premium style like reference */}
                       <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 z-20">
                         <div className="w-20 h-20 rounded-[1.25rem] shadow-2xl ring-[6px] ring-card overflow-hidden">
                           <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
@@ -200,13 +250,11 @@ export default function Index() {
                     </div>
                     
                     <div className="px-4 pb-5 pt-12 text-center">
-                      {/* Name & Description */}
                       <h3 className="text-base font-bold text-foreground mb-1">GOCLEANING</h3>
                        <p className="text-[10px] text-muted-foreground leading-relaxed mb-3 px-2">
                          {t('mockup.premiumDesc')}
                       </p>
                       
-                      {/* Ouvert badge */}
                       <div className="flex justify-center mb-3">
                         <span className="inline-flex items-center gap-1.5 text-[10px] bg-white border border-border/60 text-emerald-600 px-3 py-1.5 rounded-full font-medium shadow-sm">
                           <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
@@ -214,25 +262,23 @@ export default function Index() {
                         </span>
                       </div>
                       
-                      {/* Social icons row */}
                       <div className="flex justify-center gap-2 mb-4">
-                        <div className="w-9 h-9 bg-secondary/60 rounded-xl flex items-center justify-center hover:bg-secondary transition-colors cursor-pointer">
+                        <div className="w-9 h-9 bg-secondary/60 rounded-xl flex items-center justify-center">
                           <Instagram className="w-4 h-4 text-foreground" />
                         </div>
-                        <div className="w-9 h-9 bg-secondary/60 rounded-xl flex items-center justify-center hover:bg-secondary transition-colors cursor-pointer">
+                        <div className="w-9 h-9 bg-secondary/60 rounded-xl flex items-center justify-center">
                           <svg className="w-4 h-4 text-foreground" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
                           </svg>
                         </div>
-                        <div className="w-9 h-9 bg-secondary/60 rounded-xl flex items-center justify-center hover:bg-secondary transition-colors cursor-pointer">
+                        <div className="w-9 h-9 bg-secondary/60 rounded-xl flex items-center justify-center">
                           <MessageCircle className="w-4 h-4 text-foreground" />
                         </div>
-                        <div className="w-9 h-9 bg-secondary/60 rounded-xl flex items-center justify-center hover:bg-secondary transition-colors cursor-pointer">
+                        <div className="w-9 h-9 bg-secondary/60 rounded-xl flex items-center justify-center">
                           <Mail className="w-4 h-4 text-foreground" />
                         </div>
                       </div>
                       
-                      {/* Contact info */}
                       <div className="space-y-1.5 mb-4 text-left px-1">
                         <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                           <Phone className="w-3 h-3" />
@@ -248,7 +294,6 @@ export default function Index() {
                         </div>
                       </div>
                       
-                      {/* Formules section */}
                       <div className="mb-4">
                         <p className="text-xs font-semibold text-foreground text-left mb-2">{t('mockup.ourPackages')}</p>
                         <div className="grid grid-cols-2 gap-2">
@@ -263,7 +308,6 @@ export default function Index() {
                         </div>
                       </div>
                       
-                      {/* CTA */}
                        <button className="w-full bg-zinc-800 hover:bg-zinc-900 text-white rounded-xl py-3 text-xs font-semibold transition-colors">
                          {t('mockup.bookNow')}
                        </button>
@@ -272,7 +316,7 @@ export default function Index() {
                 </div>
                 
                 {/* Widget: Revenue Stats - Top Right */}
-                <div className="absolute -top-2 sm:top-2 right-0 sm:right-10 z-10">
+                <div className="absolute -top-2 sm:top-2 right-0 sm:right-2 z-30">
                   <div 
                     className="bg-card rounded-2xl p-2.5 sm:p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
                     style={{ transform: 'rotate(5deg)' }}
@@ -290,7 +334,7 @@ export default function Index() {
                 </div>
                 
                 {/* Widget: Reservations Stats - Bottom Left */}
-                <div className="absolute -bottom-6 sm:bottom-24 -left-2 sm:left-6 z-30">
+                <div className="absolute -bottom-6 sm:bottom-24 -left-2 sm:left-0 z-30">
                   <div 
                     className="bg-card rounded-2xl p-2.5 sm:p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
                     style={{ transform: 'rotate(-7deg)' }}
@@ -307,26 +351,8 @@ export default function Index() {
                   </div>
                 </div>
                 
-                {/* Widget: Views Stats - Bottom Right */}
-                <div className="absolute -bottom-6 sm:bottom-12 -right-2 sm:right-12 z-30">
-                  <div 
-                    className="bg-card rounded-2xl p-2.5 sm:p-3.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
-                    style={{ transform: 'rotate(4deg)' }}
-                  >
-                    <div className="flex items-center gap-2 sm:gap-2.5">
-                      <div className="w-7 h-7 sm:w-9 sm:h-9 bg-amber-500/10 rounded-xl flex items-center justify-center">
-                        <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm sm:text-lg font-bold text-foreground">1.2k</p>
-                        <p className="text-[8px] sm:text-[9px] text-muted-foreground">{t('landing.viewsThisMonth')}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
                 {/* Widget: Rating - Top Left */}
-                <div className="absolute top-0 sm:top-20 left-0 sm:left-4 z-10">
+                <div className="absolute top-0 sm:top-20 left-0 sm:left-0 z-10">
                   <div 
                     className="bg-card rounded-xl px-2.5 py-2 sm:px-3 sm:py-2.5 shadow-lg shadow-black/10 ring-1 ring-border/30"
                     style={{ transform: 'rotate(-4deg)' }}
