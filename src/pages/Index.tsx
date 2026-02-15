@@ -171,55 +171,71 @@ export default function Index() {
               </div>
             </div>
 
-            {/* Right: Page card + floating dashboard widgets */}
+            {/* Right: Page card (left) + Dashboard widgets (right, stacked) */}
             <div className="flex justify-center lg:justify-end mt-8 lg:mt-0">
-              <div className="relative w-[360px] sm:w-[500px] md:w-[580px] h-[620px] sm:h-[580px] md:h-[620px]">
+              <div className="relative w-[340px] sm:w-[520px] md:w-[580px] h-[620px] sm:h-[600px] md:h-[640px]">
                 
-                {/* Central: Page professionnelle card */}
-                <div className="absolute top-12 sm:top-10 left-4 sm:left-8 z-20">
+                {/* Rating - top left of page card */}
+                <div className="absolute -top-2 sm:-top-1 left-0 sm:left-4 z-30">
                   <div 
-                    className="bg-card rounded-[2rem] overflow-hidden w-[220px] sm:w-[250px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
-                    style={{ transform: 'rotate(-2deg)' }}
+                    className="bg-card rounded-xl px-3 py-2 shadow-lg shadow-black/10 ring-1 ring-border/30"
+                    style={{ transform: 'rotate(-4deg)' }}
                   >
-                    <div className="h-24 relative">
+                    <div className="flex items-center gap-2">
+                      <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+                      <div>
+                        <p className="text-sm font-bold text-foreground">4.9</p>
+                        <p className="text-[8px] text-muted-foreground">312 {t('landing.reviews')}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Main page card - Left */}
+                <div className="absolute top-10 sm:top-8 left-0 sm:left-6 z-20">
+                  <div 
+                    className="bg-card rounded-[2rem] overflow-hidden w-[230px] sm:w-[260px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
+                    style={{ transform: 'rotate(-1deg)' }}
+                  >
+                    <div className="h-28 relative">
                       <div className="absolute inset-0 overflow-hidden">
                         <img src={mockupBanner} alt="Service preview" className="w-full h-full object-cover" />
                       </div>
-                      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 z-20">
-                        <div className="w-16 h-16 rounded-[1rem] shadow-2xl ring-4 ring-card overflow-hidden">
+                      <div className="absolute -bottom-9 left-1/2 -translate-x-1/2 z-20">
+                        <div className="w-[72px] h-[72px] rounded-[1.1rem] shadow-2xl ring-[5px] ring-card overflow-hidden">
                           <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
                         </div>
                       </div>
                     </div>
-                    <div className="px-3 pb-4 pt-10 text-center">
-                      <h3 className="text-sm font-bold text-foreground mb-0.5">GOCLEANING</h3>
-                      <p className="text-[9px] text-muted-foreground leading-relaxed mb-2 px-1">{t('mockup.premiumDesc')}</p>
-                      <div className="flex justify-center mb-2">
-                        <span className="inline-flex items-center gap-1 text-[9px] bg-white border border-border/60 text-emerald-600 px-2.5 py-1 rounded-full font-medium shadow-sm">
+                    <div className="px-4 pb-5 pt-11 text-center">
+                      <h3 className="text-[15px] font-bold text-foreground mb-0.5">GOCLEANING</h3>
+                      <p className="text-[9px] text-muted-foreground leading-relaxed mb-2.5 px-1">{t('mockup.premiumDesc')}</p>
+                      <div className="flex justify-center mb-2.5">
+                        <span className="inline-flex items-center gap-1.5 text-[9px] bg-white border border-border/60 text-emerald-600 px-2.5 py-1 rounded-full font-medium shadow-sm">
                           <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
                           {t('mockup.open')}
                         </span>
                       </div>
-                      <div className="flex justify-center gap-1.5 mb-3">
+                      <div className="flex justify-center gap-2 mb-3">
                         {[Instagram, MessageCircle, Mail].map((Icon, i) => (
-                          <div key={i} className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center">
-                            <Icon className="w-3 h-3 text-foreground" />
+                          <div key={i} className="w-8 h-8 bg-secondary/60 rounded-lg flex items-center justify-center">
+                            <Icon className="w-3.5 h-3.5 text-foreground" />
                           </div>
                         ))}
-                        <div className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center">
-                          <svg className="w-3 h-3 text-foreground" viewBox="0 0 24 24" fill="currentColor">
+                        <div className="w-8 h-8 bg-secondary/60 rounded-lg flex items-center justify-center">
+                          <svg className="w-3.5 h-3.5 text-foreground" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
                           </svg>
                         </div>
                       </div>
                       <div className="space-y-1 mb-3 text-left px-1">
-                        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground">
+                        <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
                           <Phone className="w-2.5 h-2.5" /><span>06 12 34 56 78</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground">
+                        <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
                           <Clock className="w-2.5 h-2.5" /><span>{t('mockup.mon')} - {t('mockup.sat')} : 9h - 19h</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground">
+                        <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
                           <MapPin className="w-2.5 h-2.5" /><span>12 rue de la Paix, Paris</span>
                         </div>
                       </div>
@@ -243,113 +259,96 @@ export default function Index() {
                   </div>
                 </div>
 
-                {/* Widget 1: Statistiques - Top Right */}
-                <div className="absolute -top-1 sm:top-0 right-2 sm:right-6 z-30">
+                {/* Right side: Dashboard widgets stacked neatly */}
+                <div className="absolute top-6 sm:top-4 right-0 sm:right-4 z-10 flex flex-col gap-4 sm:gap-5">
+                  
+                  {/* Widget: Revenue + mini chart */}
                   <div 
-                    className="bg-card rounded-2xl p-3 sm:p-4 shadow-xl shadow-black/10 ring-1 ring-border/30 w-[160px] sm:w-[190px]"
-                    style={{ transform: 'rotate(4deg)' }}
+                    className="bg-card rounded-2xl p-4 shadow-xl shadow-black/10 ring-1 ring-border/30 w-[150px] sm:w-[195px]"
+                    style={{ transform: 'rotate(2deg)' }}
                   >
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-7 h-7 bg-emerald-500/10 rounded-xl flex items-center justify-center">
-                        <BarChart3 className="w-3.5 h-3.5 text-emerald-600" />
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <div className="w-8 h-8 bg-emerald-500/10 rounded-xl flex items-center justify-center">
+                        <BarChart3 className="w-4 h-4 text-emerald-600" />
                       </div>
                       <div>
-                        <p className="text-base sm:text-lg font-bold text-foreground leading-none">4 280€</p>
-                        <p className="text-[8px] text-muted-foreground">{t('landing.thisMonth')}</p>
+                        <p className="text-lg sm:text-xl font-bold text-foreground leading-none">4 280€</p>
+                        <p className="text-[9px] text-muted-foreground">{t('landing.thisMonth')}</p>
                       </div>
                     </div>
-                    {/* Mini bar chart */}
-                    <div className="flex items-end gap-[3px] h-8">
-                      {[35, 50, 30, 65, 55, 80].map((h, i) => (
+                    <div className="flex items-end gap-1.5 h-7 mb-1">
+                      {[35, 50, 28, 55, 45, 80].map((h, i) => (
                         <div 
                           key={i} 
-                          className={`flex-1 rounded-sm ${i === 5 ? 'bg-emerald-500' : 'bg-emerald-500/30'}`} 
+                          className={`flex-1 rounded-full ${i === 5 ? 'bg-emerald-500' : 'bg-emerald-500/25'}`} 
                           style={{ height: `${h}%` }} 
                         />
                       ))}
                     </div>
-                    <div className="flex justify-between mt-1.5">
+                    <div className="flex justify-between">
                       <span className="text-[7px] text-muted-foreground">Jan</span>
                       <span className="text-[7px] text-muted-foreground">Juin</span>
                     </div>
                   </div>
-                </div>
 
-                {/* Widget 2: Rendez-vous du jour - Right middle */}
-                <div className="absolute top-[180px] sm:top-[170px] right-0 sm:right-0 z-15">
+                  {/* Widget: Prochains RDV */}
                   <div 
-                    className="bg-card rounded-2xl p-3 shadow-xl shadow-black/10 ring-1 ring-border/30 w-[175px] sm:w-[200px]"
-                    style={{ transform: 'rotate(2deg)' }}
+                    className="bg-card rounded-2xl p-4 shadow-xl shadow-black/10 ring-1 ring-border/30 w-[150px] sm:w-[195px]"
+                    style={{ transform: 'rotate(-1deg)' }}
                   >
-                    <div className="flex items-center gap-2 mb-2.5">
-                      <div className="w-6 h-6 bg-primary/10 rounded-lg flex items-center justify-center">
-                        <Calendar className="w-3 h-3 text-primary" />
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-7 h-7 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <Calendar className="w-3.5 h-3.5 text-primary" />
                       </div>
-                      <p className="text-[10px] font-bold text-foreground">{t('landing.heroDashUpcoming')}</p>
+                      <p className="text-[11px] font-bold text-foreground">{t('landing.heroDashUpcoming')}</p>
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-3">
                       {[
                         { name: 'Martin D.', time: '09:00', color: 'bg-emerald-500' },
-                        { name: 'Sophie L.', time: '11:30', color: 'bg-primary' },
+                        { name: 'Sophie L.', time: '11:30', color: 'bg-foreground' },
                         { name: 'Pierre B.', time: '14:00', color: 'bg-amber-500' },
                       ].map((apt, i) => (
-                        <div key={i} className="flex items-center gap-2 p-1.5 rounded-lg bg-secondary/30">
-                          <div className={`w-1 h-6 ${apt.color} rounded-full flex-shrink-0`} />
-                          <p className="text-[9px] font-medium text-foreground flex-1">{apt.name}</p>
-                          <span className="text-[9px] text-muted-foreground font-medium">{apt.time}</span>
+                        <div key={i} className="flex items-center gap-2.5">
+                          <div className={`w-[3px] h-5 ${apt.color} rounded-full flex-shrink-0`} />
+                          <p className="text-[10px] font-medium text-foreground flex-1">{apt.name}</p>
+                          <span className="text-[10px] text-muted-foreground">{apt.time}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                {/* Widget 3: KPI Réservations - Bottom left */}
-                <div className="absolute bottom-4 sm:bottom-10 left-0 sm:left-2 z-30">
+                {/* Bottom left: Reservations KPI */}
+                <div className="absolute bottom-2 sm:bottom-6 left-0 sm:left-4 z-30">
                   <div 
-                    className="bg-card rounded-2xl p-2.5 sm:p-3 shadow-xl shadow-black/10 ring-1 ring-border/30"
-                    style={{ transform: 'rotate(-6deg)' }}
+                    className="bg-card rounded-2xl p-3 shadow-lg shadow-black/10 ring-1 ring-border/30"
+                    style={{ transform: 'rotate(-5deg)' }}
                   >
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center">
                         <Calendar className="w-4 h-4 text-primary" />
                       </div>
                       <div>
-                        <p className="text-lg font-bold text-foreground leading-none">47</p>
-                        <p className="text-[8px] text-muted-foreground">{t('landing.bookings')}</p>
+                        <p className="text-xl font-bold text-foreground leading-none">47</p>
+                        <p className="text-[9px] text-muted-foreground">{t('landing.bookings')}</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Widget 4: Clients - Bottom right */}
-                <div className="absolute bottom-0 sm:bottom-4 right-8 sm:right-16 z-30">
+                {/* Bottom right: Clients KPI */}
+                <div className="absolute -bottom-4 sm:bottom-0 right-4 sm:right-10 z-30">
                   <div 
-                    className="bg-card rounded-2xl p-2.5 sm:p-3 shadow-xl shadow-black/10 ring-1 ring-border/30"
-                    style={{ transform: 'rotate(5deg)' }}
+                    className="bg-card rounded-2xl p-3 shadow-lg shadow-black/10 ring-1 ring-border/30"
+                    style={{ transform: 'rotate(3deg)' }}
                   >
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-violet-500/10 rounded-xl flex items-center justify-center">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 bg-violet-500/10 rounded-xl flex items-center justify-center">
                         <Users className="w-4 h-4 text-violet-600" />
                       </div>
                       <div>
-                        <p className="text-lg font-bold text-foreground leading-none">32</p>
-                        <p className="text-[8px] text-muted-foreground">{t('landing.heroDashClients')}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Widget 5: Rating - Top left */}
-                <div className="absolute top-0 sm:top-2 left-0 sm:left-0 z-30">
-                  <div 
-                    className="bg-card rounded-xl px-2.5 py-2 shadow-lg shadow-black/10 ring-1 ring-border/30"
-                    style={{ transform: 'rotate(-4deg)' }}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                      <div>
-                        <p className="text-xs font-bold text-foreground">4.9</p>
-                        <p className="text-[7px] text-muted-foreground">312 {t('landing.reviews')}</p>
+                        <p className="text-xl font-bold text-foreground leading-none">32</p>
+                        <p className="text-[9px] text-muted-foreground">{t('landing.heroDashClients')}</p>
                       </div>
                     </div>
                   </div>
