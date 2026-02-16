@@ -28,7 +28,7 @@ function SlideWrapper({ active, children }: { active: boolean; children: React.R
         active ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
       }`}
     >
-      <div className="w-full h-full overflow-y-auto px-3 sm:px-8 lg:px-12 py-4 sm:py-10 flex items-start sm:items-center justify-center">
+      <div className="w-full h-full overflow-y-auto px-4 sm:px-8 lg:px-12 py-6 sm:py-10 flex items-center justify-center">
         {children}
       </div>
     </div>
@@ -274,18 +274,20 @@ function SlideSolution() {
       <p className="animate-fade-in-up stagger-2 text-muted-foreground text-sm sm:text-base max-w-sm mx-auto mb-6 sm:mb-14">
         {t('presentation.solutionSubtitle')}
       </p>
-      <div className="grid grid-cols-3 gap-3 sm:gap-8">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-8">
         {pillars.map((p, i) => (
           <div 
             key={i} 
-            className="group animate-fade-in-up" 
+            className="group animate-fade-in-up flex sm:flex-col items-center sm:items-stretch gap-4 sm:gap-0" 
             style={{ animationDelay: `${0.25 + i * 0.12}s` }}
           >
-            <div className="mb-2 sm:mb-5 transform group-hover:scale-[1.02] transition-transform duration-500">
+            <div className="w-28 flex-shrink-0 sm:w-full sm:mb-5 transform group-hover:scale-[1.02] transition-transform duration-500">
               {p.mockup}
             </div>
-            <h3 className="text-xs sm:text-lg font-bold text-foreground mb-0.5 sm:mb-1.5 tracking-tight">{p.label}</h3>
-            <p className="text-[10px] sm:text-[13px] text-muted-foreground leading-relaxed max-w-[220px] mx-auto hidden sm:block">{p.desc}</p>
+            <div className="text-left sm:text-center flex-1">
+              <h3 className="text-sm sm:text-lg font-bold text-foreground mb-1 sm:mb-1.5 tracking-tight">{p.label}</h3>
+              <p className="text-xs sm:text-[13px] text-muted-foreground leading-relaxed max-w-[220px] sm:mx-auto">{p.desc}</p>
+            </div>
           </div>
         ))}
       </div>
