@@ -75,33 +75,32 @@ function SlideCover() {
 function SlideNeeds() {
   const { t } = useTranslation();
   const needs = [
-    { icon: Globe, label: t('presentation.need1'), desc: t('presentation.need1Desc', { defaultValue: 'Pas de site ou une page peu professionnelle' }) },
-    { icon: Calendar, label: t('presentation.need2'), desc: t('presentation.need2Desc', { defaultValue: 'Appels, SMS, messages dispersés' }) },
-    { icon: Clock, label: t('presentation.need3'), desc: t('presentation.need3Desc', { defaultValue: 'Trop de temps perdu en admin' }) },
-    { icon: Users, label: t('presentation.need4'), desc: t('presentation.need4Desc', { defaultValue: 'Pas de suivi centralisé' }) },
-    { icon: Receipt, label: t('presentation.need5'), desc: t('presentation.need5Desc', { defaultValue: 'Facturation manuelle et chronophage' }) },
+    { icon: Globe, label: t('presentation.need1') },
+    { icon: Calendar, label: t('presentation.need2') },
+    { icon: Clock, label: t('presentation.need3') },
+    { icon: Users, label: t('presentation.need4') },
+    { icon: Receipt, label: t('presentation.need5') },
   ];
 
   return (
-    <div className="max-w-4xl mx-auto w-full">
+    <div className="max-w-3xl mx-auto w-full">
       <div className="text-center mb-10 sm:mb-12">
-        <p className="animate-fade-in-up text-xs font-semibold text-muted-foreground tracking-[0.2em] uppercase mb-5">{t('presentation.needsLabel')}</p>
-        <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-[2.75rem] font-semibold text-foreground tracking-tight leading-[1.15]">
+        <p className="animate-fade-in-up text-sm font-semibold text-primary tracking-widest uppercase mb-4">{t('presentation.needsLabel')}</p>
+        <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
           {t('presentation.needsTitle')}
         </h2>
       </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 max-w-3xl mx-auto">
+      <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto">
         {needs.map((n, i) => (
           <div 
             key={i} 
-            className="rounded-2xl bg-secondary/30 p-6 animate-fade-in-up" 
+            className="flex items-center gap-4 bg-secondary/30 rounded-2xl p-5 animate-fade-in-up" 
             style={{ animationDelay: `${0.15 + i * 0.08}s` }}
           >
-            <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center mb-4 shadow-sm">
-              <n.icon className="w-5 h-5 text-foreground/70" strokeWidth={1.5} />
+            <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center flex-shrink-0 shadow-sm">
+              <n.icon className="w-5 h-5 text-foreground" />
             </div>
-            <p className="text-[15px] font-semibold text-foreground mb-1 tracking-tight">{n.label}</p>
-            <p className="text-[13px] text-muted-foreground leading-relaxed">{n.desc}</p>
+            <p className="text-sm sm:text-[15px] font-medium text-foreground leading-snug">{n.label}</p>
           </div>
         ))}
       </div>
@@ -1070,34 +1069,33 @@ function SlideStats() {
 function SlideBenefits() {
   const { t } = useTranslation();
   const benefits = [
-    { label: t('presentation.benefit1Title'), desc: t('presentation.benefit1Desc'), icon: Globe },
-    { label: t('presentation.benefit2Title'), desc: t('presentation.benefit2Desc'), icon: Clock },
-    { label: t('presentation.benefit3Title'), desc: t('presentation.benefit3Desc'), icon: Palette },
-    { label: t('presentation.benefit4Title'), desc: t('presentation.benefit4Desc'), icon: Users },
-    { label: t('presentation.benefit5Title'), desc: t('presentation.benefit5Desc'), icon: TrendingUp },
+    { label: t('presentation.benefit1Title'), desc: t('presentation.benefit1Desc') },
+    { label: t('presentation.benefit2Title'), desc: t('presentation.benefit2Desc') },
+    { label: t('presentation.benefit3Title'), desc: t('presentation.benefit3Desc') },
+    { label: t('presentation.benefit4Title'), desc: t('presentation.benefit4Desc') },
+    { label: t('presentation.benefit5Title'), desc: t('presentation.benefit5Desc') },
   ];
 
   return (
-    <div className="max-w-4xl mx-auto w-full">
+    <div className="max-w-3xl mx-auto w-full">
       <div className="text-center mb-10 sm:mb-12">
-        <p className="animate-fade-in-up text-xs font-semibold text-muted-foreground tracking-[0.2em] uppercase mb-5">{t('presentation.benefitsLabel')}</p>
-        <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-[2.75rem] font-semibold text-foreground tracking-tight leading-[1.15]">
+        <p className="animate-fade-in-up text-sm font-semibold text-emerald-600 tracking-widest uppercase mb-4">{t('presentation.benefitsLabel')}</p>
+        <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
           {t('presentation.benefitsTitle')}
         </h2>
       </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-        {benefits.map((b, i) => {
-          const Icon = b.icon;
-          return (
-            <div key={i} className="rounded-2xl bg-secondary/30 p-6 animate-fade-in-up" style={{ animationDelay: `${0.1 + i * 0.08}s` }}>
-              <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center mb-4 shadow-sm">
-                <Icon className="w-5 h-5 text-foreground/70" strokeWidth={1.5} />
-              </div>
-              <p className="text-[15px] font-semibold text-foreground mb-1.5 tracking-tight">{b.label}</p>
-              <p className="text-[13px] text-muted-foreground leading-relaxed">{b.desc}</p>
+      <div className="space-y-3 sm:space-y-4">
+        {benefits.map((b, i) => (
+          <div key={i} className="flex items-center gap-4 sm:gap-5 bg-secondary/30 rounded-2xl p-5 animate-fade-in-up" style={{ animationDelay: `${0.1 + i * 0.08}s` }}>
+            <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+              <Check className="w-4 h-4 text-emerald-500" />
             </div>
-          );
-        })}
+            <div className="flex-1">
+              <p className="text-sm sm:text-base font-semibold text-foreground">{b.label}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">{b.desc}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -1140,8 +1138,8 @@ function SlideTrial() {
               t('presentation.trialFeature6', { defaultValue: 'Support prioritaire' }),
             ].map((feature, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
-                  <Check className="w-3 h-3 text-white" />
+                <div className="w-5 h-5 rounded-full bg-foreground flex items-center justify-center flex-shrink-0">
+                  <Check className="w-3 h-3 text-background" />
                 </div>
                 <span className="text-sm text-foreground">{feature}</span>
               </div>
@@ -1149,7 +1147,7 @@ function SlideTrial() {
           </div>
 
           <Link to="/auth">
-            <Button size="lg" className="w-full rounded-xl text-base font-semibold bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20">
+            <Button size="lg" className="w-full rounded-xl text-base font-semibold">
               {t('presentation.trialCTA', { defaultValue: 'Commencer gratuitement' })}
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
