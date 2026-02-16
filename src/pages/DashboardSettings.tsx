@@ -396,9 +396,9 @@ export default function DashboardSettings() {
                 latitude={settings.latitude}
                 longitude={settings.longitude}
                 radiusKm={settings.intervention_radius_km}
-                onAddressChange={(v) => setSettings({ ...settings, address: v })}
-                onLocationChange={(lat, lng) => setSettings({ ...settings, latitude: lat, longitude: lng })}
-                onRadiusChange={(r) => setSettings({ ...settings, intervention_radius_km: r })}
+                onAddressChange={(v) => setSettings(prev => ({ ...prev, address: v }))}
+                onLocationChange={(lat, lng) => setSettings(prev => ({ ...prev, latitude: lat, longitude: lng }))}
+                onRadiusChange={(r) => setSettings(prev => ({ ...prev, intervention_radius_km: r }))}
               />
               <div className="space-y-2">
                 <Label htmlFor="phone">{t('common.phone')}</Label>
