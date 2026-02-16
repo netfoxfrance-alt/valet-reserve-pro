@@ -231,7 +231,10 @@ export type Database = {
           email_language: string
           ical_token: string | null
           id: string
+          intervention_radius_km: number | null
+          latitude: number | null
           logo_url: string | null
+          longitude: number | null
           name: string
           owner_id: string
           phone: string | null
@@ -252,7 +255,10 @@ export type Database = {
           email_language?: string
           ical_token?: string | null
           id?: string
+          intervention_radius_km?: number | null
+          latitude?: number | null
           logo_url?: string | null
+          longitude?: number | null
           name: string
           owner_id: string
           phone?: string | null
@@ -273,7 +279,10 @@ export type Database = {
           email_language?: string
           ical_token?: string | null
           id?: string
+          intervention_radius_km?: number | null
+          latitude?: number | null
           logo_url?: string | null
+          longitude?: number | null
           name?: string
           owner_id?: string
           phone?: string | null
