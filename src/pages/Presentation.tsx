@@ -46,23 +46,31 @@ function SlideCover() {
       <div className="mb-8 animate-fade-in">
         <Logo size="xl" />
       </div>
-      <h1 className="animate-fade-in-up stagger-1 text-3xl sm:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-6 leading-[1.1]">
+      <h1 className="animate-fade-in-up stagger-1 text-3xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight mb-6 leading-[1.1]">
         {t('presentation.coverTitle')}
       </h1>
       <p className="animate-fade-in-up stagger-2 text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto mb-10">
         {t('presentation.coverSubtitle')}
       </p>
-      <div className="animate-fade-in-up stagger-3">
-        <div className="inline-flex items-center gap-8 bg-secondary/40 rounded-full px-8 py-3">
+      <div className="animate-fade-in-up stagger-3 flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+        <Link to="/auth">
+          <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_8px_24px_-4px_rgba(16,185,129,0.4)] hover:shadow-[0_12px_32px_-4px_rgba(16,185,129,0.5)] transition-all duration-300 text-base font-semibold px-8">
+            {t('presentation.contactStartFree', { defaultValue: 'Commencer gratuitement' })}
+            <ArrowRight className="ml-2 w-5 h-5" />
+          </Button>
+        </Link>
+      </div>
+      <div className="animate-fade-in-up stagger-4">
+        <div className="inline-flex items-center gap-6 sm:gap-8">
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-emerald-500/15 flex items-center justify-center">
-              <Check className="w-3 h-3 text-emerald-500" />
+            <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
+              <Check className="w-3 h-3 text-white" />
             </div>
             <span className="text-sm font-medium text-foreground">{t('presentation.daysOffered')}</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-emerald-500/15 flex items-center justify-center">
-              <Check className="w-3 h-3 text-emerald-500" />
+            <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
+              <Check className="w-3 h-3 text-white" />
             </div>
             <span className="text-sm font-medium text-foreground">{t('presentation.noCommitment')}</span>
           </div>
@@ -85,8 +93,8 @@ function SlideNeeds() {
   return (
     <div className="max-w-3xl mx-auto w-full">
       <div className="text-center mb-10 sm:mb-12">
-        <p className="animate-fade-in-up text-sm font-semibold text-primary tracking-widest uppercase mb-4">{t('presentation.needsLabel')}</p>
-        <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
+        <p className="animate-fade-in-up text-sm font-semibold text-emerald-600 tracking-widest uppercase mb-4">{t('presentation.needsLabel')}</p>
+        <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight">
           {t('presentation.needsTitle')}
         </h2>
       </div>
@@ -94,13 +102,13 @@ function SlideNeeds() {
         {needs.map((n, i) => (
           <div 
             key={i} 
-            className="flex items-center gap-4 bg-secondary/30 rounded-2xl p-5 animate-fade-in-up" 
+            className="flex items-center gap-4 bg-card rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)] border border-border/30 animate-fade-in-up hover:shadow-[0_2px_8px_rgba(0,0,0,0.06),0_8px_20px_rgba(0,0,0,0.04)] transition-shadow duration-300" 
             style={{ animationDelay: `${0.15 + i * 0.08}s` }}
           >
-            <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center flex-shrink-0 shadow-sm">
-              <n.icon className="w-5 h-5 text-foreground" />
+            <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
+              <n.icon className="w-5 h-5 text-foreground" strokeWidth={1.5} />
             </div>
-            <p className="text-sm sm:text-[15px] font-medium text-foreground leading-snug">{n.label}</p>
+            <p className="text-sm sm:text-[15px] font-semibold text-foreground leading-snug">{n.label}</p>
           </div>
         ))}
       </div>
