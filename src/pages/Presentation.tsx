@@ -124,59 +124,59 @@ function SlideSolution() {
 
 function SlideCustomize() {
   return (
-    <div className="max-w-6xl mx-auto w-full">
-      <div className="text-center mb-8 sm:mb-12">
-        <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
-          Personnalisez votre page sans compétence technique
+    <div className="max-w-5xl mx-auto w-full">
+      <div className="text-center mb-6 sm:mb-8">
+        <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3">
+          Personnalisez votre page sans aucune compétence technique
         </h2>
-        <p className="animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base lg:text-lg max-w-lg mx-auto">
+        <p className="animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto">
           Ajoutez votre logo, vos couleurs, vos prestations. Modifiez tout, à tout moment.
         </p>
       </div>
       <div className="animate-fade-in-up stagger-2">
-        <div className="relative max-w-5xl mx-auto">
-          {/* Central Phone Mockup */}
-          <div className="relative mx-auto w-[280px] sm:w-[320px] lg:w-[340px]">
-            <div className="bg-card rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
-              <div className="h-24 sm:h-28 lg:h-32 relative overflow-hidden rounded-t-[2.5rem]">
+        <div className="relative max-w-4xl mx-auto flex items-center justify-center">
+          {/* Central Phone Mockup - scaled for slide */}
+          <div className="relative mx-auto w-[240px] sm:w-[260px]">
+            <div className="bg-card rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
+              <div className="h-20 sm:h-24 relative overflow-hidden rounded-t-[2rem]">
                 <img src={mockupCarCleaning} alt="Preview" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               </div>
-              <div className="flex justify-center -mt-10 sm:-mt-12 relative z-30 mb-3 sm:mb-4">
-                <div className="w-20 sm:w-24 h-20 sm:h-24 bg-white rounded-2xl shadow-2xl flex items-center justify-center ring-4 ring-white overflow-hidden">
+              <div className="flex justify-center -mt-8 relative z-30 mb-2">
+                <div className="w-16 h-16 bg-white rounded-xl shadow-2xl flex items-center justify-center ring-4 ring-white overflow-hidden">
                   <img src={mockupLogoClean} alt="Logo" className="w-full h-full object-cover" />
                 </div>
               </div>
-              <div className="px-5 sm:px-6 pb-5 sm:pb-6 text-center">
-                <h3 className="text-lg sm:text-xl font-bold text-foreground mb-1">Clean Premium</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">Nettoyage premium à domicile, 7j/7.</p>
-                <div className="flex justify-center mb-4 sm:mb-5">
-                  <span className="inline-flex items-center gap-2 text-xs bg-white border border-emerald-200 text-emerald-600 px-4 py-1.5 rounded-full font-medium shadow-sm">
-                    <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+              <div className="px-4 pb-4 text-center">
+                <h3 className="text-sm font-bold text-foreground mb-0.5">Clean Premium</h3>
+                <p className="text-[10px] text-muted-foreground mb-2">Nettoyage premium à domicile, 7j/7.</p>
+                <div className="flex justify-center mb-3">
+                  <span className="inline-flex items-center gap-1.5 text-[9px] bg-white border border-emerald-200 text-emerald-600 px-3 py-1 rounded-full font-medium">
+                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                     Ouvert
                   </span>
                 </div>
-                <div className="flex justify-center gap-3 mb-4 sm:mb-6">
+                <div className="flex justify-center gap-2 mb-3">
                   {[Instagram, Facebook, Mail].map((Icon, i) => (
-                    <div key={i} className="w-10 sm:w-11 h-10 sm:h-11 rounded-full flex items-center justify-center bg-card border-2 border-foreground/20">
-                      <Icon className="w-4 sm:w-5 h-4 sm:h-5 text-foreground" />
+                    <div key={i} className="w-8 h-8 rounded-full flex items-center justify-center bg-card border border-foreground/20">
+                      <Icon className="w-3.5 h-3.5 text-foreground" />
                     </div>
                   ))}
                 </div>
-                <div className="text-left mb-4 sm:mb-5">
-                  <h4 className="text-sm sm:text-base font-semibold text-foreground mb-2 sm:mb-3">Nos formules</h4>
-                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                    <div className="bg-card border border-border/60 rounded-xl p-3 sm:p-4">
-                      <p className="text-xs sm:text-sm font-semibold text-foreground mb-0.5 sm:mb-1">Express</p>
-                      <p className="text-base sm:text-lg font-bold text-muted-foreground">35€</p>
+                <div className="text-left mb-3">
+                  <h4 className="text-xs font-semibold text-foreground mb-2">Nos formules</h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-card border border-border/60 rounded-lg p-2">
+                      <p className="text-[10px] font-semibold text-foreground">Express</p>
+                      <p className="text-sm font-bold text-muted-foreground">35€</p>
                     </div>
-                    <div className="bg-card border border-border/60 rounded-xl p-3 sm:p-4">
-                      <p className="text-xs sm:text-sm font-semibold text-foreground mb-0.5 sm:mb-1">Complet</p>
-                      <p className="text-base sm:text-lg font-bold text-muted-foreground">89€</p>
+                    <div className="bg-card border border-border/60 rounded-lg p-2">
+                      <p className="text-[10px] font-semibold text-foreground">Complet</p>
+                      <p className="text-sm font-bold text-muted-foreground">89€</p>
                     </div>
                   </div>
                 </div>
-                <button className="w-full bg-neutral-800 text-white py-3 sm:py-4 rounded-2xl text-sm sm:text-base font-semibold shadow-lg">
+                <button className="w-full bg-neutral-800 text-white py-2.5 rounded-xl text-xs font-semibold">
                   Réserver maintenant
                 </button>
               </div>
@@ -185,38 +185,38 @@ function SlideCustomize() {
 
           {/* Floating widgets - desktop only */}
           <div className="hidden sm:block">
-            <div className="absolute top-12 lg:top-16 left-4 lg:left-12 z-30 animate-float" style={{ animationDelay: '0s' }}>
-              <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 relative">
-                <p className="text-[10px] text-muted-foreground mb-2 font-medium">Couleurs</p>
-                <div className="flex gap-2">
+            <div className="absolute top-8 left-4 lg:left-16 z-30 animate-float" style={{ animationDelay: '0s' }}>
+              <div className="bg-card rounded-xl p-3 shadow-xl ring-1 ring-border/30 relative">
+                <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Couleurs</p>
+                <div className="flex gap-1.5">
                   {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500'].map((bg, i) => (
-                    <div key={i} className={`w-7 h-7 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''} shadow-sm`} />
+                    <div key={i} className={`w-6 h-6 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''} shadow-sm`} />
                   ))}
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 shadow-sm flex items-center justify-center">
-                    <Plus className="w-3.5 h-3.5 text-white drop-shadow-md" />
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-red-500 via-yellow-500 to-purple-500 shadow-sm flex items-center justify-center">
+                    <Plus className="w-3 h-3 text-white" />
                   </div>
                 </div>
-                <div className="absolute -bottom-2 -right-2 animate-pulse">
-                  <MousePointer2 className="w-6 h-6 text-foreground drop-shadow-lg" />
+                <div className="absolute -bottom-1.5 -right-1.5">
+                  <MousePointer2 className="w-5 h-5 text-foreground drop-shadow-lg" />
                 </div>
               </div>
             </div>
 
-            <div className="absolute top-8 lg:top-12 right-4 lg:right-12 z-30 animate-float" style={{ animationDelay: '0.15s' }}>
-              <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30">
-                <p className="text-[10px] text-muted-foreground mb-2 font-medium">Disponibilités</p>
-                <div className="space-y-1.5">
+            <div className="absolute top-4 right-4 lg:right-16 z-30 animate-float" style={{ animationDelay: '0.15s' }}>
+              <div className="bg-card rounded-xl p-3 shadow-xl ring-1 ring-border/30">
+                <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Disponibilités</p>
+                <div className="space-y-1">
                   {[
                     { day: 'Lun', hours: '9h-18h', active: true },
                     { day: 'Mar', hours: '9h-18h', active: true },
                     { day: 'Mer', hours: '14h-18h', active: true },
                     { day: 'Sam', hours: 'Fermé', active: false },
                   ].map((d, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <span className="text-[9px] w-6 text-muted-foreground">{d.day}</span>
-                      <span className={`text-[9px] w-12 ${d.active ? 'text-foreground' : 'text-muted-foreground'}`}>{d.hours}</span>
-                      <div className={`w-6 h-3 rounded-full ${d.active ? 'bg-emerald-500' : 'bg-secondary'} relative transition-colors`}>
-                        <div className={`absolute w-2 h-2 bg-white rounded-full top-0.5 shadow-sm transition-all ${d.active ? 'right-0.5' : 'left-0.5'}`} />
+                    <div key={i} className="flex items-center gap-1.5">
+                      <span className="text-[8px] w-5 text-muted-foreground">{d.day}</span>
+                      <span className={`text-[8px] w-10 ${d.active ? 'text-foreground' : 'text-muted-foreground'}`}>{d.hours}</span>
+                      <div className={`w-5 h-2.5 rounded-full ${d.active ? 'bg-emerald-500' : 'bg-secondary'} relative`}>
+                        <div className={`absolute w-1.5 h-1.5 bg-white rounded-full top-0.5 ${d.active ? 'right-0.5' : 'left-0.5'}`} />
                       </div>
                     </div>
                   ))}
@@ -224,51 +224,39 @@ function SlideCustomize() {
               </div>
             </div>
 
-            <div className="absolute top-1/2 -translate-y-1/2 left-0 lg:left-4 z-30 animate-float hidden lg:block" style={{ animationDelay: '0.25s' }}>
-              <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 w-40">
-                <p className="text-[10px] text-muted-foreground mb-2 font-medium">Formules</p>
-                <div className="space-y-2">
+            <div className="absolute bottom-16 left-4 lg:left-12 z-30 animate-float" style={{ animationDelay: '0.25s' }}>
+              <div className="bg-card rounded-xl p-3 shadow-xl ring-1 ring-border/30 w-32">
+                <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Formules</p>
+                <div className="space-y-1.5">
                   {[
                     { name: 'Express', price: '35€' },
                     { name: 'Complet', price: '89€' },
                     { name: 'Premium', price: '129€' },
                   ].map((f, i) => (
-                    <div key={i} className="flex justify-between items-center text-xs">
+                    <div key={i} className="flex justify-between items-center text-[10px]">
                       <span className="text-foreground font-medium">{f.name}</span>
-                      <span className="text-primary font-bold">{f.price}</span>
+                      <span className="font-bold">{f.price}</span>
                     </div>
                   ))}
-                  <button className="w-full text-[10px] text-primary font-medium py-1.5 border border-dashed border-primary/40 rounded-lg mt-1 hover:bg-primary/5 transition-colors">
+                  <button className="w-full text-[9px] text-muted-foreground font-medium py-1 border border-dashed border-border rounded-md mt-0.5">
                     + Ajouter
                   </button>
                 </div>
               </div>
             </div>
 
-            <div className="absolute bottom-8 lg:bottom-12 left-8 lg:left-16 z-30 animate-float" style={{ animationDelay: '0.4s' }}>
-              <div className="bg-card rounded-2xl px-4 py-3 shadow-xl ring-1 ring-border/30 flex items-center gap-3">
-                <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <Type className="w-4 h-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-[10px] text-muted-foreground">Texte</p>
-                  <p className="text-xs font-medium text-foreground">Ajouter du contenu</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute bottom-8 lg:bottom-12 right-8 lg:right-16 z-30 animate-float" style={{ animationDelay: '0.5s' }}>
-              <div className="bg-card rounded-2xl p-3 shadow-xl ring-1 ring-border/30">
-                <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Galerie</p>
-                <div className="flex gap-1.5">
-                  <div className="w-8 h-8 bg-secondary rounded overflow-hidden">
+            <div className="absolute bottom-8 right-4 lg:right-12 z-30 animate-float" style={{ animationDelay: '0.4s' }}>
+              <div className="bg-card rounded-xl p-2.5 shadow-xl ring-1 ring-border/30">
+                <p className="text-[8px] text-muted-foreground mb-1 font-medium">Galerie</p>
+                <div className="flex gap-1">
+                  <div className="w-7 h-7 bg-secondary rounded overflow-hidden">
                     <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
                   </div>
-                  <div className="w-8 h-8 bg-secondary rounded overflow-hidden">
+                  <div className="w-7 h-7 bg-secondary rounded overflow-hidden">
                     <img src={sofaBanner} alt="" className="w-full h-full object-cover" />
                   </div>
-                  <div className="w-8 h-8 bg-secondary/60 rounded flex items-center justify-center border border-dashed border-border">
-                    <Plus className="w-3 h-3 text-muted-foreground" />
+                  <div className="w-7 h-7 bg-secondary/60 rounded flex items-center justify-center border border-dashed border-border">
+                    <Plus className="w-2.5 h-2.5 text-muted-foreground" />
                   </div>
                 </div>
               </div>
@@ -282,45 +270,65 @@ function SlideCustomize() {
 
 function SlideModes() {
   return (
-    <div className="max-w-4xl mx-auto w-full">
-      <div className="text-center mb-10 sm:mb-14">
-        <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
-          Deux modes, un seul outil
+    <div className="max-w-5xl mx-auto w-full">
+      <div className="text-center mb-6 sm:mb-10">
+        <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3">
+          Adapté à tout type d'entreprise de nettoyage
         </h2>
       </div>
       <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
-        <div className="bg-card border border-border/60 rounded-2xl p-6 sm:p-8 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center mb-5">
-            <Calendar className="w-6 h-6 text-foreground" />
-          </div>
-          <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-3">Réservation directe</h3>
+        {/* Left: Fixed services */}
+        <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
+            Vous avez des prestations fixes ?
+          </h3>
           <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-            Le client choisit sa formule, sélectionne un créneau et réserve en autonomie.
+            Mettez-les directement sur votre page et vos clients peuvent réserver facilement.
           </p>
-          <div className="space-y-2.5">
-            {['Idéal pour le detailing auto', 'Formules prédéfinies', 'Réservation instantanée'].map((item, i) => (
-              <div key={i} className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                <span className="text-sm text-muted-foreground">{item}</span>
+          {/* Mockup: service card like image 2 */}
+          <div className="rounded-2xl overflow-hidden shadow-xl ring-1 ring-border/20">
+            <div className="relative">
+              <div className="grid grid-cols-2 h-44 sm:h-52">
+                <div className="relative overflow-hidden">
+                  <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
+                </div>
+                <div className="relative overflow-hidden">
+                  <img src={sofaBanner} alt="" className="w-full h-full object-cover" />
+                </div>
               </div>
-            ))}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 sm:p-5">
+                <p className="text-white font-bold text-base sm:text-lg tracking-wide">LAVAGE COMPLET</p>
+                <p className="text-white/90 text-sm sm:text-base font-medium">dès 65€</p>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="bg-card border border-border/60 rounded-2xl p-6 sm:p-8 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-          <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center mb-5">
-            <FileText className="w-6 h-6 text-foreground" />
-          </div>
-          <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-3">Sur devis personnalisé</h3>
+
+        {/* Right: Custom quotes */}
+        <div className="animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+          <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
+            Vous faites des prestations sur devis personnalisé ?
+          </h3>
           <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-            Vous créez une prestation sur mesure. Le client la retrouve et réserve via son email.
+            Créez une prestation sur mesure pour un client. Une fois faite, il pourra s'identifier sur votre page pour réserver sa propre prestation.
           </p>
-          <div className="space-y-2.5">
-            {['Idéal pour vitres, maison, bureaux', 'Prestation sur mesure', 'Le client réserve quand il veut'].map((item, i) => (
-              <div key={i} className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                <span className="text-sm text-muted-foreground">{item}</span>
+          {/* Mockup: client greeting like image 3 */}
+          <div className="bg-card rounded-2xl shadow-xl ring-1 ring-border/20 p-5 sm:p-6">
+            <p className="text-base sm:text-lg font-bold text-foreground mb-1">Bonjour Sophie ! 👋</p>
+            <p className="text-sm text-muted-foreground mb-4">Votre prestation personnalisée :</p>
+            <div className="bg-secondary/40 rounded-xl p-4 flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm font-semibold text-foreground">Nettoyage complet maison</p>
+                <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                  <Clock className="w-3 h-3" /> 90 min
+                </p>
               </div>
-            ))}
+              <p className="text-xl sm:text-2xl font-bold text-foreground">75€</p>
+            </div>
+            <button className="w-full bg-neutral-600 text-white py-3 rounded-xl text-sm font-semibold mb-2">
+              Choisir un créneau
+            </button>
+            <p className="text-xs text-muted-foreground text-center underline">Ce n'est pas moi</p>
           </div>
         </div>
       </div>
