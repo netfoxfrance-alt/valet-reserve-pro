@@ -15,6 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { Sparkles, Upload, Trash2, Loader2, CreditCard, Crown, ExternalLink, Link2, Check, X } from 'lucide-react';
+import { AddressWithMap } from '@/components/settings/AddressWithMap';
 import { Link } from 'react-router-dom';
 import { CenterCustomization, defaultCustomization } from '@/types/customization';
 import { useTranslation } from 'react-i18next';
@@ -45,6 +46,9 @@ export default function DashboardSettings() {
     name: '',
     address: '',
     phone: '',
+    latitude: null as number | null,
+    longitude: null as number | null,
+    intervention_radius_km: 30,
   });
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [emailLanguage, setEmailLanguage] = useState('fr');
@@ -64,6 +68,9 @@ export default function DashboardSettings() {
         name: center.name || '',
         address: center.address || '',
         phone: center.phone || '',
+        latitude: (center as any).latitude || null,
+        longitude: (center as any).longitude || null,
+        intervention_radius_km: (center as any).intervention_radius_km || 30,
       });
       setLogoUrl(center.logo_url);
       setEmailLanguage((center as any).email_language || i18n.language || 'fr');
@@ -384,10 +391,15 @@ export default function DashboardSettings() {
                 <Label htmlFor="name">{t('settings.businessName')}</Label>
                 <Input id="name" value={settings.name} onChange={(e) => setSettings({ ...settings, name: e.target.value })} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="address">{t('common.address')}</Label>
-                <Input id="address" value={settings.address} onChange={(e) => setSettings({ ...settings, address: e.target.value })} />
-              </div>
+              <AddressWithMap
+                address={settings.address}
+                latitude={settings.latitude}
+                longitude={settings.longitude}
+                radiusKm={settings.intervention_radius_km}
+                onAddressChange={(v) => setSettings({ ...settings, address: v })}
+                onLocationChange={(lat, lng) => setSettings({ ...settings, latitude: lat, longitude: lng })}
+                onRadiusChange={(r) => setSettings({ ...settings, intervention_radius_km: r })}
+              />
               <div className="space-y-2">
                 <Label htmlFor="phone">{t('common.phone')}</Label>
                 <Input id="phone" value={settings.phone} onChange={(e) => setSettings({ ...settings, phone: e.target.value })} />

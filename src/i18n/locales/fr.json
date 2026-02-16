@@ -508,7 +508,10 @@
     "emailLanguageDesc": "Choisissez dans quelle langue les emails de confirmation et de notification seront envoyés à vos clients.",
     "emailLanguageFr": "Français",
     "emailLanguageEn": "Anglais",
-    "emailLanguageSaved": "Langue des emails mise à jour"
+    "emailLanguageSaved": "Langue des emails mise à jour",
+    "addressPlaceholder": "Saisissez votre adresse...",
+    "interventionRadius": "Rayon d'intervention",
+    "radiusDesc": "Zone géographique couverte par vos interventions"
   },
   "support": {
     "title": "Support",

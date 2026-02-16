@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { LocationMap } from '@/components/map/LocationMap';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -625,9 +626,19 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
   // Render address block with style support
   const renderAddress = (block: PageBlock) => {
     if (!center.address) return null;
+    const hasMap = center.latitude && center.longitude;
     return (
-      <div key={block.id} className="mb-4">
+      <div key={block.id} className="mb-4 space-y-3">
         {renderInfoBlock(block, center.address, <MapPin className="w-5 h-5" />, `https://maps.google.com/?q=${encodeURIComponent(center.address)}`)}
+        {hasMap && (
+          <LocationMap
+            latitude={center.latitude!}
+            longitude={center.longitude!}
+            radiusKm={center.intervention_radius_km}
+            accentColor={customization.colors.accent || customization.colors.primary}
+            height="180px"
+          />
+        )}
       </div>
     );
   };
