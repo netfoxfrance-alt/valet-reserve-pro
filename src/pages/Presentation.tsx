@@ -266,8 +266,8 @@ function SlideSolution() {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto w-full text-center">
-      <p className="animate-fade-in-up text-xs font-semibold text-emerald-600 tracking-[0.2em] uppercase mb-3 sm:mb-5">{t('presentation.solutionLabel')}</p>
+    <div className="max-w-4xl mx-auto w-full text-center pt-6 sm:pt-0">
+      <p className="animate-fade-in-up text-xs font-semibold text-emerald-600 tracking-[0.2em] uppercase mb-3 sm:mb-5 mt-2 sm:mt-0">{t('presentation.solutionLabel')}</p>
       <h2 className="animate-fade-in-up stagger-1 text-xl sm:text-3xl md:text-[2.75rem] font-bold text-foreground tracking-tight leading-[1.15] mb-2 sm:mb-3">
         {t('presentation.solutionTitle')}
       </h2>
