@@ -19,6 +19,51 @@ import { useToast } from '@/hooks/use-toast';
 import { useSEO } from '@/hooks/useSEO';
 import { LocalBusinessSchema } from '@/components/seo/LocalBusinessSchema';
 
+// Simple markdown-like rich text renderer
+function RichDescription({ text }: { text: string }) {
+  const lines = text.split('\n');
+  
+  return (
+    <div className="space-y-3">
+      {lines.map((line, i) => {
+        const trimmed = line.trim();
+        if (!trimmed) return <div key={i} className="h-2" />;
+        
+        // ## Heading 2
+        if (trimmed.startsWith('## ')) {
+          return <h3 key={i} className="text-xl font-bold text-foreground mt-6 mb-2">{trimmed.slice(3)}</h3>;
+        }
+        // ### Heading 3
+        if (trimmed.startsWith('### ')) {
+          return <h4 key={i} className="text-lg font-semibold text-foreground mt-4 mb-1">{trimmed.slice(4)}</h4>;
+        }
+        // - List item
+        if (trimmed.startsWith('- ') || trimmed.startsWith('• ')) {
+          return (
+            <div key={i} className="flex items-start gap-2 pl-1">
+              <span className="text-primary mt-1.5 text-xs">●</span>
+              <span className="text-muted-foreground">{renderInline(trimmed.slice(2))}</span>
+            </div>
+          );
+        }
+        // Regular paragraph with inline bold
+        return <p key={i} className="text-muted-foreground leading-relaxed">{renderInline(trimmed)}</p>;
+      })}
+    </div>
+  );
+}
+
+// Render inline **bold** text
+function renderInline(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i} className="font-semibold text-foreground">{part.slice(2, -2)}</strong>;
+    }
+    return <span key={i}>{part}</span>;
+  });
+}
+
 type BookingStep = 
   | 'landing'
   | 'contact-form'
@@ -448,13 +493,13 @@ export default function CenterBooking() {
     );
   }
 
-  // Quote detail page (Apple-style presentation like the reference screenshots)
+  // Quote detail page (Apple-style presentation)
   if (currentStep === 'quote-detail' && selectedPack) {
     return (
       <div className="min-h-screen bg-background">
         <BookingHeader centerName={center.name} />
         <main className="px-4 pb-16 pt-8">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             {showBackButton && (
               <div className="mb-6">
                 <Button 
@@ -469,42 +514,80 @@ export default function CenterBooking() {
               </div>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Left: Main content */}
-              <div className="lg:col-span-2 space-y-8">
-                {/* Hero image */}
-                {selectedPack.image_url && (
-                  <div className="rounded-2xl overflow-hidden shadow-lg">
-                    <img
-                      src={selectedPack.image_url}
-                      alt={selectedPack.name}
-                      className="w-full aspect-[16/9] object-cover"
-                      loading="lazy"
-                    />
-                  </div>
-                )}
+            {/* Hero section: Image left + Info right */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+              {/* Left: Hero image */}
+              {selectedPack.image_url ? (
+                <div className="rounded-2xl overflow-hidden">
+                  <img
+                    src={selectedPack.image_url}
+                    alt={selectedPack.name}
+                    className="w-full aspect-[4/3] object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ) : (
+                <div className="rounded-2xl bg-secondary/30 aspect-[4/3] flex items-center justify-center">
+                  <FileText className="w-16 h-16 text-muted-foreground/30" />
+                </div>
+              )}
 
-                {/* Title (mobile only - desktop shows in sidebar) */}
-                <div className="lg:hidden">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+              {/* Right: Title + CTA */}
+              <div className="flex flex-col justify-center space-y-6">
+                <div>
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground tracking-tight leading-tight">
                     {selectedPack.name}
                   </h1>
                 </div>
 
-                {/* About section */}
+                {/* Short description preview */}
                 {selectedPack.description && (
-                  <Card variant="elevated" className="p-6 sm:p-8 rounded-2xl">
-                    <h2 className="text-xl font-bold text-foreground mb-4">À propos du service</h2>
-                    <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-                      {selectedPack.description}
-                    </p>
-                  </Card>
+                  <p className="text-lg text-muted-foreground leading-relaxed line-clamp-3">
+                    {selectedPack.description.split('\n')[0].replace(/[*#\-]/g, '').trim()}
+                  </p>
                 )}
 
-                {/* Features */}
+                {/* Meta info */}
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <FileText className="w-4 h-4" />
+                    <span>Tarification sur devis</span>
+                  </div>
+                  {selectedPack.duration && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Clock className="w-4 h-4" />
+                      <span>Durée estimée : {selectedPack.duration}</span>
+                    </div>
+                  )}
+                </div>
+
+                <Button 
+                  variant="premium" 
+                  size="xl" 
+                  className="w-full sm:w-auto sm:px-12"
+                  onClick={() => setCurrentStep('quote-form')}
+                >
+                  Obtenir un devis
+                </Button>
+              </div>
+            </div>
+
+            {/* Content section below */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
+              {/* Left: Description + Features */}
+              <div className="lg:col-span-2 space-y-8">
+                {selectedPack.description && (
+                  <div>
+                    <h2 className="text-2xl font-bold text-foreground mb-6">À propos du service</h2>
+                    <div className="prose prose-neutral max-w-none">
+                      <RichDescription text={selectedPack.description} />
+                    </div>
+                  </div>
+                )}
+
                 {selectedPack.features && selectedPack.features.length > 0 && (
-                  <Card variant="elevated" className="p-6 sm:p-8 rounded-2xl">
-                    <h2 className="text-xl font-bold text-foreground mb-4">Ce qui est inclus</h2>
+                  <div>
+                    <h2 className="text-2xl font-bold text-foreground mb-4">Ce qui est inclus</h2>
                     <ul className="space-y-3">
                       {selectedPack.features.map((feature, i) => (
                         <li key={i} className="flex items-start gap-3">
@@ -513,17 +596,23 @@ export default function CenterBooking() {
                         </li>
                       ))}
                     </ul>
-                  </Card>
+                  </div>
                 )}
               </div>
 
-              {/* Right: Sticky sidebar */}
+              {/* Right: Sticky sidebar CTA */}
               <div className="lg:col-span-1">
                 <div className="lg:sticky lg:top-8">
                   <Card variant="elevated" className="p-6 rounded-2xl space-y-5">
-                    <h2 className="text-xl font-bold text-foreground hidden lg:block">{selectedPack.name}</h2>
+                    <h3 className="text-lg font-bold text-foreground">{selectedPack.name}</h3>
                     
-                    <div className="space-y-3">
+                    {selectedPack.description && (
+                      <p className="text-sm text-muted-foreground line-clamp-3">
+                        {selectedPack.description.split('\n')[0].replace(/[*#\-]/g, '').trim()}
+                      </p>
+                    )}
+
+                    <div className="space-y-2">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <FileText className="w-4 h-4" />
                         <span>Tarification sur devis</span>
