@@ -111,35 +111,173 @@ function SlideNeeds() {
   );
 }
 
+/* Mini mockup: page web */
+function MiniWebPage() {
+  return (
+    <div className="w-full max-w-[180px] mx-auto rounded-xl overflow-hidden shadow-lg ring-1 ring-border/20 bg-card">
+      <div className="bg-secondary/60 px-2 py-1 flex items-center gap-1">
+        <div className="flex gap-0.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-red-400/70" />
+          <div className="w-1.5 h-1.5 rounded-full bg-yellow-400/70" />
+          <div className="w-1.5 h-1.5 rounded-full bg-green-400/70" />
+        </div>
+        <div className="flex-1 flex justify-center">
+          <div className="text-[6px] text-muted-foreground bg-background/50 rounded px-2 py-0.5">cleanpremium.cleaningpage.com</div>
+        </div>
+      </div>
+      <div className="p-2.5">
+        <div className="w-full h-12 rounded-lg bg-secondary/50 mb-2 overflow-hidden relative">
+          <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover opacity-60" />
+        </div>
+        <div className="flex justify-center -mt-4 mb-1.5 relative z-10">
+          <div className="w-7 h-7 rounded-lg bg-card shadow-md ring-2 ring-white overflow-hidden">
+            <img src={mockupLogoClean} alt="" className="w-full h-full object-cover" />
+          </div>
+        </div>
+        <div className="text-center">
+          <div className="text-[7px] font-bold text-foreground mb-0.5">Clean Premium</div>
+          <div className="flex justify-center gap-1 mb-1.5">
+            <div className="w-3 h-3 rounded-full bg-secondary" />
+            <div className="w-3 h-3 rounded-full bg-secondary" />
+            <div className="w-3 h-3 rounded-full bg-secondary" />
+          </div>
+          <div className="grid grid-cols-2 gap-1">
+            <div className="bg-secondary/40 rounded-md p-1">
+              <div className="text-[6px] text-foreground font-medium">Express</div>
+              <div className="text-[8px] font-bold text-foreground">35€</div>
+            </div>
+            <div className="bg-secondary/40 rounded-md p-1">
+              <div className="text-[6px] text-foreground font-medium">Complet</div>
+              <div className="text-[8px] font-bold text-foreground">89€</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Mini mockup: calendrier RDV */
+function MiniCalendar() {
+  const days = ['L','M','M','J','V','S','D'];
+  const cells = [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+  const booked = [5,8,11,12,15,19];
+  return (
+    <div className="w-full max-w-[180px] mx-auto rounded-xl overflow-hidden shadow-lg ring-1 ring-border/20 bg-card">
+      <div className="bg-secondary/60 px-2.5 py-1.5 flex items-center justify-between">
+        <span className="text-[7px] text-muted-foreground">‹</span>
+        <span className="text-[8px] font-semibold text-foreground">Février 2026</span>
+        <span className="text-[7px] text-muted-foreground">›</span>
+      </div>
+      <div className="p-2.5">
+        <div className="grid grid-cols-7 gap-0.5 mb-1">
+          {days.map(d => <div key={d} className="text-center text-[6px] font-semibold text-muted-foreground">{d}</div>)}
+        </div>
+        <div className="grid grid-cols-7 gap-0.5">
+          {cells.map(day => {
+            const isBooked = booked.includes(day);
+            const isToday = day === 11;
+            return (
+              <div key={day} className={`text-center py-1 rounded-md text-[7px] ${isToday ? 'bg-foreground text-background font-bold' : isBooked ? 'bg-secondary text-foreground font-medium' : 'text-muted-foreground'}`}>
+                {day}
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-2 space-y-1">
+          {[
+            { time: '10:00', name: 'Jean M.', c: 'bg-emerald-500' },
+            { time: '14:00', name: 'Marie D.', c: 'bg-foreground' },
+          ].map((rdv, i) => (
+            <div key={i} className="flex items-center gap-1.5 bg-secondary/40 rounded-md px-2 py-1">
+              <div className={`w-1.5 h-1.5 rounded-full ${rdv.c} flex-shrink-0`} />
+              <span className="text-[7px] font-semibold text-foreground">{rdv.time}</span>
+              <span className="text-[7px] text-muted-foreground">{rdv.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Mini mockup: espace gestion */
+function MiniDashboard() {
+  return (
+    <div className="w-full max-w-[180px] mx-auto rounded-xl overflow-hidden shadow-lg ring-1 ring-border/20 bg-card">
+      <div className="bg-secondary/60 px-2 py-1 flex items-center gap-1">
+        <div className="flex gap-0.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-red-400/70" />
+          <div className="w-1.5 h-1.5 rounded-full bg-yellow-400/70" />
+          <div className="w-1.5 h-1.5 rounded-full bg-green-400/70" />
+        </div>
+        <div className="flex-1 flex justify-center">
+          <div className="text-[6px] text-muted-foreground bg-background/50 rounded px-2 py-0.5">dashboard</div>
+        </div>
+      </div>
+      <div className="p-2.5">
+        <div className="grid grid-cols-3 gap-1.5 mb-2">
+          {[
+            { label: 'Clients', value: '142' },
+            { label: 'CA', value: '8.5k€' },
+            { label: 'RDV', value: '23' },
+          ].map((kpi, i) => (
+            <div key={i} className="bg-secondary/40 rounded-lg p-1.5 text-center">
+              <div className="text-[6px] text-muted-foreground">{kpi.label}</div>
+              <div className="text-[9px] font-bold text-foreground">{kpi.value}</div>
+            </div>
+          ))}
+        </div>
+        {/* Mini bar chart */}
+        <div className="flex items-end gap-1 h-10 mb-2">
+          {[40, 55, 35, 65, 50, 75, 45].map((h, i) => (
+            <div key={i} className="flex-1 rounded-t bg-foreground/15 hover:bg-foreground/25 transition-colors" style={{ height: `${h}%` }} />
+          ))}
+        </div>
+        {/* Mini table */}
+        <div className="space-y-1">
+          {['Sophie L.', 'Pierre B.', 'Marie D.'].map((name, i) => (
+            <div key={i} className="flex items-center gap-1.5 text-[7px]">
+              <div className="w-3 h-3 rounded-full bg-secondary flex-shrink-0" />
+              <span className="flex-1 text-foreground font-medium">{name}</span>
+              <span className="text-muted-foreground">89€</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SlideSolution() {
   const { t } = useTranslation();
   const pillars = [
-    { icon: Globe, label: t('presentation.pillar1Title'), desc: t('presentation.pillar1Desc') },
-    { icon: Calendar, label: t('presentation.pillar2Title'), desc: t('presentation.pillar2Desc') },
-    { icon: BarChart3, label: t('presentation.pillar3Title'), desc: t('presentation.pillar3Desc') },
+    { label: t('presentation.pillar1Title'), desc: t('presentation.pillar1Desc'), mockup: <MiniWebPage /> },
+    { label: t('presentation.pillar2Title'), desc: t('presentation.pillar2Desc'), mockup: <MiniCalendar /> },
+    { label: t('presentation.pillar3Title'), desc: t('presentation.pillar3Desc'), mockup: <MiniDashboard /> },
   ];
 
   return (
-    <div className="max-w-3xl mx-auto w-full text-center">
+    <div className="max-w-4xl mx-auto w-full text-center">
       <p className="animate-fade-in-up text-xs font-semibold text-muted-foreground tracking-[0.2em] uppercase mb-5">{t('presentation.solutionLabel')}</p>
       <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-[2.75rem] font-semibold text-foreground tracking-tight leading-[1.15] mb-3">
         {t('presentation.solutionTitle')}
       </h2>
-      <p className="animate-fade-in-up stagger-2 text-muted-foreground text-sm sm:text-base max-w-sm mx-auto mb-14 sm:mb-16">
+      <p className="animate-fade-in-up stagger-2 text-muted-foreground text-sm sm:text-base max-w-sm mx-auto mb-10 sm:mb-12">
         {t('presentation.solutionSubtitle')}
       </p>
-      <div className="grid sm:grid-cols-3 gap-4 sm:gap-5">
+      <div className="grid sm:grid-cols-3 gap-5 sm:gap-6">
         {pillars.map((p, i) => (
           <div 
             key={i} 
-            className="group rounded-2xl p-7 sm:p-8 text-center bg-secondary/30 hover:bg-secondary/50 transition-colors duration-300 animate-fade-in-up" 
-            style={{ animationDelay: `${0.25 + i * 0.1}s` }}
+            className="group animate-fade-in-up" 
+            style={{ animationDelay: `${0.25 + i * 0.12}s` }}
           >
-            <div className="w-12 h-12 rounded-full bg-background flex items-center justify-center mx-auto mb-5 shadow-sm">
-              <p.icon className="w-5 h-5 text-foreground/70" strokeWidth={1.5} />
+            <div className="mb-4">
+              {p.mockup}
             </div>
-            <h3 className="text-[15px] sm:text-base font-semibold text-foreground mb-2 tracking-tight">{p.label}</h3>
-            <p className="text-[13px] text-muted-foreground leading-relaxed">{p.desc}</p>
+            <h3 className="text-[15px] sm:text-base font-semibold text-foreground mb-1.5 tracking-tight">{p.label}</h3>
+            <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[200px] mx-auto">{p.desc}</p>
           </div>
         ))}
       </div>
