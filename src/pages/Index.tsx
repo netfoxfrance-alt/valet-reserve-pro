@@ -1999,7 +1999,7 @@ export default function Index() {
               </div>
               
               <div className="mb-4 sm:mb-6">
-                <span className="text-3xl sm:text-4xl font-semibold text-foreground">39€</span>
+                <span className="text-3xl sm:text-4xl font-semibold text-foreground">29€</span>
                  <span className="text-muted-foreground text-sm sm:text-base ml-2">{t('landing.perMonth')}</span>
                  <p className="text-xs text-muted-foreground mt-1">{t('landing.afterTrial')}</p>
               </div>
