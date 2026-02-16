@@ -18,6 +18,9 @@ export interface Center {
   subscription_plan: 'free' | 'pro' | 'trial' | 'expired' | 'past_due';
   customization: CenterCustomization;
   ical_token?: string | null; // Token for iCal calendar sync - owner only
+  latitude?: number | null;
+  longitude?: number | null;
+  intervention_radius_km?: number;
   created_at: string;
   updated_at: string;
 }

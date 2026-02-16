@@ -926,7 +926,10 @@ export type Database = {
           created_at: string | null
           customization: Json | null
           id: string | null
+          intervention_radius_km: number | null
+          latitude: number | null
           logo_url: string | null
+          longitude: number | null
           name: string | null
           phone: string | null
           slug: string | null
@@ -942,7 +945,10 @@ export type Database = {
           created_at?: string | null
           customization?: Json | null
           id?: string | null
+          intervention_radius_km?: number | null
+          latitude?: number | null
           logo_url?: string | null
+          longitude?: number | null
           name?: string | null
           phone?: string | null
           slug?: string | null
@@ -958,7 +964,10 @@ export type Database = {
           created_at?: string | null
           customization?: Json | null
           id?: string | null
+          intervention_radius_km?: number | null
+          latitude?: number | null
           logo_url?: string | null
+          longitude?: number | null
           name?: string | null
           phone?: string | null
           slug?: string | null

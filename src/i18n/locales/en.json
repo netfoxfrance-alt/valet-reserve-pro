@@ -508,7 +508,10 @@
     "emailLanguageDesc": "Choose in which language confirmation and notification emails will be sent to your clients.",
     "emailLanguageFr": "French",
     "emailLanguageEn": "English",
-    "emailLanguageSaved": "Email language updated"
+    "emailLanguageSaved": "Email language updated",
+    "addressPlaceholder": "Enter your address...",
+    "interventionRadius": "Intervention radius",
+    "radiusDesc": "Geographic area covered by your services"
   },
   "support": {
     "title": "Support",
