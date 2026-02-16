@@ -46,7 +46,7 @@ function SlideCover() {
       <div className="mb-8 animate-fade-in">
         <Logo size="xl" />
       </div>
-      <h1 className="animate-fade-in-up stagger-1 text-3xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight mb-6 leading-[1.1]">
+      <h1 className="animate-fade-in-up stagger-1 text-3xl sm:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-6 leading-[1.1]">
         {t('presentation.coverTitle')}
       </h1>
       <p className="animate-fade-in-up stagger-2 text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto mb-10">
@@ -94,7 +94,7 @@ function SlideNeeds() {
     <div className="max-w-3xl mx-auto w-full">
       <div className="text-center mb-10 sm:mb-12">
         <p className="animate-fade-in-up text-sm font-semibold text-emerald-600 tracking-widest uppercase mb-4">{t('presentation.needsLabel')}</p>
-        <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+        <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
           {t('presentation.needsTitle')}
         </h2>
       </div>
@@ -108,7 +108,7 @@ function SlideNeeds() {
             <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
               <n.icon className="w-5 h-5 text-foreground" strokeWidth={1.5} />
             </div>
-            <p className="text-sm sm:text-[15px] font-semibold text-foreground leading-snug">{n.label}</p>
+            <p className="text-sm sm:text-[15px] font-medium text-foreground leading-snug">{n.label}</p>
           </div>
         ))}
       </div>
