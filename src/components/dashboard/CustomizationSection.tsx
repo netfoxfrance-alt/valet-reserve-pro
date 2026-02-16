@@ -44,9 +44,11 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
   }, [customization]);
 
   const updateLocal = (updates: Partial<CenterCustomization>) => {
-    const newCustomization = { ...local, ...updates };
-    setLocal(newCustomization);
-    onUpdate(newCustomization);
+    setLocal(prev => {
+      const newCustomization = { ...prev, ...updates };
+      onUpdate(newCustomization);
+      return newCustomization;
+    });
   };
 
   const updateColors = (colors: Partial<CenterCustomization['colors']>) => {

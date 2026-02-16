@@ -995,16 +995,22 @@ export function BlocksEditor({
                         onClick={() => {
                           if (isAlreadyAdded) return;
                           
-                          // Ensure links block exists
+                          // Ensure links block exists - create inline to avoid race condition with addBlock
                           if (!hasLinks) {
-                            addBlock('links');
+                            const maxOrder = Math.max(...blocks.map(b => b.order), 0);
+                            const linksBlock: PageBlock = {
+                              id: `links_${Date.now()}`,
+                              type: 'links',
+                              title: 'Liens',
+                              enabled: true,
+                              order: maxOrder + 1,
+                            };
+                            onUpdateBlocks([...blocks, linksBlock]);
                           }
                           
                           if (option.socialKey) {
-                            // For social links, set a placeholder to mark as "added"
                             onUpdateSocial({ ...social, [option.socialKey]: ' ' });
                           } else if (option.customLink) {
-                            // For custom links, add a new link entry
                             const newLink: CustomLink = {
                               id: crypto.randomUUID(),
                               title: option.label,
