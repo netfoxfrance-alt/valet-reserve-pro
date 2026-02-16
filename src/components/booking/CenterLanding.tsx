@@ -231,10 +231,12 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
         </h2>
         <div className="grid grid-cols-2 gap-3">
           {visiblePacks.slice(0, 6).map((pack, index) => {
-            const hasVariants = pack.price_variants && pack.price_variants.length > 0;
+            const isQuote = pack.pricing_type === 'quote';
+            const hasVariants = !isQuote && pack.price_variants && pack.price_variants.length > 0;
             const minPrice = hasVariants 
               ? Math.min(...pack.price_variants.map(v => v.price))
               : pack.price;
+            const priceLabel = isQuote ? 'Sur devis' : (hasVariants ? `dès ${minPrice}€` : `${pack.price}€`);
 
             return (
               <div 
@@ -263,7 +265,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                           {pack.name}
                         </p>
                         <p className="text-white/90 font-semibold text-lg sm:text-xl drop-shadow-lg">
-                          {hasVariants ? `dès ${minPrice}€` : `${pack.price}€`}
+                          {priceLabel}
                         </p>
                       </div>
                     </>
@@ -293,21 +295,22 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                         {pack.name}
                       </p>
                       <p className="font-semibold text-lg" style={{ color: customization.colors.primary }}>
-                        {hasVariants ? `dès ${minPrice}€` : `${pack.price}€`}
+                        {priceLabel}
                       </p>
                     </div>
                   )}
                 </div>
-                {/* Duration below */}
-                {pack.duration && (
-                  <p 
-                    className="text-xs flex items-center gap-1 px-1"
-                    style={{ color: textColors.secondary }}
-                  >
-                    <Clock className="w-3 h-3" />
-                    {pack.duration}
-                  </p>
-                )}
+                {/* Duration / Sur devis below */}
+                <p 
+                  className="text-xs flex items-center gap-1 px-1"
+                  style={{ color: textColors.secondary }}
+                >
+                  {isQuote ? (
+                    <><FileText className="w-3 h-3" /> Demande de devis</>
+                  ) : pack.duration ? (
+                    <><Clock className="w-3 h-3" /> {pack.duration}</>
+                  ) : null}
+                </p>
               </div>
             );
           })}
@@ -660,17 +663,6 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                 📍 Intervention dans un rayon de {radiusKm} km
               </p>
             )}
-            
-            <a
-              href={mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-medium hover:underline"
-              style={{ color: customization.colors.accent || customization.colors.primary }}
-            >
-              <ExternalLink className="w-4 h-4" />
-              Obtenir un itinéraire
-            </a>
           </div>
         </div>
       </div>

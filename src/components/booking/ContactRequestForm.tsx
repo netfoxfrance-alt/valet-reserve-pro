@@ -17,9 +17,12 @@ export interface ContactRequestData {
 interface ContactRequestFormProps {
   onSubmit: (data: ContactRequestData) => void;
   isSubmitting: boolean;
+  title?: string;
+  subtitle?: string;
+  submitLabel?: string;
 }
 
-export function ContactRequestForm({ onSubmit, isSubmitting }: ContactRequestFormProps) {
+export function ContactRequestForm({ onSubmit, isSubmitting, title, subtitle, submitLabel }: ContactRequestFormProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -35,10 +38,10 @@ export function ContactRequestForm({ onSubmit, isSubmitting }: ContactRequestFor
     <div className="w-full max-w-lg mx-auto animate-scale-in">
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-semibold text-foreground tracking-tight mb-2">
-          Demander un devis
+          {title || 'Demander un devis'}
         </h2>
         <p className="text-muted-foreground">
-          Décrivez votre besoin, nous vous recontactons rapidement.
+          {subtitle || 'Décrivez votre besoin, nous vous recontactons rapidement.'}
         </p>
       </div>
 
@@ -129,7 +132,7 @@ export function ContactRequestForm({ onSubmit, isSubmitting }: ContactRequestFor
             className="w-full"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Envoi en cours...' : 'Envoyer ma demande'}
+            {isSubmitting ? 'Envoi en cours...' : (submitLabel || 'Envoyer ma demande')}
           </Button>
         </form>
       </Card>

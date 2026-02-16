@@ -11,7 +11,7 @@ import { ContactConfirmation } from '@/components/booking/ContactConfirmation';
 import { useCenterBySlug, Pack, PriceVariant } from '@/hooks/useCenter';
 import { useCreateAppointment } from '@/hooks/useAppointments';
 import { useCreateContactRequest } from '@/hooks/useContactRequests';
-import { AlertCircle, ChevronLeft, Check, Clock } from 'lucide-react';
+import { AlertCircle, ChevronLeft, Check, Clock, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -23,6 +23,9 @@ type BookingStep =
   | 'landing'
   | 'contact-form'
   | 'contact-confirmation'
+  | 'quote-detail'
+  | 'quote-form'
+  | 'quote-confirmation'
   | 'select-pack'
   | 'select-variant'
   | 'calendar'
@@ -95,6 +98,16 @@ export default function CenterBooking() {
       case 'contact-form':
         setCurrentStep('landing');
         break;
+      case 'quote-detail':
+        if (packs.length > 1) {
+          setCurrentStep('select-pack');
+        } else {
+          setCurrentStep('landing');
+        }
+        break;
+      case 'quote-form':
+        setCurrentStep('quote-detail');
+        break;
       case 'select-pack':
         setCurrentStep('landing');
         break;
@@ -107,7 +120,6 @@ export default function CenterBooking() {
         break;
       case 'calendar':
         if (recognizedClient?.service_id) {
-          // Was in recognized client flow, go back to landing
           setCurrentStep('landing');
         } else if (selectedPack?.price_variants && selectedPack.price_variants.length > 0) {
           setCurrentStep('select-variant');
@@ -155,6 +167,13 @@ export default function CenterBooking() {
   const handleSelectPack = (pack: Pack) => {
     setSelectedPack(pack);
     setSelectedVariant(null);
+    
+    // Quote-based pack → show detail page
+    if (pack.pricing_type === 'quote') {
+      setCurrentStep('quote-detail');
+      return;
+    }
+    
     if (pack.price_variants && pack.price_variants.length > 0) {
       setCurrentStep('select-variant');
     } else {
@@ -263,8 +282,36 @@ export default function CenterBooking() {
     
     setCurrentStep('contact-confirmation');
   };
+
+  const handleQuoteSubmit = async (data: ContactRequestData) => {
+    if (!center || !selectedPack) return;
+    
+    setContactData(data);
+    
+    const { error } = await createContactRequest({
+      center_id: center.id,
+      client_name: data.name,
+      client_email: data.email,
+      client_phone: data.phone,
+      client_address: data.address,
+      message: data.message,
+      request_type: 'quote',
+      service_name: selectedPack.name,
+    });
+    
+    if (error) {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible d\'envoyer votre demande. Veuillez réessayer.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    setCurrentStep('quote-confirmation');
+  };
   
-  const showBackButton = currentStep !== 'landing' && currentStep !== 'confirmation' && currentStep !== 'contact-confirmation';
+  const showBackButton = currentStep !== 'landing' && currentStep !== 'confirmation' && currentStep !== 'contact-confirmation' && currentStep !== 'quote-confirmation';
 
   // Get final price (variant or pack base price)
   const finalPrice = selectedVariant?.price || selectedPack?.price || 0;
@@ -401,6 +448,164 @@ export default function CenterBooking() {
     );
   }
 
+  // Quote detail page (Apple-style presentation like the reference screenshots)
+  if (currentStep === 'quote-detail' && selectedPack) {
+    return (
+      <div className="min-h-screen bg-background">
+        <BookingHeader centerName={center.name} />
+        <main className="px-4 pb-16 pt-8">
+          <div className="max-w-4xl mx-auto">
+            {showBackButton && (
+              <div className="mb-6">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={goToPrevStep}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  Retour
+                </Button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Left: Main content */}
+              <div className="lg:col-span-2 space-y-8">
+                {/* Hero image */}
+                {selectedPack.image_url && (
+                  <div className="rounded-2xl overflow-hidden shadow-lg">
+                    <img
+                      src={selectedPack.image_url}
+                      alt={selectedPack.name}
+                      className="w-full aspect-[16/9] object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+
+                {/* Title (mobile only - desktop shows in sidebar) */}
+                <div className="lg:hidden">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+                    {selectedPack.name}
+                  </h1>
+                </div>
+
+                {/* About section */}
+                {selectedPack.description && (
+                  <Card variant="elevated" className="p-6 sm:p-8 rounded-2xl">
+                    <h2 className="text-xl font-bold text-foreground mb-4">À propos du service</h2>
+                    <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                      {selectedPack.description}
+                    </p>
+                  </Card>
+                )}
+
+                {/* Features */}
+                {selectedPack.features && selectedPack.features.length > 0 && (
+                  <Card variant="elevated" className="p-6 sm:p-8 rounded-2xl">
+                    <h2 className="text-xl font-bold text-foreground mb-4">Ce qui est inclus</h2>
+                    <ul className="space-y-3">
+                      {selectedPack.features.map((feature, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                          <span className="text-foreground">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </Card>
+                )}
+              </div>
+
+              {/* Right: Sticky sidebar */}
+              <div className="lg:col-span-1">
+                <div className="lg:sticky lg:top-8">
+                  <Card variant="elevated" className="p-6 rounded-2xl space-y-5">
+                    <h2 className="text-xl font-bold text-foreground hidden lg:block">{selectedPack.name}</h2>
+                    
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <FileText className="w-4 h-4" />
+                        <span>Tarification sur devis</span>
+                      </div>
+                      {selectedPack.duration && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Clock className="w-4 h-4" />
+                          <span>Durée estimée : {selectedPack.duration}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <Button 
+                      variant="premium" 
+                      size="xl" 
+                      className="w-full"
+                      onClick={() => setCurrentStep('quote-form')}
+                    >
+                      Obtenir un devis
+                    </Button>
+                  </Card>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Quote request form
+  if (currentStep === 'quote-form' && selectedPack) {
+    return (
+      <div className="min-h-screen bg-background">
+        <BookingHeader centerName={center.name} />
+        <main className="px-4 pb-16 pt-8">
+          <div className="max-w-4xl mx-auto">
+            {showBackButton && (
+              <div className="mb-6">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={goToPrevStep}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  Retour
+                </Button>
+              </div>
+            )}
+            <ContactRequestForm 
+              onSubmit={handleQuoteSubmit} 
+              isSubmitting={submittingContact}
+              title={`Demander un devis · ${selectedPack.name}`}
+              subtitle="Décrivez votre besoin, nous vous envoyons un devis personnalisé."
+              submitLabel="Envoyer ma demande de devis"
+            />
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Quote confirmation
+  if (currentStep === 'quote-confirmation' && contactData) {
+    return (
+      <div className="min-h-screen bg-background">
+        <BookingHeader centerName={center.name} />
+        <main className="px-4 pb-16 pt-8">
+          <div className="max-w-4xl mx-auto">
+            <ContactConfirmation 
+              clientName={contactData.name} 
+              centerName={center.name}
+              title="Demande de devis envoyée !"
+              message="Nous étudions votre demande et vous envoyons un devis personnalisé dans les plus brefs délais."
+            />
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   // Pack data for views (standard or recognized client)
   const packData = recognizedClient?.service_id
     ? {
@@ -467,10 +672,12 @@ export default function CenterBooking() {
               
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {packs.map((pack) => {
-                  const hasVariants = pack.price_variants && pack.price_variants.length > 0;
+                  const isQuote = pack.pricing_type === 'quote';
+                  const hasVariants = !isQuote && pack.price_variants && pack.price_variants.length > 0;
                   const minPrice = hasVariants 
                     ? Math.min(...pack.price_variants.map(v => v.price))
                     : pack.price;
+                  const priceLabel = isQuote ? 'Sur devis' : (hasVariants ? `dès ${minPrice}€` : `${pack.price}€`);
 
                   return (
                     <div 

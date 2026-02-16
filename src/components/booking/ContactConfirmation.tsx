@@ -2,12 +2,14 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2 } from 'lucide-react';
 
-interface ContactConfirmationProps {
+export interface ContactConfirmationProps {
   clientName: string;
   centerName?: string;
+  title?: string;
+  message?: string;
 }
 
-export function ContactConfirmation({ clientName, centerName }: ContactConfirmationProps) {
+export function ContactConfirmation({ clientName, centerName, title, message }: ContactConfirmationProps) {
   return (
     <div className="w-full max-w-lg mx-auto text-center animate-scale-in">
       <div className="mb-8">
@@ -15,10 +17,10 @@ export function ContactConfirmation({ clientName, centerName }: ContactConfirmat
           <CheckCircle2 className="w-10 h-10 text-primary" />
         </div>
         <h2 className="text-2xl md:text-3xl font-semibold text-foreground mb-2 tracking-tight">
-          Demande envoyée !
+          {title || 'Demande envoyée !'}
         </h2>
         <p className="text-muted-foreground">
-          Merci {clientName.split(' ')[0]}, votre demande a bien été transmise.
+          {message || `Merci ${clientName.split(' ')[0]}, votre demande a bien été transmise.`}
         </p>
       </div>
       

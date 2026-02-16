@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -6,8 +6,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useMyCenter } from '@/hooks/useCenter';
-import { useMyContactRequests } from '@/hooks/useContactRequests';
-import { MessageSquare, Phone, Clock, CheckCircle, XCircle, MapPin, Mail } from 'lucide-react';
+import { useMyContactRequests, ContactRequest } from '@/hooks/useContactRequests';
+import { MessageSquare, Phone, Clock, CheckCircle, XCircle, MapPin, Mail, FileText } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
@@ -18,12 +18,20 @@ export default function DashboardRequests() {
   const { center, loading: centerLoading } = useMyCenter();
   const { requests, loading, fetchRequests, updateStatus } = useMyContactRequests();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'contact' | 'quote'>('contact');
 
   useEffect(() => {
     if (center) {
       fetchRequests(center.id);
     }
   }, [center]);
+
+  const contactRequests = useMemo(() => 
+    requests.filter(r => r.request_type !== 'quote'), [requests]);
+  const quoteRequests = useMemo(() => 
+    requests.filter(r => r.request_type === 'quote'), [requests]);
+
+  const filteredRequests = activeTab === 'contact' ? contactRequests : quoteRequests;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -70,6 +78,9 @@ export default function DashboardRequests() {
     );
   }
 
+  const newContactCount = contactRequests.filter(r => r.status === 'new').length;
+  const newQuoteCount = quoteRequests.filter(r => r.status === 'new').length;
+
   return (
     <div className="min-h-screen bg-background">
       <DashboardSidebar />
@@ -82,21 +93,59 @@ export default function DashboardRequests() {
         />
         <main className="p-4 lg:p-8">
           <div className="max-w-4xl">
-            {requests.length === 0 ? (
+            {/* Tabs */}
+            <div className="flex gap-2 mb-6">
+              <Button
+                variant={activeTab === 'contact' ? 'default' : 'outline'}
+                size="sm"
+                className="rounded-xl"
+                onClick={() => setActiveTab('contact')}
+              >
+                <MessageSquare className="w-4 h-4 mr-1.5" />
+                Demandes de contact
+                {newContactCount > 0 && (
+                  <Badge variant="secondary" className="ml-2 h-5 min-w-5 px-1.5 text-xs">
+                    {newContactCount}
+                  </Badge>
+                )}
+              </Button>
+              <Button
+                variant={activeTab === 'quote' ? 'default' : 'outline'}
+                size="sm"
+                className="rounded-xl"
+                onClick={() => setActiveTab('quote')}
+              >
+                <FileText className="w-4 h-4 mr-1.5" />
+                Demandes de devis
+                {newQuoteCount > 0 && (
+                  <Badge variant="secondary" className="ml-2 h-5 min-w-5 px-1.5 text-xs">
+                    {newQuoteCount}
+                  </Badge>
+                )}
+              </Button>
+            </div>
+
+            {filteredRequests.length === 0 ? (
               <Card variant="elevated" className="p-8 sm:p-12 text-center rounded-2xl">
                 <div className="w-14 h-14 sm:w-16 sm:h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <MessageSquare className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground/50" />
+                  {activeTab === 'contact' ? (
+                    <MessageSquare className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground/50" />
+                  ) : (
+                    <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground/50" />
+                  )}
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {t('requests.noRequests')}
+                  {activeTab === 'contact' ? t('requests.noRequests') : 'Aucune demande de devis'}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {t('requests.requestsWillAppear')}
+                  {activeTab === 'contact' 
+                    ? t('requests.requestsWillAppear')
+                    : 'Les demandes de devis de vos services apparaîtront ici.'}
                 </p>
               </Card>
             ) : (
               <div className="space-y-3">
-                {requests.map((request) => (
+                {filteredRequests.map((request) => (
                   <Card key={request.id} variant="elevated" className="p-4 sm:p-5 rounded-2xl">
                     <div className="flex flex-col gap-3 sm:gap-4">
                       <div className="flex items-start justify-between gap-3">
@@ -117,13 +166,20 @@ export default function DashboardRequests() {
                               {request.client_phone}
                             </a>
                             {request.client_email && (
-                              <span className="text-sm text-muted-foreground">
+                              <span className="text-sm text-muted-foreground block">
                                 {request.client_email}
                               </span>
                             )}
                           </div>
                         </div>
-                        {getStatusBadge(request.status)}
+                        <div className="flex flex-col items-end gap-1.5">
+                          {getStatusBadge(request.status)}
+                          {request.service_name && (
+                            <Badge variant="outline" className="text-xs">
+                              {request.service_name}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                       
                       <div className="flex flex-wrap gap-2">

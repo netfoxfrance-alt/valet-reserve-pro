@@ -61,6 +61,7 @@ export interface Pack {
   image_url: string | null;
   sort_order: number;
   active: boolean;
+  pricing_type: 'fixed' | 'quote';
   created_at: string;
   updated_at: string;
 }
@@ -184,6 +185,7 @@ export function useCenterBySlug(slug: string) {
       const transformedPacks: Pack[] = (packsData || []).map(p => ({
         ...p,
         price_variants: (p.price_variants as unknown as PriceVariant[]) || [],
+        pricing_type: ((p as any).pricing_type || 'fixed') as 'fixed' | 'quote',
       }));
       setPacks(transformedPacks);
 
@@ -227,6 +229,7 @@ export function useMyPacks() {
       const transformedPacks: Pack[] = (data || []).map(p => ({
         ...p,
         price_variants: (p.price_variants as unknown as PriceVariant[]) || [],
+        pricing_type: ((p as any).pricing_type || 'fixed') as 'fixed' | 'quote',
       }));
       setPacks(transformedPacks);
       setLoading(false);
@@ -251,6 +254,7 @@ export function useMyPacks() {
       const transformedPack: Pack = {
         ...data,
         price_variants: (data.price_variants as unknown as PriceVariant[]) || [],
+        pricing_type: ((data as any).pricing_type || 'fixed') as 'fixed' | 'quote',
       };
       setPacks([...packs, transformedPack]);
     }
