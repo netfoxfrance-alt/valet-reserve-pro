@@ -27,7 +27,6 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfSale from "./pages/TermsOfSale";
 import LegalNotices from "./pages/LegalNotices";
 import Presentation from "./pages/Presentation";
-import Cartography from "./pages/Cartography";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -46,7 +45,6 @@ const App = () => (
             <Route path="/cgv" element={<TermsOfSale />} />
             <Route path="/mentions-legales" element={<LegalNotices />} />
             <Route path="/presentation" element={<Presentation />} />
-            <Route path="/carto" element={<Cartography />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/complete-signup" element={<CompleteSignup />} />
             {/* All dashboard routes - Trial model (no restrictions) */}
