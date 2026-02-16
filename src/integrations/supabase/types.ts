@@ -414,6 +414,8 @@ export type Database = {
           created_at: string
           id: string
           message: string | null
+          request_type: string
+          service_name: string | null
           status: string
         }
         Insert: {
@@ -426,6 +428,8 @@ export type Database = {
           created_at?: string
           id?: string
           message?: string | null
+          request_type?: string
+          service_name?: string | null
           status?: string
         }
         Update: {
@@ -438,6 +442,8 @@ export type Database = {
           created_at?: string
           id?: string
           message?: string | null
+          request_type?: string
+          service_name?: string | null
           status?: string
         }
         Relationships: [
@@ -751,6 +757,7 @@ export type Database = {
           name: string
           price: number
           price_variants: Json | null
+          pricing_type: string
           sort_order: number | null
           updated_at: string | null
         }
@@ -766,6 +773,7 @@ export type Database = {
           name: string
           price: number
           price_variants?: Json | null
+          pricing_type?: string
           sort_order?: number | null
           updated_at?: string | null
         }
@@ -781,6 +789,7 @@ export type Database = {
           name?: string
           price?: number
           price_variants?: Json | null
+          pricing_type?: string
           sort_order?: number | null
           updated_at?: string | null
         }

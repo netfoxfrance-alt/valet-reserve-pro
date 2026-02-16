@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 
 import { useMyPacks, Pack, useMyCenter } from '@/hooks/useCenter';
 import { useAuth } from '@/hooks/useAuth';
-import { Pencil, Clock, Plus, Trash2, Loader2, ChevronDown, ChevronUp, Image as ImageIcon, X } from 'lucide-react';
+import { Pencil, Clock, Plus, Trash2, Loader2, ChevronDown, ChevronUp, Image as ImageIcon, X, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { VariantsEditor } from '@/components/dashboard/VariantsEditor';
 import { FeaturesEditor } from '@/components/dashboard/FeaturesEditor';
@@ -59,6 +59,7 @@ export default function DashboardPacks() {
     active: true,
     price_variants: [] as PriceVariant[],
     image_url: null as string | null,
+    pricing_type: 'fixed' as 'fixed' | 'quote',
   });
   const newImageInputRef = useRef<HTMLInputElement>(null);
   const editImageInputRef = useRef<HTMLInputElement>(null);
@@ -73,6 +74,7 @@ export default function DashboardPacks() {
       features: pack.features,
       price_variants: (pack as any).price_variants || [],
       image_url: (pack as any).image_url || null,
+      pricing_type: pack.pricing_type || 'fixed',
     });
   };
 
@@ -88,7 +90,7 @@ export default function DashboardPacks() {
   };
 
   const handleCreate = async () => {
-    if (!newPack.name || (newPack.price <= 0 && newPack.price_variants.length === 0)) {
+    if (!newPack.name || (newPack.pricing_type === 'fixed' && newPack.price <= 0 && newPack.price_variants.length === 0)) {
       toast.error('Veuillez remplir le nom et au moins un prix');
       return;
     }
@@ -111,6 +113,7 @@ export default function DashboardPacks() {
         active: true,
         price_variants: [],
         image_url: null,
+        pricing_type: 'fixed',
       });
     }
   };
@@ -338,12 +341,14 @@ export default function DashboardPacks() {
                   </div>
                 )}
 
-                <VariantsEditor 
+                {newPack.pricing_type === 'fixed' && (
+                  <VariantsEditor
                   variants={newPack.price_variants} 
                   onAdd={handleAddNewVariant}
                   onUpdate={handleUpdateNewVariant}
                   onRemove={handleRemoveNewVariant}
                 />
+                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="new-description">Description</Label>
@@ -489,7 +494,33 @@ export default function DashboardPacks() {
                           </div>
                         </div>
 
-                        {(editForm.price_variants?.length || 0) === 0 && (
+                        {/* Pricing type toggle */}
+                        <div className="space-y-2">
+                          <Label>Type de tarification</Label>
+                          <div className="flex gap-2">
+                            <Button
+                              type="button"
+                              variant={editForm.pricing_type === 'fixed' || !editForm.pricing_type ? 'default' : 'outline'}
+                              size="sm"
+                              className="flex-1 rounded-xl"
+                              onClick={() => setEditForm({ ...editForm, pricing_type: 'fixed' })}
+                            >
+                              Prix fixe
+                            </Button>
+                            <Button
+                              type="button"
+                              variant={editForm.pricing_type === 'quote' ? 'default' : 'outline'}
+                              size="sm"
+                              className="flex-1 rounded-xl"
+                              onClick={() => setEditForm({ ...editForm, pricing_type: 'quote', price: 0, price_variants: [] })}
+                            >
+                              <FileText className="w-4 h-4 mr-1.5" />
+                              Sur devis
+                            </Button>
+                          </div>
+                        </div>
+
+                        {(editForm.pricing_type !== 'quote') && (editForm.price_variants?.length || 0) === 0 && (
                           <div className="space-y-2">
                             <Label htmlFor={`price-${pack.id}`}>Prix unique (€)</Label>
                             <Input
@@ -501,12 +532,14 @@ export default function DashboardPacks() {
                           </div>
                         )}
 
-                        <VariantsEditor 
-                          variants={editForm.price_variants || []} 
-                          onAdd={handleAddEditVariant}
-                          onUpdate={handleUpdateEditVariant}
-                          onRemove={handleRemoveEditVariant}
-                        />
+                        {(editForm.pricing_type !== 'quote') && (
+                          <VariantsEditor 
+                            variants={editForm.price_variants || []} 
+                            onAdd={handleAddEditVariant}
+                            onUpdate={handleUpdateEditVariant}
+                            onRemove={handleRemoveEditVariant}
+                          />
+                        )}
 
                         <div className="space-y-2">
                           <Label htmlFor={`description-${pack.id}`}>Description</Label>
@@ -601,11 +634,16 @@ export default function DashboardPacks() {
                           <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6">
                             <div className="text-left sm:text-right">
                               <p className="text-xl sm:text-2xl font-bold text-foreground">
-                                {variants.length > 0 ? `À partir de ${minPrice}€` : `${pack.price}€`}
+                                {pack.pricing_type === 'quote' 
+                                  ? 'Sur devis' 
+                                  : variants.length > 0 ? `À partir de ${minPrice}€` : `${pack.price}€`}
                               </p>
                               <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                <Clock className="w-4 h-4" />
-                                {pack.duration || 'Non défini'}
+                                {pack.pricing_type === 'quote' ? (
+                                  <><FileText className="w-4 h-4" /> Demande de devis</>
+                                ) : (
+                                  <><Clock className="w-4 h-4" /> {pack.duration || 'Non défini'}</>
+                                )}
                               </div>
                             </div>
                             <div className="flex gap-1">

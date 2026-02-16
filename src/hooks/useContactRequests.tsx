@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { findOrCreateClient } from '@/lib/clientService';
 
-interface ContactRequest {
+export interface ContactRequest {
   id: string;
   center_id: string;
   client_name: string;
@@ -11,6 +11,8 @@ interface ContactRequest {
   client_address: string | null;
   message: string | null;
   status: string;
+  request_type: 'contact' | 'quote';
+  service_name: string | null;
   created_at: string;
   contacted_at: string | null;
 }
@@ -25,6 +27,8 @@ export function useCreateContactRequest() {
     client_phone: string;
     client_address?: string;
     message?: string;
+    request_type?: 'contact' | 'quote';
+    service_name?: string;
   }) => {
     setLoading(true);
     try {
@@ -48,6 +52,8 @@ export function useCreateContactRequest() {
           client_phone: data.client_phone,
           client_address: data.client_address || null,
           message: data.message || null,
+          request_type: data.request_type || 'contact',
+          service_name: data.service_name || null,
         });
       
       return { error };
@@ -72,7 +78,7 @@ export function useMyContactRequests() {
       .order('created_at', { ascending: false });
     
     if (!error && data) {
-      setRequests(data);
+      setRequests(data as unknown as ContactRequest[]);
     }
     setLoading(false);
     return { data, error };
