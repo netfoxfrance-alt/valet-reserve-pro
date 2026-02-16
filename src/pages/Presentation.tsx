@@ -2,6 +2,8 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Logo } from '@/components/ui/Logo';
 import { Button } from '@/components/ui/button';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 import { 
   ArrowRight, Check, Calendar, Users, BarChart3, 
   Clock, Globe, Palette, Phone,
@@ -38,16 +40,17 @@ function SlideWrapper({ active, children }: { active: boolean; children: React.R
    ═══════════════════════════════════════════════ */
 
 function SlideCover() {
+  const { t } = useTranslation();
   return (
     <div className="max-w-3xl mx-auto text-center">
       <div className="mb-8 animate-fade-in">
         <Logo size="xl" />
       </div>
       <h1 className="animate-fade-in-up stagger-1 text-3xl sm:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-6 leading-[1.1]">
-        La plateforme complète pour les professionnels du nettoyage
+        {t('presentation.coverTitle')}
       </h1>
       <p className="animate-fade-in-up stagger-2 text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto mb-10">
-        Vitrine, réservation et gestion centralisée. Tout dans un seul outil.
+        {t('presentation.coverSubtitle')}
       </p>
       <div className="animate-fade-in-up stagger-3">
         <div className="inline-flex items-center gap-8 bg-secondary/40 rounded-full px-8 py-3">
@@ -55,13 +58,13 @@ function SlideCover() {
             <div className="w-5 h-5 rounded-full bg-emerald-500/15 flex items-center justify-center">
               <Check className="w-3 h-3 text-emerald-500" />
             </div>
-            <span className="text-sm font-medium text-foreground">30 jours offerts</span>
+            <span className="text-sm font-medium text-foreground">{t('presentation.daysOffered')}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 rounded-full bg-emerald-500/15 flex items-center justify-center">
               <Check className="w-3 h-3 text-emerald-500" />
             </div>
-            <span className="text-sm font-medium text-foreground">Sans engagement</span>
+            <span className="text-sm font-medium text-foreground">{t('presentation.noCommitment')}</span>
           </div>
         </div>
       </div>
@@ -70,20 +73,21 @@ function SlideCover() {
 }
 
 function SlideNeeds() {
+  const { t } = useTranslation();
   const needs = [
-    { icon: Globe, label: 'Présenter son entreprise et ses prestations' },
-    { icon: Calendar, label: 'Un système de réservation en ligne' },
-    { icon: Clock, label: 'Un agenda pour organiser son planning' },
-    { icon: Users, label: 'Un suivi de ses clients et de son activité' },
-    { icon: Receipt, label: 'Un outil pour les factures et devis' },
+    { icon: Globe, label: t('presentation.need1') },
+    { icon: Calendar, label: t('presentation.need2') },
+    { icon: Clock, label: t('presentation.need3') },
+    { icon: Users, label: t('presentation.need4') },
+    { icon: Receipt, label: t('presentation.need5') },
   ];
 
   return (
     <div className="max-w-3xl mx-auto w-full">
       <div className="text-center mb-10 sm:mb-12">
-        <p className="animate-fade-in-up text-sm font-semibold text-primary tracking-widest uppercase mb-4">Le constat</p>
+        <p className="animate-fade-in-up text-sm font-semibold text-primary tracking-widest uppercase mb-4">{t('presentation.needsLabel')}</p>
         <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
-          Aujourd'hui, une entreprise de nettoyage a besoin de :
+          {t('presentation.needsTitle')}
         </h2>
       </div>
       <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto">
@@ -101,27 +105,28 @@ function SlideNeeds() {
         ))}
       </div>
       <p className="animate-fade-in-up text-center text-sm text-muted-foreground mt-8 max-w-md mx-auto" style={{ animationDelay: '0.7s' }}>
-        Il faut un site, beaucoup d'outils éparpillés... et du temps pour tout gérer.
+        {t('presentation.needsFooter')}
       </p>
     </div>
   );
 }
 
 function SlideSolution() {
+  const { t } = useTranslation();
   const pillars = [
-    { icon: Globe, label: 'Une page web', desc: 'Faite pour convertir vos visiteurs en clients', color: 'bg-blue-500/10', iconColor: 'text-blue-600' },
-    { icon: Calendar, label: 'Un système de rendez-vous', desc: 'Réservation en ligne + gestion du planning', color: 'bg-emerald-500/10', iconColor: 'text-emerald-600' },
-    { icon: BarChart3, label: 'Un espace de gestion', desc: 'Clients, statistiques, factures, devis', color: 'bg-violet-500/10', iconColor: 'text-violet-600' },
+    { icon: Globe, label: t('presentation.pillar1Title'), desc: t('presentation.pillar1Desc'), color: 'bg-blue-500/10', iconColor: 'text-blue-600' },
+    { icon: Calendar, label: t('presentation.pillar2Title'), desc: t('presentation.pillar2Desc'), color: 'bg-emerald-500/10', iconColor: 'text-emerald-600' },
+    { icon: BarChart3, label: t('presentation.pillar3Title'), desc: t('presentation.pillar3Desc'), color: 'bg-violet-500/10', iconColor: 'text-violet-600' },
   ];
 
   return (
     <div className="max-w-4xl mx-auto w-full text-center">
-      <p className="animate-fade-in-up text-sm font-semibold text-primary tracking-widest uppercase mb-4">La solution</p>
+      <p className="animate-fade-in-up text-sm font-semibold text-primary tracking-widest uppercase mb-4">{t('presentation.solutionLabel')}</p>
       <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3">
-        CleaningPage combine tout ce dont vous avez besoin
+        {t('presentation.solutionTitle')}
       </h2>
       <p className="animate-fade-in-up stagger-2 text-muted-foreground text-sm sm:text-base max-w-md mx-auto mb-12 sm:mb-14">
-        Un seul outil. Pas dix.
+        {t('presentation.solutionSubtitle')}
       </p>
       <div className="grid sm:grid-cols-3 gap-5 sm:gap-6">
         {pillars.map((p, i) => (
@@ -143,14 +148,15 @@ function SlideSolution() {
 }
 
 function SlideCustomize() {
+  const { t } = useTranslation();
   return (
     <div className="max-w-5xl mx-auto w-full">
       <div className="text-center mb-6 sm:mb-8">
         <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3">
-          Personnalisez votre page sans aucune compétence technique
+          {t('presentation.customizeTitle')}
         </h2>
         <p className="animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto">
-          Ajoutez votre logo, vos couleurs, vos prestations. Modifiez tout, à tout moment.
+          {t('presentation.customizeSubtitle')}
         </p>
       </div>
       <div className="animate-fade-in-up stagger-2">
@@ -169,11 +175,11 @@ function SlideCustomize() {
               </div>
               <div className="px-4 pb-4 text-center">
                 <h3 className="text-sm font-bold text-foreground mb-0.5">Clean Premium</h3>
-                <p className="text-[10px] text-muted-foreground mb-2">Nettoyage premium à domicile, 7j/7.</p>
+                <p className="text-[10px] text-muted-foreground mb-2">{t('presentation.customizePremiumDesc')}</p>
                 <div className="flex justify-center mb-3">
                   <span className="inline-flex items-center gap-1.5 text-[9px] bg-white border border-emerald-200 text-emerald-600 px-3 py-1 rounded-full font-medium">
                     <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                    Ouvert
+                    {t('presentation.customizeOpen')}
                   </span>
                 </div>
                 <div className="flex justify-center gap-2 mb-3">
@@ -184,7 +190,7 @@ function SlideCustomize() {
                   ))}
                 </div>
                 <div className="text-left mb-3">
-                  <h4 className="text-xs font-semibold text-foreground mb-2">Nos formules</h4>
+                  <h4 className="text-xs font-semibold text-foreground mb-2">{t('presentation.customizeOurFormulas')}</h4>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="bg-card border border-border/60 rounded-lg p-2">
                       <p className="text-[10px] font-semibold text-foreground">Express</p>
@@ -197,7 +203,7 @@ function SlideCustomize() {
                   </div>
                 </div>
                 <button className="w-full bg-neutral-800 text-white py-2.5 rounded-xl text-xs font-semibold">
-                  Réserver maintenant
+                  {t('presentation.customizeBookNow')}
                 </button>
               </div>
             </div>
@@ -207,7 +213,7 @@ function SlideCustomize() {
           <div className="hidden sm:block">
             <div className="absolute top-8 left-4 lg:left-16 z-30 animate-float" style={{ animationDelay: '0s' }}>
               <div className="bg-card rounded-xl p-3 shadow-xl ring-1 ring-border/30 relative">
-                <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Couleurs</p>
+                <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">{t('presentation.customizeColors')}</p>
                 <div className="flex gap-1.5">
                   {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500'].map((bg, i) => (
                     <div key={i} className={`w-6 h-6 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''} shadow-sm`} />
@@ -224,13 +230,13 @@ function SlideCustomize() {
 
             <div className="absolute top-4 right-4 lg:right-16 z-30 animate-float" style={{ animationDelay: '0.15s' }}>
               <div className="bg-card rounded-xl p-3 shadow-xl ring-1 ring-border/30">
-                <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Disponibilités</p>
+                <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">{t('presentation.customizeAvailability')}</p>
                 <div className="space-y-1">
                   {[
                     { day: 'Lun', hours: '9h-18h', active: true },
                     { day: 'Mar', hours: '9h-18h', active: true },
                     { day: 'Mer', hours: '14h-18h', active: true },
-                    { day: 'Sam', hours: 'Fermé', active: false },
+                    { day: 'Sam', hours: '—', active: false },
                   ].map((d, i) => (
                     <div key={i} className="flex items-center gap-1.5">
                       <span className="text-[8px] w-5 text-muted-foreground">{d.day}</span>
@@ -246,7 +252,7 @@ function SlideCustomize() {
 
             <div className="absolute bottom-16 left-4 lg:left-12 z-30 animate-float" style={{ animationDelay: '0.25s' }}>
               <div className="bg-card rounded-xl p-3 shadow-xl ring-1 ring-border/30 w-32">
-                <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Formules</p>
+                <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">{t('presentation.customizeFormulas')}</p>
                 <div className="space-y-1.5">
                   {[
                     { name: 'Express', price: '35€' },
@@ -259,7 +265,7 @@ function SlideCustomize() {
                     </div>
                   ))}
                   <button className="w-full text-[9px] text-muted-foreground font-medium py-1 border border-dashed border-border rounded-md mt-0.5">
-                    + Ajouter
+                    {t('presentation.customizeAddFormula')}
                   </button>
                 </div>
               </div>
@@ -267,7 +273,7 @@ function SlideCustomize() {
 
             <div className="absolute bottom-8 right-4 lg:right-12 z-30 animate-float" style={{ animationDelay: '0.4s' }}>
               <div className="bg-card rounded-xl p-2.5 shadow-xl ring-1 ring-border/30">
-                <p className="text-[8px] text-muted-foreground mb-1 font-medium">Galerie</p>
+                <p className="text-[8px] text-muted-foreground mb-1 font-medium">{t('presentation.customizeGallery')}</p>
                 <div className="flex gap-1">
                   <div className="w-7 h-7 bg-secondary rounded overflow-hidden">
                     <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
@@ -289,39 +295,39 @@ function SlideCustomize() {
 }
 
 function SlideModes() {
+  const { t } = useTranslation();
   return (
     <div className="max-w-5xl mx-auto w-full">
       <div className="text-center mb-8 sm:mb-10">
         <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
-          Adapté à tout type d'entreprise de nettoyage
+          {t('presentation.modesTitle')}
         </h2>
       </div>
       <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
         {/* Left: Fixed services */}
         <div className="animate-fade-in-up bg-card rounded-3xl p-5 sm:p-6 border border-border/40 shadow-sm" style={{ animationDelay: '0.2s' }}>
           <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
-            Vous avez des prestations fixes ?
+            {t('presentation.modesFixedTitle')}
           </h3>
           <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-            Mettez-les directement sur votre page et vos clients peuvent réserver facilement.
+            {t('presentation.modesFixedDesc')}
           </p>
-          {/* Two separate service examples */}
           <div className="space-y-3">
             <div className="rounded-2xl overflow-hidden shadow-md ring-1 ring-border/10 relative">
               <img src={presCarDetailing} alt="Detailing auto" className="w-full h-28 sm:h-32 object-cover" />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
                 <div className="flex items-end justify-between">
-                  <p className="text-xs font-semibold text-white">LAVAGE COMPLET</p>
-                  <p className="text-sm font-bold text-white">dès 65€</p>
+                  <p className="text-xs font-semibold text-white">{t('presentation.modesFixedService1')}</p>
+                  <p className="text-sm font-bold text-white">{t('presentation.modesFixedPrice1')}</p>
                 </div>
               </div>
             </div>
             <div className="rounded-2xl overflow-hidden shadow-md ring-1 ring-border/10 relative">
-              <img src={sofaBanner} alt="Nettoyage canapé" className="w-full h-28 sm:h-32 object-cover" />
+              <img src={sofaBanner} alt="Sofa cleaning" className="w-full h-28 sm:h-32 object-cover" />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
                 <div className="flex items-end justify-between">
-                  <p className="text-xs font-semibold text-white">NETTOYAGE CANAPÉ</p>
-                  <p className="text-sm font-bold text-white">80€</p>
+                  <p className="text-xs font-semibold text-white">{t('presentation.modesFixedService2')}</p>
+                  <p className="text-sm font-bold text-white">{t('presentation.modesFixedPrice2')}</p>
                 </div>
               </div>
             </div>
@@ -331,28 +337,27 @@ function SlideModes() {
         {/* Right: Custom quotes */}
         <div className="animate-fade-in-up bg-card rounded-3xl p-5 sm:p-6 border border-border/40 shadow-sm" style={{ animationDelay: '0.4s' }}>
           <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
-            Vous faites des prestations sur devis personnalisé ?
+            {t('presentation.modesCustomTitle')}
           </h3>
           <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-            Créez une prestation sur mesure pour un client. Une fois faite, il pourra s'identifier sur votre page pour réserver sa propre prestation.
+            {t('presentation.modesCustomDesc')}
           </p>
-          {/* Mockup: client greeting */}
           <div className="bg-secondary/30 rounded-2xl p-5">
-            <p className="text-base sm:text-lg font-bold text-foreground mb-1">Bonjour Sophie ! 👋</p>
-            <p className="text-sm text-muted-foreground mb-4">Votre prestation personnalisée :</p>
+            <p className="text-base sm:text-lg font-bold text-foreground mb-1">{t('presentation.modesCustomGreeting')}</p>
+            <p className="text-sm text-muted-foreground mb-4">{t('presentation.modesCustomSubtext')}</p>
             <div className="bg-card rounded-xl p-4 flex items-center justify-between mb-4 border border-border/30 shadow-sm">
               <div>
-                <p className="text-sm font-semibold text-foreground">Nettoyage complet maison</p>
+                <p className="text-sm font-semibold text-foreground">{t('presentation.modesCustomService')}</p>
                 <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                  <Clock className="w-3 h-3" /> 90 min
+                  <Clock className="w-3 h-3" /> {t('presentation.modesCustomDuration')}
                 </p>
               </div>
-              <p className="text-xl sm:text-2xl font-bold text-foreground">75€</p>
+              <p className="text-xl sm:text-2xl font-bold text-foreground">{t('presentation.modesCustomPrice')}</p>
             </div>
             <button className="w-full bg-neutral-800 text-white py-3 rounded-xl text-sm font-semibold mb-2">
-              Choisir un créneau
+              {t('presentation.modesCustomCTA')}
             </button>
-            <p className="text-xs text-muted-foreground text-center underline">Ce n'est pas moi</p>
+            <p className="text-xs text-muted-foreground text-center underline">{t('presentation.modesCustomNotMe')}</p>
           </div>
         </div>
       </div>
@@ -364,34 +369,31 @@ function SlideModes() {
    DASHBOARD JSX MOCKUP SLIDES
    ═══════════════════════════════════════════════ */
 
-/* Shared mini sidebar for dashboard mockups */
-function MockSidebar({ active }: { active: string }) {
-  const items = [
-    { label: 'Réservations', icon: Calendar, badge: '3' },
-    { label: 'Calendrier', icon: Calendar },
-    { label: 'Demandes', icon: Mail, badge: '2' },
-    { label: 'Clients', icon: Users },
-    { label: 'Factures & Devis', icon: FileText },
-    { label: 'Statistiques', icon: BarChart3 },
-  ];
+function MockSidebar({ active, items }: { active: string; items: string[] }) {
+  const icons = [Calendar, Calendar, Mail, Users, FileText, BarChart3];
+  const badges: Record<number, string> = { 0: '3', 2: '2' };
   return (
     <div className="w-44 flex-shrink-0 bg-card border-r border-border/30 py-4 px-3 flex-col hidden lg:flex">
       <p className="text-xs font-bold text-foreground mb-0.5 px-1">CleaningPage</p>
       <p className="text-[9px] text-muted-foreground mb-4 px-1">clean-auto-pro</p>
       <div className="space-y-0.5">
-        {items.map((item) => (
-          <div key={item.label} className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] ${active === item.label ? 'bg-foreground text-background font-semibold' : 'text-muted-foreground hover:bg-secondary/50'}`}>
-            <item.icon className="w-3.5 h-3.5 flex-shrink-0" />
-            <span className="flex-1 truncate">{item.label}</span>
-            {item.badge && <span className={`text-[9px] w-4 h-4 rounded-full flex items-center justify-center ${active === item.label ? 'bg-background text-foreground' : 'bg-foreground text-background'} font-bold`}>{item.badge}</span>}
-          </div>
-        ))}
+        {items.map((label, i) => {
+          const Icon = icons[i];
+          const badge = badges[i];
+          return (
+            <div key={label} className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] ${active === label ? 'bg-foreground text-background font-semibold' : 'text-muted-foreground hover:bg-secondary/50'}`}>
+              <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+              <span className="flex-1 truncate">{label}</span>
+              {badge && <span className={`text-[9px] w-4 h-4 rounded-full flex items-center justify-center ${active === label ? 'bg-background text-foreground' : 'bg-foreground text-background'} font-bold`}>{badge}</span>}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-function MockDashboardShell({ active, children, title, subtitle }: { active: string; children: React.ReactNode; title: string; subtitle: string }) {
+function MockDashboardShell({ active, children, title, subtitle, sidebarItems }: { active: string; children: React.ReactNode; title: string; subtitle: string; sidebarItems: string[] }) {
   return (
     <div className="max-w-5xl mx-auto w-full">
       <div className="text-center mb-5 sm:mb-6">
@@ -404,7 +406,6 @@ function MockDashboardShell({ active, children, title, subtitle }: { active: str
       </div>
       <div className="animate-fade-in-up stagger-2">
         <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/40 max-w-4xl mx-auto">
-          {/* Browser chrome */}
           <div className="bg-secondary/50 px-4 py-2 flex items-center gap-3 border-b border-border/30">
             <div className="flex gap-1.5">
               <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
@@ -415,9 +416,8 @@ function MockDashboardShell({ active, children, title, subtitle }: { active: str
               <div className="text-[10px] text-muted-foreground bg-background/60 rounded-md px-3 py-0.5">cleaningpage.com/<span className="text-foreground font-medium">dashboard</span></div>
             </div>
           </div>
-          {/* Content with sidebar */}
           <div className="flex min-h-[340px] sm:min-h-[380px]">
-            <MockSidebar active={active} />
+            <MockSidebar active={active} items={sidebarItems} />
             <div className="flex-1 p-4 sm:p-5 overflow-hidden bg-background">
               {children}
             </div>
@@ -430,49 +430,47 @@ function MockDashboardShell({ active, children, title, subtitle }: { active: str
 
 /* ─── Slide 6: Réservations ─── */
 function SlideReservations() {
+  const { t } = useTranslation();
+  const sidebarItems = t('presentation.sidebarItems', { returnObjects: true }) as string[];
   const appointments = [
-    { initials: 'JM', color: 'bg-blue-500', name: 'Jean Martin', service: 'Nettoyage Complet · 10:00 · 1h30', price: '89€', status: 'Confirmé', statusColor: 'bg-emerald-500' },
-    { initials: 'MD', color: 'bg-pink-400', name: 'Marie Dupont', service: 'Express · 11:30 · 45min', price: '35€', status: 'En attente', statusColor: 'bg-amber-500' },
-    { initials: 'PB', color: 'bg-orange-500', name: 'Pierre Bernard', service: 'Rénovation Premium · 14:00 · 3h', price: '159€', status: 'Confirmé', statusColor: 'bg-emerald-500' },
-    { initials: '?', color: 'bg-blue-400', name: 'Demande entrante', service: 'Nettoyage canapé · — · —', price: 'Sur devis', status: 'Demande', statusColor: 'bg-blue-500' },
-    { initials: 'SL', color: 'bg-violet-500', name: 'Sophie Leroy', service: 'Pack Intérieur · 16:30 · 1h', price: '65€', status: 'Confirmé', statusColor: 'bg-emerald-500' },
+    { initials: 'JM', color: 'bg-blue-500', name: 'Jean Martin', service: 'Nettoyage Complet · 10:00 · 1h30', price: '89€', status: t('presentation.dashConfirmed'), statusColor: 'bg-emerald-500' },
+    { initials: 'MD', color: 'bg-pink-400', name: 'Marie Dupont', service: 'Express · 11:30 · 45min', price: '35€', status: t('presentation.dashPending'), statusColor: 'bg-amber-500' },
+    { initials: 'PB', color: 'bg-orange-500', name: 'Pierre Bernard', service: 'Rénovation Premium · 14:00 · 3h', price: '159€', status: t('presentation.dashConfirmed'), statusColor: 'bg-emerald-500' },
+    { initials: '?', color: 'bg-blue-400', name: t('presentation.dashIncomingRequest'), service: `${t('presentation.modesFixedService2')} · — · —`, price: t('presentation.dashOnQuote'), status: t('presentation.dashRequest'), statusColor: 'bg-blue-500' },
+    { initials: 'SL', color: 'bg-violet-500', name: 'Sophie Leroy', service: 'Pack Intérieur · 16:30 · 1h', price: '65€', status: t('presentation.dashConfirmed'), statusColor: 'bg-emerald-500' },
   ];
 
   return (
-    <MockDashboardShell active="Réservations" title="Gérez vos réservations" subtitle="Vos réservations s'ajoutent automatiquement. Suivez tout en un coup d'œil.">
-      {/* Header */}
+    <MockDashboardShell active={sidebarItems[0]} title={t('presentation.dashReservationsTitle')} subtitle={t('presentation.dashReservationsSubtitle')} sidebarItems={sidebarItems}>
       <div className="flex items-start justify-between mb-3">
         <div>
-          <p className="text-sm sm:text-base font-semibold text-foreground">Réservations</p>
+          <p className="text-sm sm:text-base font-semibold text-foreground">{t('presentation.dashReservationsLabel')}</p>
           <p className="text-[10px] text-muted-foreground">Mercredi 11 février 2026</p>
         </div>
-        <button className="bg-primary text-primary-foreground text-[10px] font-semibold px-3 py-1.5 rounded-lg">+ Nouveau RDV</button>
+        <button className="bg-primary text-primary-foreground text-[10px] font-semibold px-3 py-1.5 rounded-lg">{t('presentation.dashNewBooking')}</button>
       </div>
-      {/* KPI cards */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         <div className="bg-card border border-border/40 rounded-xl p-2.5">
-          <p className="text-[9px] text-muted-foreground">Aujourd'hui</p>
+          <p className="text-[9px] text-muted-foreground">{t('presentation.dashToday')}</p>
           <p className="text-lg font-bold text-foreground">5</p>
-          <p className="text-[8px] text-emerald-500 flex items-center gap-0.5"><span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" /> 2 en attente</p>
+          <p className="text-[8px] text-emerald-500 flex items-center gap-0.5"><span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" /> 2 {t('presentation.dashPendingCount')}</p>
         </div>
         <div className="bg-card border border-border/40 rounded-xl p-2.5">
-          <p className="text-[9px] text-muted-foreground">Cette semaine</p>
+          <p className="text-[9px] text-muted-foreground">{t('presentation.dashThisWeek')}</p>
           <p className="text-lg font-bold text-foreground">23</p>
-          <p className="text-[8px] text-muted-foreground">dont 4 demandes</p>
+          <p className="text-[8px] text-muted-foreground">{t('presentation.dashIncludingRequests')}</p>
         </div>
         <div className="bg-card border border-border/40 rounded-xl p-2.5">
-          <p className="text-[9px] text-muted-foreground">CA du jour</p>
+          <p className="text-[9px] text-muted-foreground">{t('presentation.dashDailyRevenue')}</p>
           <p className="text-lg font-bold text-foreground">340€</p>
           <p className="text-[8px] text-emerald-500">↑ 15%</p>
         </div>
       </div>
-      {/* Tabs */}
       <div className="flex gap-3 mb-2 border-b border-border/30 pb-1.5">
-        {['Prochains', 'Demandes', 'Passés'].map((t, i) => (
-          <span key={t} className={`text-[10px] pb-1 ${i === 0 ? 'text-foreground font-semibold border-b-2 border-foreground' : 'text-muted-foreground'}`}>{t}</span>
+        {[t('presentation.dashUpcoming'), t('presentation.dashRequests'), t('presentation.dashPast')].map((tab, i) => (
+          <span key={tab} className={`text-[10px] pb-1 ${i === 0 ? 'text-foreground font-semibold border-b-2 border-foreground' : 'text-muted-foreground'}`}>{tab}</span>
         ))}
       </div>
-      {/* List */}
       <div className="space-y-0">
         {appointments.map((a, i) => (
           <div key={i} className="flex items-center gap-2.5 py-2 border-b border-border/20 last:border-0">
@@ -492,7 +490,9 @@ function SlideReservations() {
 
 /* ─── Slide 7: Calendrier ─── */
 function SlideCalendar() {
-  const days = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+  const { t } = useTranslation();
+  const sidebarItems = t('presentation.sidebarItems', { returnObjects: true }) as string[];
+  const calDays = t('presentation.calendarDays', { returnObjects: true }) as string[];
   const weeks = [
     [26, 27, 28, 29, 30, 31, 1],
     [2, 3, 4, 5, 6, 7, 8],
@@ -510,28 +510,26 @@ function SlideCalendar() {
   };
 
   return (
-    <MockDashboardShell active="Calendrier" title="Votre planning, connecté à Google Agenda" subtitle="Vos rendez-vous s'ajoutent dans votre planning, synchronisable avec Google Agenda si vous le souhaitez.">
-      {/* Google Agenda banner */}
+    <MockDashboardShell active={sidebarItems[1]} title={t('presentation.dashCalendarTitle')} subtitle={t('presentation.dashCalendarSubtitle')} sidebarItems={sidebarItems}>
       <div className="flex items-center gap-2 bg-secondary/40 rounded-xl p-2.5 mb-3">
         <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-sm">
           <span className="text-[10px] font-bold">G</span>
         </div>
         <div className="flex-1">
-          <p className="text-[10px] font-semibold text-foreground">Connecter à Google Agenda</p>
-          <p className="text-[8px] text-muted-foreground">Synchronisez vos rendez-vous automatiquement</p>
+          <p className="text-[10px] font-semibold text-foreground">{t('presentation.dashConnectGoogle')}</p>
+          <p className="text-[8px] text-muted-foreground">{t('presentation.dashSyncAuto')}</p>
         </div>
-        <span className="text-primary text-[9px] font-semibold">Connecter</span>
+        <span className="text-primary text-[9px] font-semibold">{t('presentation.dashConnect')}</span>
       </div>
       <div className="flex gap-3">
-        {/* Calendar grid */}
         <div className="flex-1">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] text-muted-foreground">‹</span>
-            <span className="text-xs font-semibold text-foreground">Février 2026</span>
+            <span className="text-xs font-semibold text-foreground">{t('presentation.dashFebruary2026')}</span>
             <span className="text-[10px] text-muted-foreground">›</span>
           </div>
           <div className="grid grid-cols-7 gap-0">
-            {days.map((d, i) => (
+            {calDays.map((d, i) => (
               <div key={i} className="text-center text-[8px] font-semibold text-muted-foreground py-1">{d}</div>
             ))}
             {weeks.flat().map((day, i) => {
@@ -559,9 +557,8 @@ function SlideCalendar() {
               );
             })}
           </div>
-          {/* Legend */}
           <div className="flex items-center gap-3 mt-2">
-            {[{ c: 'bg-emerald-500', l: 'Confirmé' }, { c: 'bg-amber-500', l: 'En attente' }, { c: 'bg-blue-500', l: 'Terminé' }].map((item) => (
+            {[{ c: 'bg-emerald-500', l: t('presentation.dashConfirmed') }, { c: 'bg-amber-500', l: t('presentation.dashPending') }, { c: 'bg-blue-500', l: t('presentation.dashCompleted') }].map((item) => (
               <div key={item.l} className="flex items-center gap-1">
                 <div className={`w-1.5 h-1.5 rounded-full ${item.c}`} />
                 <span className="text-[8px] text-muted-foreground">{item.l}</span>
@@ -569,13 +566,12 @@ function SlideCalendar() {
             ))}
           </div>
         </div>
-        {/* Day detail sidebar */}
         <div className="w-32 flex-shrink-0 hidden sm:block">
           <div className="flex items-center gap-1.5 mb-2">
             <span className="w-6 h-6 bg-blue-500 rounded-lg flex items-center justify-center text-white text-[9px] font-bold">11</span>
             <div>
-              <p className="text-[10px] font-semibold text-foreground">Mercredi</p>
-              <p className="text-[8px] text-muted-foreground">3 rendez-vous · 340€</p>
+              <p className="text-[10px] font-semibold text-foreground">{t('presentation.dashWednesday')}</p>
+              <p className="text-[8px] text-muted-foreground">3 {t('presentation.dashAppointments')} · 340€</p>
             </div>
           </div>
           <div className="space-y-2">
@@ -602,44 +598,43 @@ function SlideCalendar() {
 
 /* ─── Slide 8: Clients ─── */
 function SlideClients() {
+  const { t } = useTranslation();
+  const sidebarItems = t('presentation.sidebarItems', { returnObjects: true }) as string[];
   const clients = [
-    { initials: 'SL', color: 'bg-violet-500', name: 'Sophie Leroy', visits: '15 visites · Dernier : Aujourd\'hui', ca: '1 420€' },
-    { initials: 'JM', color: 'bg-blue-500', name: 'Jean Martin', visits: '12 visites · Dernier : 10 fév', ca: '1 068€' },
-    { initials: 'MD', color: 'bg-pink-400', name: 'Marie Dupont', visits: '8 visites · Dernier : 8 fév', ca: '520€' },
-    { initials: 'PB', color: 'bg-orange-500', name: 'Pierre Bernard', visits: '3 visites · Dernier : 2 fév', ca: '477€' },
+    { initials: 'SL', color: 'bg-violet-500', name: 'Sophie Leroy', visits: `15 ${t('presentation.dashVisits')} · ${t('presentation.dashLastVisit')} ${t('presentation.dashToday')}`, ca: '1 420€' },
+    { initials: 'JM', color: 'bg-blue-500', name: 'Jean Martin', visits: `12 ${t('presentation.dashVisits')} · ${t('presentation.dashLastVisit')} 10 fév`, ca: '1 068€' },
+    { initials: 'MD', color: 'bg-pink-400', name: 'Marie Dupont', visits: `8 ${t('presentation.dashVisits')} · ${t('presentation.dashLastVisit')} 8 fév`, ca: '520€' },
+    { initials: 'PB', color: 'bg-orange-500', name: 'Pierre Bernard', visits: `3 ${t('presentation.dashVisits')} · ${t('presentation.dashLastVisit')} 2 fév`, ca: '477€' },
   ];
 
   return (
-    <MockDashboardShell active="Clients" title="Suivez vos clients en détail" subtitle="Chaque client a sa fiche complète : historique, chiffre d'affaires, factures et prestations.">
+    <MockDashboardShell active={sidebarItems[3]} title={t('presentation.dashClientsTitle')} subtitle={t('presentation.dashClientsSubtitle')} sidebarItems={sidebarItems}>
       <div className="flex items-start justify-between mb-3">
         <div>
-          <p className="text-sm font-semibold text-foreground">Clients</p>
-          <p className="text-[10px] text-muted-foreground">142 clients enregistrés</p>
+          <p className="text-sm font-semibold text-foreground">{t('presentation.dashClientsLabel')}</p>
+          <p className="text-[10px] text-muted-foreground">142 {t('presentation.dashRegisteredClients')}</p>
         </div>
-        <button className="bg-primary text-primary-foreground text-[10px] font-semibold px-3 py-1.5 rounded-lg">+ Ajouter</button>
+        <button className="bg-primary text-primary-foreground text-[10px] font-semibold px-3 py-1.5 rounded-lg">+ {t('common.add')}</button>
       </div>
-      {/* KPI */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         <div className="bg-card border border-border/40 rounded-xl p-2.5 text-center">
           <p className="text-lg font-bold text-foreground">142</p>
-          <p className="text-[9px] text-muted-foreground">Clients</p>
+          <p className="text-[9px] text-muted-foreground">{t('presentation.dashClientsLabel')}</p>
         </div>
         <div className="bg-card border border-border/40 rounded-xl p-2.5 text-center">
           <p className="text-lg font-bold text-foreground">8 640€</p>
-          <p className="text-[9px] text-muted-foreground">CA total</p>
+          <p className="text-[9px] text-muted-foreground">{t('presentation.dashTotalRevenue')}</p>
         </div>
         <div className="bg-card border border-border/40 rounded-xl p-2.5 text-center">
           <p className="text-lg font-bold text-foreground">61€</p>
-          <p className="text-[9px] text-muted-foreground">Panier moy.</p>
+          <p className="text-[9px] text-muted-foreground">{t('presentation.dashAvgBasket')}</p>
         </div>
       </div>
-      {/* Search */}
       <div className="flex items-center gap-2 bg-secondary/30 rounded-lg px-2.5 py-1.5 mb-2">
         <Search className="w-3 h-3 text-muted-foreground" />
-        <span className="text-[10px] text-muted-foreground">Rechercher un client...</span>
+        <span className="text-[10px] text-muted-foreground">{t('presentation.dashSearchClient')}</span>
       </div>
-      <p className="text-[9px] text-muted-foreground text-center mb-2">Cliquez sur un client pour voir sa fiche complète</p>
-      {/* List */}
+      <p className="text-[9px] text-muted-foreground text-center mb-2">{t('presentation.dashClickClientHint')}</p>
       <div className="space-y-0">
         {clients.map((c, i) => (
           <div key={i} className="flex items-center gap-2.5 py-2 border-b border-border/20 last:border-0">
@@ -650,7 +645,7 @@ function SlideClients() {
             </div>
             <div className="text-right flex-shrink-0">
               <p className="text-[11px] font-bold text-foreground">{c.ca}</p>
-              <p className="text-[8px] text-muted-foreground">CA total</p>
+              <p className="text-[8px] text-muted-foreground">{t('presentation.dashTotalRevenue')}</p>
             </div>
             <ChevronRight className="w-3 h-3 text-muted-foreground/40 flex-shrink-0" />
           </div>
@@ -662,11 +657,11 @@ function SlideClients() {
 
 /* ─── Slide 9: Fiche Client ─── */
 function SlideFicheClient() {
+  const { t } = useTranslation();
+  const sidebarItems = t('presentation.sidebarItems', { returnObjects: true }) as string[];
   return (
-    <MockDashboardShell active="Clients" title="La fiche client détaillée" subtitle="Retrouvez l'historique complet, le chiffre d'affaires, les notes et les prestations de chaque client.">
-      {/* Back link */}
-      <p className="text-[9px] text-muted-foreground mb-2 flex items-center gap-1"><ChevronLeft className="w-3 h-3" /> Retour aux clients</p>
-      {/* Client header */}
+    <MockDashboardShell active={sidebarItems[3]} title={t('presentation.dashFicheTitle')} subtitle={t('presentation.dashFicheSubtitle')} sidebarItems={sidebarItems}>
+      <p className="text-[9px] text-muted-foreground mb-2 flex items-center gap-1"><ChevronLeft className="w-3 h-3" /> {t('presentation.dashBackToClients')}</p>
       <div className="flex items-center gap-3 mb-3">
         <div className="w-10 h-10 rounded-full bg-violet-500 flex items-center justify-center text-white text-sm font-bold">SL</div>
         <div className="flex-1">
@@ -677,38 +672,39 @@ function SlideFicheClient() {
             <span className="flex items-center gap-0.5"><MapPin className="w-2.5 h-2.5" /> 12 rue de Rivoli, 75001</span>
           </div>
         </div>
-        <span className="text-[9px] text-muted-foreground border border-border/40 px-2 py-0.5 rounded-full">Via réservation</span>
+        <span className="text-[9px] text-muted-foreground border border-border/40 px-2 py-0.5 rounded-full">{t('presentation.dashViaBooking')}</span>
       </div>
-      {/* KPI row */}
       <div className="grid grid-cols-4 gap-2 mb-3">
-        {[{ v: '15', l: 'Réservations' }, { v: '1 420€', l: 'CA total' }, { v: '3', l: 'Factures' }, { v: '1', l: 'Devis' }].map((k) => (
+        {[
+          { v: '15', l: t('presentation.dashReservationsKpi') },
+          { v: '1 420€', l: t('presentation.dashTotalRevenue') },
+          { v: '3', l: t('presentation.dashInvoicesKpi') },
+          { v: '1', l: t('presentation.dashQuotesKpi') },
+        ].map((k) => (
           <div key={k.l} className="bg-card border border-border/40 rounded-xl p-2 text-center">
             <p className="text-sm font-bold text-foreground">{k.v}</p>
             <p className="text-[8px] text-muted-foreground">{k.l}</p>
           </div>
         ))}
       </div>
-      {/* Default service */}
       <div className="bg-secondary/30 rounded-xl p-3 mb-2">
-        <p className="text-[8px] text-muted-foreground mb-1">Prestation par défaut</p>
+        <p className="text-[8px] text-muted-foreground mb-1">{t('presentation.dashDefaultService')}</p>
         <p className="text-[11px] font-semibold text-foreground flex items-center gap-1"><Sparkles className="w-3 h-3" /> Nettoyage Complet · 1h30 · 89€</p>
       </div>
-      {/* Notes */}
       <div className="bg-secondary/20 rounded-xl p-3 mb-3">
-        <p className="text-[8px] text-muted-foreground mb-1">Notes</p>
-        <p className="text-[10px] text-foreground">Cliente fidèle, préfère les créneaux du matin. Véhicule : Tesla Model 3 blanc.</p>
+        <p className="text-[8px] text-muted-foreground mb-1">{t('presentation.dashNotes')}</p>
+        <p className="text-[10px] text-foreground">{t('presentation.dashLoyalNote')}</p>
       </div>
-      {/* History */}
       <div className="flex gap-3 mb-2">
-        {['Prestations', 'Factures & Devis'].map((t, i) => (
-          <span key={t} className={`text-[10px] pb-1 ${i === 0 ? 'text-foreground font-semibold border-b-2 border-foreground' : 'text-muted-foreground'}`}>{t}</span>
+        {[t('presentation.dashServices'), t('presentation.dashInvoicesAndQuotes')].map((tab, i) => (
+          <span key={tab} className={`text-[10px] pb-1 ${i === 0 ? 'text-foreground font-semibold border-b-2 border-foreground' : 'text-muted-foreground'}`}>{tab}</span>
         ))}
       </div>
       <div className="space-y-0">
         {[
-          { name: 'Nettoyage Complet', date: '11 fév 2026 à 10:00', price: '89€', status: 'Confirmé', sc: 'bg-emerald-500' },
-          { name: 'Nettoyage Complet', date: '28 jan 2026 à 09:30', price: '89€', status: 'Terminé', sc: 'bg-muted-foreground' },
-          { name: 'Lavage Express', date: '15 jan 2026 à 14:00', price: '35€', status: 'Terminé', sc: 'bg-muted-foreground' },
+          { name: 'Nettoyage Complet', date: '11 fév 2026 à 10:00', price: '89€', status: t('presentation.dashConfirmed'), sc: 'bg-emerald-500' },
+          { name: 'Nettoyage Complet', date: '28 jan 2026 à 09:30', price: '89€', status: t('presentation.dashCompleted'), sc: 'bg-muted-foreground' },
+          { name: 'Lavage Express', date: '15 jan 2026 à 14:00', price: '35€', status: t('presentation.dashCompleted'), sc: 'bg-muted-foreground' },
         ].map((h, i) => (
           <div key={i} className="flex items-center justify-between py-1.5 border-b border-border/20 last:border-0">
             <div>
@@ -728,32 +724,33 @@ function SlideFicheClient() {
 
 /* ─── Slide 10: Factures & Devis ─── */
 function SlideInvoices() {
+  const { t } = useTranslation();
+  const sidebarItems = t('presentation.sidebarItems', { returnObjects: true }) as string[];
   const invoices = [
-    { num: 'FAC-2026-012', client: 'Jean Martin · 10 fév', amount: '89,00 €', status: 'Payé', sc: 'bg-emerald-500', bar: 'bg-emerald-500' },
-    { num: 'FAC-2026-011', client: 'Marie Dupont · 8 fév', amount: '159,00 €', status: 'Envoyé', sc: 'bg-blue-500', bar: 'bg-blue-500' },
-    { num: 'DEV-2026-005', client: 'Pierre Bernard · 5 fév', amount: '320,00 €', status: 'En attente', sc: 'bg-amber-500', bar: 'bg-amber-500' },
-    { num: 'FAC-2026-010', client: 'Sophie Leroy · 3 fév', amount: '65,00 €', status: 'Payé', sc: 'bg-emerald-500', bar: 'bg-emerald-500' },
+    { num: 'FAC-2026-012', client: 'Jean Martin · 10 fév', amount: '89,00 €', status: t('presentation.dashPaid'), sc: 'bg-emerald-500', bar: 'bg-emerald-500' },
+    { num: 'FAC-2026-011', client: 'Marie Dupont · 8 fév', amount: '159,00 €', status: t('presentation.dashSent'), sc: 'bg-blue-500', bar: 'bg-blue-500' },
+    { num: 'DEV-2026-005', client: 'Pierre Bernard · 5 fév', amount: '320,00 €', status: t('presentation.dashPending'), sc: 'bg-amber-500', bar: 'bg-amber-500' },
+    { num: 'FAC-2026-010', client: 'Sophie Leroy · 3 fév', amount: '65,00 €', status: t('presentation.dashPaid'), sc: 'bg-emerald-500', bar: 'bg-emerald-500' },
   ];
 
   return (
-    <MockDashboardShell active="Factures & Devis" title="Factures & Devis" subtitle="Créez vos factures et devis en quelques clics. Ils se rattachent automatiquement au client.">
+    <MockDashboardShell active={sidebarItems[4]} title={t('presentation.dashInvoicesTitle')} subtitle={t('presentation.dashInvoicesSubtitle')} sidebarItems={sidebarItems}>
       <div className="flex items-start justify-between mb-3">
         <div>
-          <p className="text-sm font-semibold text-foreground">Factures & Devis</p>
-          <p className="text-[10px] text-muted-foreground">Gérez vos documents</p>
+          <p className="text-sm font-semibold text-foreground">{t('presentation.dashInvoicesTitle')}</p>
+          <p className="text-[10px] text-muted-foreground">{t('presentation.dashManageDocuments')}</p>
         </div>
         <div className="flex gap-1.5">
-          <button className="bg-card border border-border/50 text-foreground text-[10px] font-semibold px-3 py-1.5 rounded-lg">Devis</button>
-          <button className="bg-primary text-primary-foreground text-[10px] font-semibold px-3 py-1.5 rounded-lg">+ Facture</button>
+          <button className="bg-card border border-border/50 text-foreground text-[10px] font-semibold px-3 py-1.5 rounded-lg">{t('presentation.dashQuotesBtn')}</button>
+          <button className="bg-primary text-primary-foreground text-[10px] font-semibold px-3 py-1.5 rounded-lg">{t('presentation.dashNewInvoice')}</button>
         </div>
       </div>
-      {/* KPI */}
       <div className="grid grid-cols-4 gap-2 mb-3">
         {[
-          { label: 'Factures', value: '24' },
-          { label: 'Devis', value: '8' },
-          { label: 'En attente', value: '680€' },
-          { label: 'Encaissé', value: '3 240€' },
+          { label: t('presentation.dashInvoicesTab'), value: '24' },
+          { label: t('presentation.dashQuotesTab'), value: '8' },
+          { label: t('presentation.dashPendingLabel'), value: '680€' },
+          { label: t('presentation.dashCollected'), value: '3 240€' },
         ].map((k) => (
           <div key={k.label} className="bg-card border border-border/40 rounded-xl p-2.5">
             <p className="text-[9px] text-muted-foreground">{k.label}</p>
@@ -761,13 +758,11 @@ function SlideInvoices() {
           </div>
         ))}
       </div>
-      {/* Tabs */}
       <div className="flex gap-3 mb-2 border-b border-border/30 pb-1.5">
-        {['Tout', 'Factures', 'Devis'].map((t, i) => (
-          <span key={t} className={`text-[10px] pb-1 ${i === 0 ? 'text-foreground font-semibold border-b-2 border-foreground' : 'text-muted-foreground'}`}>{t}</span>
+        {[t('presentation.dashAll'), t('presentation.dashInvoicesTab'), t('presentation.dashQuotesTab')].map((tab, i) => (
+          <span key={tab} className={`text-[10px] pb-1 ${i === 0 ? 'text-foreground font-semibold border-b-2 border-foreground' : 'text-muted-foreground'}`}>{tab}</span>
         ))}
       </div>
-      {/* List */}
       <div className="space-y-0">
         {invoices.map((inv, i) => (
           <div key={i} className="flex items-center gap-2.5 py-2 border-b border-border/20 last:border-0">
@@ -787,49 +782,49 @@ function SlideInvoices() {
 
 /* ─── Slide 11: Statistiques ─── */
 function SlideStats() {
+  const { t } = useTranslation();
+  const sidebarItems = t('presentation.sidebarItems', { returnObjects: true }) as string[];
+  const months = t('presentation.dashMonths', { returnObjects: true }) as string[];
+
   return (
-    <MockDashboardShell active="Statistiques" title="Statistiques & plus encore" subtitle="Suivez votre activité en temps réel. D'autres fonctionnalités complémentaires sont intégrées à votre espace.">
-      {/* Month nav */}
+    <MockDashboardShell active={sidebarItems[5]} title={t('presentation.dashStatsTitle')} subtitle={t('presentation.dashStatsSubtitle')} sidebarItems={sidebarItems}>
       <div className="flex items-center justify-between mb-3">
         <span className="text-[10px] text-muted-foreground">‹</span>
-        <p className="text-sm font-bold text-foreground">Janvier 2025</p>
+        <p className="text-sm font-bold text-foreground">{t('presentation.dashJanuary2025')}</p>
         <span className="text-[10px] text-muted-foreground">›</span>
       </div>
-      {/* KPI grid */}
       <div className="grid grid-cols-2 gap-2 mb-3">
         <div className="bg-card border border-border/40 rounded-xl p-3">
-          <p className="text-[9px] text-muted-foreground">Réservations</p>
+          <p className="text-[9px] text-muted-foreground">{t('presentation.dashReservationsStat')}</p>
           <div className="flex items-baseline gap-2">
             <p className="text-xl font-bold text-foreground">24</p>
             <span className="text-[9px] text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded-full font-semibold">↑12%</span>
           </div>
         </div>
         <div className="bg-card border border-border/40 rounded-xl p-3">
-          <p className="text-[9px] text-muted-foreground">CA</p>
+          <p className="text-[9px] text-muted-foreground">{t('presentation.dashRevenue')}</p>
           <div className="flex items-baseline gap-2">
             <p className="text-xl font-bold text-foreground">8 450€</p>
             <span className="text-[9px] text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded-full font-semibold">↑18%</span>
           </div>
         </div>
         <div className="bg-card border border-border/40 rounded-xl p-3">
-          <p className="text-[9px] text-muted-foreground">Clients</p>
+          <p className="text-[9px] text-muted-foreground">{t('presentation.dashClientsStat')}</p>
           <p className="text-xl font-bold text-foreground">18</p>
         </div>
         <div className="bg-card border border-border/40 rounded-xl p-3">
-          <p className="text-[9px] text-muted-foreground">Panier moyen</p>
+          <p className="text-[9px] text-muted-foreground">{t('presentation.dashAvgBasketStat')}</p>
           <p className="text-xl font-bold text-foreground">352€</p>
         </div>
       </div>
-      {/* Chart area */}
       <div className="flex gap-3 mb-2">
-        {['Évolution', 'Services'].map((t, i) => (
-          <span key={t} className={`text-[10px] pb-1 ${i === 0 ? 'text-foreground font-semibold border-b-2 border-foreground' : 'text-muted-foreground'}`}>{t}</span>
+        {[t('presentation.dashEvolution'), t('presentation.dashServicesTab')].map((tab, i) => (
+          <span key={tab} className={`text-[10px] pb-1 ${i === 0 ? 'text-foreground font-semibold border-b-2 border-foreground' : 'text-muted-foreground'}`}>{tab}</span>
         ))}
       </div>
       <div className="grid grid-cols-2 gap-2">
-        {/* Line chart mockup */}
         <div className="bg-card border border-border/40 rounded-xl p-3">
-          <p className="text-[9px] font-semibold text-foreground mb-2">Réservations par semaine</p>
+          <p className="text-[9px] font-semibold text-foreground mb-2">{t('presentation.dashWeeklyBookings')}</p>
           <div className="h-20 flex items-end gap-1">
             {[20, 30, 40, 50, 55, 60, 70].map((h, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
@@ -840,10 +835,9 @@ function SlideStats() {
             ))}
           </div>
         </div>
-        {/* Bar chart mockup */}
         <div className="bg-card border border-border/40 rounded-xl p-3">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-[9px] font-semibold text-foreground">CA par mois</p>
+            <p className="text-[9px] font-semibold text-foreground">{t('presentation.dashMonthlyRevenue')}</p>
             <span className="text-[8px] text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded-full font-semibold">+18%</span>
           </div>
           <div className="h-20 flex items-end gap-1.5">
@@ -854,7 +848,7 @@ function SlideStats() {
             ))}
           </div>
           <div className="flex justify-between mt-1">
-            {['août', 'sept.', 'oct.', 'nov.', 'déc.', 'janv.'].map((m) => (
+            {months.map((m) => (
               <span key={m} className="text-[6px] text-muted-foreground flex-1 text-center">{m}</span>
             ))}
           </div>
@@ -869,22 +863,25 @@ function SlideStats() {
    ═══════════════════════════════════════════════ */
 
 function SlideBenefits() {
+  const { t } = useTranslation();
+  const benefits = [
+    { label: t('presentation.benefit1Title'), desc: t('presentation.benefit1Desc') },
+    { label: t('presentation.benefit2Title'), desc: t('presentation.benefit2Desc') },
+    { label: t('presentation.benefit3Title'), desc: t('presentation.benefit3Desc') },
+    { label: t('presentation.benefit4Title'), desc: t('presentation.benefit4Desc') },
+    { label: t('presentation.benefit5Title'), desc: t('presentation.benefit5Desc') },
+  ];
+
   return (
     <div className="max-w-3xl mx-auto w-full">
       <div className="text-center mb-10 sm:mb-12">
-        <p className="animate-fade-in-up text-sm font-semibold text-emerald-600 tracking-widest uppercase mb-4">Les bénéfices</p>
+        <p className="animate-fade-in-up text-sm font-semibold text-emerald-600 tracking-widest uppercase mb-4">{t('presentation.benefitsLabel')}</p>
         <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
-          Ce que vous gagnez
+          {t('presentation.benefitsTitle')}
         </h2>
       </div>
       <div className="space-y-3 sm:space-y-4">
-        {[
-          { label: 'Professionnaliser votre image', desc: 'Une page pro qui inspire confiance à vos clients' },
-          { label: 'Centraliser votre activité', desc: 'Fini les outils éparpillés, tout est au même endroit' },
-          { label: 'Gagner du temps', desc: 'Moins d\'administratif, plus de terrain' },
-          { label: 'Structurer votre organisation', desc: 'Planning, suivi client, statistiques' },
-          { label: 'Améliorer le suivi client', desc: 'Historique complet et fidélisation' },
-        ].map((b, i) => (
+        {benefits.map((b, i) => (
           <div key={i} className="flex items-center gap-4 sm:gap-5 bg-secondary/30 rounded-2xl p-5 animate-fade-in-up" style={{ animationDelay: `${0.1 + i * 0.08}s` }}>
             <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
               <Check className="w-4 h-4 text-emerald-500" />
@@ -901,16 +898,17 @@ function SlideBenefits() {
 }
 
 function SlideTrial() {
+  const { t } = useTranslation();
   return (
     <div className="max-w-xl mx-auto text-center">
       <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-8 animate-fade-in">
         <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-emerald-500" />
       </div>
       <h2 className="animate-fade-in-up text-3xl sm:text-4xl md:text-5xl font-semibold text-foreground tracking-tight mb-6">
-        Essayez gratuitement
+        {t('presentation.trialTitle')}
       </h2>
       <div className="space-y-3 mb-10">
-        {['30 jours offerts', 'Sans engagement', 'Toutes les fonctionnalités incluses'].map((text, i) => (
+        {[t('presentation.trialPoint1'), t('presentation.trialPoint2'), t('presentation.trialPoint3')].map((text, i) => (
           <div key={i} className="flex items-center justify-center gap-3 animate-fade-in-up" style={{ animationDelay: `${0.2 + i * 0.1}s` }}>
             <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center">
               <Check className="w-4 h-4 text-emerald-500" />
@@ -922,7 +920,7 @@ function SlideTrial() {
       <div className="animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
         <Link to="/auth">
           <Button size="xl" className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl shadow-emerald-500/25 px-12">
-            Commencer l'essai gratuit
+            {t('presentation.trialCTA')}
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </Link>
@@ -932,22 +930,23 @@ function SlideTrial() {
 }
 
 function SlideContact() {
+  const { t } = useTranslation();
   return (
     <div className="max-w-lg mx-auto text-center">
       <Logo size="xl" />
       <p className="text-lg text-muted-foreground mt-6 mb-8">
-        Rejoignez les professionnels du nettoyage qui utilisent CleaningPage.
+        {t('presentation.contactJoin')}
       </p>
       <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
         <Link to="/auth">
           <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white w-full sm:w-auto">
-            Commencer gratuitement
+            {t('presentation.contactStartFree')}
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </Link>
         <Link to="/">
           <Button size="lg" variant="outline" className="w-full sm:w-auto">
-            Voir le site
+            {t('presentation.contactViewSite')}
           </Button>
         </Link>
       </div>
@@ -963,6 +962,7 @@ function SlideContact() {
 export default function Presentation() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const touchStartX = useRef(0);
+  const { t } = useTranslation();
 
   const goTo = useCallback((index: number) => {
     setCurrentSlide(Math.max(0, Math.min(TOTAL_SLIDES - 1, index)));
@@ -987,19 +987,19 @@ export default function Presentation() {
   };
 
   const slides = [
-    <SlideCover />,          // 1
-    <SlideNeeds />,          // 2
-    <SlideSolution />,       // 3
-    <SlideCustomize />,      // 4
-    <SlideModes />,          // 5
-    <SlideReservations />,   // 6
-    <SlideCalendar />,       // 7
-    <SlideClients />,        // 8
-    <SlideFicheClient />,    // 9
-    <SlideInvoices />,       // 10
-    <SlideStats />,          // 11
-    <SlideBenefits />,       // 12
-    <SlideTrial />,          // 13
+    <SlideCover />,
+    <SlideNeeds />,
+    <SlideSolution />,
+    <SlideCustomize />,
+    <SlideModes />,
+    <SlideReservations />,
+    <SlideCalendar />,
+    <SlideClients />,
+    <SlideFicheClient />,
+    <SlideInvoices />,
+    <SlideStats />,
+    <SlideBenefits />,
+    <SlideTrial />,
   ];
 
   return (
@@ -1008,7 +1008,6 @@ export default function Presentation() {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      {/* Top bar */}
       <header className="flex-shrink-0 flex items-center justify-between px-4 sm:px-6 py-3 border-b border-border/30 bg-background z-50">
         <Link to="/" className="flex items-center">
           <Logo size="lg" />
@@ -1017,15 +1016,15 @@ export default function Presentation() {
           <span className="text-xs text-muted-foreground hidden sm:block">
             {currentSlide + 1} / {TOTAL_SLIDES}
           </span>
+          <LanguageSwitcher />
           <Link to="/auth">
             <Button size="sm" className="text-xs px-4">
-              Commencer
+              {t('presentation.headerStart')}
             </Button>
           </Link>
         </div>
       </header>
 
-      {/* Slide area */}
       <div className="flex-1 relative">
         {slides.map((slide, i) => (
           <SlideWrapper key={i} active={currentSlide === i}>
@@ -1051,7 +1050,6 @@ export default function Presentation() {
         )}
       </div>
 
-      {/* Progress dots */}
       <div className="flex-shrink-0 flex items-center justify-center gap-1.5 py-3 bg-background border-t border-border/30">
         {Array.from({ length: TOTAL_SLIDES }).map((_, i) => (
           <button
