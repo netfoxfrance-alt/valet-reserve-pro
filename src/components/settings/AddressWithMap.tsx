@@ -113,7 +113,7 @@ export function AddressWithMap({
 
           {/* Suggestions dropdown */}
           {showSuggestions && suggestions.length > 0 && (
-            <div className="absolute z-50 top-full mt-1 w-full bg-popover border rounded-lg shadow-lg max-h-48 overflow-y-auto">
+            <div className="absolute z-[9999] top-full mt-1 w-full bg-popover border rounded-lg shadow-lg max-h-48 overflow-y-auto">
               {suggestions.map((s, i) => (
                 <button
                   key={i}
