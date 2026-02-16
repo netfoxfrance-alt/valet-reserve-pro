@@ -4,19 +4,23 @@ import { Logo } from '@/components/ui/Logo';
 import { Button } from '@/components/ui/button';
 import { 
   ArrowRight, Check, Calendar, Users, BarChart3, 
-  Clock, Sparkles, Globe, Palette, Shield, Phone,
-  MousePointer2, FileText, Receipt, Plus,
-  Instagram, Facebook, Mail, Droplets, MapPin,
-  CalendarDays, Star, Settings, Link2, ExternalLink,
-  ChevronLeft, ChevronRight, Eye, Type
+  Clock, Globe, Palette, Phone,
+  MousePointer2, Receipt, Plus,
+  Instagram, Facebook, Mail,
+  ChevronLeft, ChevronRight, Sparkles
 } from 'lucide-react';
-import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 import mockupCarCleaning from '@/assets/mockup-car-cleaning.jpg';
 import mockupLogoClean from '@/assets/mockup-logo-cleaning.png';
-import gocleanLogo from '@/assets/gocleaning-logo.png';
 import sofaBanner from '@/assets/sofa-cleaning-banner.jpg';
+import presCarDetailing from '@/assets/pres-car-detailing.png';
+import presDashReservations from '@/assets/pres-dashboard-reservations.png';
+import presDashCalendar from '@/assets/pres-dashboard-calendar.png';
+import presDashClients from '@/assets/pres-dashboard-clients.png';
+import presDashFicheClient from '@/assets/pres-dashboard-fiche-client.png';
+import presDashInvoices from '@/assets/pres-dashboard-invoices.png';
+import presDashStats from '@/assets/pres-dashboard-stats.png';
 
-const TOTAL_SLIDES = 9;
+const TOTAL_SLIDES = 13;
 
 /* ─── Slide transition wrapper ─── */
 function SlideWrapper({ active, children }: { active: boolean; children: React.ReactNode }) {
@@ -40,7 +44,7 @@ function SlideWrapper({ active, children }: { active: boolean; children: React.R
 function SlideCover() {
   return (
     <div className="max-w-3xl mx-auto text-center">
-      <div className="mb-6 animate-fade-in">
+      <div className="mb-8 animate-fade-in">
         <Logo size="xl" />
       </div>
       <h1 className="animate-fade-in-up stagger-1 text-3xl sm:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-6 leading-[1.1]">
@@ -49,14 +53,20 @@ function SlideCover() {
       <p className="animate-fade-in-up stagger-2 text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto mb-10">
         Vitrine, réservation et gestion centralisée. Tout dans un seul outil.
       </p>
-      <div className="animate-fade-in-up stagger-3 flex items-center gap-6 justify-center text-sm text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <Check className="w-4 h-4 text-emerald-500" />
-          <span>30 jours offerts</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Check className="w-4 h-4 text-emerald-500" />
-          <span>Sans engagement</span>
+      <div className="animate-fade-in-up stagger-3">
+        <div className="inline-flex items-center gap-8 bg-secondary/40 rounded-full px-8 py-3">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded-full bg-emerald-500/15 flex items-center justify-center">
+              <Check className="w-3 h-3 text-emerald-500" />
+            </div>
+            <span className="text-sm font-medium text-foreground">30 jours offerts</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded-full bg-emerald-500/15 flex items-center justify-center">
+              <Check className="w-3 h-3 text-emerald-500" />
+            </div>
+            <span className="text-sm font-medium text-foreground">Sans engagement</span>
+          </div>
         </div>
       </div>
     </div>
@@ -64,54 +74,68 @@ function SlideCover() {
 }
 
 function SlideNeeds() {
+  const needs = [
+    { icon: Globe, label: 'Présenter son entreprise et ses prestations' },
+    { icon: Calendar, label: 'Un système de réservation en ligne' },
+    { icon: Clock, label: 'Un agenda pour organiser son planning' },
+    { icon: Users, label: 'Un suivi de ses clients et de son activité' },
+    { icon: Receipt, label: 'Un outil pour les factures et devis' },
+  ];
+
   return (
     <div className="max-w-3xl mx-auto w-full">
-      <div className="text-center mb-10 sm:mb-14">
-        <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
-          Aujourd'hui, une entreprise de nettoyage a besoin de&nbsp;:
+      <div className="text-center mb-10 sm:mb-12">
+        <p className="animate-fade-in-up text-sm font-semibold text-primary tracking-widest uppercase mb-4">Le constat</p>
+        <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
+          Aujourd'hui, une entreprise de nettoyage a besoin de :
         </h2>
-        <p className="animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto">
-          Il faut un site complet et beaucoup d'outils éparpillés pour tout gérer.
-        </p>
       </div>
-      <div className="grid sm:grid-cols-2 gap-4 sm:gap-5 max-w-2xl mx-auto">
-        {[
-          { icon: Globe, label: 'Présenter son entreprise et ses prestations' },
-          { icon: Calendar, label: 'Un système de réservation en ligne' },
-          { icon: Clock, label: 'Un agenda pour organiser son planning' },
-          { icon: Users, label: 'Un suivi de ses clients et de son activité' },
-          { icon: Receipt, label: 'Un outil pour les factures et devis' },
-        ].map((n, i) => (
-          <div key={i} className="flex items-center gap-4 bg-card border border-border/60 rounded-2xl p-4 sm:p-5 animate-fade-in-up" style={{ animationDelay: `${0.15 + i * 0.1}s` }}>
-            <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
+      <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto">
+        {needs.map((n, i) => (
+          <div 
+            key={i} 
+            className="flex items-center gap-4 bg-secondary/30 rounded-2xl p-5 animate-fade-in-up" 
+            style={{ animationDelay: `${0.15 + i * 0.08}s` }}
+          >
+            <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center flex-shrink-0 shadow-sm">
               <n.icon className="w-5 h-5 text-foreground" />
             </div>
-            <p className="text-sm sm:text-base font-medium text-foreground">{n.label}</p>
+            <p className="text-sm sm:text-[15px] font-medium text-foreground leading-snug">{n.label}</p>
           </div>
         ))}
       </div>
+      <p className="animate-fade-in-up text-center text-sm text-muted-foreground mt-8 max-w-md mx-auto" style={{ animationDelay: '0.7s' }}>
+        Il faut un site, beaucoup d'outils éparpillés... et du temps pour tout gérer.
+      </p>
     </div>
   );
 }
 
 function SlideSolution() {
+  const pillars = [
+    { icon: Globe, label: 'Une page web', desc: 'Faite pour convertir vos visiteurs en clients', color: 'bg-blue-500/10', iconColor: 'text-blue-600' },
+    { icon: Calendar, label: 'Un système de rendez-vous', desc: 'Réservation en ligne + gestion du planning', color: 'bg-emerald-500/10', iconColor: 'text-emerald-600' },
+    { icon: BarChart3, label: 'Un espace de gestion', desc: 'Clients, statistiques, factures, devis', color: 'bg-violet-500/10', iconColor: 'text-violet-600' },
+  ];
+
   return (
     <div className="max-w-4xl mx-auto w-full text-center">
-      <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+      <p className="animate-fade-in-up text-sm font-semibold text-primary tracking-widest uppercase mb-4">La solution</p>
+      <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3">
         CleaningPage combine tout ce dont vous avez besoin
       </h2>
-      <p className="animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto mb-12 sm:mb-16">
+      <p className="animate-fade-in-up stagger-2 text-muted-foreground text-sm sm:text-base max-w-md mx-auto mb-12 sm:mb-14">
         Un seul outil. Pas dix.
       </p>
       <div className="grid sm:grid-cols-3 gap-5 sm:gap-6">
-        {[
-          { icon: Globe, label: 'Une page web', desc: 'Faite pour convertir vos visiteurs en clients' },
-          { icon: Calendar, label: 'Un système de rendez-vous', desc: 'Réservation en ligne + gestion du planning' },
-          { icon: BarChart3, label: 'Un espace de gestion', desc: 'Clients, statistiques, factures, devis' },
-        ].map((p, i) => (
-          <div key={i} className="bg-card border border-border/60 rounded-2xl p-6 sm:p-8 text-center animate-fade-in-up" style={{ animationDelay: `${0.2 + i * 0.15}s` }}>
-            <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-5">
-              <p.icon className="w-7 h-7 text-foreground" />
+        {pillars.map((p, i) => (
+          <div 
+            key={i} 
+            className="bg-card rounded-2xl p-6 sm:p-8 text-center border border-border/40 shadow-sm hover:shadow-md transition-shadow animate-fade-in-up" 
+            style={{ animationDelay: `${0.25 + i * 0.12}s` }}
+          >
+            <div className={`w-14 h-14 rounded-2xl ${p.color} flex items-center justify-center mx-auto mb-5`}>
+              <p.icon className={`w-7 h-7 ${p.iconColor}`} />
             </div>
             <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">{p.label}</h3>
             <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
@@ -135,7 +159,7 @@ function SlideCustomize() {
       </div>
       <div className="animate-fade-in-up stagger-2">
         <div className="relative max-w-4xl mx-auto flex items-center justify-center">
-          {/* Central Phone Mockup - scaled for slide */}
+          {/* Central Phone Mockup */}
           <div className="relative mx-auto w-[240px] sm:w-[260px]">
             <div className="bg-card rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
               <div className="h-20 sm:h-24 relative overflow-hidden rounded-t-[2rem]">
@@ -271,49 +295,45 @@ function SlideCustomize() {
 function SlideModes() {
   return (
     <div className="max-w-5xl mx-auto w-full">
-      <div className="text-center mb-6 sm:mb-10">
-        <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3">
+      <div className="text-center mb-8 sm:mb-10">
+        <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
           Adapté à tout type d'entreprise de nettoyage
         </h2>
       </div>
       <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
         {/* Left: Fixed services */}
-        <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+        <div className="animate-fade-in-up bg-secondary/20 rounded-3xl p-5 sm:p-6" style={{ animationDelay: '0.2s' }}>
           <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
             Vous avez des prestations fixes ?
           </h3>
           <p className="text-sm text-muted-foreground leading-relaxed mb-5">
             Mettez-les directement sur votre page et vos clients peuvent réserver facilement.
           </p>
-          {/* Mockup: service card like image 2 */}
-          <div className="rounded-2xl overflow-hidden shadow-xl ring-1 ring-border/20">
-            <div className="relative">
-              <div className="grid grid-cols-2 h-44 sm:h-52">
-                <div className="relative overflow-hidden">
-                  <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
-                </div>
-                <div className="relative overflow-hidden">
-                  <img src={sofaBanner} alt="" className="w-full h-full object-cover" />
-                </div>
+          {/* Two service cards */}
+          <div className="space-y-3">
+            <div className="rounded-2xl overflow-hidden shadow-lg ring-1 ring-border/10">
+              <img src={presCarDetailing} alt="Lavage complet" className="w-full h-36 sm:h-40 object-cover" />
+            </div>
+            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border/30 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-foreground">Lavage canapé</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Nettoyage en profondeur</p>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 sm:p-5">
-                <p className="text-white font-bold text-base sm:text-lg tracking-wide">LAVAGE COMPLET</p>
-                <p className="text-white/90 text-sm sm:text-base font-medium">dès 65€</p>
-              </div>
+              <p className="text-xl font-bold text-foreground">80€</p>
             </div>
           </div>
         </div>
 
         {/* Right: Custom quotes */}
-        <div className="animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+        <div className="animate-fade-in-up bg-secondary/20 rounded-3xl p-5 sm:p-6" style={{ animationDelay: '0.4s' }}>
           <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
             Vous faites des prestations sur devis personnalisé ?
           </h3>
           <p className="text-sm text-muted-foreground leading-relaxed mb-5">
             Créez une prestation sur mesure pour un client. Une fois faite, il pourra s'identifier sur votre page pour réserver sa propre prestation.
           </p>
-          {/* Mockup: client greeting like image 3 */}
-          <div className="bg-card rounded-2xl shadow-xl ring-1 ring-border/20 p-5 sm:p-6">
+          {/* Mockup: client greeting */}
+          <div className="bg-card rounded-2xl shadow-sm ring-1 ring-border/20 p-5">
             <p className="text-base sm:text-lg font-bold text-foreground mb-1">Bonjour Sophie ! 👋</p>
             <p className="text-sm text-muted-foreground mb-4">Votre prestation personnalisée :</p>
             <div className="bg-secondary/40 rounded-xl p-4 flex items-center justify-between mb-4">
@@ -336,11 +356,77 @@ function SlideModes() {
   );
 }
 
+/* ─── Dashboard screenshot slides ─── */
+
+function DashboardScreenshotSlide({ 
+  title, subtitle, image, imageAlt 
+}: { title: string; subtitle: string; image: string; imageAlt: string }) {
+  return (
+    <div className="max-w-5xl mx-auto w-full">
+      <div className="text-center mb-6 sm:mb-8">
+        <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-2">
+          {title}
+        </h2>
+        <p className="animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto">
+          {subtitle}
+        </p>
+      </div>
+      <div className="animate-fade-in-up stagger-2">
+        <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/40 max-w-4xl mx-auto">
+          <div className="bg-secondary/50 px-4 py-2.5 flex items-center gap-3 border-b border-border/30">
+            <div className="flex gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+              <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+              <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+            </div>
+            <div className="flex-1 flex justify-center">
+              <div className="text-[11px] text-muted-foreground">cleaningpage.com/ <span className="text-foreground font-medium">dashboard</span></div>
+            </div>
+          </div>
+          <img src={image} alt={imageAlt} className="w-full" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DashboardDoubleSlide({ 
+  title, subtitle, image1, image2, label1, label2 
+}: { title: string; subtitle: string; image1: string; image2: string; label1: string; label2: string }) {
+  return (
+    <div className="max-w-6xl mx-auto w-full">
+      <div className="text-center mb-6 sm:mb-8">
+        <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-2">
+          {title}
+        </h2>
+        <p className="animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto">
+          {subtitle}
+        </p>
+      </div>
+      <div className="animate-fade-in-up stagger-2 grid sm:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto">
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">{label1}</p>
+          <div className="bg-card rounded-2xl shadow-xl overflow-hidden border border-border/40">
+            <img src={image1} alt={label1} className="w-full" />
+          </div>
+        </div>
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">{label2}</p>
+          <div className="bg-card rounded-2xl shadow-xl overflow-hidden border border-border/40">
+            <img src={image2} alt={label2} className="w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SlideBenefits() {
   return (
     <div className="max-w-3xl mx-auto w-full">
-      <div className="text-center mb-10 sm:mb-14">
-        <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+      <div className="text-center mb-10 sm:mb-12">
+        <p className="animate-fade-in-up text-sm font-semibold text-emerald-600 tracking-widest uppercase mb-4">Les bénéfices</p>
+        <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
           Ce que vous gagnez
         </h2>
       </div>
@@ -352,251 +438,16 @@ function SlideBenefits() {
           { label: 'Structurer votre organisation', desc: 'Planning, suivi client, statistiques' },
           { label: 'Améliorer le suivi client', desc: 'Historique complet et fidélisation' },
         ].map((b, i) => (
-          <div key={i} className="flex items-center gap-4 sm:gap-5 bg-card border border-border/60 rounded-2xl p-4 sm:p-5 animate-fade-in-up" style={{ animationDelay: `${0.1 + i * 0.08}s` }}>
-            <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+          <div key={i} className="flex items-center gap-4 sm:gap-5 bg-secondary/30 rounded-2xl p-5 animate-fade-in-up" style={{ animationDelay: `${0.1 + i * 0.08}s` }}>
+            <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
               <Check className="w-4 h-4 text-emerald-500" />
             </div>
             <div className="flex-1">
-              <p className="text-sm sm:text-base font-medium text-foreground">{b.label}</p>
+              <p className="text-sm sm:text-base font-semibold text-foreground">{b.label}</p>
               <p className="text-xs sm:text-sm text-muted-foreground">{b.desc}</p>
             </div>
           </div>
         ))}
-      </div>
-    </div>
-  );
-}
-
-function SlideDashboard() {
-  const [dashboardTab, setDashboardTab] = useState<'reservations' | 'calendar' | 'clients' | 'invoices' | 'stats'>('reservations');
-
-  return (
-    <div className="max-w-6xl mx-auto w-full">
-      <div className="text-center mb-6 sm:mb-10">
-        <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
-          Tout ce qu'il vous faut pour gérer votre activité
-        </h2>
-        <p className="animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto mb-2">
-          Réservations, planning, clients, factures, statistiques — tout au même endroit.
-        </p>
-        <p className="animate-fade-in-up stagger-2 text-sm text-muted-foreground flex items-center justify-center gap-2">
-          <MousePointer2 className="w-4 h-4" />
-          Cliquez sur un onglet pour explorer
-        </p>
-      </div>
-
-      {/* Tabs */}
-      <div className="animate-fade-in-up stagger-3 flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8 justify-center">
-        {[
-          { icon: Calendar, label: 'Réservations', tab: 'reservations' as const, badge: '3' },
-          { icon: CalendarDays, label: 'Calendrier', tab: 'calendar' as const, badge: null },
-          { icon: Users, label: 'Clients', tab: 'clients' as const, badge: null },
-          { icon: Star, label: 'Factures', tab: 'invoices' as const, badge: null },
-          { icon: BarChart3, label: 'Statistiques', tab: 'stats' as const, badge: null },
-        ].map((item) => (
-          <button 
-            key={item.label}
-            onClick={(e) => { e.stopPropagation(); setDashboardTab(item.tab); }}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer ${
-              dashboardTab === item.tab 
-                ? 'bg-foreground text-background shadow-lg' 
-                : 'bg-card border border-border/60 text-foreground hover:bg-secondary/50'
-            }`}
-          >
-            <item.icon className="w-4 h-4" />
-            <span className="hidden sm:inline">{item.label}</span>
-            {item.badge && (
-              <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
-                {item.badge}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* Dashboard Browser Mockup */}
-      <div className="animate-fade-in-up stagger-4">
-        <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60 max-w-5xl mx-auto">
-          <div className="bg-secondary/50 px-4 py-3 flex items-center gap-3 border-b border-border/40">
-            <div className="flex gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-red-400" />
-              <div className="w-3 h-3 rounded-full bg-yellow-400" />
-              <div className="w-3 h-3 rounded-full bg-green-400" />
-            </div>
-            <div className="flex-1 flex justify-center">
-              <div className="flex items-center gap-2 bg-background rounded-full px-4 py-1.5 text-xs text-muted-foreground">
-                <Shield className="w-3 h-3" />
-                cleaningpage.com/<span className="text-foreground font-medium">dashboard</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-5 sm:p-6" style={{ background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary)/0.3) 100%)' }}>
-            {dashboardTab === 'reservations' && (
-              <>
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground tracking-tight">Réservations</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5">Mercredi 11 février 2026</p>
-                  </div>
-                  <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25">+ Nouveau</button>
-                </div>
-                <div className="grid grid-cols-3 gap-3 mb-6">
-                  {[
-                    { label: "Aujourd'hui", value: '5', extra: '2 en attente' },
-                    { label: 'Cette semaine', value: '23', extra: 'dont 4 demandes' },
-                    { label: 'CA du jour', value: '340€', extra: '↑ 15%' },
-                  ].map((kpi, i) => (
-                    <div key={i} className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                      <p className="text-[11px] text-muted-foreground mb-1">{kpi.label}</p>
-                      <p className="text-3xl font-bold tracking-tight leading-none text-foreground">{kpi.value}</p>
-                      <p className={`text-[10px] mt-2 ${i === 2 ? 'text-emerald-600 font-semibold' : 'text-muted-foreground'}`}>{kpi.extra}</p>
-                    </div>
-                  ))}
-                </div>
-                <div className="space-y-2">
-                  {[
-                    { name: 'Jean Martin', service: 'Nettoyage Complet', time: '10:00 · 1h30', price: '89€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'JM', avatarBg: 'bg-blue-500' },
-                    { name: 'Marie Dupont', service: 'Express', time: '11:30 · 45min', price: '35€', status: 'En attente', statusBg: 'bg-orange-500', initials: 'MD', avatarBg: 'bg-pink-500' },
-                    { name: 'Pierre Bernard', service: 'Rénovation Premium', time: '14:00 · 3h', price: '159€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'PB', avatarBg: 'bg-amber-500' },
-                  ].map((b, i) => (
-                    <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 hover:shadow-md transition-all cursor-pointer">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 ${b.avatarBg}`}>{b.initials}</div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold text-foreground truncate">{b.name}</p>
-                        <p className="text-[11px] text-muted-foreground mt-0.5">{b.service} · {b.time}</p>
-                      </div>
-                      <span className="text-[13px] font-bold text-foreground hidden sm:block tabular-nums">{b.price}</span>
-                      <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold text-white ${b.statusBg}`}>{b.status}</span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-
-            {dashboardTab === 'calendar' && (
-              <div>
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-3">
-                    <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center"><ChevronLeft className="w-4 h-4" /></button>
-                    <h3 className="text-base font-semibold text-foreground min-w-[130px] text-center">Février 2026</h3>
-                    <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center"><ChevronRight className="w-4 h-4" /></button>
-                  </div>
-                  <button className="text-[11px] text-white font-semibold bg-blue-500 px-3.5 py-1.5 rounded-full shadow-sm">Aujourd'hui</button>
-                </div>
-                <div className="grid grid-cols-7 gap-1 mb-2">
-                  {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
-                    <div key={i} className="text-center text-[11px] font-semibold text-muted-foreground py-1">{d}</div>
-                  ))}
-                </div>
-                <div className="grid grid-cols-7 gap-1">
-                  {Array.from({ length: 28 }, (_, i) => i + 1).map(d => {
-                    const hasAppt = [3, 5, 8, 11, 15, 22, 25].includes(d);
-                    const isSelected = d === 11;
-                    return (
-                      <div key={d} className={`aspect-square rounded-2xl flex flex-col items-center justify-start pt-2 text-[11px] relative cursor-pointer transition-all ${isSelected ? 'bg-blue-500 text-white font-bold shadow-lg shadow-blue-500/30' : 'hover:bg-secondary/50'}`}>
-                        <span>{d}</span>
-                        {hasAppt && <div className="flex gap-0.5 mt-1"><div className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-white/70' : 'bg-emerald-500'}`} /></div>}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {dashboardTab === 'clients' && (
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-foreground">Clients</h3>
-                  <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25">+ Nouveau client</button>
-                </div>
-                <div className="space-y-2">
-                  {[
-                    { name: 'Jean Martin', email: 'jean@email.com', bookings: 12, revenue: '1 068€', initials: 'JM', bg: 'bg-blue-500' },
-                    { name: 'Marie Dupont', email: 'marie@email.com', bookings: 8, revenue: '712€', initials: 'MD', bg: 'bg-pink-500' },
-                    { name: 'Pierre Bernard', email: 'pierre@email.com', bookings: 5, revenue: '445€', initials: 'PB', bg: 'bg-amber-500' },
-                  ].map((c, i) => (
-                    <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 cursor-pointer hover:shadow-md transition-all">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white ${c.bg}`}>{c.initials}</div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold text-foreground">{c.name}</p>
-                        <p className="text-[11px] text-muted-foreground">{c.email}</p>
-                      </div>
-                      <div className="text-right hidden sm:block">
-                        <p className="text-[13px] font-bold text-foreground">{c.revenue}</p>
-                        <p className="text-[10px] text-muted-foreground">{c.bookings} réservations</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {dashboardTab === 'invoices' && (
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-foreground">Factures & Devis</h3>
-                  <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25">+ Nouvelle facture</button>
-                </div>
-                <div className="space-y-2">
-                  {[
-                    { number: 'F-2026-001', client: 'Jean Martin', amount: '89€', date: '11 fév 2026', status: 'Payée', statusBg: 'bg-emerald-500' },
-                    { number: 'F-2026-002', client: 'Marie Dupont', amount: '35€', date: '10 fév 2026', status: 'En attente', statusBg: 'bg-orange-500' },
-                    { number: 'D-2026-001', client: 'Pierre Bernard', amount: '159€', date: '9 fév 2026', status: 'Devis', statusBg: 'bg-blue-500' },
-                  ].map((inv, i) => (
-                    <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 cursor-pointer hover:shadow-md transition-all">
-                      <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center">
-                        <Receipt className="w-5 h-5 text-foreground" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold text-foreground">{inv.number}</p>
-                        <p className="text-[11px] text-muted-foreground">{inv.client} · {inv.date}</p>
-                      </div>
-                      <span className="text-[13px] font-bold text-foreground hidden sm:block">{inv.amount}</span>
-                      <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold text-white ${inv.statusBg}`}>{inv.status}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {dashboardTab === 'stats' && (
-              <div>
-                <h3 className="text-lg font-semibold text-foreground mb-6">Statistiques</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                  {[
-                    { label: 'Réservations', value: '47', change: '+12%' },
-                    { label: 'Revenu', value: '4 280€', change: '+8%' },
-                    { label: 'Clients', value: '32', change: '+5' },
-                    { label: 'Taux conversion', value: '68%', change: '+3%' },
-                  ].map((s, i) => (
-                    <div key={i} className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                      <p className="text-[11px] text-muted-foreground mb-1">{s.label}</p>
-                      <p className="text-2xl font-bold tracking-tight leading-none text-foreground">{s.value}</p>
-                      <p className="text-[10px] text-emerald-600 font-semibold mt-2">{s.change}</p>
-                    </div>
-                  ))}
-                </div>
-                <div className="rounded-2xl p-5 bg-card border border-border/30 shadow-sm">
-                  <p className="text-sm font-semibold text-foreground mb-4">Revenu mensuel</p>
-                  <div className="flex items-end gap-2 h-32">
-                    {[40, 55, 45, 70, 60, 85, 75, 90, 80, 95, 88, 100].map((h, i) => (
-                      <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                        <div className="w-full bg-primary/15 rounded-lg" style={{ height: `${h}%` }}>
-                          <div className="w-full bg-primary rounded-lg transition-all" style={{ height: `${h}%` }} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex justify-between mt-2">
-                    <span className="text-[9px] text-muted-foreground">Jan</span>
-                    <span className="text-[9px] text-muted-foreground">Déc</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -673,7 +524,6 @@ export default function Presentation() {
   const next = useCallback(() => goTo(currentSlide + 1), [currentSlide, goTo]);
   const prev = useCallback(() => goTo(currentSlide - 1), [currentSlide, goTo]);
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
@@ -683,7 +533,6 @@ export default function Presentation() {
     return () => window.removeEventListener('keydown', handleKey);
   }, [next, prev]);
 
-  // Touch swipe
   const onTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
   const onTouchEnd = (e: React.TouchEvent) => {
     const diff = touchStartX.current - e.changedTouches[0].clientX;
@@ -691,13 +540,46 @@ export default function Presentation() {
   };
 
   const slides = [
-    <SlideCover />,
-    <SlideNeeds />,
-    <SlideSolution />,
-    <SlideCustomize />,
-    <SlideModes />,
+    <SlideCover />,                    // 1
+    <SlideNeeds />,                    // 2
+    <SlideSolution />,                 // 3
+    <SlideCustomize />,                // 4
+    <SlideModes />,                    // 5
+    // Dashboard slides (6-10)
+    <DashboardScreenshotSlide 
+      title="Gérez vos réservations" 
+      subtitle="Vos réservations s'ajoutent automatiquement. Suivez tout en un coup d'œil."
+      image={presDashReservations}
+      imageAlt="Réservations"
+    />,
+    <DashboardScreenshotSlide 
+      title="Votre planning, connecté à Google Agenda" 
+      subtitle="Vos rendez-vous s'ajoutent dans votre planning, synchronisable avec Google Agenda si vous le souhaitez."
+      image={presDashCalendar}
+      imageAlt="Calendrier"
+    />,
+    <DashboardDoubleSlide 
+      title="Suivez vos clients en détail" 
+      subtitle="Chaque client a sa fiche complète : historique, chiffre d'affaires, factures et prestations."
+      image1={presDashClients}
+      image2={presDashFicheClient}
+      label1="Liste des clients"
+      label2="Fiche client détaillée"
+    />,
+    <DashboardScreenshotSlide 
+      title="Factures & Devis" 
+      subtitle="Créez vos factures et devis en quelques clics. Ils se rattachent automatiquement au client."
+      image={presDashInvoices}
+      imageAlt="Factures & Devis"
+    />,
+    <DashboardScreenshotSlide 
+      title="Statistiques & plus encore" 
+      subtitle="Suivez votre activité en temps réel. D'autres fonctionnalités complémentaires sont intégrées à votre espace."
+      image={presDashStats}
+      imageAlt="Statistiques"
+    />,
+    // Benefits & CTA (11-13)
     <SlideBenefits />,
-    <SlideDashboard />,
     <SlideTrial />,
     <SlideContact />,
   ];
@@ -733,7 +615,6 @@ export default function Presentation() {
           </SlideWrapper>
         ))}
 
-        {/* Navigation arrows */}
         {currentSlide > 0 && (
           <button
             onClick={prev}
@@ -753,15 +634,15 @@ export default function Presentation() {
       </div>
 
       {/* Progress dots */}
-      <div className="flex-shrink-0 flex items-center justify-center gap-2 py-3 bg-background border-t border-border/30">
+      <div className="flex-shrink-0 flex items-center justify-center gap-1.5 py-3 bg-background border-t border-border/30">
         {Array.from({ length: TOTAL_SLIDES }).map((_, i) => (
           <button
             key={i}
             onClick={() => goTo(i)}
             className={`rounded-full transition-all duration-300 ${
               i === currentSlide 
-                ? 'w-8 h-2.5 bg-foreground' 
-                : 'w-2.5 h-2.5 bg-border hover:bg-muted-foreground/50'
+                ? 'w-6 h-2 bg-foreground' 
+                : 'w-2 h-2 bg-border hover:bg-muted-foreground/50'
             }`}
           />
         ))}
