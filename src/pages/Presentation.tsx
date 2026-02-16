@@ -1130,7 +1130,7 @@ function SlideTrial() {
         <div className="rounded-3xl bg-card border border-border/40 shadow-xl p-8 sm:p-10">
           <div className="mb-6">
             <div className="flex items-baseline justify-center gap-1">
-              <span className="text-5xl sm:text-6xl font-bold text-foreground tracking-tight">39€</span>
+              <span className="text-5xl sm:text-6xl font-bold text-foreground tracking-tight">29€</span>
               <span className="text-base text-muted-foreground font-medium">/mois</span>
             </div>
             <p className="text-sm text-muted-foreground mt-2">
