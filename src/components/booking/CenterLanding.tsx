@@ -627,17 +627,52 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
   const renderAddress = (block: PageBlock) => {
     if (!center.address) return null;
     const hasMap = center.latitude && center.longitude;
+    const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(center.address)}`;
+    const radiusKm = center.intervention_radius_km;
+    
     return (
-      <div key={block.id} className="mb-4 space-y-3">
-        {renderInfoBlock(block, center.address, <MapPin className="w-5 h-5" />, `https://maps.google.com/?q=${encodeURIComponent(center.address)}`)}
-        {hasMap && (
-          <LocationMap
-            latitude={center.latitude!}
-            longitude={center.longitude!}
-            address={center.address || undefined}
-            height="180px"
-          />
-        )}
+      <div key={block.id} className="mb-4">
+        <div 
+          className="rounded-2xl overflow-hidden border"
+          style={{ 
+            borderColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+            backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.8)',
+          }}
+        >
+          {/* Map */}
+          {hasMap && (
+            <LocationMap
+              latitude={center.latitude!}
+              longitude={center.longitude!}
+              address={center.address || undefined}
+              height="200px"
+            />
+          )}
+          
+          {/* Address info */}
+          <div className="p-4 space-y-3">
+            <p className="text-sm font-medium" style={{ color: textColors.primary }}>
+              {center.address}
+            </p>
+            
+            {radiusKm && radiusKm > 0 && (
+              <p className="text-xs" style={{ color: textColors.secondary }}>
+                📍 Intervention dans un rayon de {radiusKm} km
+              </p>
+            )}
+            
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-medium hover:underline"
+              style={{ color: customization.colors.accent || customization.colors.primary }}
+            >
+              <ExternalLink className="w-4 h-4" />
+              Obtenir un itinéraire
+            </a>
+          </div>
+        </div>
       </div>
     );
   };
