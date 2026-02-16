@@ -28,7 +28,7 @@ function SlideWrapper({ active, children }: { active: boolean; children: React.R
         active ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
       }`}
     >
-      <div className="w-full h-full overflow-y-auto px-4 sm:px-8 lg:px-12 py-6 sm:py-10 flex items-center justify-center">
+      <div className="w-full h-full overflow-y-auto px-3 sm:px-8 lg:px-12 py-4 sm:py-10 flex items-center justify-center">
         {children}
       </div>
     </div>
@@ -52,27 +52,27 @@ function SlideCover() {
       <p className="animate-fade-in-up stagger-2 text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto mb-10">
         {t('presentation.coverSubtitle')}
       </p>
-      <div className="animate-fade-in-up stagger-3 flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+      <div className="animate-fade-in-up stagger-3 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
         <Link to="/auth">
-          <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_8px_24px_-4px_rgba(16,185,129,0.4)] hover:shadow-[0_12px_32px_-4px_rgba(16,185,129,0.5)] transition-all duration-300 text-base font-semibold px-8">
+          <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_8px_24px_-4px_rgba(16,185,129,0.4)] hover:shadow-[0_12px_32px_-4px_rgba(16,185,129,0.5)] transition-all duration-300 text-sm sm:text-base font-semibold px-6 sm:px-8">
             {t('presentation.contactStartFree', { defaultValue: 'Commencer gratuitement' })}
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </Link>
       </div>
       <div className="animate-fade-in-up stagger-4">
-        <div className="inline-flex items-center gap-6 sm:gap-8">
+        <div className="inline-flex items-center gap-4 sm:gap-6 md:gap-8">
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
               <Check className="w-3 h-3 text-white" />
             </div>
-            <span className="text-sm font-medium text-foreground">{t('presentation.daysOffered')}</span>
+            <span className="text-xs sm:text-sm font-medium text-foreground">{t('presentation.daysOffered')}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
               <Check className="w-3 h-3 text-white" />
             </div>
-            <span className="text-sm font-medium text-foreground">{t('presentation.noCommitment')}</span>
+            <span className="text-xs sm:text-sm font-medium text-foreground">{t('presentation.noCommitment')}</span>
           </div>
         </div>
       </div>
@@ -122,7 +122,7 @@ function SlideNeeds() {
 /* Mini mockup: page web */
 function MiniWebPage() {
   return (
-    <div className="w-full max-w-[180px] mx-auto rounded-xl overflow-hidden shadow-lg ring-1 ring-border/20 bg-card">
+    <div className="w-full max-w-[200px] sm:max-w-[180px] mx-auto rounded-xl overflow-hidden shadow-lg ring-1 ring-border/20 bg-card">
       <div className="bg-secondary/60 px-2 py-1 flex items-center gap-1">
         <div className="flex gap-0.5">
           <div className="w-1.5 h-1.5 rounded-full bg-red-400/70" />
@@ -171,7 +171,7 @@ function MiniCalendar() {
   const cells = [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
   const booked = [5,8,11,12,15,19];
   return (
-    <div className="w-full max-w-[180px] mx-auto rounded-xl overflow-hidden shadow-lg ring-1 ring-border/20 bg-card">
+    <div className="w-full max-w-[200px] sm:max-w-[180px] mx-auto rounded-xl overflow-hidden shadow-lg ring-1 ring-border/20 bg-card">
       <div className="bg-secondary/60 px-2.5 py-1.5 flex items-center justify-between">
         <span className="text-[7px] text-muted-foreground">‹</span>
         <span className="text-[8px] font-semibold text-foreground">Février 2026</span>
@@ -212,7 +212,7 @@ function MiniCalendar() {
 /* Mini mockup: espace gestion */
 function MiniDashboard() {
   return (
-    <div className="w-full max-w-[180px] mx-auto rounded-xl overflow-hidden shadow-lg ring-1 ring-border/20 bg-card">
+    <div className="w-full max-w-[200px] sm:max-w-[180px] mx-auto rounded-xl overflow-hidden shadow-lg ring-1 ring-border/20 bg-card">
       <div className="bg-secondary/60 px-2 py-1 flex items-center gap-1">
         <div className="flex gap-0.5">
           <div className="w-1.5 h-1.5 rounded-full bg-red-400/70" />
@@ -274,7 +274,7 @@ function SlideSolution() {
       <p className="animate-fade-in-up stagger-2 text-muted-foreground text-sm sm:text-base max-w-sm mx-auto mb-10 sm:mb-14">
         {t('presentation.solutionSubtitle')}
       </p>
-      <div className="grid sm:grid-cols-3 gap-6 sm:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-8">
         {pillars.map((p, i) => (
           <div 
             key={i} 
@@ -308,7 +308,7 @@ function SlideCustomize() {
       <div className="animate-fade-in-up stagger-2">
         <div className="relative max-w-4xl mx-auto flex items-center justify-center">
           {/* Central Phone Mockup */}
-          <div className="relative mx-auto w-[240px] sm:w-[260px]">
+          <div className="relative mx-auto w-[220px] sm:w-[240px] md:w-[260px]">
             <div className="bg-card rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
               <div className="h-20 sm:h-24 relative overflow-hidden rounded-t-[2rem]">
                 <img src={mockupCarCleaning} alt="Preview" className="w-full h-full object-cover" />
@@ -443,13 +443,13 @@ function SlideCustomize() {
 function SlideModes() {
   const { t } = useTranslation();
   return (
-    <div className="max-w-5xl mx-auto w-full">
+    <div className="max-w-5xl mx-auto w-full px-1 sm:px-0">
       <div className="text-center mb-8 sm:mb-10">
         <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
           {t('presentation.modesTitle')}
         </h2>
       </div>
-      <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
         {/* Left: Fixed services */}
         <div className="animate-fade-in-up bg-card rounded-3xl p-5 sm:p-6 border border-border/40 shadow-sm" style={{ animationDelay: '0.2s' }}>
           <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
@@ -460,7 +460,7 @@ function SlideModes() {
           </p>
           <div className="space-y-3">
             <div className="rounded-2xl overflow-hidden shadow-md ring-1 ring-border/10 relative">
-              <img src={presCarDetailing} alt="Detailing auto" className="w-full h-28 sm:h-32 object-cover" />
+              <img src={presCarDetailing} alt="Detailing auto" className="w-full h-24 sm:h-28 md:h-32 object-cover" />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
                 <div className="flex items-end justify-between">
                   <p className="text-xs font-semibold text-white">{t('presentation.modesFixedService1')}</p>
@@ -469,7 +469,7 @@ function SlideModes() {
               </div>
             </div>
             <div className="rounded-2xl overflow-hidden shadow-md ring-1 ring-border/10 relative">
-              <img src={sofaBanner} alt="Sofa cleaning" className="w-full h-28 sm:h-32 object-cover" />
+              <img src={sofaBanner} alt="Sofa cleaning" className="w-full h-24 sm:h-28 md:h-32 object-cover" />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
                 <div className="flex items-end justify-between">
                   <p className="text-xs font-semibold text-white">{t('presentation.modesFixedService2')}</p>
@@ -551,7 +551,7 @@ function MockDashboardShell({ active, children, title, subtitle, sidebarItems }:
         </p>
       </div>
       <div className="animate-fade-in-up stagger-2">
-        <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/40 max-w-4xl mx-auto">
+        <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/40 max-w-4xl mx-auto max-h-[60vh] sm:max-h-none">
           <div className="bg-secondary/50 px-4 py-2 flex items-center gap-3 border-b border-border/30">
             <div className="flex gap-1.5">
               <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
@@ -562,9 +562,9 @@ function MockDashboardShell({ active, children, title, subtitle, sidebarItems }:
               <div className="text-[10px] text-muted-foreground bg-background/60 rounded-md px-3 py-0.5">cleaningpage.com/<span className="text-foreground font-medium">dashboard</span></div>
             </div>
           </div>
-          <div className="flex min-h-[340px] sm:min-h-[380px]">
+          <div className="flex min-h-[280px] sm:min-h-[340px] md:min-h-[380px]">
             <MockSidebar active={active} items={sidebarItems} />
-            <div className="flex-1 p-4 sm:p-5 overflow-hidden bg-background">
+            <div className="flex-1 p-3 sm:p-4 md:p-5 overflow-y-auto bg-background">
               {children}
             </div>
           </div>
@@ -595,7 +595,7 @@ function SlideReservations() {
         </div>
         <button className="bg-primary text-primary-foreground text-[10px] font-semibold px-3 py-1.5 rounded-lg">{t('presentation.dashNewBooking')}</button>
       </div>
-      <div className="grid grid-cols-3 gap-2 mb-3">
+      <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3">
         <div className="bg-card border border-border/40 rounded-xl p-2.5">
           <p className="text-[9px] text-muted-foreground">{t('presentation.dashToday')}</p>
           <p className="text-lg font-bold text-foreground">5</p>
@@ -966,7 +966,7 @@ function SlideStats() {
           </div>
 
           {/* KPI cards */}
-          <div className="grid grid-cols-4 gap-2 mb-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
             <div className="border border-border/40 rounded-xl p-3">
               <p className="text-[10px] text-muted-foreground mb-0.5">{t('presentation.dashReservationsStat')}</p>
               <div className="flex items-baseline gap-1.5">
@@ -999,7 +999,7 @@ function SlideStats() {
           </div>
 
           {/* Charts */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {/* Réservations par semaine — smooth curve */}
             <div className="border border-border/40 rounded-xl p-3">
               <p className="text-[10px] font-semibold text-foreground mb-2">{t('presentation.dashWeeklyBookings')}</p>
@@ -1274,17 +1274,17 @@ export default function Presentation() {
         {currentSlide > 0 && (
           <button
             onClick={prev}
-            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-card border border-border/60 shadow-lg flex items-center justify-center hover:bg-secondary transition-colors"
+            className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-40 w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-card border border-border/60 shadow-lg flex items-center justify-center hover:bg-secondary transition-colors"
           >
-            <ChevronLeft className="w-5 h-5 text-foreground" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />
           </button>
         )}
         {currentSlide < TOTAL_SLIDES - 1 && (
           <button
             onClick={next}
-            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-card border border-border/60 shadow-lg flex items-center justify-center hover:bg-secondary transition-colors"
+            className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-40 w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-card border border-border/60 shadow-lg flex items-center justify-center hover:bg-secondary transition-colors"
           >
-            <ChevronRight className="w-5 h-5 text-foreground" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />
           </button>
         )}
       </div>
