@@ -114,32 +114,32 @@ function SlideNeeds() {
 function SlideSolution() {
   const { t } = useTranslation();
   const pillars = [
-    { icon: Globe, label: t('presentation.pillar1Title'), desc: t('presentation.pillar1Desc'), color: 'bg-blue-500/10', iconColor: 'text-blue-600' },
-    { icon: Calendar, label: t('presentation.pillar2Title'), desc: t('presentation.pillar2Desc'), color: 'bg-emerald-500/10', iconColor: 'text-emerald-600' },
-    { icon: BarChart3, label: t('presentation.pillar3Title'), desc: t('presentation.pillar3Desc'), color: 'bg-violet-500/10', iconColor: 'text-violet-600' },
+    { icon: Globe, label: t('presentation.pillar1Title'), desc: t('presentation.pillar1Desc') },
+    { icon: Calendar, label: t('presentation.pillar2Title'), desc: t('presentation.pillar2Desc') },
+    { icon: BarChart3, label: t('presentation.pillar3Title'), desc: t('presentation.pillar3Desc') },
   ];
 
   return (
-    <div className="max-w-4xl mx-auto w-full text-center">
-      <p className="animate-fade-in-up text-sm font-semibold text-primary tracking-widest uppercase mb-4">{t('presentation.solutionLabel')}</p>
-      <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3">
+    <div className="max-w-3xl mx-auto w-full text-center">
+      <p className="animate-fade-in-up text-xs font-semibold text-muted-foreground tracking-[0.2em] uppercase mb-5">{t('presentation.solutionLabel')}</p>
+      <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-[2.75rem] font-semibold text-foreground tracking-tight leading-[1.15] mb-3">
         {t('presentation.solutionTitle')}
       </h2>
-      <p className="animate-fade-in-up stagger-2 text-muted-foreground text-sm sm:text-base max-w-md mx-auto mb-12 sm:mb-14">
+      <p className="animate-fade-in-up stagger-2 text-muted-foreground text-sm sm:text-base max-w-sm mx-auto mb-14 sm:mb-16">
         {t('presentation.solutionSubtitle')}
       </p>
-      <div className="grid sm:grid-cols-3 gap-5 sm:gap-6">
+      <div className="grid sm:grid-cols-3 gap-4 sm:gap-5">
         {pillars.map((p, i) => (
           <div 
             key={i} 
-            className="bg-card rounded-2xl p-6 sm:p-8 text-center border border-border/40 shadow-sm hover:shadow-md transition-shadow animate-fade-in-up" 
-            style={{ animationDelay: `${0.25 + i * 0.12}s` }}
+            className="group rounded-2xl p-7 sm:p-8 text-center bg-secondary/30 hover:bg-secondary/50 transition-colors duration-300 animate-fade-in-up" 
+            style={{ animationDelay: `${0.25 + i * 0.1}s` }}
           >
-            <div className={`w-14 h-14 rounded-2xl ${p.color} flex items-center justify-center mx-auto mb-5`}>
-              <p.icon className={`w-7 h-7 ${p.iconColor}`} />
+            <div className="w-12 h-12 rounded-full bg-background flex items-center justify-center mx-auto mb-5 shadow-sm">
+              <p.icon className="w-5 h-5 text-foreground/70" strokeWidth={1.5} />
             </div>
-            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">{p.label}</h3>
-            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
+            <h3 className="text-[15px] sm:text-base font-semibold text-foreground mb-2 tracking-tight">{p.label}</h3>
+            <p className="text-[13px] text-muted-foreground leading-relaxed">{p.desc}</p>
           </div>
         ))}
       </div>
