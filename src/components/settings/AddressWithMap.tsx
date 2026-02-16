@@ -34,6 +34,7 @@ export function AddressWithMap({
   const [geocoding, setGeocoding] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout>();
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const skipSearchRef = useRef(false);
 
   // Close suggestions on outside click
   useEffect(() => {
@@ -48,6 +49,11 @@ export function AddressWithMap({
 
   const handleInputChange = useCallback((value: string) => {
     onAddressChange(value);
+
+    if (skipSearchRef.current) {
+      skipSearchRef.current = false;
+      return;
+    }
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
@@ -64,6 +70,7 @@ export function AddressWithMap({
   }, [onAddressChange]);
 
   const handleSelectSuggestion = (suggestion: { display_name: string; lat: string; lon: string }) => {
+    skipSearchRef.current = true;
     onAddressChange(suggestion.display_name);
     onLocationChange(parseFloat(suggestion.lat), parseFloat(suggestion.lon));
     setShowSuggestions(false);
