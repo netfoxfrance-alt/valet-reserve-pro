@@ -783,110 +783,146 @@ function SlideInvoices() {
 /* ─── Slide 11: Statistiques ─── */
 function SlideStats() {
   const { t } = useTranslation();
-  const sidebarItems = t('presentation.sidebarItems', { returnObjects: true }) as string[];
   const months = t('presentation.dashMonths', { returnObjects: true }) as string[];
 
   return (
-    <MockDashboardShell active={sidebarItems[5]} title={t('presentation.dashStatsTitle')} subtitle={t('presentation.dashStatsSubtitle')} sidebarItems={sidebarItems}>
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[10px] text-muted-foreground">‹</span>
-        <p className="text-sm font-bold text-foreground">{t('presentation.dashJanuary2025')}</p>
-        <span className="text-[10px] text-muted-foreground">›</span>
+    <div className="max-w-4xl mx-auto w-full">
+      <div className="text-center mb-6 sm:mb-8">
+        <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-2">
+          {t('presentation.dashStatsTitle')}
+        </h2>
+        <p className="animate-fade-in-up stagger-1 text-sm sm:text-base text-muted-foreground max-w-lg mx-auto">
+          {t('presentation.dashStatsSubtitle')}
+        </p>
       </div>
-      <div className="grid grid-cols-2 gap-2 mb-3">
-        <div className="bg-card border border-border/40 rounded-xl p-3">
-          <p className="text-[9px] text-muted-foreground">{t('presentation.dashReservationsStat')}</p>
-          <div className="flex items-baseline gap-2">
-            <p className="text-xl font-bold text-foreground">24</p>
-            <span className="text-[9px] text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded-full font-semibold">↑12%</span>
+
+      {/* Browser mockup */}
+      <div className="animate-fade-in-up stagger-2 bg-card rounded-2xl shadow-[0_8px_40px_-12px_rgba(0,0,0,0.12)] border border-border/30 overflow-hidden">
+        {/* Browser bar */}
+        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/30">
+          <div className="flex gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+            <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+          </div>
+          <div className="flex-1 flex justify-center">
+            <div className="bg-secondary/50 rounded-md px-4 py-1 text-[10px] text-muted-foreground">cleaningpage.com/dashboard</div>
           </div>
         </div>
-        <div className="bg-card border border-border/40 rounded-xl p-3">
-          <p className="text-[9px] text-muted-foreground">{t('presentation.dashRevenue')}</p>
-          <div className="flex items-baseline gap-2">
-            <p className="text-xl font-bold text-foreground">8 450€</p>
-            <span className="text-[9px] text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded-full font-semibold">↑18%</span>
+
+        {/* Content */}
+        <div className="p-5 sm:p-7">
+          {/* Month nav */}
+          <div className="flex items-center justify-between mb-5">
+            <ChevronLeft className="w-4 h-4 text-muted-foreground" />
+            <p className="text-base sm:text-lg font-bold text-foreground">{t('presentation.dashJanuary2025')}</p>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
           </div>
-        </div>
-        <div className="bg-card border border-border/40 rounded-xl p-3">
-          <p className="text-[9px] text-muted-foreground">{t('presentation.dashClientsStat')}</p>
-          <p className="text-xl font-bold text-foreground">18</p>
-        </div>
-        <div className="bg-card border border-border/40 rounded-xl p-3">
-          <p className="text-[9px] text-muted-foreground">{t('presentation.dashAvgBasketStat')}</p>
-          <p className="text-xl font-bold text-foreground">352€</p>
-        </div>
-      </div>
-      <div className="flex gap-3 mb-2">
-        {[t('presentation.dashEvolution'), t('presentation.dashServicesTab')].map((tab, i) => (
-          <span key={tab} className={`text-[10px] pb-1 ${i === 0 ? 'text-foreground font-semibold border-b-2 border-foreground' : 'text-muted-foreground'}`}>{tab}</span>
-        ))}
-      </div>
-      <div className="grid grid-cols-2 gap-2">
-        {/* Réservations par semaine — courbe */}
-        <div className="bg-card border border-border/40 rounded-xl p-3">
-          <p className="text-[9px] font-semibold text-foreground mb-2">{t('presentation.dashWeeklyBookings')}</p>
-          <div className="h-20 relative">
-            <svg viewBox="0 0 200 80" className="w-full h-full" preserveAspectRatio="none">
-              {/* Grid lines */}
-              {[20, 40, 60].map(y => (
-                <line key={y} x1="0" y1={y} x2="200" y2={y} stroke="currentColor" className="text-border" strokeWidth="0.5" strokeDasharray="3,3" />
-              ))}
-              {/* Area fill */}
-              <path d="M0,65 L33,55 L66,45 L100,40 L133,30 L166,25 L200,18 L200,80 L0,80 Z" fill="hsl(221 83% 53% / 0.1)" />
-              {/* Line curve */}
-              <polyline
-                points="0,65 33,55 66,45 100,40 133,30 166,25 200,18"
-                fill="none"
-                stroke="hsl(221 83% 53%)"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              {/* Data points */}
-              {[[0,65],[33,55],[66,45],[100,40],[133,30],[166,25],[200,18]].map(([cx,cy], i) => (
-                <circle key={i} cx={cx} cy={cy} r="3" fill="white" stroke="hsl(221 83% 53%)" strokeWidth="2" />
-              ))}
-            </svg>
-          </div>
-          <div className="flex justify-between mt-1">
-            {['S1','S2','S3','S4','S5','S6','S7'].map(s => (
-              <span key={s} className="text-[6px] text-muted-foreground flex-1 text-center">{s}</span>
-            ))}
-          </div>
-        </div>
-        {/* CA par mois — colonnes vertes */}
-        <div className="bg-card border border-border/40 rounded-xl p-3">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-[9px] font-semibold text-foreground">{t('presentation.dashMonthlyRevenue')}</p>
-            <span className="text-[8px] text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded-full font-semibold">+18%</span>
-          </div>
-          <div className="h-20 flex items-end gap-1.5">
-            {[
-              { h: 45, val: '5.2k' },
-              { h: 40, val: '4.8k' },
-              { h: 50, val: '6.1k' },
-              { h: 48, val: '5.9k' },
-              { h: 55, val: '7.0k' },
-              { h: 75, val: '8.5k' },
-            ].map((bar, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center">
-                <span className="text-[5px] text-emerald-600 font-semibold mb-0.5">{bar.val}</span>
-                <div
-                  className={`w-full rounded-t-sm ${i === 5 ? 'bg-emerald-500' : 'bg-emerald-500/40'}`}
-                  style={{ height: `${bar.h}%` }}
-                />
+
+          {/* KPI cards */}
+          <div className="grid grid-cols-2 gap-3 mb-5">
+            <div className="border border-border/40 rounded-xl p-4">
+              <p className="text-xs text-muted-foreground mb-1">{t('presentation.dashReservationsStat')}</p>
+              <div className="flex items-baseline gap-2">
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">24</p>
+                <span className="text-[10px] text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full font-semibold">↑12%</span>
               </div>
+            </div>
+            <div className="border border-border/40 rounded-xl p-4">
+              <p className="text-xs text-muted-foreground mb-1">{t('presentation.dashRevenue')}</p>
+              <div className="flex items-baseline gap-2">
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">8 450€</p>
+                <span className="text-[10px] text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full font-semibold">↑18%</span>
+              </div>
+            </div>
+            <div className="border border-border/40 rounded-xl p-4">
+              <p className="text-xs text-muted-foreground mb-1">{t('presentation.dashClientsStat')}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-foreground">18</p>
+            </div>
+            <div className="border border-border/40 rounded-xl p-4">
+              <p className="text-xs text-muted-foreground mb-1">{t('presentation.dashAvgBasketStat')}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-foreground">352€</p>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex gap-1 mb-4">
+            {[t('presentation.dashEvolution'), t('presentation.dashServicesTab')].map((tab, i) => (
+              <span key={tab} className={`text-xs px-3 py-1.5 rounded-full ${i === 0 ? 'bg-foreground text-background font-semibold' : 'text-muted-foreground'}`}>{tab}</span>
             ))}
           </div>
-          <div className="flex justify-between mt-1">
-            {months.map((m) => (
-              <span key={m} className="text-[6px] text-muted-foreground flex-1 text-center">{m}</span>
-            ))}
+
+          {/* Charts */}
+          <div className="grid grid-cols-2 gap-3">
+            {/* Réservations par semaine — smooth curve */}
+            <div className="border border-border/40 rounded-xl p-4">
+              <p className="text-xs font-semibold text-foreground mb-3">{t('presentation.dashWeeklyBookings')}</p>
+              <div className="flex gap-2">
+                {/* Y axis */}
+                <div className="flex flex-col justify-between text-[8px] text-muted-foreground py-0.5" style={{ height: 120 }}>
+                  <span>8</span><span>6</span><span>4</span><span>2</span><span>0</span>
+                </div>
+                <div className="flex-1" style={{ height: 120 }}>
+                  <svg viewBox="0 0 240 100" className="w-full h-full" preserveAspectRatio="none">
+                    {/* Grid */}
+                    {[0, 25, 50, 75, 100].map(y => (
+                      <line key={y} x1="0" y1={y} x2="240" y2={y} stroke="currentColor" className="text-border/50" strokeWidth="0.5" />
+                    ))}
+                    {/* Area */}
+                    <path d="M0,80 C20,78 30,70 60,55 C90,40 100,30 130,22 C160,14 190,12 210,12 L240,12 L240,100 L0,100 Z" fill="hsl(221 83% 53% / 0.08)" />
+                    {/* Smooth curve */}
+                    <path
+                      d="M0,80 C20,78 30,70 60,55 C90,40 100,30 130,22 C160,14 190,12 210,12 L240,12"
+                      fill="none"
+                      stroke="hsl(221 83% 53%)"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex justify-between mt-1.5 ml-5">
+                {['9 déc','16 déc','23 déc','30 déc','6 jan','13 jan','20 jan'].map(d => (
+                  <span key={d} className="text-[7px] text-muted-foreground">{d}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* CA par mois — green bar chart */}
+            <div className="border border-border/40 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-semibold text-foreground">{t('presentation.dashMonthlyRevenue')}</p>
+                <span className="text-[10px] text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full font-semibold">+18%</span>
+              </div>
+              <div className="flex gap-2">
+                {/* Y axis */}
+                <div className="flex flex-col justify-between text-[8px] text-muted-foreground py-0.5" style={{ height: 120 }}>
+                  <span>10k</span><span>7.5k</span><span>5k</span><span>2.5k</span><span>0</span>
+                </div>
+                <div className="flex-1 flex items-end gap-2" style={{ height: 120 }}>
+                  {[
+                    { h: 35, label: 'août' },
+                    { h: 33, label: 'sept.' },
+                    { h: 40, label: 'oct.' },
+                    { h: 38, label: 'nov.' },
+                    { h: 55, label: 'déc.' },
+                    { h: 80, label: 'janv.' },
+                  ].map((bar, i) => (
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                      <div
+                        className={`w-full rounded-t-lg ${i === 5 ? 'bg-emerald-500' : 'bg-emerald-400/50'}`}
+                        style={{ height: `${bar.h}%` }}
+                      />
+                      <span className={`text-[7px] ${i === 5 ? 'text-foreground font-semibold' : 'text-muted-foreground'}`}>{months[i] || bar.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </MockDashboardShell>
+    </div>
   );
 }
 
