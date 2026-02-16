@@ -259,25 +259,25 @@ function SlideSolution() {
 
   return (
     <div className="max-w-4xl mx-auto w-full text-center">
-      <p className="animate-fade-in-up text-xs font-semibold text-muted-foreground tracking-[0.2em] uppercase mb-5">{t('presentation.solutionLabel')}</p>
-      <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-[2.75rem] font-semibold text-foreground tracking-tight leading-[1.15] mb-3">
+      <p className="animate-fade-in-up text-xs font-semibold text-emerald-600 tracking-[0.2em] uppercase mb-5">{t('presentation.solutionLabel')}</p>
+      <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-[2.75rem] font-bold text-foreground tracking-tight leading-[1.15] mb-3">
         {t('presentation.solutionTitle')}
       </h2>
-      <p className="animate-fade-in-up stagger-2 text-muted-foreground text-sm sm:text-base max-w-sm mx-auto mb-10 sm:mb-12">
+      <p className="animate-fade-in-up stagger-2 text-muted-foreground text-sm sm:text-base max-w-sm mx-auto mb-10 sm:mb-14">
         {t('presentation.solutionSubtitle')}
       </p>
-      <div className="grid sm:grid-cols-3 gap-5 sm:gap-6">
+      <div className="grid sm:grid-cols-3 gap-6 sm:gap-8">
         {pillars.map((p, i) => (
           <div 
             key={i} 
             className="group animate-fade-in-up" 
             style={{ animationDelay: `${0.25 + i * 0.12}s` }}
           >
-            <div className="mb-4">
+            <div className="mb-5 transform group-hover:scale-[1.02] transition-transform duration-500">
               {p.mockup}
             </div>
-            <h3 className="text-[15px] sm:text-base font-semibold text-foreground mb-1.5 tracking-tight">{p.label}</h3>
-            <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[200px] mx-auto">{p.desc}</p>
+            <h3 className="text-base sm:text-lg font-bold text-foreground mb-1.5 tracking-tight">{p.label}</h3>
+            <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px] mx-auto">{p.desc}</p>
           </div>
         ))}
       </div>
@@ -1080,15 +1080,15 @@ function SlideBenefits() {
     <div className="max-w-3xl mx-auto w-full">
       <div className="text-center mb-10 sm:mb-12">
         <p className="animate-fade-in-up text-sm font-semibold text-emerald-600 tracking-widest uppercase mb-4">{t('presentation.benefitsLabel')}</p>
-        <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
+        <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight">
           {t('presentation.benefitsTitle')}
         </h2>
       </div>
       <div className="space-y-3 sm:space-y-4">
         {benefits.map((b, i) => (
-          <div key={i} className="flex items-center gap-4 sm:gap-5 bg-secondary/30 rounded-2xl p-5 animate-fade-in-up" style={{ animationDelay: `${0.1 + i * 0.08}s` }}>
-            <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-              <Check className="w-4 h-4 text-emerald-500" />
+          <div key={i} className="flex items-center gap-4 sm:gap-5 bg-card rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)] border border-border/30 animate-fade-in-up hover:shadow-[0_2px_8px_rgba(0,0,0,0.06),0_8px_20px_rgba(0,0,0,0.04)] transition-shadow duration-300" style={{ animationDelay: `${0.1 + i * 0.08}s` }}>
+            <div className="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 shadow-[0_4px_12px_-2px_rgba(16,185,129,0.35)]">
+              <Check className="w-4 h-4 text-white" strokeWidth={2.5} />
             </div>
             <div className="flex-1">
               <p className="text-sm sm:text-base font-semibold text-foreground">{b.label}</p>
@@ -1138,8 +1138,8 @@ function SlideTrial() {
               t('presentation.trialFeature6', { defaultValue: 'Support prioritaire' }),
             ].map((feature, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-foreground flex items-center justify-center flex-shrink-0">
-                  <Check className="w-3 h-3 text-background" />
+                <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
+                  <Check className="w-3 h-3 text-white" />
                 </div>
                 <span className="text-sm text-foreground">{feature}</span>
               </div>
@@ -1147,7 +1147,7 @@ function SlideTrial() {
           </div>
 
           <Link to="/auth">
-            <Button size="lg" className="w-full rounded-xl text-base font-semibold">
+            <Button size="lg" className="w-full rounded-xl text-base font-semibold bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_8px_24px_-4px_rgba(16,185,129,0.4)] hover:shadow-[0_12px_32px_-4px_rgba(16,185,129,0.5)] transition-all duration-300">
               {t('presentation.trialCTA', { defaultValue: 'Commencer gratuitement' })}
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
