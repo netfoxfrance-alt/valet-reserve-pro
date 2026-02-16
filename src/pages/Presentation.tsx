@@ -1,555 +1,745 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Logo } from '@/components/ui/Logo';
 import { Button } from '@/components/ui/button';
 import { 
-  ArrowRight, ArrowLeft, ArrowDown, Check, Calendar, Users, BarChart3, 
-  Clock, Car, Building2, Home, Shirt, Sparkles, Zap, 
-  Globe, Palette, Eye, Shield, Settings, Phone,
-  MousePointer2, FileText, UserCheck, MessageCircle, Receipt, Layout
+  ArrowRight, Check, Calendar, Users, BarChart3, 
+  Clock, Sparkles, Globe, Palette, Shield, Phone,
+  MousePointer2, FileText, Receipt, Plus,
+  Instagram, Facebook, Mail, Droplets, MapPin,
+  CalendarDays, Star, Settings, Link2, ExternalLink,
+  ChevronLeft, ChevronRight, Eye, Type
 } from 'lucide-react';
+import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 import mockupCarCleaning from '@/assets/mockup-car-cleaning.jpg';
 import mockupLogoClean from '@/assets/mockup-logo-cleaning.png';
-
-const TOTAL_SLIDES = 9;
+import gocleanLogo from '@/assets/gocleaning-logo.png';
+import sofaBanner from '@/assets/sofa-cleaning-banner.jpg';
 
 export default function Presentation() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [direction, setDirection] = useState<'next' | 'prev'>('next');
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const goTo = (index: number) => {
-    if (index < 0 || index >= TOTAL_SLIDES || index === currentSlide) return;
-    setDirection(index > currentSlide ? 'next' : 'prev');
-    setCurrentSlide(index);
-  };
-
-  const next = () => goTo(currentSlide + 1);
-  const prev = () => goTo(currentSlide - 1);
-
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [currentSlide]);
-
-  const touchStart = useRef(0);
-  const handleTouchStart = (e: React.TouchEvent) => { touchStart.current = e.touches[0].clientX; };
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const diff = touchStart.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) { diff > 0 ? next() : prev(); }
-  };
-
-  const slides = [
-    <SlideCover key={0} />,
-    <SlideNeeds key={1} />,
-    <SlideSolution key={2} />,
-    <SlideCustomize key={3} />,
-    <SlideModes key={4} />,
-    <SlideBenefits key={5} />,
-    <SlideFeatures key={6} />,
-    <SlideTrial key={7} />,
-    <SlideContact key={8} />,
-  ];
+  const [dashboardTab, setDashboardTab] = useState<'reservations' | 'calendar' | 'clients' | 'invoices' | 'stats'>('reservations');
 
   return (
-    <div 
-      ref={containerRef}
-      className="h-screen w-screen overflow-hidden bg-foreground relative select-none"
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
-      <div className="h-full w-full relative">
-        {slides.map((slide, i) => (
-          <SlideTransition key={i} active={currentSlide === i} direction={direction}>
-            {slide}
-          </SlideTransition>
-        ))}
-      </div>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="w-full py-4 px-4 sm:px-6 border-b border-border/50 sticky top-0 bg-background/95 backdrop-blur-sm z-50">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <Link to="/" className="flex items-center">
+            <Logo size="lg" />
+          </Link>
+          <Link to="/auth">
+            <Button size="sm" className="text-xs sm:text-sm px-3 sm:px-4">
+              Commencer
+            </Button>
+          </Link>
+        </div>
+      </header>
 
-      {/* Navigation */}
-      <div className="absolute bottom-0 left-0 right-0 z-50">
-        <div className="flex items-center justify-between px-4 sm:px-8 py-4 bg-gradient-to-t from-black/60 to-transparent">
-          <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10 rounded-full" onClick={prev} disabled={currentSlide === 0}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div className="flex gap-1.5 sm:gap-2">
-            {Array.from({ length: TOTAL_SLIDES }).map((_, i) => (
-              <button key={i} onClick={() => goTo(i)} className={`h-1.5 rounded-full transition-all duration-500 ${i === currentSlide ? 'w-8 bg-white' : 'w-1.5 bg-white/30 hover:bg-white/50'}`} />
+      {/* ═══════ 1. COVER ═══════ */}
+      <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6 text-center">
+        <div className="max-w-3xl mx-auto">
+          <div className="mb-6 opacity-0 animate-fade-in">
+            <Logo size="xl" />
+          </div>
+          <h1 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-5xl lg:text-6xl font-semibold text-foreground tracking-tight mb-6 leading-[1.1]">
+            La plateforme complète pour les professionnels du nettoyage
+          </h1>
+          <p className="opacity-0 animate-fade-in-up stagger-2 text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto mb-10">
+            Vitrine, réservation et gestion centralisée. Tout dans un seul outil.
+          </p>
+          <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-col sm:flex-row gap-3 justify-center">
+            <Link to="/auth">
+              <Button size="lg" className="w-full sm:w-auto text-base px-8 shadow-lg shadow-emerald-500/25 bg-emerald-500 hover:bg-emerald-600">
+                Essayer gratuitement
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
+          <div className="opacity-0 animate-fade-in-up stagger-4 flex items-center gap-6 justify-center text-sm text-muted-foreground mt-6">
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-emerald-500" />
+              <span>30 jours offerts</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-emerald-500" />
+              <span>Sans engagement</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ 2. LES BESOINS ═══════ */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/30">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+              Aujourd'hui, une entreprise de nettoyage a besoin de&nbsp;:
+            </h2>
+            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto">
+              Il faut un site complet et beaucoup d'outils éparpillés pour tout gérer.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-5 max-w-2xl mx-auto">
+            {[
+              { icon: Globe, label: 'Présenter son entreprise et ses prestations' },
+              { icon: Calendar, label: 'Un système de réservation en ligne' },
+              { icon: Clock, label: 'Un agenda pour organiser son planning' },
+              { icon: Users, label: 'Un suivi de ses clients et de son activité' },
+              { icon: Receipt, label: 'Un outil pour les factures et devis' },
+            ].map((n, i) => (
+              <div key={i} className="flex items-center gap-4 bg-card border border-border/60 rounded-2xl p-4 sm:p-5 opacity-0 animate-fade-in-up" style={{ animationDelay: `${0.15 + i * 0.1}s` }}>
+                <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
+                  <n.icon className="w-5 h-5 text-foreground" />
+                </div>
+                <p className="text-sm sm:text-base font-medium text-foreground">{n.label}</p>
+              </div>
             ))}
           </div>
-          <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10 rounded-full" onClick={next} disabled={currentSlide === TOTAL_SLIDES - 1}>
-            <ArrowRight className="w-5 h-5" />
-          </Button>
         </div>
-      </div>
+      </section>
 
-      <div className="absolute top-4 right-4 sm:top-6 sm:right-8 z-50">
-        <span className="text-white/40 text-xs font-mono">{String(currentSlide + 1).padStart(2, '0')} / {TOTAL_SLIDES}</span>
-      </div>
-    </div>
-  );
-}
+      {/* ═══════ 3. LA SOLUTION ═══════ */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/30">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+            CleaningPage combine tout ce dont vous avez besoin
+          </h2>
+          <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto mb-12 sm:mb-16">
+            Un seul outil. Pas dix.
+          </p>
 
-/* ──── Transition ──── */
-function SlideTransition({ active, direction, children }: { active: boolean; direction: 'next' | 'prev'; children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { if (active) setMounted(true); }, [active]);
-  if (!mounted && !active) return null;
-  return (
-    <div className={`absolute inset-0 transition-all duration-700 ease-out ${active ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 pointer-events-none ' + (direction === 'next' ? '-translate-x-8 scale-[0.98]' : 'translate-x-8 scale-[0.98]')}`}>
-      {children}
-    </div>
-  );
-}
-
-/* ──── Shared ──── */
-const slideBg = "h-full w-full bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 flex items-center justify-center relative overflow-hidden px-6 sm:px-12";
-
-function Tag({ children, color = 'emerald' }: { children: string; color?: string }) {
-  const colors: Record<string, string> = {
-    emerald: 'text-emerald-400/80',
-    red: 'text-red-400/80',
-    blue: 'text-blue-400/80',
-    amber: 'text-amber-400/80',
-    violet: 'text-violet-400/80',
-  };
-  return <p className={`text-xs sm:text-sm uppercase tracking-[0.25em] font-medium mb-4 animate-fade-in ${colors[color]}`}>{children}</p>;
-}
-
-/* ═══════ SLIDE 1: Cover ═══════ */
-function SlideCover() {
-  return (
-    <div className="h-full w-full bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 flex flex-col items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px]" />
-
-      <div className="relative z-10 text-center max-w-2xl mx-auto px-6">
-        <div className="mb-8 animate-fade-in">
-          <Logo size="xl" variant="light" />
-        </div>
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-semibold text-white tracking-tight mb-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          La plateforme complète pour les professionnels du nettoyage
-        </h1>
-        <p className="text-lg sm:text-xl text-white/50 mb-12 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-          Vitrine, réservation et gestion centralisée.
-        </p>
-        <div className="flex justify-center gap-6 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-          {['Pro', 'Minimal', 'Complet'].map((l) => (
-            <span key={l} className="text-xs sm:text-sm text-white/30 tracking-[0.2em] uppercase font-medium">{l}</span>
-          ))}
-        </div>
-      </div>
-
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 animate-bounce">
-        <ArrowDown className="w-5 h-5 text-white/20" />
-      </div>
-    </div>
-  );
-}
-
-/* ═══════ SLIDE 2: Les besoins ═══════ */
-function SlideNeeds() {
-  const needs = [
-    { icon: Globe, label: 'Présenter son entreprise et ses prestations', desc: 'Un site web professionnel qui reflète votre savoir-faire' },
-    { icon: Calendar, label: 'Un système de réservation', desc: 'Pour que vos clients réservent en ligne, simplement' },
-    { icon: Clock, label: 'Un agenda pour organiser son planning', desc: 'Visualiser et gérer tous vos rendez-vous au même endroit' },
-    { icon: Users, label: 'Un suivi de ses clients et de son activité', desc: 'Historique, statistiques et fidélisation' },
-    { icon: Receipt, label: 'Un outil pour les factures et devis', desc: 'Créer, envoyer et suivre vos documents en quelques clics' },
-  ];
-
-  return (
-    <div className={slideBg}>
-      <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-[100px]" />
-
-      <div className="relative z-10 max-w-3xl mx-auto">
-        <Tag color="amber">Le constat</Tag>
-        <h2 className="text-2xl sm:text-4xl lg:text-5xl font-semibold text-white tracking-tight mb-4 animate-fade-in-up">
-          Aujourd'hui, une entreprise de nettoyage a besoin&nbsp;:
-        </h2>
-        <p className="text-sm sm:text-base text-white/40 mb-10 animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
-          Il faut un site complet et beaucoup d'outils éparpillés pour tout gérer.
-        </p>
-
-        <div className="space-y-4">
-          {needs.map((n, i) => (
-            <div key={i} className="flex items-start gap-4 animate-fade-in-up" style={{ animationDelay: `${0.2 + i * 0.12}s` }}>
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0">
-                <n.icon className="w-5 h-5 text-amber-400" />
-              </div>
-              <div>
-                <p className="text-sm sm:text-base font-medium text-white">{n.label}</p>
-                <p className="text-xs sm:text-sm text-white/40">{n.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ═══════ SLIDE 3: La solution ═══════ */
-function SlideSolution() {
-  const pillars = [
-    { icon: Globe, label: 'Une page web', desc: 'Faite pour convertir vos visiteurs en clients', color: 'emerald' },
-    { icon: Calendar, label: 'Un système de rendez-vous', desc: 'Réservation en ligne + gestion du planning', color: 'blue' },
-    { icon: Layout, label: 'Un espace de gestion', desc: 'Clients, statistiques, factures, devis', color: 'violet' },
-  ];
-
-  return (
-    <div className={slideBg}>
-      <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[120px]" />
-
-      <div className="relative z-10 max-w-4xl mx-auto w-full text-center">
-        <Tag>La solution</Tag>
-        <h2 className="text-2xl sm:text-4xl lg:text-5xl font-semibold text-white tracking-tight mb-4 animate-fade-in-up">
-          CleaningPage combine tout ce dont vous avez besoin
-        </h2>
-        <p className="text-sm sm:text-base text-white/40 mb-12 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
-          Un seul outil. Pas dix.
-        </p>
-
-        <div className="grid sm:grid-cols-3 gap-5 sm:gap-6">
-          {pillars.map((p, i) => {
-            const colors: Record<string, string> = {
-              emerald: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400',
-              blue: 'bg-blue-500/10 border-blue-500/20 text-blue-400',
-              violet: 'bg-violet-500/10 border-violet-500/20 text-violet-400',
-            };
-            return (
-              <div key={i} className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 sm:p-8 text-center animate-fade-in-up" style={{ animationDelay: `${0.3 + i * 0.15}s` }}>
-                <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center mx-auto mb-5 ${colors[p.color]}`}>
-                  <p.icon className="w-7 h-7" />
+          <div className="grid sm:grid-cols-3 gap-5 sm:gap-6">
+            {[
+              { icon: Globe, label: 'Une page web', desc: 'Faite pour convertir vos visiteurs en clients' },
+              { icon: Calendar, label: 'Un système de rendez-vous', desc: 'Réservation en ligne + gestion du planning' },
+              { icon: BarChart3, label: 'Un espace de gestion', desc: 'Clients, statistiques, factures, devis' },
+            ].map((p, i) => (
+              <div key={i} className="bg-card border border-border/60 rounded-2xl p-6 sm:p-8 text-center opacity-0 animate-fade-in-up" style={{ animationDelay: `${0.2 + i * 0.15}s` }}>
+                <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-5">
+                  <p.icon className="w-7 h-7 text-foreground" />
                 </div>
-                <h3 className="text-base sm:text-lg font-semibold text-white mb-2">{p.label}</h3>
-                <p className="text-xs sm:text-sm text-white/50 leading-relaxed">{p.desc}</p>
+                <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">{p.label}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
               </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ═══════ SLIDE 4: Personnalisation ═══════ */
-function SlideCustomize() {
-  return (
-    <div className={slideBg}>
-      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[120px]" />
-
-      <div className="relative z-10 max-w-5xl mx-auto w-full">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Mockup */}
-          <div className="animate-fade-in-up order-2 lg:order-1" style={{ animationDelay: '0.3s' }}>
-            <div className="relative mx-auto w-[260px] sm:w-[300px]">
-              <div className="bg-zinc-800/60 rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-white/10">
-                <div className="h-24 relative overflow-hidden">
-                  <img src={mockupCarCleaning} alt="Preview" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-800/40 to-transparent" />
-                </div>
-                <div className="flex justify-center -mt-8 relative z-10 mb-2">
-                  <div className="w-16 h-16 rounded-2xl shadow-xl ring-4 ring-zinc-800 overflow-hidden">
-                    <img src={mockupLogoClean} alt="Logo" className="w-full h-full object-cover" />
-                  </div>
-                </div>
-                <div className="px-4 pb-4 text-center">
-                  <h3 className="text-sm font-bold text-white mb-0.5">Clean Premium</h3>
-                  <p className="text-[9px] text-white/40 mb-3">Detailing automobile haut de gamme</p>
-                  <div className="flex justify-center mb-3">
-                    <span className="inline-flex items-center gap-1.5 text-[8px] border border-emerald-500/30 text-emerald-400 px-2.5 py-1 rounded-full">
-                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                      Ouvert
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 mb-3">
-                    <div className="bg-white/5 rounded-lg p-2.5 border border-white/5">
-                      <p className="text-[9px] text-white/60 mb-0.5">Express</p>
-                      <p className="text-sm font-bold text-white">35€</p>
-                    </div>
-                    <div className="bg-white/5 rounded-lg p-2.5 border border-white/5">
-                      <p className="text-[9px] text-white/60 mb-0.5">Complet</p>
-                      <p className="text-sm font-bold text-white">89€</p>
-                    </div>
-                  </div>
-                  <button className="w-full bg-white text-zinc-900 py-2.5 rounded-xl text-xs font-semibold">
-                    Réserver
-                  </button>
-                </div>
-              </div>
-
-              {/* Floating widgets */}
-              <div className="absolute -top-3 -right-3 sm:-right-8 animate-float">
-                <div className="bg-zinc-800 rounded-xl p-2.5 shadow-lg ring-1 ring-white/10">
-                  <div className="flex items-center gap-2">
-                    <Palette className="w-4 h-4 text-emerald-400" />
-                    <span className="text-[9px] text-white/60">Couleurs</span>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute -bottom-2 -left-3 sm:-left-8 animate-float" style={{ animationDelay: '1.5s' }}>
-                <div className="bg-zinc-800 rounded-xl p-2.5 shadow-lg ring-1 ring-white/10">
-                  <div className="flex items-center gap-2">
-                    <MousePointer2 className="w-4 h-4 text-blue-400" />
-                    <span className="text-[9px] text-white/60">Drag & drop</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
+        </div>
+      </section>
 
-          {/* Text */}
-          <div className="order-1 lg:order-2">
-            <Tag>Votre page</Tag>
-            <h2 className="text-2xl sm:text-4xl font-semibold text-white tracking-tight mb-4 animate-fade-in-up">
+      {/* ═══════ 4. PERSONNALISEZ VOTRE PAGE ═══════ */}
+      <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 border-t border-border/30 overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10 sm:mb-16 lg:mb-20">
+            <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
               Personnalisez votre page sans compétence technique
             </h2>
-            <p className="text-sm sm:text-base text-white/40 mb-8 animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
+            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base lg:text-lg max-w-lg mx-auto">
               Ajoutez votre logo, vos couleurs, vos prestations. Modifiez tout, à tout moment.
             </p>
+          </div>
 
-            <div className="space-y-5">
-              {[
-                { icon: Zap, label: 'Mise en place en quelques minutes' },
-                { icon: Shield, label: 'Aucune compétence technique requise' },
-                { icon: Settings, label: 'Modifiable à tout moment' },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-4 animate-fade-in-up" style={{ animationDelay: `${0.3 + i * 0.15}s` }}>
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                    <item.icon className="w-5 h-5 text-emerald-400" />
+          <div className="opacity-0 animate-fade-in-up stagger-2">
+            {/* Desktop layout with floating widgets */}
+            <div className="hidden sm:block relative">
+              <div className="relative max-w-5xl mx-auto">
+                
+                {/* Central Phone Mockup */}
+                <div className="relative mx-auto w-[320px] lg:w-[340px]">
+                  <div className="bg-card rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
+                    <div className="h-28 lg:h-32 relative overflow-hidden rounded-t-[2.5rem]">
+                      <img src={mockupCarCleaning} alt="Preview" className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                    </div>
+                    <div className="flex justify-center -mt-12 relative z-30 mb-4">
+                      <div className="w-24 h-24 bg-white rounded-2xl shadow-2xl flex items-center justify-center ring-4 ring-white overflow-hidden">
+                        <img src={mockupLogoClean} alt="Logo" className="w-full h-full object-cover" />
+                      </div>
+                    </div>
+                    <div className="px-6 pb-6 text-center">
+                      <h3 className="text-xl font-bold text-foreground mb-1">Clean Premium</h3>
+                      <p className="text-sm text-muted-foreground mb-4">Nettoyage premium à domicile, 7j/7.</p>
+                      <div className="flex justify-center mb-5">
+                        <span className="inline-flex items-center gap-2 text-xs bg-white border border-emerald-200 text-emerald-600 px-4 py-1.5 rounded-full font-medium shadow-sm">
+                          <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                          Ouvert
+                        </span>
+                      </div>
+                      <div className="flex justify-center gap-3 mb-6">
+                        {[Instagram, Facebook, Mail].map((Icon, i) => (
+                          <div key={i} className="w-11 h-11 rounded-full flex items-center justify-center bg-card border-2 border-foreground/20">
+                            <Icon className="w-5 h-5 text-foreground" />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="space-y-3 mb-6 text-left">
+                        <div className="flex items-center gap-3 text-sm text-foreground">
+                          <Phone className="w-4 h-4 text-muted-foreground" />
+                          <span>06 12 34 56 78</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-primary">
+                          <Droplets className="w-4 h-4 text-primary" />
+                          <span className="font-medium">Voir nos produits utilisés →</span>
+                        </div>
+                      </div>
+                      <div className="text-left mb-5">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="text-base font-semibold text-foreground">Nos formules</h4>
+                          <span className="text-xs text-primary font-medium">Voir tout →</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="bg-card border border-border/60 rounded-xl p-4">
+                            <p className="text-sm font-semibold text-foreground mb-1">Express</p>
+                            <p className="text-lg font-bold text-muted-foreground">35€</p>
+                          </div>
+                          <div className="bg-card border border-border/60 rounded-xl p-4">
+                            <p className="text-sm font-semibold text-foreground mb-1">Complet</p>
+                            <p className="text-lg font-bold text-muted-foreground">89€</p>
+                          </div>
+                        </div>
+                      </div>
+                      <button className="w-full bg-neutral-800 text-white py-4 rounded-2xl text-base font-semibold shadow-lg">
+                        Réserver maintenant
+                      </button>
+                    </div>
                   </div>
-                  <p className="text-sm sm:text-base text-white/80">{item.label}</p>
                 </div>
-              ))}
+
+                {/* Floating widgets */}
+                {/* Colors - Top Left */}
+                <div className="absolute top-12 lg:top-16 left-4 lg:left-12 z-30 animate-float" style={{ animationDelay: '0s' }}>
+                  <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 relative">
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">Couleurs</p>
+                    <div className="flex gap-2">
+                      {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500'].map((bg, i) => (
+                        <div key={i} className={`w-7 h-7 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''} shadow-sm`} />
+                      ))}
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 shadow-sm flex items-center justify-center">
+                        <Plus className="w-3.5 h-3.5 text-white drop-shadow-md" />
+                      </div>
+                    </div>
+                    <div className="absolute -bottom-2 -right-2 animate-pulse">
+                      <MousePointer2 className="w-6 h-6 text-foreground drop-shadow-lg" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Availability - Top Right */}
+                <div className="absolute top-8 lg:top-12 right-4 lg:right-12 z-30 animate-float" style={{ animationDelay: '0.15s' }}>
+                  <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30">
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">Disponibilités</p>
+                    <div className="space-y-1.5">
+                      {[
+                        { day: 'Lun', hours: '9h-18h', active: true },
+                        { day: 'Mar', hours: '9h-18h', active: true },
+                        { day: 'Mer', hours: '14h-18h', active: true },
+                        { day: 'Sam', hours: 'Fermé', active: false },
+                      ].map((d, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <span className="text-[9px] w-6 text-muted-foreground">{d.day}</span>
+                          <span className={`text-[9px] w-12 ${d.active ? 'text-foreground' : 'text-muted-foreground'}`}>{d.hours}</span>
+                          <div className={`w-6 h-3 rounded-full ${d.active ? 'bg-emerald-500' : 'bg-secondary'} relative transition-colors`}>
+                            <div className={`absolute w-2 h-2 bg-white rounded-full top-0.5 shadow-sm transition-all ${d.active ? 'right-0.5' : 'left-0.5'}`} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Formulas - Left Middle */}
+                <div className="absolute top-1/2 -translate-y-1/2 left-0 lg:left-4 z-30 animate-float hidden lg:block" style={{ animationDelay: '0.25s' }}>
+                  <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 w-40">
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">Formules</p>
+                    <div className="space-y-2">
+                      {[
+                        { name: 'Express', price: '35€' },
+                        { name: 'Complet', price: '89€' },
+                        { name: 'Premium', price: '129€' },
+                      ].map((f, i) => (
+                        <div key={i} className="flex justify-between items-center text-xs">
+                          <span className="text-foreground font-medium">{f.name}</span>
+                          <span className="text-primary font-bold">{f.price}</span>
+                        </div>
+                      ))}
+                      <button className="w-full text-[10px] text-primary font-medium py-1.5 border border-dashed border-primary/40 rounded-lg mt-1 hover:bg-primary/5 transition-colors">
+                        + Ajouter
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Text - Bottom Left */}
+                <div className="absolute bottom-8 lg:bottom-12 left-8 lg:left-16 z-30 animate-float" style={{ animationDelay: '0.4s' }}>
+                  <div className="bg-card rounded-2xl px-4 py-3 shadow-xl ring-1 ring-border/30 flex items-center gap-3">
+                    <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center">
+                      <Type className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-muted-foreground">Texte</p>
+                      <p className="text-xs font-medium text-foreground">Ajouter du contenu</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Gallery - Bottom Right */}
+                <div className="absolute bottom-8 lg:bottom-12 right-8 lg:right-16 z-30 animate-float" style={{ animationDelay: '0.5s' }}>
+                  <div className="bg-card rounded-2xl p-3 shadow-xl ring-1 ring-border/30">
+                    <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">Galerie</p>
+                    <div className="flex gap-1.5">
+                      <div className="w-8 h-8 bg-secondary rounded overflow-hidden">
+                        <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="w-8 h-8 bg-secondary rounded overflow-hidden">
+                        <img src={sofaBanner} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="w-8 h-8 bg-secondary/60 rounded flex items-center justify-center border border-dashed border-border">
+                        <Plus className="w-3 h-3 text-muted-foreground" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile layout */}
+            <div className="sm:hidden">
+              <div className="relative mx-auto w-[280px]">
+                <div className="bg-card rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
+                  <div className="h-24 relative overflow-hidden rounded-t-[2rem]">
+                    <img src={mockupCarCleaning} alt="Preview" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex justify-center -mt-10 relative z-30 mb-3">
+                    <div className="w-20 h-20 bg-white rounded-2xl shadow-2xl ring-4 ring-white overflow-hidden">
+                      <img src={mockupLogoClean} alt="Logo" className="w-full h-full object-cover" />
+                    </div>
+                  </div>
+                  <div className="px-5 pb-5 text-center">
+                    <h3 className="text-lg font-bold text-foreground mb-1">Clean Premium</h3>
+                    <p className="text-xs text-muted-foreground mb-3">Nettoyage premium à domicile, 7j/7.</p>
+                    <div className="flex justify-center mb-4">
+                      <span className="inline-flex items-center gap-1.5 text-[10px] bg-white border border-emerald-200 text-emerald-600 px-3 py-1 rounded-full font-medium shadow-sm">
+                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                        Ouvert
+                      </span>
+                    </div>
+                    <div className="text-left mb-4">
+                      <h4 className="text-sm font-semibold text-foreground mb-2">Nos formules</h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-card border border-border/60 rounded-lg p-3">
+                          <p className="text-xs font-semibold text-foreground mb-0.5">Express</p>
+                          <p className="text-base font-bold text-muted-foreground">35€</p>
+                        </div>
+                        <div className="bg-card border border-border/60 rounded-lg p-3">
+                          <p className="text-xs font-semibold text-foreground mb-0.5">Complet</p>
+                          <p className="text-base font-bold text-muted-foreground">89€</p>
+                        </div>
+                      </div>
+                    </div>
+                    <button className="w-full bg-neutral-800 text-white py-3 rounded-xl text-sm font-semibold shadow-lg">
+                      Réserver maintenant
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
+      </section>
 
-/* ═══════ SLIDE 5: Deux modes ═══════ */
-function SlideModes() {
-  return (
-    <div className={slideBg}>
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-blue-500/5 rounded-full blur-[120px]" />
+      {/* ═══════ 5. DEUX MODES ═══════ */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/30">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+              Deux modes, un seul outil
+            </h2>
+          </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto w-full">
-        <div className="text-center mb-12">
-          <Tag color="blue">Fonctionnement</Tag>
-          <h2 className="text-2xl sm:text-4xl font-semibold text-white tracking-tight animate-fade-in-up">
-            Deux modes, un seul outil
+          <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
+            <div className="bg-card border border-border/60 rounded-2xl p-6 sm:p-8 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+              <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center mb-5">
+                <Calendar className="w-6 h-6 text-foreground" />
+              </div>
+              <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-3">Réservation directe</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+                Le client choisit sa formule, sélectionne un créneau et réserve en autonomie.
+              </p>
+              <div className="space-y-2.5">
+                {['Idéal pour le detailing auto', 'Formules prédéfinies', 'Réservation instantanée'].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-card border border-border/60 rounded-2xl p-6 sm:p-8 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+              <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center mb-5">
+                <FileText className="w-6 h-6 text-foreground" />
+              </div>
+              <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-3">Sur devis personnalisé</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+                Vous créez une prestation sur mesure. Le client la retrouve et réserve via son email.
+              </p>
+              <div className="space-y-2.5">
+                {['Idéal pour vitres, maison, bureaux', 'Prestation sur mesure', 'Le client réserve quand il veut'].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ 6. CE QUE VOUS GAGNEZ ═══════ */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/30">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+              Ce que vous gagnez
+            </h2>
+          </div>
+
+          <div className="space-y-3 sm:space-y-4">
+            {[
+              { label: 'Professionnaliser votre image', desc: 'Une page pro qui inspire confiance à vos clients' },
+              { label: 'Centraliser votre activité', desc: 'Fini les outils éparpillés, tout est au même endroit' },
+              { label: 'Gagner du temps', desc: 'Moins d\'administratif, plus de terrain' },
+              { label: 'Structurer votre organisation', desc: 'Planning, suivi client, statistiques' },
+              { label: 'Améliorer le suivi client', desc: 'Historique complet et fidélisation' },
+            ].map((b, i) => (
+              <div key={i} className="flex items-center gap-4 sm:gap-5 bg-card border border-border/60 rounded-2xl p-4 sm:p-5 opacity-0 animate-fade-in-up" style={{ animationDelay: `${0.1 + i * 0.08}s` }}>
+                <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                  <Check className="w-4 h-4 text-emerald-500" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm sm:text-base font-medium text-foreground">{b.label}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{b.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ 7. GÉREZ VOTRE ACTIVITÉ - Dashboard mockup ═══════ */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10 sm:mb-14">
+            <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+              Tout ce qu'il vous faut pour gérer votre activité
+            </h2>
+            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto mb-2">
+              Réservations, planning, clients, factures, statistiques — tout au même endroit.
+            </p>
+            <p className="opacity-0 animate-fade-in-up stagger-2 text-sm text-muted-foreground flex items-center justify-center gap-2">
+              <MousePointer2 className="w-4 h-4" />
+              Cliquez sur un onglet pour explorer
+            </p>
+          </div>
+
+          {/* Tabs */}
+          <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-wrap gap-2 sm:gap-3 mb-10 justify-center">
+            {[
+              { icon: Calendar, label: 'Réservations', tab: 'reservations' as const, badge: '3' },
+              { icon: CalendarDays, label: 'Calendrier', tab: 'calendar' as const, badge: null },
+              { icon: Users, label: 'Clients', tab: 'clients' as const, badge: null },
+              { icon: Star, label: 'Factures', tab: 'invoices' as const, badge: null },
+              { icon: BarChart3, label: 'Statistiques', tab: 'stats' as const, badge: null },
+            ].map((item) => (
+              <button 
+                key={item.label}
+                onClick={() => setDashboardTab(item.tab)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer ${
+                  dashboardTab === item.tab 
+                    ? 'bg-foreground text-background shadow-lg' 
+                    : 'bg-card border border-border/60 text-foreground hover:bg-secondary/50'
+                }`}
+              >
+                <item.icon className="w-4 h-4" />
+                <span className="hidden sm:inline">{item.label}</span>
+                {item.badge && (
+                  <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Dashboard Browser Mockup */}
+          <div className="opacity-0 animate-fade-in-up stagger-4">
+            <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60 max-w-5xl mx-auto">
+              {/* Browser Bar */}
+              <div className="bg-secondary/50 px-4 py-3 flex items-center gap-3 border-b border-border/40">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-400" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                  <div className="w-3 h-3 rounded-full bg-green-400" />
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <div className="flex items-center gap-2 bg-background rounded-full px-4 py-1.5 text-xs text-muted-foreground">
+                    <Shield className="w-3 h-3" />
+                    cleaningpage.com/<span className="text-foreground font-medium">dashboard</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dashboard Content */}
+              <div className="p-5 sm:p-6" style={{ background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary)/0.3) 100%)' }}>
+                
+                {/* Reservations tab */}
+                {dashboardTab === 'reservations' && (
+                  <>
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h3 className="text-lg font-semibold text-foreground tracking-tight">Réservations</h3>
+                        <p className="text-xs text-muted-foreground mt-0.5">Mercredi 11 février 2026</p>
+                      </div>
+                      <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25">
+                        + Nouveau
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3 mb-6">
+                      {[
+                        { label: "Aujourd'hui", value: '5', extra: '2 en attente' },
+                        { label: 'Cette semaine', value: '23', extra: 'dont 4 demandes' },
+                        { label: 'CA du jour', value: '340€', extra: '↑ 15%' },
+                      ].map((kpi, i) => (
+                        <div key={i} className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">{kpi.label}</p>
+                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">{kpi.value}</p>
+                          <p className={`text-[10px] mt-2 ${i === 2 ? 'text-emerald-600 font-semibold' : 'text-muted-foreground'}`}>{kpi.extra}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="space-y-2">
+                      {[
+                        { name: 'Jean Martin', service: 'Nettoyage Complet', time: '10:00 · 1h30', price: '89€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'JM', avatarBg: 'bg-blue-500' },
+                        { name: 'Marie Dupont', service: 'Express', time: '11:30 · 45min', price: '35€', status: 'En attente', statusBg: 'bg-orange-500', initials: 'MD', avatarBg: 'bg-pink-500' },
+                        { name: 'Pierre Bernard', service: 'Rénovation Premium', time: '14:00 · 3h', price: '159€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'PB', avatarBg: 'bg-amber-500' },
+                        { name: 'Sophie Leroy', service: 'Pack Intérieur', time: '16:30 · 1h', price: '65€', status: 'Confirmé', statusBg: 'bg-emerald-500', initials: 'SL', avatarBg: 'bg-violet-500' },
+                      ].map((b, i) => (
+                        <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 hover:shadow-md transition-all cursor-pointer">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 ${b.avatarBg}`}>
+                            {b.initials}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[13px] font-semibold text-foreground truncate">{b.name}</p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">{b.service} · {b.time}</p>
+                          </div>
+                          <span className="text-[13px] font-bold text-foreground hidden sm:block tabular-nums">{b.price}</span>
+                          <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold text-white ${b.statusBg}`}>{b.status}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* Calendar tab */}
+                {dashboardTab === 'calendar' && (
+                  <div>
+                    <div className="flex items-center justify-between mb-5">
+                      <div className="flex items-center gap-3">
+                        <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center">
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <h3 className="text-base font-semibold text-foreground min-w-[130px] text-center">Février 2026</h3>
+                        <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center">
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <button className="text-[11px] text-white font-semibold bg-blue-500 px-3.5 py-1.5 rounded-full shadow-sm">Aujourd'hui</button>
+                    </div>
+                    <div className="grid grid-cols-7 gap-1 mb-2">
+                      {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
+                        <div key={i} className="text-center text-[11px] font-semibold text-muted-foreground py-1">{d}</div>
+                      ))}
+                    </div>
+                    <div className="grid grid-cols-7 gap-1">
+                      {Array.from({ length: 28 }, (_, i) => i + 1).map(d => {
+                        const hasAppt = [3, 5, 8, 11, 15, 22, 25].includes(d);
+                        const isSelected = d === 11;
+                        return (
+                          <div key={d} className={`aspect-square rounded-2xl flex flex-col items-center justify-start pt-2 text-[11px] relative cursor-pointer transition-all ${
+                            isSelected ? 'bg-blue-500 text-white font-bold shadow-lg shadow-blue-500/30' : 'hover:bg-secondary/50'
+                          }`}>
+                            <span>{d}</span>
+                            {hasAppt && (
+                              <div className="flex gap-0.5 mt-1">
+                                <div className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-white/70' : 'bg-emerald-500'}`} />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Clients tab */}
+                {dashboardTab === 'clients' && (
+                  <div>
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-lg font-semibold text-foreground">Clients</h3>
+                      <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25">+ Nouveau client</button>
+                    </div>
+                    <div className="space-y-2">
+                      {[
+                        { name: 'Jean Martin', email: 'jean@email.com', bookings: 12, revenue: '1 068€', initials: 'JM', bg: 'bg-blue-500' },
+                        { name: 'Marie Dupont', email: 'marie@email.com', bookings: 8, revenue: '712€', initials: 'MD', bg: 'bg-pink-500' },
+                        { name: 'Pierre Bernard', email: 'pierre@email.com', bookings: 5, revenue: '445€', initials: 'PB', bg: 'bg-amber-500' },
+                        { name: 'Sophie Leroy', email: 'sophie@email.com', bookings: 3, revenue: '267€', initials: 'SL', bg: 'bg-violet-500' },
+                      ].map((c, i) => (
+                        <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 cursor-pointer hover:shadow-md transition-all">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white ${c.bg}`}>{c.initials}</div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[13px] font-semibold text-foreground">{c.name}</p>
+                            <p className="text-[11px] text-muted-foreground">{c.email}</p>
+                          </div>
+                          <div className="text-right hidden sm:block">
+                            <p className="text-[13px] font-bold text-foreground">{c.revenue}</p>
+                            <p className="text-[10px] text-muted-foreground">{c.bookings} réservations</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Invoices tab */}
+                {dashboardTab === 'invoices' && (
+                  <div>
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-lg font-semibold text-foreground">Factures & Devis</h3>
+                      <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25">+ Nouvelle facture</button>
+                    </div>
+                    <div className="space-y-2">
+                      {[
+                        { number: 'F-2026-001', client: 'Jean Martin', amount: '89€', date: '11 fév 2026', status: 'Payée', statusBg: 'bg-emerald-500' },
+                        { number: 'F-2026-002', client: 'Marie Dupont', amount: '35€', date: '10 fév 2026', status: 'En attente', statusBg: 'bg-orange-500' },
+                        { number: 'D-2026-001', client: 'Pierre Bernard', amount: '159€', date: '9 fév 2026', status: 'Devis', statusBg: 'bg-blue-500' },
+                      ].map((inv, i) => (
+                        <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 cursor-pointer hover:shadow-md transition-all">
+                          <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center">
+                            <Receipt className="w-5 h-5 text-foreground" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[13px] font-semibold text-foreground">{inv.number}</p>
+                            <p className="text-[11px] text-muted-foreground">{inv.client} · {inv.date}</p>
+                          </div>
+                          <span className="text-[13px] font-bold text-foreground hidden sm:block">{inv.amount}</span>
+                          <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold text-white ${inv.statusBg}`}>{inv.status}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Stats tab */}
+                {dashboardTab === 'stats' && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-6">Statistiques</h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                      {[
+                        { label: 'Réservations', value: '47', change: '+12%' },
+                        { label: 'Revenu', value: '4 280€', change: '+8%' },
+                        { label: 'Clients', value: '32', change: '+5' },
+                        { label: 'Taux conversion', value: '68%', change: '+3%' },
+                      ].map((s, i) => (
+                        <div key={i} className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[11px] text-muted-foreground mb-1">{s.label}</p>
+                          <p className="text-2xl font-bold tracking-tight leading-none text-foreground">{s.value}</p>
+                          <p className="text-[10px] text-emerald-600 font-semibold mt-2">{s.change}</p>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Simple chart mockup */}
+                    <div className="rounded-2xl p-5 bg-card border border-border/30 shadow-sm">
+                      <p className="text-sm font-semibold text-foreground mb-4">Revenu mensuel</p>
+                      <div className="flex items-end gap-2 h-32">
+                        {[40, 55, 45, 70, 60, 85, 75, 90, 80, 95, 88, 100].map((h, i) => (
+                          <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                            <div className="w-full bg-primary/15 rounded-lg" style={{ height: `${h}%` }}>
+                              <div className="w-full bg-primary rounded-lg transition-all" style={{ height: `${h}%` }} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex justify-between mt-2">
+                        <span className="text-[9px] text-muted-foreground">Jan</span>
+                        <span className="text-[9px] text-muted-foreground">Déc</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ 8. ESSAI GRATUIT ═══════ */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/30">
+        <div className="max-w-xl mx-auto text-center">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-8 opacity-0 animate-fade-in">
+            <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-emerald-500" />
+          </div>
+          
+          <h2 className="opacity-0 animate-fade-in-up text-3xl sm:text-4xl md:text-5xl font-semibold text-foreground tracking-tight mb-6">
+            Essayez gratuitement
           </h2>
-        </div>
-
-        <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
-          <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 sm:p-8 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-5">
-              <Calendar className="w-6 h-6 text-emerald-400" />
-            </div>
-            <h3 className="text-lg sm:text-xl font-semibold text-white mb-3">Réservation directe</h3>
-            <p className="text-sm text-white/50 leading-relaxed mb-5">
-              Le client choisit sa formule, sélectionne un créneau et réserve en autonomie.
-            </p>
-            <div className="space-y-2.5">
-              {['Idéal pour le detailing auto', 'Formules prédéfinies', 'Réservation instantanée'].map((item, i) => (
-                <div key={i} className="flex items-center gap-2.5">
-                  <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm text-white/60">{item}</span>
+          
+          <div className="space-y-3 mb-10">
+            {['30 jours offerts', 'Sans engagement', 'Toutes les fonctionnalités incluses'].map((text, i) => (
+              <div key={i} className="flex items-center justify-center gap-3 opacity-0 animate-fade-in-up" style={{ animationDelay: `${0.2 + i * 0.1}s` }}>
+                <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                  <Check className="w-4 h-4 text-emerald-500" />
                 </div>
-              ))}
-            </div>
+                <p className={`text-base sm:text-lg ${i === 0 ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>{text}</p>
+              </div>
+            ))}
           </div>
 
-          <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 sm:p-8 animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
-            <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-5">
-              <FileText className="w-6 h-6 text-blue-400" />
-            </div>
-            <h3 className="text-lg sm:text-xl font-semibold text-white mb-3">Sur devis personnalisé</h3>
-            <p className="text-sm text-white/50 leading-relaxed mb-5">
-              Vous créez une prestation sur mesure. Le client la retrouve et réserve via son email.
-            </p>
-            <div className="space-y-2.5">
-              {['Idéal pour vitres, maison, bureaux', 'Prestation sur mesure', 'Le client réserve quand il veut'].map((item, i) => (
-                <div key={i} className="flex items-center gap-2.5">
-                  <Check className="w-4 h-4 text-blue-400 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm text-white/60">{item}</span>
-                </div>
-              ))}
-            </div>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
+            <Link to="/auth">
+              <Button size="xl" className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl shadow-emerald-500/25 px-12">
+                Commencer l'essai gratuit
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
+      </section>
 
-/* ═══════ SLIDE 6: Ce que vous gagnez ═══════ */
-function SlideBenefits() {
-  const benefits = [
-    { icon: Shield, label: 'Professionnaliser votre image', desc: 'Une page pro qui inspire confiance à vos clients' },
-    { icon: Layout, label: 'Centraliser votre activité', desc: 'Fini les outils éparpillés, tout est au même endroit' },
-    { icon: Clock, label: 'Gagner du temps', desc: 'Moins d\'administratif, plus de terrain' },
-    { icon: BarChart3, label: 'Structurer votre organisation', desc: 'Planning, suivi client, statistiques' },
-    { icon: UserCheck, label: 'Améliorer le suivi client', desc: 'Historique complet et fidélisation' },
-  ];
-
-  return (
-    <div className={slideBg}>
-      <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[120px]" />
-
-      <div className="relative z-10 max-w-3xl mx-auto">
-        <Tag>Les bénéfices</Tag>
-        <h2 className="text-2xl sm:text-4xl font-semibold text-white tracking-tight mb-10 animate-fade-in-up">
-          Ce que vous gagnez
-        </h2>
-
-        <div className="space-y-3 sm:space-y-4">
-          {benefits.map((b, i) => (
-            <div 
-              key={i}
-              className="flex items-center gap-4 sm:gap-5 animate-fade-in-up"
-              style={{ animationDelay: `${0.2 + i * 0.1}s` }}
-            >
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center flex-shrink-0">
-                <b.icon className="w-5 h-5 text-white/70" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm sm:text-base font-medium text-white">{b.label}</p>
-                <p className="text-xs sm:text-sm text-white/40">{b.desc}</p>
-              </div>
-            </div>
-          ))}
+      {/* ═══════ 9. FOOTER ═══════ */}
+      <section className="py-12 px-4 sm:px-6 border-t border-border/30">
+        <div className="max-w-lg mx-auto text-center">
+          <Logo size="lg" />
+          <p className="text-sm text-muted-foreground mt-4 mb-6">
+            Rejoignez les professionnels du nettoyage qui utilisent CleaningPage.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+            <Link to="/auth">
+              <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white w-full sm:w-auto">
+                Commencer gratuitement
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
+            <Link to="/">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                Voir le site
+              </Button>
+            </Link>
+          </div>
+          <p className="text-xs text-muted-foreground">contact@cleaningpage.com</p>
         </div>
-      </div>
-    </div>
-  );
-}
-
-/* ═══════ SLIDE 7: Fonctionnalités ═══════ */
-function SlideFeatures() {
-  const features = [
-    { icon: Palette, label: 'Page personnalisable' },
-    { icon: Calendar, label: 'Réservation en ligne' },
-    { icon: UserCheck, label: 'Attribution de prestations' },
-    { icon: Clock, label: 'Planning intégré' },
-    { icon: MessageCircle, label: 'Centralisation des demandes' },
-    { icon: Phone, label: 'Ajout manuel de RDV' },
-    { icon: Users, label: 'Suivi client complet' },
-    { icon: BarChart3, label: 'Statistiques' },
-    { icon: Receipt, label: 'Factures & devis' },
-  ];
-
-  return (
-    <div className={slideBg}>
-      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px]" />
-
-      <div className="relative z-10 max-w-3xl mx-auto text-center">
-        <Tag color="blue">Fonctionnalités</Tag>
-        <h2 className="text-2xl sm:text-4xl font-semibold text-white tracking-tight mb-10 animate-fade-in-up">
-          Tout ce qu'il vous faut
-        </h2>
-
-        <div className="grid grid-cols-3 gap-3 sm:gap-4">
-          {features.map((f, i) => (
-            <div 
-              key={i}
-              className="bg-white/[0.03] border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col items-center gap-3 animate-fade-in-up"
-              style={{ animationDelay: `${0.15 + i * 0.07}s` }}
-            >
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center">
-                <f.icon className="w-5 h-5 text-white/60" />
-              </div>
-              <p className="text-[10px] sm:text-xs text-white/60 font-medium text-center leading-tight">{f.label}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ═══════ SLIDE 8: Essai gratuit ═══════ */
-function SlideTrial() {
-  return (
-    <div className={slideBg}>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[150px]" />
-      </div>
-
-      <div className="relative z-10 max-w-xl mx-auto text-center">
-        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-8 animate-fade-in">
-          <Sparkles className="w-10 h-10 sm:w-12 sm:h-12 text-emerald-400" />
-        </div>
-
-        <h2 className="text-3xl sm:text-5xl font-semibold text-white tracking-tight mb-6 animate-fade-in-up">
-          Essayez gratuitement
-        </h2>
-
-        <div className="space-y-4 mb-10">
-          {['30 jours offerts', 'Sans engagement', 'Toutes les fonctionnalités incluses'].map((text, i) => (
-            <div key={i} className="flex items-center justify-center gap-3 animate-fade-in-up" style={{ animationDelay: `${0.3 + i * 0.15}s` }}>
-              <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                <Check className="w-4 h-4 text-emerald-400" />
-              </div>
-              <p className={`text-base sm:text-lg ${i === 0 ? 'text-white font-medium' : 'text-white/60'}`}>{text}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="animate-fade-in-up" style={{ animationDelay: '0.7s' }}>
-          <a href="/auth">
-            <Button size="xl" className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl shadow-emerald-500/25 px-12">
-              Commencer l'essai gratuit
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ═══════ SLIDE 9: Contact ═══════ */
-function SlideContact() {
-  return (
-    <div className={slideBg}>
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-emerald-500/5 rounded-full blur-[120px]" />
-
-      <div className="relative z-10 max-w-lg mx-auto text-center">
-        <div className="mb-8 animate-fade-in">
-          <Logo size="xl" variant="light" />
-        </div>
-
-        <h2 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight mb-3 animate-fade-in-up">
-          Prêt à structurer votre activité ?
-        </h2>
-        <p className="text-sm sm:text-base text-white/40 mb-8 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          Rejoignez les professionnels du nettoyage qui utilisent CleaningPage.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-3 justify-center animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-          <a href="/auth">
-            <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white w-full sm:w-auto">
-              Commencer gratuitement
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-          </a>
-          <a href="/">
-            <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 w-full sm:w-auto">
-              Voir le site
-            </Button>
-          </a>
-        </div>
-
-        <div className="mt-12 pt-8 border-t border-white/10 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-          <p className="text-xs text-white/30">contact@cleaningpage.com</p>
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
