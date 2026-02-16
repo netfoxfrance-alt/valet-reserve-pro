@@ -28,7 +28,7 @@ function SlideWrapper({ active, children }: { active: boolean; children: React.R
         active ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
       }`}
     >
-      <div className="w-full h-full overflow-y-auto px-3 sm:px-8 lg:px-12 py-4 sm:py-10 flex items-center justify-center">
+      <div className="w-full h-full overflow-y-auto px-3 sm:px-8 lg:px-12 py-4 sm:py-10 flex items-start sm:items-center justify-center">
         {children}
       </div>
     </div>
@@ -267,25 +267,25 @@ function SlideSolution() {
 
   return (
     <div className="max-w-4xl mx-auto w-full text-center">
-      <p className="animate-fade-in-up text-xs font-semibold text-emerald-600 tracking-[0.2em] uppercase mb-5">{t('presentation.solutionLabel')}</p>
-      <h2 className="animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-[2.75rem] font-bold text-foreground tracking-tight leading-[1.15] mb-3">
+      <p className="animate-fade-in-up text-xs font-semibold text-emerald-600 tracking-[0.2em] uppercase mb-3 sm:mb-5">{t('presentation.solutionLabel')}</p>
+      <h2 className="animate-fade-in-up stagger-1 text-xl sm:text-3xl md:text-[2.75rem] font-bold text-foreground tracking-tight leading-[1.15] mb-2 sm:mb-3">
         {t('presentation.solutionTitle')}
       </h2>
-      <p className="animate-fade-in-up stagger-2 text-muted-foreground text-sm sm:text-base max-w-sm mx-auto mb-10 sm:mb-14">
+      <p className="animate-fade-in-up stagger-2 text-muted-foreground text-sm sm:text-base max-w-sm mx-auto mb-6 sm:mb-14">
         {t('presentation.solutionSubtitle')}
       </p>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-8">
+      <div className="grid grid-cols-3 gap-3 sm:gap-8">
         {pillars.map((p, i) => (
           <div 
             key={i} 
             className="group animate-fade-in-up" 
             style={{ animationDelay: `${0.25 + i * 0.12}s` }}
           >
-            <div className="mb-5 transform group-hover:scale-[1.02] transition-transform duration-500">
+            <div className="mb-2 sm:mb-5 transform group-hover:scale-[1.02] transition-transform duration-500">
               {p.mockup}
             </div>
-            <h3 className="text-base sm:text-lg font-bold text-foreground mb-1.5 tracking-tight">{p.label}</h3>
-            <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px] mx-auto">{p.desc}</p>
+            <h3 className="text-xs sm:text-lg font-bold text-foreground mb-0.5 sm:mb-1.5 tracking-tight">{p.label}</h3>
+            <p className="text-[10px] sm:text-[13px] text-muted-foreground leading-relaxed max-w-[220px] mx-auto hidden sm:block">{p.desc}</p>
           </div>
         ))}
       </div>
@@ -444,36 +444,36 @@ function SlideModes() {
   const { t } = useTranslation();
   return (
     <div className="max-w-5xl mx-auto w-full px-1 sm:px-0">
-      <div className="text-center mb-8 sm:mb-10">
-        <h2 className="animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
+      <div className="text-center mb-4 sm:mb-10">
+        <h2 className="animate-fade-in-up text-xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
           {t('presentation.modesTitle')}
         </h2>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-8">
         {/* Left: Fixed services */}
-        <div className="animate-fade-in-up bg-card rounded-3xl p-5 sm:p-6 border border-border/40 shadow-sm" style={{ animationDelay: '0.2s' }}>
-          <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
+        <div className="animate-fade-in-up bg-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-border/40 shadow-sm" style={{ animationDelay: '0.2s' }}>
+          <h3 className="text-sm sm:text-lg font-semibold text-foreground mb-1 sm:mb-2">
             {t('presentation.modesFixedTitle')}
           </h3>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-3 sm:mb-5">
             {t('presentation.modesFixedDesc')}
           </p>
-          <div className="space-y-3">
-            <div className="rounded-2xl overflow-hidden shadow-md ring-1 ring-border/10 relative">
-              <img src={presCarDetailing} alt="Detailing auto" className="w-full h-24 sm:h-28 md:h-32 object-cover" />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+          <div className="space-y-2 sm:space-y-3">
+            <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-md ring-1 ring-border/10 relative">
+              <img src={presCarDetailing} alt="Detailing auto" className="w-full h-20 sm:h-28 md:h-32 object-cover" />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2 sm:p-3">
                 <div className="flex items-end justify-between">
-                  <p className="text-xs font-semibold text-white">{t('presentation.modesFixedService1')}</p>
-                  <p className="text-sm font-bold text-white">{t('presentation.modesFixedPrice1')}</p>
+                  <p className="text-[10px] sm:text-xs font-semibold text-white">{t('presentation.modesFixedService1')}</p>
+                  <p className="text-xs sm:text-sm font-bold text-white">{t('presentation.modesFixedPrice1')}</p>
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl overflow-hidden shadow-md ring-1 ring-border/10 relative">
-              <img src={sofaBanner} alt="Sofa cleaning" className="w-full h-24 sm:h-28 md:h-32 object-cover" />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+            <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-md ring-1 ring-border/10 relative">
+              <img src={sofaBanner} alt="Sofa cleaning" className="w-full h-20 sm:h-28 md:h-32 object-cover" />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2 sm:p-3">
                 <div className="flex items-end justify-between">
-                  <p className="text-xs font-semibold text-white">{t('presentation.modesFixedService2')}</p>
-                  <p className="text-sm font-bold text-white">{t('presentation.modesFixedPrice2')}</p>
+                  <p className="text-[10px] sm:text-xs font-semibold text-white">{t('presentation.modesFixedService2')}</p>
+                  <p className="text-xs sm:text-sm font-bold text-white">{t('presentation.modesFixedPrice2')}</p>
                 </div>
               </div>
             </div>
@@ -481,29 +481,29 @@ function SlideModes() {
         </div>
 
         {/* Right: Custom quotes */}
-        <div className="animate-fade-in-up bg-card rounded-3xl p-5 sm:p-6 border border-border/40 shadow-sm" style={{ animationDelay: '0.4s' }}>
-          <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
+        <div className="animate-fade-in-up bg-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-border/40 shadow-sm" style={{ animationDelay: '0.4s' }}>
+          <h3 className="text-sm sm:text-lg font-semibold text-foreground mb-1 sm:mb-2">
             {t('presentation.modesCustomTitle')}
           </h3>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-3 sm:mb-5">
             {t('presentation.modesCustomDesc')}
           </p>
-          <div className="bg-secondary/30 rounded-2xl p-5">
-            <p className="text-base sm:text-lg font-bold text-foreground mb-1">{t('presentation.modesCustomGreeting')}</p>
-            <p className="text-sm text-muted-foreground mb-4">{t('presentation.modesCustomSubtext')}</p>
-            <div className="bg-card rounded-xl p-4 flex items-center justify-between mb-4 border border-border/30 shadow-sm">
+          <div className="bg-secondary/30 rounded-xl sm:rounded-2xl p-3 sm:p-5">
+            <p className="text-sm sm:text-lg font-bold text-foreground mb-0.5 sm:mb-1">{t('presentation.modesCustomGreeting')}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-4">{t('presentation.modesCustomSubtext')}</p>
+            <div className="bg-card rounded-lg sm:rounded-xl p-3 sm:p-4 flex items-center justify-between mb-3 sm:mb-4 border border-border/30 shadow-sm">
               <div>
-                <p className="text-sm font-semibold text-foreground">{t('presentation.modesCustomService')}</p>
-                <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                <p className="text-xs sm:text-sm font-semibold text-foreground">{t('presentation.modesCustomService')}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                   <Clock className="w-3 h-3" /> {t('presentation.modesCustomDuration')}
                 </p>
               </div>
-              <p className="text-xl sm:text-2xl font-bold text-foreground">{t('presentation.modesCustomPrice')}</p>
+              <p className="text-lg sm:text-2xl font-bold text-foreground">{t('presentation.modesCustomPrice')}</p>
             </div>
-            <button className="w-full bg-neutral-800 text-white py-3 rounded-xl text-sm font-semibold mb-2">
+            <button className="w-full bg-neutral-800 text-white py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold mb-1 sm:mb-2">
               {t('presentation.modesCustomCTA')}
             </button>
-            <p className="text-xs text-muted-foreground text-center underline">{t('presentation.modesCustomNotMe')}</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground text-center underline">{t('presentation.modesCustomNotMe')}</p>
           </div>
         </div>
       </div>
@@ -542,8 +542,8 @@ function MockSidebar({ active, items }: { active: string; items: string[] }) {
 function MockDashboardShell({ active, children, title, subtitle, sidebarItems }: { active: string; children: React.ReactNode; title: string; subtitle: string; sidebarItems: string[] }) {
   return (
     <div className="max-w-5xl mx-auto w-full">
-      <div className="text-center mb-5 sm:mb-6">
-        <h2 className="animate-fade-in-up text-xl sm:text-2xl md:text-3xl font-semibold text-foreground tracking-tight mb-1.5">
+      <div className="text-center mb-3 sm:mb-6">
+        <h2 className="animate-fade-in-up text-lg sm:text-2xl md:text-3xl font-semibold text-foreground tracking-tight mb-1">
           {title}
         </h2>
         <p className="animate-fade-in-up stagger-1 text-muted-foreground text-xs sm:text-sm max-w-lg mx-auto">
@@ -933,8 +933,8 @@ function SlideStats() {
 
   return (
     <div className="max-w-4xl mx-auto w-full">
-      <div className="text-center mb-4 sm:mb-6">
-        <h2 className="animate-fade-in-up text-xl sm:text-2xl md:text-3xl font-bold text-foreground tracking-tight mb-1">
+      <div className="text-center mb-2 sm:mb-6">
+        <h2 className="animate-fade-in-up text-lg sm:text-2xl md:text-3xl font-bold text-foreground tracking-tight mb-1">
           {t('presentation.dashStatsTitle')}
         </h2>
         <p className="animate-fade-in-up stagger-1 text-xs sm:text-sm text-muted-foreground max-w-lg mx-auto">
@@ -957,7 +957,7 @@ function SlideStats() {
         </div>
 
         {/* Content */}
-        <div className="p-4 sm:p-5">
+        <div className="p-3 sm:p-5">
           {/* Month nav */}
           <div className="flex items-center justify-between mb-3">
             <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />
