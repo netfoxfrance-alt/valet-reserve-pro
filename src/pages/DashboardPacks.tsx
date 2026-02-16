@@ -28,7 +28,7 @@ const parseDuration = (duration: string): { hours: number; minutes: number } => 
 
 // Helper to format { hours, minutes } to duration string
 const formatDuration = (hours: number, minutes: number): string => {
-  if (hours === 0 && minutes === 0) return '1h';
+  if (hours === 0 && minutes === 0) return '';
   if (hours === 0) return `${minutes}min`;
   if (minutes === 0) return `${hours}h`;
   return `${hours}h${minutes.toString().padStart(2, '0')}`;
@@ -53,7 +53,7 @@ export default function DashboardPacks() {
     name: '',
     description: '',
     price: 0,
-    duration: '1h',
+    duration: '',
     features: [] as string[],
     sort_order: 0,
     active: true,
@@ -107,7 +107,7 @@ export default function DashboardPacks() {
         name: '',
         description: '',
         price: 0,
-        duration: '1h',
+        duration: '',
         features: [],
         sort_order: 0,
         active: true,
@@ -382,9 +382,12 @@ export default function DashboardPacks() {
                     id="new-description"
                     value={newPack.description}
                     onChange={(e) => setNewPack({ ...newPack, description: e.target.value })}
-                    placeholder="Description de la formule..."
-                    rows={2}
+                    placeholder="Utilisez **gras**, ## Titre, - liste pour formater..."
+                    rows={4}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Formatage : **gras**, ## Titre, ### Sous-titre, - liste à puces
+                  </p>
                 </div>
 
                 <FeaturesEditor 
@@ -573,8 +576,12 @@ export default function DashboardPacks() {
                             id={`description-${pack.id}`}
                             value={editForm.description || ''}
                             onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                            rows={2}
+                            placeholder="Utilisez **gras**, ## Titre, - liste pour formater..."
+                            rows={4}
                           />
+                          <p className="text-xs text-muted-foreground">
+                            Formatage : **gras**, ## Titre, ### Sous-titre, - liste à puces
+                          </p>
                         </div>
 
                         <FeaturesEditor 
@@ -664,12 +671,12 @@ export default function DashboardPacks() {
                                   ? 'Sur devis' 
                                   : variants.length > 0 ? `À partir de ${minPrice}€` : `${pack.price}€`}
                               </p>
-                              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                 {pack.pricing_type === 'quote' ? (
                                   <><FileText className="w-4 h-4" /> Demande de devis</>
-                                ) : (
-                                  <><Clock className="w-4 h-4" /> {pack.duration || 'Non défini'}</>
-                                )}
+                                ) : pack.duration ? (
+                                  <><Clock className="w-4 h-4" /> {pack.duration}</>
+                                ) : null}
                               </div>
                             </div>
                             <div className="flex gap-1">
