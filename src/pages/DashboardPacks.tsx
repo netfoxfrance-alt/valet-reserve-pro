@@ -325,7 +325,33 @@ export default function DashboardPacks() {
                   </div>
                 </div>
 
-                {newPack.price_variants.length === 0 && (
+                {/* Pricing type toggle */}
+                <div className="space-y-2">
+                  <Label>Type de tarification</Label>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant={newPack.pricing_type === 'fixed' ? 'default' : 'outline'}
+                      size="sm"
+                      className="flex-1 rounded-xl"
+                      onClick={() => setNewPack({ ...newPack, pricing_type: 'fixed' })}
+                    >
+                      Prix fixe
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={newPack.pricing_type === 'quote' ? 'default' : 'outline'}
+                      size="sm"
+                      className="flex-1 rounded-xl"
+                      onClick={() => setNewPack({ ...newPack, pricing_type: 'quote', price: 0, price_variants: [] })}
+                    >
+                      <FileText className="w-4 h-4 mr-1.5" />
+                      Sur devis
+                    </Button>
+                  </div>
+                </div>
+
+                {newPack.pricing_type === 'fixed' && newPack.price_variants.length === 0 && (
                   <div className="space-y-2">
                     <Label htmlFor="new-price">Prix unique (€)</Label>
                     <Input
