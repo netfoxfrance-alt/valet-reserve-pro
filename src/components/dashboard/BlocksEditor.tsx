@@ -777,10 +777,10 @@ export function BlocksEditor({
       )}
 
       {/* Social Links as separate visible items */}
-      {(social.instagram?.trim() || social.tiktok?.trim() || social.facebook?.trim() || social.email?.trim()) && (
+      {(social.instagram || social.tiktok || social.facebook || social.email) && (
         <div className="space-y-3">
           <Label className="text-sm font-medium text-muted-foreground">Réseaux sociaux & liens</Label>
-          {social.instagram?.trim() && (
+          {social.instagram && (
             <div className="border rounded-xl bg-background border-border overflow-hidden">
               <div className="flex items-center gap-3 p-3 sm:p-4">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20">
@@ -806,7 +806,7 @@ export function BlocksEditor({
               </div>
             </div>
           )}
-          {social.tiktok?.trim() && (
+          {social.tiktok && (
             <div className="border rounded-xl bg-background border-border overflow-hidden">
               <div className="flex items-center gap-3 p-3 sm:p-4">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-foreground/5">
@@ -834,7 +834,7 @@ export function BlocksEditor({
               </div>
             </div>
           )}
-          {social.facebook?.trim() && (
+          {social.facebook && (
             <div className="border rounded-xl bg-background border-border overflow-hidden">
               <div className="flex items-center gap-3 p-3 sm:p-4">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-blue-500/10">
@@ -862,7 +862,7 @@ export function BlocksEditor({
               </div>
             </div>
           )}
-          {social.email?.trim() && (
+          {social.email && (
             <div className="border rounded-xl bg-background border-border overflow-hidden">
               <div className="flex items-center gap-3 p-3 sm:p-4">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'hsl(var(--primary) / 0.1)' }}>
