@@ -471,7 +471,9 @@ export default function DashboardSettings() {
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {subscription.subscribed 
-                        ? t('settings.renewalOn', { date: new Date(subscription.subscriptionEnd!).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'fr-FR') })
+                        ? (subscription.subscriptionEnd 
+                            ? t('settings.renewalOn', { date: new Date(subscription.subscriptionEnd).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'fr-FR') })
+                            : t('settings.activeSubscription', { defaultValue: 'Abonnement actif' }))
                         : t('settings.limitedAccess')
                       }
                     </p>
