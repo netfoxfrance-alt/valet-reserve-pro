@@ -823,27 +823,59 @@ function SlideStats() {
         ))}
       </div>
       <div className="grid grid-cols-2 gap-2">
+        {/* Réservations par semaine — courbe */}
         <div className="bg-card border border-border/40 rounded-xl p-3">
           <p className="text-[9px] font-semibold text-foreground mb-2">{t('presentation.dashWeeklyBookings')}</p>
-          <div className="h-20 flex items-end gap-1">
-            {[20, 30, 40, 50, 55, 60, 70].map((h, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
-                <div className="w-full bg-blue-500/20 rounded-t" style={{ height: `${h}%` }}>
-                  <div className="w-full bg-blue-500 rounded-t" style={{ height: '2px' }} />
-                </div>
-              </div>
+          <div className="h-20 relative">
+            <svg viewBox="0 0 200 80" className="w-full h-full" preserveAspectRatio="none">
+              {/* Grid lines */}
+              {[20, 40, 60].map(y => (
+                <line key={y} x1="0" y1={y} x2="200" y2={y} stroke="currentColor" className="text-border" strokeWidth="0.5" strokeDasharray="3,3" />
+              ))}
+              {/* Area fill */}
+              <path d="M0,65 L33,55 L66,45 L100,40 L133,30 L166,25 L200,18 L200,80 L0,80 Z" fill="hsl(221 83% 53% / 0.1)" />
+              {/* Line curve */}
+              <polyline
+                points="0,65 33,55 66,45 100,40 133,30 166,25 200,18"
+                fill="none"
+                stroke="hsl(221 83% 53%)"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              {/* Data points */}
+              {[[0,65],[33,55],[66,45],[100,40],[133,30],[166,25],[200,18]].map(([cx,cy], i) => (
+                <circle key={i} cx={cx} cy={cy} r="3" fill="white" stroke="hsl(221 83% 53%)" strokeWidth="2" />
+              ))}
+            </svg>
+          </div>
+          <div className="flex justify-between mt-1">
+            {['S1','S2','S3','S4','S5','S6','S7'].map(s => (
+              <span key={s} className="text-[6px] text-muted-foreground flex-1 text-center">{s}</span>
             ))}
           </div>
         </div>
+        {/* CA par mois — colonnes vertes */}
         <div className="bg-card border border-border/40 rounded-xl p-3">
           <div className="flex items-center justify-between mb-2">
             <p className="text-[9px] font-semibold text-foreground">{t('presentation.dashMonthlyRevenue')}</p>
             <span className="text-[8px] text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded-full font-semibold">+18%</span>
           </div>
           <div className="h-20 flex items-end gap-1.5">
-            {[45, 40, 50, 48, 55, 75].map((h, i) => (
-              <div key={i} className="flex-1">
-                <div className={`w-full rounded-t ${i === 5 ? 'bg-emerald-500' : 'bg-emerald-500/30'}`} style={{ height: `${h}%` }} />
+            {[
+              { h: 45, val: '5.2k' },
+              { h: 40, val: '4.8k' },
+              { h: 50, val: '6.1k' },
+              { h: 48, val: '5.9k' },
+              { h: 55, val: '7.0k' },
+              { h: 75, val: '8.5k' },
+            ].map((bar, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center">
+                <span className="text-[5px] text-emerald-600 font-semibold mb-0.5">{bar.val}</span>
+                <div
+                  className={`w-full rounded-t-sm ${i === 5 ? 'bg-emerald-500' : 'bg-emerald-500/40'}`}
+                  style={{ height: `${bar.h}%` }}
+                />
               </div>
             ))}
           </div>
