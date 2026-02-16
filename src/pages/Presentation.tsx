@@ -1104,35 +1104,62 @@ function SlideBenefits() {
 function SlideTrial() {
   const { t } = useTranslation();
   return (
-    <div className="max-w-xl mx-auto text-center">
-      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-8 animate-fade-in">
-        <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-emerald-500" />
-      </div>
-      <h2 className="animate-fade-in-up text-3xl sm:text-4xl md:text-5xl font-semibold text-foreground tracking-tight mb-6">
-        {t('presentation.trialTitle')}
+    <div className="max-w-2xl mx-auto text-center">
+      <p className="animate-fade-in-up text-xs font-semibold text-muted-foreground tracking-[0.2em] uppercase mb-6">
+        {t('presentation.trialLabel', { defaultValue: 'Tarif unique' })}
+      </p>
+      <h2 className="animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl font-semibold text-foreground tracking-tight mb-4">
+        {t('presentation.trialTitle', { defaultValue: 'Essayez gratuitement' })}
       </h2>
-      <div className="space-y-3 mb-10">
-        {[t('presentation.trialPoint1'), t('presentation.trialPoint2'), t('presentation.trialPoint3')].map((text, i) => (
-          <div key={i} className="flex items-center justify-center gap-3 animate-fade-in-up" style={{ animationDelay: `${0.2 + i * 0.1}s` }}>
-            <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center">
-              <Check className="w-4 h-4 text-emerald-500" />
+      <p className="animate-fade-in-up stagger-2 text-muted-foreground text-base sm:text-lg max-w-md mx-auto mb-10">
+        {t('presentation.trialDesc', { defaultValue: 'Le premier mois est offert. Voyez par vous-même.' })}
+      </p>
+
+      {/* Pricing card */}
+      <div className="animate-fade-in-up stagger-3 max-w-sm mx-auto mb-10">
+        <div className="rounded-3xl bg-card border border-border/40 shadow-xl p-8 sm:p-10">
+          <div className="mb-6">
+            <div className="flex items-baseline justify-center gap-1">
+              <span className="text-5xl sm:text-6xl font-bold text-foreground tracking-tight">39€</span>
+              <span className="text-base text-muted-foreground font-medium">/mois</span>
             </div>
-            <p className={`text-base sm:text-lg ${i === 0 ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>{text}</p>
+            <p className="text-sm text-muted-foreground mt-2">
+              {t('presentation.trialNoCommitment', { defaultValue: 'Sans engagement · Annulez à tout moment' })}
+            </p>
           </div>
-        ))}
-      </div>
-      <div className="animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
-        <Link to="/auth">
-          <Button size="xl" className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl shadow-emerald-500/25 px-12">
-            {t('presentation.trialCTA')}
-            <ArrowRight className="ml-2 w-5 h-5" />
-          </Button>
-        </Link>
+
+          <div className="space-y-3 text-left mb-8">
+            {[
+              t('presentation.trialFeature1', { defaultValue: 'Page professionnelle personnalisable' }),
+              t('presentation.trialFeature2', { defaultValue: 'Système de réservation en ligne' }),
+              t('presentation.trialFeature3', { defaultValue: 'Gestion clients, factures & devis' }),
+              t('presentation.trialFeature4', { defaultValue: 'Statistiques & tableau de bord' }),
+              t('presentation.trialFeature5', { defaultValue: 'Synchronisation Google Calendar' }),
+              t('presentation.trialFeature6', { defaultValue: 'Support prioritaire' }),
+            ].map((feature, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full bg-foreground flex items-center justify-center flex-shrink-0">
+                  <Check className="w-3 h-3 text-background" />
+                </div>
+                <span className="text-sm text-foreground">{feature}</span>
+              </div>
+            ))}
+          </div>
+
+          <Link to="/auth">
+            <Button size="lg" className="w-full rounded-xl text-base font-semibold">
+              {t('presentation.trialCTA', { defaultValue: 'Commencer gratuitement' })}
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
+          </Link>
+        </div>
+        <p className="text-xs text-muted-foreground mt-4">
+          {t('presentation.trialFooter', { defaultValue: '30 jours offerts · Aucune carte bancaire requise' })}
+        </p>
       </div>
     </div>
   );
 }
-
 function SlideContact() {
   const { t } = useTranslation();
   return (
