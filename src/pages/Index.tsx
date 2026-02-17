@@ -258,98 +258,89 @@ export default function Index() {
                     className="bg-card rounded-[2rem] overflow-hidden w-[220px] sm:w-[250px] lg:w-[280px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
                     style={{ transform: 'rotate(-3deg)' }}
                   >
-                    {/* Minimal Header - Logo + Call button */}
-                    <div className="flex items-center justify-between px-3 lg:px-4 pt-3 pb-2.5">
-                      <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl overflow-hidden shadow-sm ring-1 ring-border/20">
+                    {/* Header - strong separator */}
+                    <div className="flex items-center justify-between px-3 lg:px-4 py-2.5">
+                      <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-xl overflow-hidden ring-1 ring-border/30">
                         <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
                       </div>
-                      <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-zinc-600 flex items-center justify-center shadow-md">
-                        <Phone className="w-4 h-4 lg:w-4.5 lg:h-4.5 text-white" />
+                      <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-zinc-700 flex items-center justify-center">
+                        <Phone className="w-3.5 h-3.5 text-white" />
                       </div>
                     </div>
-
-                    <div className="border-t border-border/20" />
+                    <div className="border-t border-border/40" />
                     
-                    <div className="px-4 lg:px-5 pb-4 pt-5 text-center">
-                      {/* Name - Big & bold like the screenshot */}
-                      <h3 className="text-base lg:text-lg font-extrabold text-foreground mb-1 tracking-wide">GO CLEANING</h3>
-                      <p className="text-[9px] lg:text-[10px] text-muted-foreground leading-relaxed mb-3">
+                    <div className="px-3.5 lg:px-4 pb-3 pt-4 text-center">
+                      <h3 className="text-sm lg:text-base font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
+                      <p className="text-[8px] lg:text-[9px] text-muted-foreground mb-2">
                         Expert du nettoyage automobile depuis 2018
                       </p>
                       
-                      {/* Open badge */}
-                      <div className="flex justify-center mb-3">
-                        <span className="inline-flex items-center gap-1.5 text-[10px] border border-emerald-200 text-emerald-600 px-3 py-1 rounded-full font-semibold">
-                          <span className="w-2 h-2 bg-emerald-500 rounded-full" />
+                      <div className="flex justify-center mb-2">
+                        <span className="inline-flex items-center gap-1 text-[9px] border border-emerald-200 text-emerald-600 px-2 py-0.5 rounded-full font-semibold">
+                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
                           {t('mockup.open')}
                         </span>
                       </div>
                       
-                      {/* Social icons - larger, rounder like screenshot */}
-                      <div className="flex justify-center gap-2.5 mb-4">
-                        <div className="w-9 h-9 lg:w-10 lg:h-10 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
-                          <Instagram className="w-4 h-4 lg:w-4.5 lg:h-4.5 text-muted-foreground" />
+                      <div className="flex justify-center gap-2 mb-2.5">
+                        <div className="w-8 h-8 bg-secondary/30 rounded-full flex items-center justify-center border border-border/40">
+                          <Instagram className="w-3.5 h-3.5 text-foreground/70" />
                         </div>
-                        <div className="w-9 h-9 lg:w-10 lg:h-10 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
-                          <svg className="w-4 h-4 lg:w-4.5 lg:h-4.5 text-muted-foreground" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.73a8.19 8.19 0 0 0 4.77 1.53V6.81a4.82 4.82 0 0 1-1-.12z"/></svg>
+                        <div className="w-8 h-8 bg-secondary/30 rounded-full flex items-center justify-center border border-border/40">
+                          <svg className="w-3.5 h-3.5 text-foreground/70" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.73a8.19 8.19 0 0 0 4.77 1.53V6.81a4.82 4.82 0 0 1-1-.12z"/></svg>
                         </div>
                       </div>
 
-                      {/* Contact bar - pill shape like screenshot */}
-                      <div className="bg-secondary/30 rounded-2xl px-4 py-2.5 flex items-center gap-2.5 mb-5">
-                        <Mail className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-                        <span className="text-[8px] lg:text-[9px] text-muted-foreground leading-tight">Formule personnalisée ? Identifiez-vous</span>
+                      <div className="bg-secondary/25 rounded-xl px-3 py-2 flex items-center gap-2 mb-3">
+                        <Mail className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                        <span className="text-[7px] lg:text-[8px] text-muted-foreground">Formule personnalisée ? Identifiez-vous</span>
                       </div>
 
-                      {/* Opening hours - with chevron like screenshot */}
-                      <div className="flex items-center justify-between mb-4 px-0.5">
-                        <div className="flex items-center gap-1.5">
-                          <Clock className="w-3.5 h-3.5 text-muted-foreground" />
-                          <span className="text-[9px] lg:text-[10px] text-emerald-600 font-semibold">{t('mockup.open')}</span>
-                          <span className="text-[9px] lg:text-[10px] text-muted-foreground">· Ferme à 19h00</span>
+                      <div className="flex items-center justify-between mb-2.5">
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-muted-foreground" />
+                          <span className="text-[8px] text-emerald-600 font-semibold">{t('mockup.open')}</span>
+                          <span className="text-[8px] text-muted-foreground">· Ferme à 19h00</span>
                         </div>
                         <ChevronRight className="w-3 h-3 text-muted-foreground rotate-90" />
                       </div>
                       
-                      {/* Nos formules - bigger title like screenshot */}
-                      <div className="mb-3">
-                        <p className="text-sm lg:text-[15px] font-bold text-foreground text-left mb-2.5">Nos formules</p>
-                        <div className="grid grid-cols-2 gap-2">
-                          {/* Card 1 - Image with overlay text */}
+                      {/* Formules - compact square cards with big overlay text */}
+                      <div className="mb-2.5">
+                        <p className="text-[11px] lg:text-xs font-bold text-foreground text-left mb-2">Nos formules</p>
+                        <div className="grid grid-cols-2 gap-1.5">
                           <div>
-                            <div className="rounded-2xl overflow-hidden relative aspect-[4/5]">
+                            <div className="rounded-2xl overflow-hidden relative aspect-square">
                               <img src={mockupExterior} alt="Lavage complet" className="w-full h-full object-cover" />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                              <div className="absolute bottom-0 left-0 right-0 p-2.5">
-                                <p className="text-[9px] lg:text-[10px] font-extrabold text-white leading-tight uppercase tracking-wider mb-0.5">Lavage complet</p>
-                                <p className="text-[10px] lg:text-[11px] font-bold text-emerald-400">dès 65€</p>
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                              <div className="absolute bottom-0 left-0 right-0 p-2">
+                                <p className="text-[9px] lg:text-[10px] font-extrabold text-white leading-tight uppercase tracking-wide">Lavage complet</p>
+                                <p className="text-[10px] lg:text-[11px] font-bold text-white/90">dès 65€</p>
                               </div>
                             </div>
-                            <div className="flex items-center gap-1 mt-1.5 px-0.5">
-                              <Clock className="w-3 h-3 text-muted-foreground" />
-                              <span className="text-[9px] text-muted-foreground">1h</span>
+                            <div className="flex items-center gap-1 mt-1 px-0.5">
+                              <Clock className="w-2.5 h-2.5 text-muted-foreground" />
+                              <span className="text-[8px] text-muted-foreground">1h</span>
                             </div>
                           </div>
-                          {/* Card 2 */}
                           <div>
-                            <div className="rounded-2xl overflow-hidden relative aspect-[4/5]">
+                            <div className="rounded-2xl overflow-hidden relative aspect-square">
                               <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-full object-cover" />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                              <div className="absolute bottom-0 left-0 right-0 p-2.5">
-                                <p className="text-[9px] lg:text-[10px] font-extrabold text-white leading-tight mb-0.5">Nettoyage intérieur</p>
-                                <p className="text-[10px] lg:text-[11px] font-bold text-emerald-400">dès 50€</p>
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                              <div className="absolute bottom-0 left-0 right-0 p-2">
+                                <p className="text-[9px] lg:text-[10px] font-extrabold text-white leading-tight">Nettoyage intérieur</p>
+                                <p className="text-[10px] lg:text-[11px] font-bold text-white/90">dès 50€</p>
                               </div>
                             </div>
-                            <div className="flex items-center gap-1 mt-1.5 px-0.5">
-                              <Clock className="w-3 h-3 text-muted-foreground" />
-                              <span className="text-[9px] text-muted-foreground">1h</span>
+                            <div className="flex items-center gap-1 mt-1 px-0.5">
+                              <Clock className="w-2.5 h-2.5 text-muted-foreground" />
+                              <span className="text-[8px] text-muted-foreground">1h</span>
                             </div>
                           </div>
                         </div>
                       </div>
                       
-                      {/* Réserver button - wider, more prominent like screenshot */}
-                      <button className="w-full bg-zinc-500 hover:bg-zinc-600 text-white rounded-2xl py-3 text-[11px] lg:text-xs font-semibold tracking-wide transition-colors">
+                      <button className="w-full bg-zinc-600 text-white rounded-xl py-2 text-[10px] font-semibold">
                         Réserver
                       </button>
                     </div>
