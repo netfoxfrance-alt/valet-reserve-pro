@@ -105,6 +105,7 @@ export default function DashboardCustomServices() {
   };
 
   return (
+    <>
     <DashboardLayout title={t('customServices.title')}>
           <div className="max-w-4xl space-y-6">
             {/* Header - responsive stack on mobile */}
@@ -257,7 +258,7 @@ export default function DashboardCustomServices() {
                 ))}
               </div>
             )}
-          </div>
+           </div>
       </DashboardLayout>
 
       {/* Edit Dialog */}
@@ -333,6 +334,6 @@ export default function DashboardCustomServices() {
           </div>
         </DialogContent>
       </Dialog>
-    </DashboardLayout>
+    </>
   );
 }
