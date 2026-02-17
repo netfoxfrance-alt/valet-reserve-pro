@@ -119,7 +119,8 @@ export default function DashboardHome() {
               <img
                 src={item.icon}
                 alt={item.label}
-                className="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-[18px] shadow-md group-hover:scale-105 transition-transform duration-300"
+                className="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-[22px] shadow-md group-hover:scale-105 transition-transform duration-300 bg-transparent"
+                style={{ clipPath: 'inset(12% round 18px)' }}
               />
               <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">{item.label}</span>
             </Link>
