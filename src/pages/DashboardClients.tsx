@@ -154,6 +154,7 @@ export default function DashboardClients() {
   };
 
   return (
+    <>
     <DashboardLayout title="Clients" subtitle={center?.name}>
           {loading ? (
             <div className="space-y-4">
@@ -361,7 +362,7 @@ export default function DashboardClients() {
                 )}
               </Card>
             </>
-          )}
+           )}
       </DashboardLayout>
 
       {/* Edit Dialog */}
@@ -453,6 +454,6 @@ export default function DashboardClients() {
         open={!!viewingClient} 
         onOpenChange={(open) => !open && setViewingClient(null)} 
       />
-    </DashboardLayout>
+    </>
   );
 }

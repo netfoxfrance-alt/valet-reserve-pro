@@ -178,6 +178,7 @@ export default function DashboardInvoices() {
   }
 
   return (
+    <>
     <DashboardLayout title="Factures & Devis">
       <div className="space-y-6">
           {/* Header */}
@@ -355,7 +356,7 @@ export default function DashboardInvoices() {
             </CardContent>
           </Card>
       </div>
-      </DashboardLayout>
+    </DashboardLayout>
 
       {/* Form Dialog */}
       <InvoiceFormDialog
@@ -408,7 +409,6 @@ export default function DashboardInvoices() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      </div>
-    </DashboardLayout>
+    </>
   );
 }
