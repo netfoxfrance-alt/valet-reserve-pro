@@ -194,38 +194,54 @@ export default function Index() {
 
              {/* Right: Two Mockup Cards side by side */}
             <div className="flex justify-center lg:justify-end mt-8 lg:mt-0">
-              <div className="relative w-[340px] sm:w-[440px] md:w-[560px] h-[520px] sm:h-[500px] md:h-[540px]">
+              <div className="relative w-[340px] sm:w-[440px] md:w-[560px] lg:w-[620px] h-[480px] sm:h-[500px] md:h-[520px]">
                 
                 {/* Dashboard Mockup Card - Behind, right */}
-                <div className="absolute top-0 sm:top-0 right-0 sm:right-0 z-10">
+                <div className="absolute top-0 right-0 lg:top-2 lg:right-0 z-10">
                   <div 
-                    className="bg-card rounded-[2rem] overflow-hidden w-[220px] sm:w-[250px] shadow-2xl shadow-black/15 ring-1 ring-border/40"
+                    className="bg-card rounded-[2rem] overflow-hidden w-[220px] sm:w-[260px] lg:w-[300px] shadow-2xl shadow-black/15 ring-1 ring-border/40"
                     style={{ transform: 'rotate(3deg)' }}
                   >
                     {/* Dashboard Header */}
-                    <div className="px-4 pt-4 pb-2 border-b border-border/30">
-                      <div className="flex items-center justify-between mb-1">
+                    <div className="px-4 lg:px-5 pt-4 pb-3">
+                      <div className="flex items-center justify-between mb-2">
                         <Logo size="sm" />
                         <div className="flex items-center gap-1">
-                          <div className="w-5 h-5 rounded-md bg-secondary/60 flex items-center justify-center">
-                            <Settings className="w-2.5 h-2.5 text-muted-foreground" />
+                          <div className="w-5 h-5 lg:w-6 lg:h-6 rounded-lg bg-secondary/60 flex items-center justify-center">
+                            <Settings className="w-2.5 h-2.5 lg:w-3 lg:h-3 text-muted-foreground" />
                           </div>
                         </div>
                       </div>
-                      <p className="text-[9px] text-muted-foreground">GOCLEANING</p>
+                      {/* Center name + Pro badge */}
+                      <h3 className="text-sm lg:text-base font-bold text-foreground leading-tight">GOCLEANING</h3>
+                      <div className="flex items-center gap-1.5 mt-0.5 mb-2">
+                        <Crown className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-primary" />
+                        <span className="text-[9px] lg:text-[10px] font-medium text-primary">Plan Pro actif</span>
+                      </div>
+                      {/* Copy link */}
+                      <div className="flex items-center gap-2 bg-secondary/40 rounded-xl px-2.5 py-1.5">
+                        <Share2 className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-[9px] lg:text-[10px] text-muted-foreground font-mono">/gocleaning</span>
+                        <div className="ml-auto w-4 h-4 lg:w-5 lg:h-5 rounded-md bg-background/80 flex items-center justify-center">
+                          <svg className="w-2.5 h-2.5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <rect x="9" y="9" width="13" height="13" rx="2" />
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                          </svg>
+                        </div>
+                      </div>
                     </div>
                     
                     {/* Icon Grid */}
-                    <div className="p-4">
-                      <div className="grid grid-cols-3 gap-x-3 gap-y-4">
+                    <div className="px-4 lg:px-5 pb-5 pt-2">
+                      <div className="grid grid-cols-3 gap-x-3 gap-y-4 lg:gap-x-4 lg:gap-y-5">
                         {dashboardIcons.map((item) => (
                           <div key={item.label} className="flex flex-col items-center gap-1.5">
                             <img
                               src={item.icon}
                               alt={item.label}
-                              className="w-12 h-12 sm:w-14 sm:h-14 object-contain"
+                              className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 object-contain"
                             />
-                            <span className="text-[8px] sm:text-[9px] font-medium text-muted-foreground text-center leading-tight truncate max-w-[60px]">
+                            <span className="text-[8px] sm:text-[9px] lg:text-[10px] font-medium text-muted-foreground text-center leading-tight truncate max-w-[70px]">
                               {item.label}
                             </span>
                           </div>
@@ -236,13 +252,13 @@ export default function Index() {
                 </div>
 
                 {/* Main Page Card - In front, left */}
-                <div className="absolute top-10 sm:top-8 left-0 sm:left-0 z-20">
+                <div className="absolute top-10 sm:top-8 left-0 lg:top-6 lg:left-4 z-20">
                   <div 
-                    className="bg-card rounded-[2rem] overflow-hidden w-[220px] sm:w-[250px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
+                    className="bg-card rounded-[2rem] overflow-hidden w-[220px] sm:w-[250px] lg:w-[280px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
                     style={{ transform: 'rotate(-3deg)' }}
                   >
                     {/* Banner */}
-                    <div className="h-24 relative">
+                    <div className="h-24 lg:h-28 relative">
                       <div className="absolute inset-0 overflow-hidden">
                         <img 
                           src={mockupBanner} 
@@ -258,8 +274,8 @@ export default function Index() {
                     </div>
                     
                     <div className="px-4 pb-4 pt-10 text-center">
-                      <h3 className="text-sm font-bold text-foreground mb-0.5">GOCLEANING</h3>
-                      <p className="text-[9px] text-muted-foreground leading-relaxed mb-2 px-1">
+                      <h3 className="text-sm lg:text-base font-bold text-foreground mb-0.5">GOCLEANING</h3>
+                      <p className="text-[9px] lg:text-[10px] text-muted-foreground leading-relaxed mb-2 px-1">
                         {t('mockup.premiumDesc')}
                       </p>
                       
@@ -301,58 +317,6 @@ export default function Index() {
                       <button className="w-full bg-zinc-800 text-white rounded-xl py-2.5 text-[10px] font-semibold">
                         {t('mockup.bookNow')}
                       </button>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Widget: Revenue - Top Right */}
-                <div className="absolute -top-4 sm:-top-2 right-4 sm:right-16 z-30">
-                  <div 
-                    className="bg-card rounded-2xl p-2.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
-                    style={{ transform: 'rotate(5deg)' }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 bg-emerald-500/10 rounded-xl flex items-center justify-center">
-                        <BarChart3 className="w-3.5 h-3.5 text-emerald-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-foreground">4 280€</p>
-                        <p className="text-[8px] text-muted-foreground">{t('landing.thisMonth')}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Widget: Bookings - Bottom Left */}
-                <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 z-30">
-                  <div 
-                    className="bg-card rounded-2xl p-2.5 shadow-xl shadow-black/10 ring-1 ring-border/30"
-                    style={{ transform: 'rotate(-6deg)' }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 bg-primary/10 rounded-xl flex items-center justify-center">
-                        <Calendar className="w-3.5 h-3.5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-foreground">47</p>
-                        <p className="text-[8px] text-muted-foreground">{t('landing.bookings')}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Widget: Rating - Bottom Right */}
-                <div className="absolute bottom-0 sm:bottom-2 right-0 sm:right-4 z-30">
-                  <div 
-                    className="bg-card rounded-xl px-2.5 py-2 shadow-lg shadow-black/10 ring-1 ring-border/30"
-                    style={{ transform: 'rotate(4deg)' }}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                      <div>
-                        <p className="text-xs font-bold text-foreground">4.9</p>
-                        <p className="text-[7px] text-muted-foreground">312 {t('landing.reviews')}</p>
-                      </div>
                     </div>
                   </div>
                 </div>
