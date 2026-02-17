@@ -15,8 +15,6 @@ import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 import sofaBanner from '@/assets/sofa-cleaning-banner.jpg';
 import gocleanLogo from '@/assets/gocleaning-logo.png';
 import mockupCarCleaning from '@/assets/mockup-car-cleaning.jpg';
-import mockupVitres from '@/assets/mockup-vitres-cleaning.png';
-import mockupTerrasse from '@/assets/mockup-terrasse-cleaning.png';
 import mockupLogoClean from '@/assets/mockup-logo-cleaning.png';
 import mockupInterior from '@/assets/mockup-interior-cleaning.png';
 import mockupExterior from '@/assets/mockup-exterior-cleaning.png';
@@ -253,27 +251,28 @@ export default function Index() {
 
                 {/* Main Page Card - In front, left */}
                 <div className="absolute top-10 sm:top-8 left-0 lg:top-6 lg:left-4 z-20">
-                   <div 
+                  <div 
                     className="bg-card rounded-[2rem] overflow-hidden w-[220px] sm:w-[250px] lg:w-[280px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
                     style={{ transform: 'rotate(-3deg)' }}
                   >
-                    {/* Minimal Header */}
-                    <div className="flex items-center justify-between px-3 lg:px-4 py-2.5 border-b border-border/30">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 lg:w-8 lg:h-8 rounded-lg overflow-hidden shadow-sm">
-                          <img src={gocleanLogo} alt="Logo" className="w-full h-full object-cover" />
-                        </div>
-                        <span className="text-[10px] lg:text-xs font-bold text-foreground">GOCLEANING</span>
+                    {/* Banner */}
+                    <div className="h-24 lg:h-28 relative">
+                      <div className="absolute inset-0 overflow-hidden">
+                        <img 
+                          src={mockupBanner} 
+                          alt="Service preview" 
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                      <div className="flex items-center gap-1">
-                        <div className="bg-foreground text-background rounded-lg px-2 py-1 flex items-center gap-1">
-                          <Phone className="w-2.5 h-2.5" />
-                          <span className="text-[8px] lg:text-[9px] font-semibold">Appeler</span>
+                      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 z-20">
+                        <div className="w-16 h-16 rounded-[1rem] shadow-2xl ring-4 ring-card overflow-hidden">
+                          <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
                         </div>
                       </div>
                     </div>
                     
-                    <div className="px-4 pb-4 pt-4 text-center">
+                    <div className="px-4 pb-4 pt-10 text-center">
+                      <h3 className="text-sm lg:text-base font-bold text-foreground mb-0.5">GOCLEANING</h3>
                       <p className="text-[9px] lg:text-[10px] text-muted-foreground leading-relaxed mb-2 px-1">
                         {t('mockup.premiumDesc')}
                       </p>
@@ -304,20 +303,20 @@ export default function Index() {
                         <div className="grid grid-cols-2 gap-2">
                           <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
                             <div className="aspect-[4/3] overflow-hidden">
-                              <img src={mockupVitres} alt="Nettoyage de vitres" className="w-full h-full object-cover" />
+                              <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-full object-cover" />
                             </div>
                             <div className="px-2 py-1.5">
-                              <p className="text-[8px] lg:text-[9px] font-semibold text-foreground leading-tight">Nettoyage de vitres</p>
-                              <p className="text-[10px] lg:text-[11px] font-bold text-primary">dès 45€</p>
+                              <p className="text-[8px] lg:text-[9px] font-semibold text-foreground leading-tight">Nettoyage intérieur</p>
+                              <p className="text-[10px] lg:text-[11px] font-bold text-primary">dès 55€</p>
                             </div>
                           </div>
                           <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
                             <div className="aspect-[4/3] overflow-hidden">
-                              <img src={mockupTerrasse} alt="Nettoyage de terrasses" className="w-full h-full object-cover" />
+                              <img src={mockupExterior} alt="Nettoyage extérieur" className="w-full h-full object-cover" />
                             </div>
                             <div className="px-2 py-1.5">
-                              <p className="text-[8px] lg:text-[9px] font-semibold text-foreground leading-tight">Nettoyage terrasses</p>
-                              <p className="text-[10px] lg:text-[11px] font-bold text-primary">dès 65€</p>
+                              <p className="text-[8px] lg:text-[9px] font-semibold text-foreground leading-tight">Nettoyage extérieur</p>
+                              <p className="text-[10px] lg:text-[11px] font-bold text-primary">dès 35€</p>
                             </div>
                           </div>
                         </div>
