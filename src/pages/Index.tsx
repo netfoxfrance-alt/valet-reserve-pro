@@ -204,20 +204,8 @@ export default function Index() {
                   >
                     {/* Dashboard Header */}
                     <div className="px-4 lg:px-5 pt-4 pb-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <Logo size="sm" />
-                        <div className="flex items-center gap-1">
-                          <div className="w-5 h-5 lg:w-6 lg:h-6 rounded-lg bg-secondary/60 flex items-center justify-center">
-                            <Settings className="w-2.5 h-2.5 lg:w-3 lg:h-3 text-muted-foreground" />
-                          </div>
-                        </div>
-                      </div>
-                      {/* Center name + Pro badge */}
-                      <h3 className="text-sm lg:text-base font-bold text-foreground leading-tight">GOCLEANING</h3>
-                      <div className="flex items-center gap-1.5 mt-0.5 mb-2">
-                        <Crown className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-primary" />
-                        <span className="text-[9px] lg:text-[10px] font-medium text-primary">Plan Pro actif</span>
-                      </div>
+                      {/* Center name */}
+                      <h3 className="text-sm lg:text-base font-bold text-foreground leading-tight mb-2">GOCLEANING</h3>
                       {/* Copy link */}
                       <div className="flex items-center gap-2 bg-secondary/40 rounded-xl px-2.5 py-1.5">
                         <Share2 className="w-3 h-3 text-muted-foreground" />
@@ -847,132 +835,6 @@ export default function Index() {
 
               {/* Dashboard Content */}
               <div className="flex min-h-[480px]">
-                {/* Sidebar */}
-                <div className="w-52 bg-secondary/30 border-r border-border/40 p-4 flex-shrink-0 hidden md:flex flex-col">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Logo size="md" />
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-5 truncate">clean-auto-pro</p>
-
-                  {/* Sidebar Groups */}
-                  <nav className="flex-1 space-y-4">
-                    <div>
-                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">{t('mockup.activity')}</p>
-                      <div className="space-y-0.5">
-                        {[
-                           { icon: Calendar, label: t('mockup.reservations'), tab: 'reservations' as const, badge: '3' },
-                           { icon: CalendarDays, label: t('mockup.calendar'), tab: 'calendar' as const },
-                           { icon: Mail, label: t('mockup.requests'), tab: 'reservations' as const, badge: '2' },
-                        ].map((item) => (
-                          <button
-                            key={item.label}
-                            onClick={() => setDashboardTab(item.tab)}
-                            className={`w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg text-xs transition-all ${
-                             dashboardTab === item.tab && item.label === t('mockup.reservations')
-                                 ? 'bg-foreground text-background font-medium' 
-                                 : dashboardTab === item.tab && item.label === t('mockup.calendar')
-                                ? 'bg-foreground text-background font-medium'
-                                : 'text-muted-foreground hover:bg-card/50'
-                            }`}
-                          >
-                            <div className="flex items-center gap-2">
-                              <item.icon className="w-3.5 h-3.5" />
-                              {item.label}
-                            </div>
-                            {item.badge && (
-                              <span className="bg-primary text-primary-foreground text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-                                {item.badge}
-                              </span>
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">{t('mockup.clients')}</p>
-                      <div className="space-y-0.5">
-                        {[
-                           { icon: Users, label: t('mockup.clients'), tab: 'clients' as const },
-                           { icon: Star, label: t('mockup.invoicesQuotes'), tab: 'invoices' as const },
-                        ].map((item) => (
-                          <button
-                            key={item.label}
-                            onClick={() => setDashboardTab(item.tab)}
-                            className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs transition-all ${
-                              dashboardTab === item.tab 
-                                ? 'bg-foreground text-background font-medium' 
-                                : 'text-muted-foreground hover:bg-card/50'
-                            }`}
-                          >
-                            <item.icon className="w-3.5 h-3.5" />
-                            {item.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">{t('mockup.configuration')}</p>
-                      <div className="space-y-0.5">
-                        {[
-                           { icon: Globe, label: t('mockup.myPage'), tab: 'mypage' as const },
-                           { icon: Droplets, label: t('mockup.formulas'), tab: 'formules' as const },
-                           { icon: Clock, label: t('mockup.availabilityLabel'), tab: 'reservations' as const },
-                           { icon: Settings, label: t('mockup.settingsLabel'), tab: 'reservations' as const },
-                        ].map((item) => (
-                          <button
-                            key={item.label}
-                            onClick={() => setDashboardTab(item.tab)}
-                            className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs transition-all ${
-                              dashboardTab === item.tab && (item.label === t('mockup.myPage') || item.label === t('mockup.formulas'))
-                                ? 'bg-foreground text-background font-medium' 
-                                : 'text-muted-foreground hover:bg-card/50'
-                            }`}
-                          >
-                            <item.icon className="w-3.5 h-3.5" />
-                            {item.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70 font-medium mb-1.5 px-2">{t('mockup.insights')}</p>
-                      <div className="space-y-0.5">
-                        <button
-                          onClick={() => setDashboardTab('stats')}
-                          className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs transition-all ${
-                            dashboardTab === 'stats' 
-                              ? 'bg-foreground text-background font-medium' 
-                              : 'text-muted-foreground hover:bg-card/50'
-                          }`}
-                        >
-                          <BarChart3 className="w-3.5 h-3.5" />
-                          {t('mockup.statistics')}
-                        </button>
-                      </div>
-                    </div>
-                  </nav>
-
-                  {/* Link at bottom — prominent */}
-                  <div className="mt-4 pt-3 border-t border-border/40">
-                    <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 hover:bg-primary/10 transition-colors cursor-pointer">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center">
-                          <Link2 className="w-3 h-3 text-primary-foreground" />
-                        </div>
-                        <span className="text-[10px] font-semibold text-foreground">{t('mockup.yourLink')}</span>
-                      </div>
-                      <p className="text-[9px] text-primary font-medium truncate">cleaningpage.com/clean-auto-pro</p>
-                      <div className="flex items-center gap-1.5 mt-1.5">
-                        <ExternalLink className="w-3 h-3 text-primary" />
-                        <span className="text-[8px] text-primary font-medium">{t('mockup.copyLink')}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 {/* Main Content Area */}
                 <div className="flex-1 p-5 sm:p-6 overflow-y-auto" style={{ background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary)/0.3) 100%)' }}>
                   
