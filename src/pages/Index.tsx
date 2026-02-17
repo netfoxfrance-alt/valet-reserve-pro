@@ -300,19 +300,23 @@ export default function Index() {
                       {/* Formules */}
                       <div className="mb-3">
                         <p className="text-[10px] font-semibold text-foreground text-left mb-1.5">{t('mockup.ourPackages')}</p>
-                        <div className="grid grid-cols-2 gap-1.5">
-                          <div className="rounded-xl overflow-hidden border border-border/30 text-left">
-                            <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-12 object-cover" />
-                            <div className="p-1.5">
-                              <p className="text-[8px] font-medium text-foreground leading-tight">Nettoyage intérieur</p>
-                              <p className="text-[10px] font-bold text-muted-foreground">dès 55€</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
+                            <div className="aspect-[4/3] overflow-hidden">
+                              <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-full object-cover" />
+                            </div>
+                            <div className="px-2 py-1.5">
+                              <p className="text-[8px] lg:text-[9px] font-semibold text-foreground leading-tight">Nettoyage intérieur</p>
+                              <p className="text-[10px] lg:text-[11px] font-bold text-primary">dès 55€</p>
                             </div>
                           </div>
-                          <div className="rounded-xl overflow-hidden border border-border/30 text-left">
-                            <img src={mockupExterior} alt="Nettoyage extérieur" className="w-full h-12 object-cover" />
-                            <div className="p-1.5">
-                              <p className="text-[8px] font-medium text-foreground leading-tight">Nettoyage extérieur</p>
-                              <p className="text-[10px] font-bold text-muted-foreground">dès 35€</p>
+                          <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
+                            <div className="aspect-[4/3] overflow-hidden">
+                              <img src={mockupExterior} alt="Nettoyage extérieur" className="w-full h-full object-cover" />
+                            </div>
+                            <div className="px-2 py-1.5">
+                              <p className="text-[8px] lg:text-[9px] font-semibold text-foreground leading-tight">Nettoyage extérieur</p>
+                              <p className="text-[10px] lg:text-[11px] font-bold text-primary">dès 35€</p>
                             </div>
                           </div>
                         </div>
