@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
-import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,12 +40,7 @@ export default function DashboardSupport() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar />
-      <MobileSidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
-      <div className="lg:pl-64">
-        <DashboardHeader title={t('support.title')} onMenuClick={() => setSidebarOpen(true)} />
-        <main className="p-4 sm:p-6 max-w-2xl mx-auto">
+    <DashboardLayout title={t('support.title')}>
           <div className="mb-6">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"><Headphones className="w-5 h-5 text-primary" /></div>
@@ -91,8 +84,6 @@ export default function DashboardSupport() {
           <p className="text-xs text-muted-foreground text-center mt-6">
             {t('support.directEmail')} <a href="mailto:contact@cleaningpage.com" className="text-primary hover:underline">contact@cleaningpage.com</a>
           </p>
-        </main>
-      </div>
-    </div>
+    </DashboardLayout>
   );
 }

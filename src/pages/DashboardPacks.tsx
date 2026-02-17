@@ -1,7 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
-import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -252,17 +250,7 @@ export default function DashboardPacks() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar />
-      <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
-      
-      <div className="lg:pl-64">
-        <DashboardHeader 
-          title="Formules" 
-          onMenuClick={() => setMobileMenuOpen(true)}
-        />
-        
-        <main className="p-4 lg:p-8 max-w-4xl">
+    <DashboardLayout title="Formules">
           <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Vos offres</h2>
@@ -742,8 +730,6 @@ export default function DashboardPacks() {
               })
             )}
           </div>
-        </main>
-      </div>
-    </div>
+    </DashboardLayout>
   );
 }

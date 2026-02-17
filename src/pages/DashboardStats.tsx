@@ -1,7 +1,5 @@
 import { useState, useMemo } from 'react';
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
-import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -223,18 +221,8 @@ export default function DashboardStats() {
   const isCurrentMonth = format(selectedMonth, 'yyyy-MM') === format(new Date(), 'yyyy-MM');
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar />
-      <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
-      
-      <div className="lg:pl-64">
-        <DashboardHeader 
-          title="Statistiques" 
-          subtitle={center?.name}
-          onMenuClick={() => setMobileMenuOpen(true)}
-        />
-        
-        <main className="p-4 lg:p-8">
+    <>
+    <DashboardLayout title="Statistiques" subtitle={center?.name}>
           {loading ? (
             <div className="space-y-4">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -530,8 +518,7 @@ export default function DashboardStats() {
               </Tabs>
             </>
           )}
-        </main>
-      </div>
+    </DashboardLayout>
 
       {/* Detail Dialog */}
       <Dialog open={!!detailDialog} onOpenChange={() => setDetailDialog(null)}>
@@ -570,6 +557,6 @@ export default function DashboardStats() {
           </ScrollArea>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

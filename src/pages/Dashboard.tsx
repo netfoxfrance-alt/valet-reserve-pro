@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
-import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -479,7 +477,6 @@ type FilterType = 'all' | 'today' | 'week' | 'month' | 'pending';
 export default function Dashboard() {
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [filter, setFilter] = useState<FilterType>('all');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
@@ -653,19 +650,9 @@ export default function Dashboard() {
   ];
   
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar />
-      <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
-      
-      <div className="lg:pl-64">
-        <DashboardHeader 
-          title={t('nav.reservations')} 
-          subtitle={center?.name}
-          onMenuClick={() => setMobileMenuOpen(true)}
-        />
-        
-        <main className="p-4 lg:p-8 max-w-6xl space-y-6">
-          <SubscriptionBanner />
+    <>
+    <DashboardLayout title={t('nav.reservations')} subtitle={center?.name}>
+      <div className="space-y-6">
           <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
             {stats.map((stat) => (
               <Card key={stat.name} variant="elevated" className="p-4 sm:p-5 rounded-2xl hover:shadow-lg transition-all duration-200">
@@ -760,8 +747,8 @@ export default function Dashboard() {
               })}
             </div>
           )}
-        </main>
-      </div>
+        </div>
+      </DashboardLayout>
       
       {selectedAppointment && (
         <AppointmentDetailDialog
@@ -781,6 +768,6 @@ export default function Dashboard() {
           onAddToCalendar={() => markAsSynced(justConfirmedAppointment.id)}
         />
       )}
-    </div>
+    </>
   );
 }

@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
-import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -156,18 +154,7 @@ export default function DashboardClients() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar />
-      <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
-
-      <div className="lg:pl-64">
-        <DashboardHeader
-          title="Clients"
-          subtitle={center?.name}
-          onMenuClick={() => setMobileMenuOpen(true)}
-        />
-
-        <main className="p-4 lg:p-8">
+    <DashboardLayout title="Clients" subtitle={center?.name}>
           {loading ? (
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-4">
@@ -375,8 +362,7 @@ export default function DashboardClients() {
               </Card>
             </>
           )}
-        </main>
-      </div>
+      </DashboardLayout>
 
       {/* Edit Dialog */}
       <Dialog open={!!editingClient} onOpenChange={(open) => !open && setEditingClient(null)}>
@@ -462,12 +448,11 @@ export default function DashboardClients() {
         </DialogContent>
       </Dialog>
 
-      {/* Client Detail Dialog */}
       <ClientDetailDialog 
         client={viewingClient} 
         open={!!viewingClient} 
         onOpenChange={(open) => !open && setViewingClient(null)} 
       />
-    </div>
+    </DashboardLayout>
   );
 }
