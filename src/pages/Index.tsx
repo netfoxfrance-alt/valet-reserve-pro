@@ -258,7 +258,7 @@ export default function Index() {
                     style={{ transform: 'rotate(-3deg)' }}
                   >
                     {/* Banner */}
-                    <div className="h-24 lg:h-28 relative">
+                    <div className="h-20 lg:h-24 relative">
                       <div className="absolute inset-0 overflow-hidden">
                         <img 
                           src={mockupBanner} 
@@ -266,65 +266,78 @@ export default function Index() {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 z-20">
-                        <div className="w-16 h-16 rounded-[1rem] shadow-2xl ring-4 ring-card overflow-hidden">
-                          <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
+                      <div className="absolute -bottom-7 lg:-bottom-8 left-1/2 -translate-x-1/2 z-20">
+                        <div className="w-14 h-14 lg:w-16 lg:h-16 rounded-[1rem] shadow-2xl ring-[3px] ring-card overflow-hidden">
+                          <img src={gocleanLogo} alt="Logo" className="w-full h-full object-cover" />
                         </div>
                       </div>
                     </div>
                     
-                    <div className="px-4 pb-4 pt-10 text-center">
-                      <h3 className="text-sm lg:text-base font-bold text-foreground mb-0.5">GOCLEANING</h3>
-                      <p className="text-[9px] lg:text-[10px] text-muted-foreground leading-relaxed mb-2 px-1">
-                        {t('mockup.premiumDesc')}
+                    <div className="px-4 pb-4 pt-9 lg:pt-10 text-center">
+                      <h3 className="text-sm lg:text-base font-bold text-foreground mb-0.5">Clean Premium</h3>
+                      <p className="text-[8px] lg:text-[9px] text-muted-foreground leading-relaxed mb-2 px-2">
+                        Nettoyage premium à domicile, 7j/7.
                       </p>
                       
-                      <div className="flex justify-center mb-2">
-                        <span className="inline-flex items-center gap-1 text-[9px] bg-white border border-border/60 text-emerald-600 px-2.5 py-1 rounded-full font-medium shadow-sm">
+                      {/* Ouvert badge */}
+                      <div className="flex justify-center mb-2.5">
+                        <span className="inline-flex items-center gap-1 text-[8px] lg:text-[9px] bg-white border border-emerald-200 text-emerald-600 px-2 lg:px-2.5 py-0.5 lg:py-1 rounded-full font-medium">
                           <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
                           {t('mockup.open')}
                         </span>
                       </div>
                       
-                      {/* Social icons */}
+                      {/* 4 Social icons */}
                       <div className="flex justify-center gap-1.5 mb-3">
-                        <div className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center">
-                          <Instagram className="w-3 h-3 text-foreground" />
+                        {[
+                          { icon: Instagram },
+                          { isTiktok: true },
+                          { icon: Facebook },
+                          { icon: Mail },
+                        ].map((item, i) => (
+                          <div key={i} className="w-7 h-7 lg:w-8 lg:h-8 rounded-full flex items-center justify-center bg-card border border-foreground/15">
+                            {item.isTiktok ? (
+                              <svg className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-foreground" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                              </svg>
+                            ) : item.icon && (
+                              <item.icon className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-foreground" />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Phone + Products */}
+                      <div className="space-y-1.5 mb-3 text-left px-1">
+                        <div className="flex items-center gap-2 text-[9px] lg:text-[10px] text-foreground">
+                          <Phone className="w-3 h-3 text-muted-foreground" />
+                          <span>06 12 34 56 78</span>
                         </div>
-                        <div className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center">
-                          <MessageCircle className="w-3 h-3 text-foreground" />
-                        </div>
-                        <div className="w-7 h-7 bg-secondary/60 rounded-lg flex items-center justify-center">
-                          <Mail className="w-3 h-3 text-foreground" />
+                        <div className="flex items-center gap-2 text-[9px] lg:text-[10px] text-primary">
+                          <Droplets className="w-3 h-3" />
+                          <span className="font-medium">Voir nos produits utilisés →</span>
                         </div>
                       </div>
                       
                       {/* Formules */}
-                      <div className="mb-3">
-                        <p className="text-[10px] font-semibold text-foreground text-left mb-1.5">{t('mockup.ourPackages')}</p>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
-                            <div className="aspect-[4/3] overflow-hidden">
-                              <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-full object-cover" />
-                            </div>
-                            <div className="px-2 py-1.5">
-                              <p className="text-[8px] lg:text-[9px] font-semibold text-foreground leading-tight">Nettoyage intérieur</p>
-                              <p className="text-[10px] lg:text-[11px] font-bold text-primary">dès 55€</p>
-                            </div>
+                      <div className="text-left mb-3">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <p className="text-[10px] lg:text-[11px] font-semibold text-foreground">{t('mockup.ourPackages')}</p>
+                          <span className="text-[8px] lg:text-[9px] text-muted-foreground font-medium">Voir tout →</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          <div className="bg-card border border-border/50 rounded-xl p-2.5 lg:p-3">
+                            <p className="text-[9px] lg:text-[10px] font-semibold text-foreground mb-0.5">Express</p>
+                            <p className="text-sm lg:text-base font-bold text-muted-foreground">35€</p>
                           </div>
-                          <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
-                            <div className="aspect-[4/3] overflow-hidden">
-                              <img src={mockupExterior} alt="Nettoyage extérieur" className="w-full h-full object-cover" />
-                            </div>
-                            <div className="px-2 py-1.5">
-                              <p className="text-[8px] lg:text-[9px] font-semibold text-foreground leading-tight">Nettoyage extérieur</p>
-                              <p className="text-[10px] lg:text-[11px] font-bold text-primary">dès 35€</p>
-                            </div>
+                          <div className="bg-card border border-border/50 rounded-xl p-2.5 lg:p-3">
+                            <p className="text-[9px] lg:text-[10px] font-semibold text-foreground mb-0.5">Complet</p>
+                            <p className="text-sm lg:text-base font-bold text-muted-foreground">89€</p>
                           </div>
                         </div>
                       </div>
                       
-                      <button className="w-full bg-zinc-800 text-white rounded-xl py-2.5 text-[10px] font-semibold">
+                      <button className="w-full bg-zinc-800 text-white rounded-xl py-2 lg:py-2.5 text-[10px] lg:text-[11px] font-semibold">
                         {t('mockup.bookNow')}
                       </button>
                     </div>
