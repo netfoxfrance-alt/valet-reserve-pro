@@ -26,6 +26,14 @@ import iconFormules from '@/assets/icons/icon-formules.webp';
 import iconDemandes from '@/assets/icons/icon-demandes.webp';
 import iconStatistiques from '@/assets/icons/icon-statistiques.webp';
 
+import tabReservations from '@/assets/icons/tab-reservations.webp';
+import tabAgenda from '@/assets/icons/tab-agenda.webp';
+import tabClients from '@/assets/icons/tab-clients.webp';
+import tabFactures from '@/assets/icons/tab-factures.webp';
+import tabStats from '@/assets/icons/tab-stats.png';
+import tabMaPage from '@/assets/icons/tab-mapage.webp';
+import tabFormules from '@/assets/icons/tab-formules.webp';
+
 const dashboardIcons = [
   { icon: iconReservations, label: 'Réservations' },
   { icon: iconAgenda, label: 'Agenda' },
@@ -787,13 +795,13 @@ export default function Index() {
           </div>
           <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-wrap gap-2 sm:gap-3 mb-10 justify-center">
             {[
-               { icon: Calendar, label: t('mockup.reservations'), tab: 'reservations' as const, badge: '3' },
-               { icon: CalendarDays, label: t('mockup.calendar'), tab: 'calendar' as const, badge: null },
-               { icon: Users, label: t('mockup.clients'), tab: 'clients' as const, badge: null },
-               { icon: Star, label: t('mockup.invoices'), tab: 'invoices' as const, badge: null },
-               { icon: BarChart3, label: t('mockup.statistics'), tab: 'stats' as const, badge: null },
-               { icon: Globe, label: t('mockup.myPage'), tab: 'mypage' as const, badge: null },
-               { icon: Droplets, label: t('mockup.formulas'), tab: 'formules' as const, badge: null },
+               { img: tabReservations, label: t('mockup.reservations'), tab: 'reservations' as const, badge: '3' },
+               { img: tabAgenda, label: t('mockup.calendar'), tab: 'calendar' as const, badge: null },
+               { img: tabClients, label: t('mockup.clients'), tab: 'clients' as const, badge: null },
+               { img: tabFactures, label: t('mockup.invoices'), tab: 'invoices' as const, badge: null },
+               { img: tabStats, label: t('mockup.statistics'), tab: 'stats' as const, badge: null },
+               { img: tabMaPage, label: t('mockup.myPage'), tab: 'mypage' as const, badge: null },
+               { img: tabFormules, label: t('mockup.formulas'), tab: 'formules' as const, badge: null },
             ].map((item) => (
               <button 
                 key={item.label}
@@ -804,7 +812,7 @@ export default function Index() {
                     : 'bg-card border border-border/60 text-foreground hover:bg-secondary/50'
                 }`}
               >
-                <item.icon className="w-4 h-4" />
+                <img src={item.img} alt={item.label} className={`w-5 h-5 object-contain ${dashboardTab === item.tab ? 'brightness-0 invert' : ''}`} />
                 <span className="hidden sm:inline">{item.label}</span>
                 {item.badge && (
                   <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
