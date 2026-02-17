@@ -275,10 +275,14 @@ export default function Index() {
                         Expert du nettoyage automobile depuis 2018
                       </p>
                       
-                      <div className="flex justify-center mb-2">
+                      <div className="flex justify-center items-center gap-2 mb-2">
                         <span className="inline-flex items-center gap-1 text-[9px] border border-emerald-200 text-emerald-600 px-2 py-0.5 rounded-full font-semibold">
                           <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
                           {t('mockup.open')}
+                        </span>
+                        <span className="inline-flex items-center gap-0.5 text-[8px] text-muted-foreground">
+                          <Star className="w-2.5 h-2.5 text-amber-400 fill-amber-400" />
+                          <span className="font-semibold text-foreground/70">4.9</span>
                         </span>
                       </div>
                       
@@ -291,9 +295,10 @@ export default function Index() {
                         </div>
                       </div>
 
-                      <div className="bg-secondary/25 rounded-xl px-3 py-2 flex items-center gap-2 mb-3">
-                        <Mail className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-                        <span className="text-[7px] lg:text-[8px] text-muted-foreground">Formule personnalisée ? Identifiez-vous</span>
+                      <div className="bg-secondary/60 rounded-xl px-3 py-2 flex items-center gap-2 mb-3 ring-1 ring-border/40">
+                        <Mail className="w-3 h-3 text-foreground/50 flex-shrink-0" />
+                        <span className="text-[7px] lg:text-[8px] text-foreground/60 font-medium">Client personnalisé ? Identifiez-vous</span>
+                        <ChevronRight className="w-3 h-3 text-foreground/40 ml-auto flex-shrink-0" />
                       </div>
 
                       <div className="flex items-center justify-between mb-2.5">
@@ -305,42 +310,38 @@ export default function Index() {
                         <ChevronRight className="w-3 h-3 text-muted-foreground rotate-90" />
                       </div>
                       
-                      {/* Formules - compact square cards with big overlay text */}
+                      {/* Formules - clean cards */}
                       <div className="mb-2.5">
                         <p className="text-[11px] lg:text-xs font-bold text-foreground text-left mb-2">Nos formules</p>
-                        <div className="grid grid-cols-2 gap-1.5">
-                          <div>
-                            <div className="rounded-2xl overflow-hidden relative aspect-square">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="rounded-2xl overflow-hidden ring-1 ring-border/30">
+                            <div className="relative aspect-[4/3]">
                               <img src={mockupExterior} alt="Lavage complet" className="w-full h-full object-cover" />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                              <div className="absolute bottom-0 left-0 right-0 p-2">
-                                <p className="text-[9px] lg:text-[10px] font-extrabold text-white leading-tight uppercase tracking-wide">Lavage complet</p>
-                                <p className="text-[10px] lg:text-[11px] font-bold text-white/90">dès 65€</p>
-                              </div>
                             </div>
-                            <div className="flex items-center gap-1 mt-1 px-0.5">
-                              <Clock className="w-2.5 h-2.5 text-muted-foreground" />
-                              <span className="text-[8px] text-muted-foreground">1h</span>
+                            <div className="p-2 bg-card">
+                              <p className="text-[9px] lg:text-[10px] font-bold text-foreground leading-tight">Lavage complet</p>
+                              <div className="flex items-center justify-between mt-0.5">
+                                <span className="text-[10px] lg:text-[11px] font-bold text-emerald-600">dès 65€</span>
+                                <span className="text-[7px] text-muted-foreground flex items-center gap-0.5"><Clock className="w-2 h-2" />1h</span>
+                              </div>
                             </div>
                           </div>
-                          <div>
-                            <div className="rounded-2xl overflow-hidden relative aspect-square">
+                          <div className="rounded-2xl overflow-hidden ring-1 ring-border/30">
+                            <div className="relative aspect-[4/3]">
                               <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-full object-cover" />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                              <div className="absolute bottom-0 left-0 right-0 p-2">
-                                <p className="text-[9px] lg:text-[10px] font-extrabold text-white leading-tight">Nettoyage intérieur</p>
-                                <p className="text-[10px] lg:text-[11px] font-bold text-white/90">dès 50€</p>
-                              </div>
                             </div>
-                            <div className="flex items-center gap-1 mt-1 px-0.5">
-                              <Clock className="w-2.5 h-2.5 text-muted-foreground" />
-                              <span className="text-[8px] text-muted-foreground">1h</span>
+                            <div className="p-2 bg-card">
+                              <p className="text-[9px] lg:text-[10px] font-bold text-foreground leading-tight">Nettoyage intérieur</p>
+                              <div className="flex items-center justify-between mt-0.5">
+                                <span className="text-[10px] lg:text-[11px] font-bold text-emerald-600">dès 50€</span>
+                                <span className="text-[7px] text-muted-foreground flex items-center gap-0.5"><Clock className="w-2 h-2" />1h</span>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                       
-                      <button className="w-full bg-zinc-600 text-white rounded-xl py-2 text-[10px] font-semibold">
+                      <button className="w-full bg-emerald-500 text-white rounded-xl py-2 text-[10px] font-semibold">
                         Réserver
                       </button>
                     </div>
