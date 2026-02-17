@@ -20,13 +20,13 @@ import iconReservations from '@/assets/icons/icon-reservations.webp';
 import iconStatistiques from '@/assets/icons/icon-statistiques.webp';
 
 const menuItems = [
-  { icon: iconDemandes, label: 'Demandes', href: '/dashboard/requests' },
-  { icon: iconAgenda, label: 'Agenda', href: '/dashboard/calendar' },
-  { icon: iconClients, label: 'Clients', href: '/dashboard/clients' },
-  { icon: iconFactures, label: 'Factures', href: '/dashboard/invoices' },
-  { icon: iconFormules, label: 'Formules', href: '/dashboard/formules' },
-  { icon: iconMaPage, label: 'Ma Page', href: '/dashboard/my-page' },
   { icon: iconReservations, label: 'Réservations', href: '/dashboard/reservations' },
+  { icon: iconAgenda, label: 'Agenda', href: '/dashboard/calendar' },
+  { icon: iconFactures, label: 'Factures & Devis', href: '/dashboard/invoices' },
+  { icon: iconClients, label: 'Clients', href: '/dashboard/clients' },
+  { icon: iconMaPage, label: 'Ma Page', href: '/dashboard/my-page' },
+  { icon: iconFormules, label: 'Formules', href: '/dashboard/formules' },
+  { icon: iconDemandes, label: 'Demandes', href: '/dashboard/requests' },
   { icon: iconStatistiques, label: 'Statistiques', href: '/dashboard/stats' },
 ];
 
