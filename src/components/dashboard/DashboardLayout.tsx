@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Settings, LogOut, LayoutGrid, X } from 'lucide-react';
+import { ArrowLeft, Settings, LogOut, LayoutGrid } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useAuth } from '@/hooks/useAuth';
@@ -46,7 +46,6 @@ export function DashboardLayout({ title, subtitle, children }: DashboardLayoutPr
     navigate('/');
   };
 
-  // Close on click outside
   useEffect(() => {
     if (!navOpen) return;
     const handler = (e: MouseEvent) => {
@@ -79,8 +78,7 @@ export function DashboardLayout({ title, subtitle, children }: DashboardLayoutPr
           </div>
         </div>
         
-        <div className="flex items-center gap-1 relative">
-          {/* Grid nav trigger */}
+        <div className="flex items-center gap-1">
           <Button
             ref={buttonRef}
             variant="ghost"
@@ -97,46 +95,73 @@ export function DashboardLayout({ title, subtitle, children }: DashboardLayoutPr
           <Button variant="ghost" size="icon" className="rounded-xl text-muted-foreground" onClick={handleLogout}>
             <LogOut className="w-4 h-4" />
           </Button>
+        </div>
+      </header>
 
-          {/* Google-style popover grid */}
-          {navOpen && (
-            <div
-              ref={panelRef}
-              className="absolute top-12 right-0 w-[280px] sm:w-[320px] max-h-[70vh] overflow-y-auto rounded-2xl bg-card border border-border shadow-2xl z-[100] p-4 animate-in fade-in slide-in-from-top-2 duration-200"
-            >
-              <p className="text-xs font-semibold text-muted-foreground mb-3 px-1">Outils</p>
-              <div className="grid grid-cols-3 gap-2">
-                {navItems.map((item) => {
-                  const isActive = location.pathname === item.href;
-                  return (
-                    <Link
-                      key={item.href}
-                      to={item.href}
-                      onClick={() => setNavOpen(false)}
-                      className={`flex flex-col items-center gap-1.5 p-3 rounded-xl transition-colors duration-150 ${
+      {/* Backdrop */}
+      {navOpen && (
+        <div
+          className="fixed inset-0 z-[90] bg-black/30 backdrop-blur-sm transition-opacity duration-300"
+          onClick={() => setNavOpen(false)}
+        />
+      )}
+
+      {/* Apple-style floating panel */}
+      <div
+        ref={panelRef}
+        className={`fixed top-16 right-3 sm:right-6 w-[calc(100vw-24px)] sm:w-[360px] z-[100] transition-all duration-300 ease-out ${
+          navOpen
+            ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
+            : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
+        }`}
+      >
+        <div className="bg-card/95 backdrop-blur-xl border border-border/50 rounded-3xl shadow-2xl overflow-hidden">
+          <div className="p-5 sm:p-6">
+            <div className="grid grid-cols-3 gap-y-5 gap-x-3 sm:gap-x-4">
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    onClick={() => setNavOpen(false)}
+                    className="group flex flex-col items-center gap-2 outline-none"
+                  >
+                    <div
+                      className={`relative rounded-2xl p-1 transition-all duration-200 ${
                         isActive
-                          ? 'bg-accent'
-                          : 'hover:bg-accent/50'
+                          ? 'bg-accent ring-2 ring-primary/20 scale-105'
+                          : 'group-hover:bg-accent/60 group-hover:scale-105 group-active:scale-95'
                       }`}
                     >
                       <img
                         src={item.icon}
                         alt={item.label}
-                        className="w-12 h-12 object-contain"
+                        className="w-14 h-14 sm:w-16 sm:h-16 object-contain"
                       />
-                      <span className={`text-[10px] sm:text-[11px] font-medium text-center leading-tight ${
-                        isActive ? 'text-foreground' : 'text-muted-foreground'
-                      }`}>
-                        {item.label}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
+                    </div>
+                    <span
+                      className={`text-[11px] sm:text-xs font-medium text-center leading-tight max-w-[80px] truncate transition-colors duration-200 ${
+                        isActive ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'
+                      }`}
+                    >
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              })}
             </div>
-          )}
+          </div>
+          {/* Bottom link */}
+          <Link
+            to="/dashboard"
+            onClick={() => setNavOpen(false)}
+            className="block text-center text-xs font-medium text-primary py-3 border-t border-border/50 hover:bg-accent/40 transition-colors duration-150"
+          >
+            Accueil Dashboard
+          </Link>
         </div>
-      </header>
+      </div>
       
       <main className="p-4 lg:p-8 max-w-6xl mx-auto">
         {children}
