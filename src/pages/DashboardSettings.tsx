@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
-import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 
 import { Card } from '@/components/ui/card';
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -198,28 +196,16 @@ export default function DashboardSettings() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <DashboardSidebar />
-        <div className="lg:pl-64 p-4 sm:p-8">
-          <Skeleton className="h-8 w-48 mb-8" />
-          <Skeleton className="h-64 w-full max-w-2xl" />
-        </div>
-      </div>
+      <DashboardLayout title={t('settings.title')}>
+        <Skeleton className="h-8 w-48 mb-8" />
+        <Skeleton className="h-64 w-full max-w-2xl" />
+      </DashboardLayout>
     );
   }
   
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar />
-      <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
-      
-      <div className="lg:pl-64">
-        <DashboardHeader 
-          title={t('settings.title')} 
-          onMenuClick={() => setMobileMenuOpen(true)}
-        />
-        
-        <main className="p-4 lg:p-8 max-w-2xl">
+    <DashboardLayout title={t('settings.title')}>
+        <div className="max-w-2xl">
           {/* Logo Section */}
           <section className="mb-6 sm:mb-8">
             <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">{t('settings.centerLogo')}</h2>
@@ -505,8 +491,7 @@ export default function DashboardSettings() {
               {saving ? t('common.saving') : t('settings.saveChanges')}
             </Button>
           </div>
-        </main>
-      </div>
-    </div>
+        </div>
+    </DashboardLayout>
   );
 }

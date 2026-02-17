@@ -1,7 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
-import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -62,19 +60,13 @@ export default function DashboardRequests() {
 
   if (centerLoading || loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <DashboardSidebar />
-        <div className="lg:pl-64">
-          <DashboardHeader title={t('requests.title')} onMenuClick={() => setMobileMenuOpen(true)} />
-          <main className="p-4 sm:p-6">
-            <div className="animate-pulse space-y-3 sm:space-y-4">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="h-32 bg-muted rounded-xl" />
-              ))}
-            </div>
-          </main>
+      <DashboardLayout title={t('requests.title')}>
+        <div className="animate-pulse space-y-3 sm:space-y-4">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="h-32 bg-muted rounded-xl" />
+          ))}
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
@@ -82,16 +74,7 @@ export default function DashboardRequests() {
   const newQuoteCount = quoteRequests.filter(r => r.status === 'new').length;
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar />
-      <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
-      
-      <div className="lg:pl-64">
-        <DashboardHeader 
-          title={t('requests.title')} 
-          onMenuClick={() => setMobileMenuOpen(true)}
-        />
-        <main className="p-4 lg:p-8">
+    <DashboardLayout title={t('requests.title')}>
           <div className="max-w-4xl">
             {/* Tabs */}
             <div className="flex gap-2 mb-6">
@@ -254,8 +237,6 @@ export default function DashboardRequests() {
               </div>
             )}
           </div>
-        </main>
-      </div>
-    </div>
+    </DashboardLayout>
   );
 }

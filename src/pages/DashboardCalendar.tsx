@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
-import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -161,18 +159,9 @@ export default function DashboardCalendar() {
   const weekDays = t('calendar.weekDays', { returnObjects: true }) as string[];
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar />
-      <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
-      
-      <div className="lg:pl-64">
-        <DashboardHeader 
-          title={t('calendar.title')} 
-          subtitle={center?.name}
-          onMenuClick={() => setMobileMenuOpen(true)}
-        />
-        
-        <main className="p-4 lg:p-8 max-w-7xl">
+    <>
+    <DashboardLayout title={t('calendar.title')} subtitle={center?.name}>
+      <div className="max-w-7xl">
           {/* Header with navigation - mobile optimized */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="flex items-center gap-2 sm:gap-3">
@@ -403,9 +392,8 @@ export default function DashboardCalendar() {
               )}
             </div>
           </div>
-        </main>
-      </div>
-
+        </div>
+      </DashboardLayout>
       {/* Appointment Details Dialog */}
       <Dialog open={!!selectedAppointment && !appointmentToReschedule} onOpenChange={(open) => {
         if (!open) {
@@ -642,6 +630,6 @@ export default function DashboardCalendar() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
-import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useInvoices, Invoice } from '@/hooks/useInvoices';
 import { useMyCenter } from '@/hooks/useCenter';
 import { Button } from '@/components/ui/button';
@@ -167,34 +165,21 @@ export default function DashboardInvoices() {
 
   if (centerLoading || !center) {
     return (
-      <div className="min-h-screen bg-background">
-        <DashboardSidebar />
-        <MobileSidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
-        <div className="lg:pl-64">
-          <DashboardHeader title="Factures & Devis" onMenuClick={() => setSidebarOpen(true)} />
-          <main className="p-6">
-            <Skeleton className="h-8 w-48 mb-6" />
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-              {[1, 2, 3, 4].map(i => (
-                <Skeleton key={i} className="h-24" />
-              ))}
-            </div>
-            <Skeleton className="h-96" />
-          </main>
+      <DashboardLayout title="Factures & Devis">
+        <Skeleton className="h-8 w-48 mb-6" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          {[1, 2, 3, 4].map(i => (
+            <Skeleton key={i} className="h-24" />
+          ))}
         </div>
-      </div>
+        <Skeleton className="h-96" />
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar />
-      <MobileSidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
-      
-      <div className="lg:pl-64">
-        <DashboardHeader title="Factures & Devis" onMenuClick={() => setSidebarOpen(true)} />
-        
-        <main className="p-4 md:p-6 space-y-6">
+    <DashboardLayout title="Factures & Devis">
+      <div className="space-y-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -369,8 +354,8 @@ export default function DashboardInvoices() {
               )}
             </CardContent>
           </Card>
-        </main>
       </div>
+      </DashboardLayout>
 
       {/* Form Dialog */}
       <InvoiceFormDialog
@@ -423,6 +408,7 @@ export default function DashboardInvoices() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

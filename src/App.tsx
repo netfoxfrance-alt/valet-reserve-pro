@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import CenterBooking from "./pages/CenterBooking";
 import Booking from "./pages/Booking";
 import Auth from "./pages/Auth";
+import DashboardHome from "./pages/DashboardHome";
 import Dashboard from "./pages/Dashboard";
 import DashboardCalendar from "./pages/DashboardCalendar";
 import DashboardAvailability from "./pages/DashboardAvailability";
@@ -20,6 +21,7 @@ import DashboardMyPage from "./pages/DashboardMyPage";
 import DashboardInvoices from "./pages/DashboardInvoices";
 import DashboardClients from "./pages/DashboardClients";
 import DashboardSupport from "./pages/DashboardSupport";
+import DashboardFormules from "./pages/DashboardFormules";
 
 import CompleteSignup from "./pages/CompleteSignup";
 import NotFound from "./pages/NotFound";
@@ -50,7 +52,17 @@ const App = () => (
             {/* All dashboard routes - Trial model (no restrictions) */}
             <Route path="/dashboard" element={
               <ProtectedRoute>
+                <DashboardHome />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/reservations" element={
+              <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/formules" element={
+              <ProtectedRoute>
+                <DashboardFormules />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/calendar" element={

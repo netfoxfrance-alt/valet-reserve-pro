@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
-import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -107,14 +105,7 @@ export default function DashboardCustomServices() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar />
-      <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
-
-      <div className="lg:pl-64">
-        <DashboardHeader title={t('customServices.title')} onMenuClick={() => setMobileMenuOpen(true)} />
-
-        <main className="p-4 lg:p-8">
+    <DashboardLayout title={t('customServices.title')}>
           <div className="max-w-4xl space-y-6">
             {/* Header - responsive stack on mobile */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -267,8 +258,7 @@ export default function DashboardCustomServices() {
               </div>
             )}
           </div>
-        </main>
-      </div>
+      </DashboardLayout>
 
       {/* Edit Dialog */}
       <Dialog open={!!editingService} onOpenChange={(open) => !open && setEditingService(null)}>
@@ -343,6 +333,6 @@ export default function DashboardCustomServices() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </DashboardLayout>
   );
 }

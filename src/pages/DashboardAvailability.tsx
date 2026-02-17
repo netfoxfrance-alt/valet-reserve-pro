@@ -1,6 +1,4 @@
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
-import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -79,34 +77,17 @@ export default function DashboardAvailability() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <DashboardSidebar />
-        <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
-        <div className="lg:pl-64">
-          <DashboardHeader 
-            title={t('availability.title')} 
-            onMenuClick={() => setMobileMenuOpen(true)}
-          />
-          <main className="p-4 lg:p-8 flex items-center justify-center min-h-[50vh]">
-            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-          </main>
+      <DashboardLayout title={t('availability.title')}>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
   
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar />
-      <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
-      
-      <div className="lg:pl-64">
-        <DashboardHeader 
-          title={t('availability.title')} 
-          onMenuClick={() => setMobileMenuOpen(true)}
-        />
-        
-        <main className="p-4 lg:p-8 max-w-3xl">
+    <DashboardLayout title={t('availability.title')}>
+      <div className="max-w-3xl">
           {/* Buffer setting */}
           <Card variant="elevated" className="p-5 mb-6 rounded-2xl">
             <div className="flex items-start gap-4">
@@ -249,8 +230,7 @@ export default function DashboardAvailability() {
               )}
             </Button>
           </div>
-        </main>
-      </div>
-    </div>
+        </div>
+      </DashboardLayout>
   );
 }

@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
-import { MobileSidebar } from '@/components/dashboard/MobileSidebar';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
@@ -65,25 +63,18 @@ export default function DashboardMyPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <DashboardSidebar />
-        <div className="lg:pl-64 p-4 sm:p-8">
-          <Skeleton className="h-8 w-48 mb-8" />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8"><Skeleton className="h-[600px] w-full" /><Skeleton className="h-[400px] w-full" /></div>
-        </div>
-      </div>
+      <DashboardLayout title={t('myPage.title')}>
+        <Skeleton className="h-8 w-48 mb-8" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8"><Skeleton className="h-[600px] w-full" /><Skeleton className="h-[400px] w-full" /></div>
+      </DashboardLayout>
     );
   }
 
   const publicUrl = center ? `${window.location.origin}/${center.slug}` : '';
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar />
-      <MobileSidebar open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
-      <div className="lg:pl-64">
-        <DashboardHeader title={t('myPage.title')} onMenuClick={() => setMobileMenuOpen(true)} />
-        <main className="p-4 lg:p-6">
+    <DashboardLayout title={t('myPage.title')}>
+        <div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div><p className="text-muted-foreground text-sm">{t('myPage.customizeDesc')}</p></div>
             <div className="flex flex-wrap gap-2">
@@ -129,8 +120,7 @@ export default function DashboardMyPage() {
               )}
             </div>
           </div>
-        </main>
-      </div>
+        </div>
 
       <Dialog open={requestDialogOpen} onOpenChange={setRequestDialogOpen}>
         <DialogContent className="sm:max-w-md">
@@ -173,6 +163,6 @@ export default function DashboardMyPage() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </DashboardLayout>
   );
 }
