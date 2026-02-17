@@ -18,6 +18,8 @@ import mockupCarCleaning from '@/assets/mockup-car-cleaning.jpg';
 import mockupLogoClean from '@/assets/mockup-logo-cleaning.png';
 import mockupInterior from '@/assets/mockup-interior-cleaning.png';
 import mockupExterior from '@/assets/mockup-exterior-cleaning.png';
+import mockupWindowCleaning from '@/assets/mockup-window-cleaning.png';
+import mockupTerraceCleaning from '@/assets/mockup-terrace-cleaning.png';
 
 import iconReservations from '@/assets/icons/icon-reservations.webp';
 import iconAgenda from '@/assets/icons/icon-agenda.webp';
@@ -417,32 +419,24 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* Central Page Preview - Mobile - BELOW widgets */}
+              {/* Central Page Preview - Mobile - Minimal Style */}
               <div className="relative mx-auto w-[280px]">
                 <div className="bg-card rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
-                  {/* Banner with real car cleaning image */}
-                  <div className="h-24 relative overflow-hidden rounded-t-[2rem]">
-                    <img 
-                      src={mockupCarCleaning} 
-                      alt="Nettoyage automobile professionnel" 
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                  </div>
-                  
-                  {/* Logo - Prominent */}
-                  <div className="flex justify-center -mt-10 relative z-30 mb-3">
-                    <div className="w-20 h-20 bg-white rounded-2xl shadow-2xl flex items-center justify-center ring-4 ring-white overflow-hidden">
-                      <img 
-                        src={mockupLogoClean} 
-                        alt="Clean Premium logo" 
-                        className="w-full h-full object-cover"
-                      />
+                  {/* Minimal Header with logo + call button */}
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-border/30">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-xl overflow-hidden">
+                        <img src={mockupLogoClean} alt="Logo" className="w-full h-full object-cover" />
+                      </div>
+                      <span className="text-xs font-bold text-foreground">Clean Premium</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-foreground text-background px-3 py-1.5 rounded-full">
+                      <Phone className="w-3 h-3" />
+                      <span className="text-[9px] font-semibold">Appeler</span>
                     </div>
                   </div>
                   
-                  <div className="px-5 pb-5 text-center">
-                    <h3 className="text-lg font-bold text-foreground mb-1">Clean Premium</h3>
+                  <div className="px-5 pb-5 pt-4 text-center">
                     <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
                       {t('mockup.premiumDescShort')}
                     </p>
@@ -464,20 +458,30 @@ export default function Index() {
                       ))}
                     </div>
                     
-                    {/* Formules section */}
+                    {/* Formules section with images */}
                     <div className="text-left mb-4">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="text-sm font-semibold text-foreground">{t('mockup.ourPackages')}</h4>
                         <span className="text-[10px] text-primary font-medium">{t('mockup.seeAll')}</span>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
-                        <div className="bg-card border border-border/60 rounded-lg p-3">
-                          <p className="text-xs font-semibold text-foreground mb-0.5">Express</p>
-                          <p className="text-base font-bold text-muted-foreground">35€</p>
+                        <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
+                          <div className="aspect-[4/3] overflow-hidden">
+                            <img src={mockupWindowCleaning} alt="Nettoyage de vitres" className="w-full h-full object-cover" />
+                          </div>
+                          <div className="px-2 py-1.5">
+                            <p className="text-[9px] font-semibold text-foreground leading-tight">Nettoyage de vitres</p>
+                            <p className="text-[10px] font-medium text-muted-foreground italic">Sur devis</p>
+                          </div>
                         </div>
-                        <div className="bg-card border border-border/60 rounded-lg p-3">
-                          <p className="text-xs font-semibold text-foreground mb-0.5">Complet</p>
-                          <p className="text-base font-bold text-muted-foreground">89€</p>
+                        <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
+                          <div className="aspect-[4/3] overflow-hidden">
+                            <img src={mockupTerraceCleaning} alt="Nettoyage de terrasses" className="w-full h-full object-cover" />
+                          </div>
+                          <div className="px-2 py-1.5">
+                            <p className="text-[9px] font-semibold text-foreground leading-tight">Nettoyage de terrasses</p>
+                            <p className="text-[10px] font-medium text-muted-foreground italic">Sur devis</p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -495,32 +499,24 @@ export default function Index() {
             <div className="hidden sm:block relative">
               <div className="relative max-w-5xl mx-auto">
                 
-                {/* Central Page Preview - Premium & Complete */}
+                {/* Central Page Preview - Minimal Style */}
                 <div className="relative mx-auto w-[320px] lg:w-[340px]">
                   <div className="bg-card rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
-                    {/* Banner with real car cleaning image */}
-                    <div className="h-28 lg:h-32 relative overflow-hidden rounded-t-[2.5rem]">
-                      <img 
-                        src={mockupCarCleaning} 
-                        alt="Nettoyage automobile professionnel" 
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                    </div>
-                    
-                    {/* Logo - Prominent, outside banner */}
-                    <div className="flex justify-center -mt-12 relative z-30 mb-4">
-                      <div className="w-24 h-24 bg-white rounded-2xl shadow-2xl flex items-center justify-center ring-4 ring-white overflow-hidden">
-                        <img 
-                          src={mockupLogoClean} 
-                          alt="Clean Premium logo" 
-                          className="w-full h-full object-cover"
-                        />
+                    {/* Minimal Header with logo + call button */}
+                    <div className="flex items-center justify-between px-5 py-4 border-b border-border/30">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm">
+                          <img src={mockupLogoClean} alt="Logo" className="w-full h-full object-cover" />
+                        </div>
+                        <span className="text-sm font-bold text-foreground">Clean Premium</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 bg-foreground text-background px-4 py-2 rounded-full">
+                        <Phone className="w-3.5 h-3.5" />
+                        <span className="text-xs font-semibold">Appeler</span>
                       </div>
                     </div>
                     
-                    <div className="px-6 pb-6 text-center">
-                      <h3 className="text-xl font-bold text-foreground mb-1">Clean Premium</h3>
+                    <div className="px-6 pb-6 pt-5 text-center">
                       <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
                         {t('mockup.premiumDescShort')}
                       </p>
@@ -553,7 +549,7 @@ export default function Index() {
                         ))}
                       </div>
                       
-                      {/* Contact info - Simplified */}
+                      {/* Contact info */}
                       <div className="space-y-3 mb-6 text-left">
                         <div className="flex items-center gap-3 text-sm text-foreground">
                           <Phone className="w-4 h-4 text-muted-foreground" />
@@ -565,20 +561,30 @@ export default function Index() {
                         </div>
                       </div>
                       
-                      {/* Formules section - "Voir toutes" style */}
+                      {/* Formules section with images */}
                       <div className="text-left mb-5">
                         <div className="flex items-center justify-between mb-3">
                           <h4 className="text-base font-semibold text-foreground">{t('mockup.ourPackages')}</h4>
                           <span className="text-xs text-primary font-medium">{t('mockup.seeAll')}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
-                          <div className="bg-card border border-border/60 rounded-xl p-4">
-                            <p className="text-sm font-semibold text-foreground mb-1">Express</p>
-                            <p className="text-lg font-bold text-muted-foreground">35€</p>
+                          <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
+                            <div className="aspect-[4/3] overflow-hidden">
+                              <img src={mockupWindowCleaning} alt="Nettoyage de vitres" className="w-full h-full object-cover" />
+                            </div>
+                            <div className="px-2.5 py-2">
+                              <p className="text-[10px] lg:text-xs font-semibold text-foreground leading-tight">Nettoyage de vitres</p>
+                              <p className="text-[11px] lg:text-sm font-medium text-muted-foreground italic">Sur devis</p>
+                            </div>
                           </div>
-                          <div className="bg-card border border-border/60 rounded-xl p-4">
-                            <p className="text-sm font-semibold text-foreground mb-1">Complet</p>
-                            <p className="text-lg font-bold text-muted-foreground">89€</p>
+                          <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
+                            <div className="aspect-[4/3] overflow-hidden">
+                              <img src={mockupTerraceCleaning} alt="Nettoyage de terrasses" className="w-full h-full object-cover" />
+                            </div>
+                            <div className="px-2.5 py-2">
+                              <p className="text-[10px] lg:text-xs font-semibold text-foreground leading-tight">Nettoyage de terrasses</p>
+                              <p className="text-[11px] lg:text-sm font-medium text-muted-foreground italic">Sur devis</p>
+                            </div>
                           </div>
                         </div>
                       </div>
