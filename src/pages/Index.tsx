@@ -20,6 +20,7 @@ import mockupInterior from '@/assets/mockup-interior-cleaning.png';
 import mockupExterior from '@/assets/mockup-exterior-cleaning.png';
 import mockupWindowCleaning from '@/assets/mockup-window-cleaning.png';
 import mockupTerraceCleaning from '@/assets/mockup-terrace-cleaning.png';
+import mockupPrestigeBanner from '@/assets/mockup-prestige-banner.png';
 
 import iconReservations from '@/assets/icons/icon-reservations.webp';
 import iconAgenda from '@/assets/icons/icon-agenda.webp';
@@ -435,51 +436,35 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* Central Page Preview - Mobile - Minimal Style */}
+              {/* Central Page Preview - Mobile - Banner Style */}
               <div className="relative mx-auto w-[280px]">
                 <div className="bg-card rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
-                  {/* Minimal Header with logo + call button */}
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-border/30">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-xl overflow-hidden">
+                  {/* Banner */}
+                  <div className="h-28 relative">
+                    <img src={mockupPrestigeBanner} alt="Service Prestige" className="w-full h-full object-cover" />
+                    <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 z-20">
+                      <div className="w-14 h-14 rounded-2xl shadow-xl ring-3 ring-card overflow-hidden">
                         <img src={mockupLogoClean} alt="Logo" className="w-full h-full object-cover" />
                       </div>
-                      <span className="text-xs font-bold text-foreground">Clean Premium</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 bg-foreground text-background px-3 py-1.5 rounded-full">
-                      <Phone className="w-3 h-3" />
-                      <span className="text-[9px] font-semibold">Appeler</span>
                     </div>
                   </div>
                   
-                  <div className="px-5 pb-5 pt-4 text-center">
-                    <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-                      {t('mockup.premiumDescShort')}
+                  <div className="px-5 pb-5 pt-10 text-center">
+                    <h3 className="text-sm font-bold text-foreground mb-0.5">SERVICE PRESTIGE</h3>
+                    <p className="text-[9px] text-muted-foreground leading-relaxed mb-2">
+                      Expertise & Excellence in Luxury Cleaning
                     </p>
                     
-                    {/* Open badge */}
-                    <div className="flex justify-center mb-4">
-                      <span className="inline-flex items-center gap-1.5 text-[10px] bg-white dark:bg-card border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full font-medium shadow-sm">
+                    <div className="flex justify-center mb-3">
+                      <span className="inline-flex items-center gap-1.5 text-[9px] bg-white border border-emerald-200 text-emerald-600 px-2.5 py-1 rounded-full font-medium shadow-sm">
                         <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                         {t('mockup.open')}
                       </span>
                     </div>
                     
-                    {/* Social icons row */}
-                    <div className="flex justify-center gap-2 mb-4">
-                      {[Instagram, Facebook, Mail].map((Icon, i) => (
-                        <div key={i} className="w-9 h-9 rounded-full flex items-center justify-center bg-card border-2 border-foreground/20">
-                          <Icon className="w-4 h-4 text-foreground" />
-                        </div>
-                      ))}
-                    </div>
-                    
                     {/* Formules section with images */}
                     <div className="text-left mb-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-sm font-semibold text-foreground">{t('mockup.ourPackages')}</h4>
-                        <span className="text-[10px] text-primary font-medium">{t('mockup.seeAll')}</span>
-                      </div>
+                      <h4 className="text-xs font-semibold text-foreground mb-2">{t('mockup.ourPackages')}</h4>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
                           <div className="aspect-[4/3] overflow-hidden">
@@ -487,7 +472,7 @@ export default function Index() {
                           </div>
                           <div className="px-2 py-1.5">
                             <p className="text-[9px] font-semibold text-foreground leading-tight">Nettoyage de vitres</p>
-                            <p className="text-[10px] font-medium text-muted-foreground italic">Sur devis</p>
+                            <p className="text-[9px] font-medium text-muted-foreground italic">Sur devis</p>
                           </div>
                         </div>
                         <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
@@ -496,14 +481,13 @@ export default function Index() {
                           </div>
                           <div className="px-2 py-1.5">
                             <p className="text-[9px] font-semibold text-foreground leading-tight">Nettoyage de terrasses</p>
-                            <p className="text-[10px] font-medium text-muted-foreground italic">Sur devis</p>
+                            <p className="text-[9px] font-medium text-muted-foreground italic">Sur devis</p>
                           </div>
                         </div>
                       </div>
                     </div>
                     
-                    {/* CTA Button */}
-                    <button className="w-full bg-neutral-800 dark:bg-neutral-700 text-white py-3 rounded-xl text-sm font-semibold shadow-lg">
+                    <button className="w-full bg-neutral-800 text-white py-3 rounded-xl text-sm font-semibold shadow-lg">
                        {t('mockup.bookNow')}
                     </button>
                   </div>
@@ -515,30 +499,27 @@ export default function Index() {
             <div className="hidden sm:block relative">
               <div className="relative max-w-5xl mx-auto">
                 
-                {/* Central Page Preview - Minimal Style */}
+                {/* Central Page Preview - Banner Style */}
                 <div className="relative mx-auto w-[320px] lg:w-[340px]">
                   <div className="bg-card rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
-                    {/* Minimal Header with logo + call button */}
-                    <div className="flex items-center justify-between px-5 py-4 border-b border-border/30">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm">
+                    {/* Banner */}
+                    <div className="h-32 lg:h-36 relative">
+                      <img src={mockupPrestigeBanner} alt="Service Prestige" className="w-full h-full object-cover" />
+                      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 z-20">
+                        <div className="w-16 h-16 rounded-2xl shadow-xl ring-4 ring-card overflow-hidden">
                           <img src={mockupLogoClean} alt="Logo" className="w-full h-full object-cover" />
                         </div>
-                        <span className="text-sm font-bold text-foreground">Clean Premium</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 bg-foreground text-background px-4 py-2 rounded-full">
-                        <Phone className="w-3.5 h-3.5" />
-                        <span className="text-xs font-semibold">Appeler</span>
                       </div>
                     </div>
                     
-                    <div className="px-6 pb-6 pt-5 text-center">
-                      <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                        {t('mockup.premiumDescShort')}
+                    <div className="px-6 pb-6 pt-11 text-center">
+                      <h3 className="text-base font-bold text-foreground mb-0.5 tracking-wide">SERVICE PRESTIGE</h3>
+                      <p className="text-xs text-muted-foreground leading-relaxed mb-3">
+                        Expertise & Excellence in Luxury Cleaning
                       </p>
                       
                       {/* Open badge */}
-                      <div className="flex justify-center mb-5">
+                      <div className="flex justify-center mb-4">
                         <span className="inline-flex items-center gap-2 text-xs bg-white dark:bg-card border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 px-4 py-1.5 rounded-full font-medium shadow-sm">
                           <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                            {t('mockup.open')}
@@ -546,35 +527,12 @@ export default function Index() {
                       </div>
                       
                       {/* Social icons row */}
-                      <div className="flex justify-center gap-3 mb-6">
-                        {[
-                          { icon: Instagram, style: 'border-2 border-foreground/20' },
-                          { icon: null, isTiktok: true, style: 'border-2 border-foreground/20' },
-                          { icon: Facebook, style: 'border-2 border-foreground/20' },
-                          { icon: Mail, style: 'border-2 border-foreground/20' },
-                        ].map((item, i) => (
-                          <div key={i} className={`w-11 h-11 rounded-full flex items-center justify-center bg-card ${item.style}`}>
-                            {item.isTiktok ? (
-                              <svg className="w-5 h-5 text-foreground" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                              </svg>
-                            ) : item.icon && (
-                              <item.icon className="w-5 h-5 text-foreground" />
-                            )}
+                      <div className="flex justify-center gap-3 mb-5">
+                        {[Instagram, Facebook, Mail].map((Icon, i) => (
+                          <div key={i} className="w-10 h-10 rounded-full flex items-center justify-center bg-card border-2 border-foreground/20">
+                            <Icon className="w-4.5 h-4.5 text-foreground" />
                           </div>
                         ))}
-                      </div>
-                      
-                      {/* Contact info */}
-                      <div className="space-y-3 mb-6 text-left">
-                        <div className="flex items-center gap-3 text-sm text-foreground">
-                          <Phone className="w-4 h-4 text-muted-foreground" />
-                          <span>06 12 34 56 78</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-sm text-primary">
-                          <Droplets className="w-4 h-4 text-primary" />
-                          <span className="font-medium">{t('mockup.seeProducts')}</span>
-                        </div>
                       </div>
                       
                       {/* Formules section with images */}
