@@ -205,139 +205,148 @@ export default function Index() {
               </div>
             </div>
 
-             {/* Right: Prestige Mockup with floating widgets */}
+             {/* Right: Two Mockup Cards side by side */}
             <div className="flex justify-center lg:justify-end mt-8 lg:mt-0">
-              <div className="opacity-0 animate-fade-in-up stagger-2">
-                {/* Mobile Layout */}
-                <div className="sm:hidden">
-                  <div className="relative mx-auto w-[280px]">
-                    <div className="bg-card rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
-                      {/* Banner */}
-                      <div className="h-28 relative">
-                        <img src={mockupPrestigeBanner} alt="Service Prestige" className="w-full h-full object-cover" />
-                        <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 z-20">
-                          <div className="w-14 h-14 rounded-2xl shadow-xl ring-3 ring-card overflow-hidden">
-                            <img src={mockupLogoClean} alt="Logo" className="w-full h-full object-cover" />
-                          </div>
+              <div className="relative w-[340px] sm:w-[440px] md:w-[560px] lg:w-[620px] h-[480px] sm:h-[500px] md:h-[520px]">
+                
+                {/* Dashboard Mockup Card - Behind, right */}
+                <div className="absolute top-0 right-0 lg:top-2 lg:right-0 z-10">
+                  <div 
+                    className="bg-card rounded-[2rem] overflow-hidden w-[220px] sm:w-[260px] lg:w-[300px] shadow-2xl shadow-black/15 ring-1 ring-border/40"
+                    style={{ transform: 'rotate(3deg)' }}
+                  >
+                    {/* Dashboard Header */}
+                    <div className="px-4 lg:px-5 pt-4 pb-3">
+                      {/* Center name */}
+                      <h3 className="text-sm lg:text-base font-bold text-foreground leading-tight mb-2">GOCLEANING</h3>
+                      {/* Copy link */}
+                      <div className="flex items-center gap-2 bg-secondary/40 rounded-xl px-2.5 py-1.5">
+                        <Share2 className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-[9px] lg:text-[10px] text-muted-foreground font-mono">/gocleaning</span>
+                        <div className="ml-auto w-4 h-4 lg:w-5 lg:h-5 rounded-md bg-background/80 flex items-center justify-center">
+                          <svg className="w-2.5 h-2.5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <rect x="9" y="9" width="13" height="13" rx="2" />
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                          </svg>
                         </div>
                       </div>
-                      
-                      <div className="px-5 pb-5 pt-10 text-center">
-                        <h3 className="text-sm font-bold text-foreground mb-0.5">SERVICE PRESTIGE</h3>
-                        <p className="text-[9px] text-muted-foreground leading-relaxed mb-2">
-                          Expertise & Excellence in Luxury Cleaning
-                        </p>
-                        
-                        <div className="flex justify-center mb-3">
-                          <span className="inline-flex items-center gap-1.5 text-[9px] bg-white border border-emerald-200 text-emerald-600 px-2.5 py-1 rounded-full font-medium shadow-sm">
-                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                            {t('mockup.open')}
-                          </span>
-                        </div>
-                        
-                        <div className="text-left mb-4">
-                          <h4 className="text-xs font-semibold text-foreground mb-2">{t('mockup.ourPackages')}</h4>
-                          <div className="grid grid-cols-2 gap-2">
-                            <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
-                              <div className="aspect-[4/3] overflow-hidden">
-                                <img src={mockupWindowCleaning} alt="Nettoyage de vitres" className="w-full h-full object-cover" />
-                              </div>
-                              <div className="px-2 py-1.5">
-                                <p className="text-[9px] font-semibold text-foreground leading-tight">Nettoyage de vitres</p>
-                                <p className="text-[9px] font-medium text-muted-foreground italic">Sur devis</p>
-                              </div>
-                            </div>
-                            <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
-                              <div className="aspect-[4/3] overflow-hidden">
-                                <img src={mockupTerraceCleaning} alt="Nettoyage de terrasses" className="w-full h-full object-cover" />
-                              </div>
-                              <div className="px-2 py-1.5">
-                                <p className="text-[9px] font-semibold text-foreground leading-tight">Nettoyage de terrasses</p>
-                                <p className="text-[9px] font-medium text-muted-foreground italic">Sur devis</p>
-                              </div>
-                            </div>
+                    </div>
+                    
+                    {/* Icon Grid */}
+                    <div className="px-4 lg:px-5 pb-5 pt-2">
+                      <div className="grid grid-cols-3 gap-x-3 gap-y-4 lg:gap-x-4 lg:gap-y-5">
+                        {dashboardIcons.map((item) => (
+                          <div key={item.label} className="flex flex-col items-center gap-1.5">
+                            <img
+                              src={item.icon}
+                              alt={item.label}
+                              className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 object-contain"
+                            />
+                            <span className="text-[8px] sm:text-[9px] lg:text-[10px] font-medium text-muted-foreground text-center leading-tight truncate max-w-[70px]">
+                              {item.label}
+                            </span>
                           </div>
-                        </div>
-                        
-                        <button className="w-full bg-neutral-800 text-white py-3 rounded-xl text-sm font-semibold shadow-lg">
-                           {t('mockup.bookNow')}
-                        </button>
+                        ))}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Desktop Layout */}
-                <div className="hidden sm:block relative">
-                  <div className="relative w-[440px] md:w-[560px] lg:w-[620px]">
-                    {/* Central Page Preview - Banner Style */}
-                    <div className="relative mx-auto w-[320px] lg:w-[340px]">
-                      <div className="bg-card rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
-                        <div className="h-32 lg:h-36 relative">
-                          <img src={mockupPrestigeBanner} alt="Service Prestige" className="w-full h-full object-cover" />
-                          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 z-20">
-                            <div className="w-16 h-16 rounded-2xl shadow-xl ring-4 ring-card overflow-hidden">
-                              <img src={mockupLogoClean} alt="Logo" className="w-full h-full object-cover" />
-                            </div>
-                          </div>
+                {/* Main Page Card - In front, left */}
+                <div className="absolute top-10 sm:top-8 left-0 lg:top-6 lg:left-4 z-20">
+                  <div 
+                    className="bg-card rounded-[2rem] overflow-hidden w-[220px] sm:w-[250px] lg:w-[280px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
+                    style={{ transform: 'rotate(-3deg)' }}
+                  >
+                    {/* Header - strong separator */}
+                    <div className="flex items-center justify-between px-3 lg:px-4 py-2.5">
+                      <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-xl overflow-hidden ring-1 ring-border/30">
+                        <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-zinc-700 flex items-center justify-center">
+                        <Phone className="w-3.5 h-3.5 text-white" />
+                      </div>
+                    </div>
+                    <div className="border-t border-border/40" />
+                    
+                    <div className="px-3.5 lg:px-4 pb-3 pt-4 text-center">
+                      <h3 className="text-sm lg:text-base font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
+                      <p className="text-[8px] lg:text-[9px] text-muted-foreground mb-2">
+                        Expert du nettoyage automobile depuis 2018
+                      </p>
+                      
+                      <div className="flex justify-center mb-2">
+                        <span className="inline-flex items-center gap-1 text-[9px] border border-emerald-200 text-emerald-600 px-2 py-0.5 rounded-full font-semibold">
+                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                          {t('mockup.open')}
+                        </span>
+                      </div>
+                      
+                      <div className="flex justify-center gap-2 mb-2.5">
+                        <div className="w-8 h-8 bg-secondary/30 rounded-full flex items-center justify-center border border-border/40">
+                          <Instagram className="w-3.5 h-3.5 text-foreground/70" />
                         </div>
-                        
-                        <div className="px-6 pb-6 pt-11 text-center">
-                          <h3 className="text-base font-bold text-foreground mb-0.5 tracking-wide">SERVICE PRESTIGE</h3>
-                          <p className="text-xs text-muted-foreground leading-relaxed mb-3">
-                            Expertise & Excellence in Luxury Cleaning
-                          </p>
-                          
-                          <div className="flex justify-center mb-4">
-                            <span className="inline-flex items-center gap-2 text-xs bg-white dark:bg-card border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 px-4 py-1.5 rounded-full font-medium shadow-sm">
-                              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                               {t('mockup.open')}
-                            </span>
-                          </div>
-                          
-                          <div className="flex justify-center gap-3 mb-5">
-                            {[Instagram, Facebook, Mail].map((Icon, i) => (
-                              <div key={i} className="w-10 h-10 rounded-full flex items-center justify-center bg-card border-2 border-foreground/20">
-                                <Icon className="w-4.5 h-4.5 text-foreground" />
-                              </div>
-                            ))}
-                          </div>
-                          
-                          <div className="text-left mb-5">
-                            <div className="flex items-center justify-between mb-3">
-                              <h4 className="text-base font-semibold text-foreground">{t('mockup.ourPackages')}</h4>
-                              <span className="text-xs text-primary font-medium">{t('mockup.seeAll')}</span>
-                            </div>
-                            <div className="grid grid-cols-2 gap-3">
-                              <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
-                                <div className="aspect-[4/3] overflow-hidden">
-                                  <img src={mockupWindowCleaning} alt="Nettoyage de vitres" className="w-full h-full object-cover" />
-                                </div>
-                                <div className="px-2.5 py-2">
-                                  <p className="text-[10px] lg:text-xs font-semibold text-foreground leading-tight">Nettoyage de vitres</p>
-                                  <p className="text-[11px] lg:text-sm font-medium text-muted-foreground italic">Sur devis</p>
-                                </div>
-                              </div>
-                              <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
-                                <div className="aspect-[4/3] overflow-hidden">
-                                  <img src={mockupTerraceCleaning} alt="Nettoyage de terrasses" className="w-full h-full object-cover" />
-                                </div>
-                                <div className="px-2.5 py-2">
-                                  <p className="text-[10px] lg:text-xs font-semibold text-foreground leading-tight">Nettoyage de terrasses</p>
-                                  <p className="text-[11px] lg:text-sm font-medium text-muted-foreground italic">Sur devis</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <button className="w-full bg-neutral-800 dark:bg-neutral-700 text-white py-4 rounded-2xl text-base font-semibold shadow-lg">
-                            {t('mockup.bookNow')}
-                          </button>
+                        <div className="w-8 h-8 bg-secondary/30 rounded-full flex items-center justify-center border border-border/40">
+                          <svg className="w-3.5 h-3.5 text-foreground/70" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.73a8.19 8.19 0 0 0 4.77 1.53V6.81a4.82 4.82 0 0 1-1-.12z"/></svg>
                         </div>
                       </div>
+
+                      <div className="bg-secondary/25 rounded-xl px-3 py-2 flex items-center gap-2 mb-3">
+                        <Mail className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                        <span className="text-[7px] lg:text-[8px] text-muted-foreground">Formule personnalisée ? Identifiez-vous</span>
+                      </div>
+
+                      <div className="flex items-center justify-between mb-2.5">
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-muted-foreground" />
+                          <span className="text-[8px] text-emerald-600 font-semibold">{t('mockup.open')}</span>
+                          <span className="text-[8px] text-muted-foreground">· Ferme à 19h00</span>
+                        </div>
+                        <ChevronRight className="w-3 h-3 text-muted-foreground rotate-90" />
+                      </div>
+                      
+                      {/* Formules - compact square cards with big overlay text */}
+                      <div className="mb-2.5">
+                        <p className="text-[11px] lg:text-xs font-bold text-foreground text-left mb-2">Nos formules</p>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          <div>
+                            <div className="rounded-2xl overflow-hidden relative aspect-square">
+                              <img src={mockupExterior} alt="Lavage complet" className="w-full h-full object-cover" />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                              <div className="absolute bottom-0 left-0 right-0 p-2">
+                                <p className="text-[9px] lg:text-[10px] font-extrabold text-white leading-tight uppercase tracking-wide">Lavage complet</p>
+                                <p className="text-[10px] lg:text-[11px] font-bold text-white/90">dès 65€</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1 mt-1 px-0.5">
+                              <Clock className="w-2.5 h-2.5 text-muted-foreground" />
+                              <span className="text-[8px] text-muted-foreground">1h</span>
+                            </div>
+                          </div>
+                          <div>
+                            <div className="rounded-2xl overflow-hidden relative aspect-square">
+                              <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-full object-cover" />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                              <div className="absolute bottom-0 left-0 right-0 p-2">
+                                <p className="text-[9px] lg:text-[10px] font-extrabold text-white leading-tight">Nettoyage intérieur</p>
+                                <p className="text-[10px] lg:text-[11px] font-bold text-white/90">dès 50€</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1 mt-1 px-0.5">
+                              <Clock className="w-2.5 h-2.5 text-muted-foreground" />
+                              <span className="text-[8px] text-muted-foreground">1h</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <button className="w-full bg-zinc-600 text-white rounded-xl py-2 text-[10px] font-semibold">
+                        Réserver
+                      </button>
                     </div>
                   </div>
                 </div>
+                
               </div>
             </div>
 
@@ -358,213 +367,324 @@ export default function Index() {
             </p>
           </div>
 
-          {/* Visual Composition - Two Mockup Cards */}
+          {/* Visual Composition - Premium Mockup */}
           <div className="opacity-0 animate-fade-in-up stagger-2">
             {/* Mobile Layout */}
-            <div className="sm:hidden flex justify-center">
-              <div className="relative w-[300px] h-[420px]">
-                {/* Dashboard Card - Behind */}
-                <div className="absolute top-0 right-0 z-10">
-                  <div 
-                    className="bg-card rounded-[2rem] overflow-hidden w-[200px] shadow-2xl shadow-black/15 ring-1 ring-border/40"
-                    style={{ transform: 'rotate(3deg)' }}
-                  >
-                    <div className="px-3 pt-3 pb-2">
-                      <h3 className="text-xs font-bold text-foreground mb-1.5">GOCLEANING</h3>
-                      <div className="flex items-center gap-1.5 bg-secondary/40 rounded-lg px-2 py-1">
-                        <Share2 className="w-2.5 h-2.5 text-muted-foreground" />
-                        <span className="text-[8px] text-muted-foreground font-mono">/gocleaning</span>
-                      </div>
-                    </div>
-                    <div className="px-3 pb-3 pt-1">
-                      <div className="grid grid-cols-3 gap-x-2 gap-y-3">
-                        {dashboardIcons.map((item) => (
-                          <div key={item.label} className="flex flex-col items-center gap-1">
-                            <img src={item.icon} alt={item.label} className="w-10 h-10 object-contain" />
-                            <span className="text-[7px] font-medium text-muted-foreground text-center leading-tight truncate max-w-[55px]">{item.label}</span>
-                          </div>
-                        ))}
-                      </div>
+            <div className="sm:hidden">
+              {/* Mobile Widgets Grid - ABOVE mockup */}
+              <div className="grid grid-cols-2 gap-3 max-w-[280px] mx-auto mb-6">
+                {/* Colors - with cursor */}
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30 relative">
+                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">{t('mockup.colors')}</p>
+                  <div className="flex gap-1.5">
+                    {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500'].map((bg, i) => (
+                      <div key={i} className={`w-5 h-5 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-1 ring-offset-card' : ''}`} />
+                    ))}
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-red-500 via-green-500 to-purple-500 flex items-center justify-center">
+                      <Plus className="w-2.5 h-2.5 text-white" />
                     </div>
                   </div>
+                  {/* Cursor icon */}
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 animate-pulse">
+                    <MousePointer2 className="w-5 h-5 text-foreground drop-shadow-md" />
+                  </div>
                 </div>
-
-                {/* GoCleaning Page Card - In front */}
-                <div className="absolute top-8 left-0 z-20">
-                  <div 
-                    className="bg-card rounded-[2rem] overflow-hidden w-[200px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
-                    style={{ transform: 'rotate(-3deg)' }}
-                  >
-                    <div className="flex items-center justify-between px-3 py-2">
-                      <div className="w-7 h-7 rounded-lg overflow-hidden ring-1 ring-border/30">
-                        <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
+                
+                {/* Disponibilités */}
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30">
+                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">{t('mockup.availability')}</p>
+                  <div className="space-y-1">
+                    {[
+                      { day: t('mockup.mon'), hours: '9h-18h', active: true },
+                      { day: t('mockup.sat'), hours: t('mockup.closed'), active: false },
+                    ].map((d, i) => (
+                      <div key={i} className="flex items-center gap-1">
+                        <span className="text-[8px] w-5 text-muted-foreground">{d.day}</span>
+                        <span className={`text-[8px] flex-1 ${d.active ? 'text-foreground' : 'text-muted-foreground'}`}>{d.hours}</span>
+                        <div className={`w-5 h-2.5 rounded-full ${d.active ? 'bg-emerald-500' : 'bg-secondary'}`} />
                       </div>
-                      <div className="w-7 h-7 rounded-full bg-zinc-700 flex items-center justify-center">
-                        <Phone className="w-3 h-3 text-white" />
-                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Texte */}
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30 flex items-center gap-2">
+                  <div className="w-6 h-6 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Type className="w-3 h-3 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-[9px] text-muted-foreground">{t('mockup.text')}</p>
+                    <p className="text-[10px] font-medium text-foreground">{t('mockup.addText')}</p>
+                  </div>
+                </div>
+                
+                {/* Galerie */}
+                <div className="bg-card rounded-xl p-3 shadow-lg ring-1 ring-border/30">
+                  <p className="text-[9px] text-muted-foreground mb-1.5 font-medium">{t('mockup.gallery')}</p>
+                  <div className="flex gap-1">
+                    <div className="w-7 h-7 bg-secondary rounded overflow-hidden">
+                      <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
                     </div>
-                    <div className="border-t border-border/40" />
-                    <div className="px-3 pb-3 pt-3 text-center">
-                      <h3 className="text-xs font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
-                      <p className="text-[7px] text-muted-foreground mb-1.5">Expert du nettoyage automobile depuis 2018</p>
-                      <div className="flex justify-center mb-1.5">
-                        <span className="inline-flex items-center gap-1 text-[8px] border border-emerald-200 text-emerald-600 px-1.5 py-0.5 rounded-full font-semibold">
-                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                          {t('mockup.open')}
-                        </span>
-                      </div>
-                      <div className="flex justify-center gap-1.5 mb-2">
-                        <div className="w-6 h-6 bg-secondary/30 rounded-full flex items-center justify-center border border-border/40">
-                          <Instagram className="w-3 h-3 text-foreground/70" />
-                        </div>
-                        <div className="w-6 h-6 bg-secondary/30 rounded-full flex items-center justify-center border border-border/40">
-                          <svg className="w-3 h-3 text-foreground/70" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.73a8.19 8.19 0 0 0 4.77 1.53V6.81a4.82 4.82 0 0 1-1-.12z"/></svg>
-                        </div>
-                      </div>
-                      <div className="mb-2">
-                        <p className="text-[9px] font-bold text-foreground text-left mb-1.5">Nos formules</p>
-                        <div className="grid grid-cols-2 gap-1.5">
-                          <div className="rounded-xl overflow-hidden relative aspect-square">
-                            <img src={mockupExterior} alt="Lavage complet" className="w-full h-full object-cover" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                            <div className="absolute bottom-0 left-0 right-0 p-1.5">
-                              <p className="text-[7px] font-extrabold text-white uppercase tracking-wide">Lavage complet</p>
-                              <p className="text-[8px] font-bold text-white/90">dès 65€</p>
-                            </div>
-                          </div>
-                          <div className="rounded-xl overflow-hidden relative aspect-square">
-                            <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-full object-cover" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                            <div className="absolute bottom-0 left-0 right-0 p-1.5">
-                              <p className="text-[7px] font-extrabold text-white">Nettoyage intérieur</p>
-                              <p className="text-[8px] font-bold text-white/90">dès 50€</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <button className="w-full bg-zinc-600 text-white rounded-lg py-1.5 text-[9px] font-semibold">Réserver</button>
+                    <div className="w-7 h-7 bg-secondary rounded overflow-hidden">
+                      <img src={sofaBanner} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="w-7 h-7 bg-secondary/60 rounded flex items-center justify-center border border-dashed border-border">
+                      <Plus className="w-3 h-3 text-muted-foreground" />
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Desktop Layout */}
-            <div className="hidden sm:flex justify-center">
-              <div className="relative w-[560px] lg:w-[620px] h-[480px] sm:h-[500px] md:h-[520px]">
-                {/* Dashboard Mockup Card - Behind, right */}
-                <div className="absolute top-0 right-0 lg:top-2 lg:right-0 z-10">
-                  <div 
-                    className="bg-card rounded-[2rem] overflow-hidden w-[260px] lg:w-[300px] shadow-2xl shadow-black/15 ring-1 ring-border/40"
-                    style={{ transform: 'rotate(3deg)' }}
-                  >
-                    <div className="px-4 lg:px-5 pt-4 pb-3">
-                      <h3 className="text-sm lg:text-base font-bold text-foreground leading-tight mb-2">GOCLEANING</h3>
-                      <div className="flex items-center gap-2 bg-secondary/40 rounded-xl px-2.5 py-1.5">
-                        <Share2 className="w-3 h-3 text-muted-foreground" />
-                        <span className="text-[9px] lg:text-[10px] text-muted-foreground font-mono">/gocleaning</span>
-                        <div className="ml-auto w-4 h-4 lg:w-5 lg:h-5 rounded-md bg-background/80 flex items-center justify-center">
-                          <svg className="w-2.5 h-2.5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <rect x="9" y="9" width="13" height="13" rx="2" />
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                          </svg>
+              {/* Central Page Preview - Mobile - Banner Style */}
+              <div className="relative mx-auto w-[280px]">
+                <div className="bg-card rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
+                  {/* Banner */}
+                  <div className="h-28 relative">
+                    <img src={mockupPrestigeBanner} alt="Service Prestige" className="w-full h-full object-cover" />
+                    <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 z-20">
+                      <div className="w-14 h-14 rounded-2xl shadow-xl ring-3 ring-card overflow-hidden">
+                        <img src={mockupLogoClean} alt="Logo" className="w-full h-full object-cover" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="px-5 pb-5 pt-10 text-center">
+                    <h3 className="text-sm font-bold text-foreground mb-0.5">SERVICE PRESTIGE</h3>
+                    <p className="text-[9px] text-muted-foreground leading-relaxed mb-2">
+                      Expertise & Excellence in Luxury Cleaning
+                    </p>
+                    
+                    <div className="flex justify-center mb-3">
+                      <span className="inline-flex items-center gap-1.5 text-[9px] bg-white border border-emerald-200 text-emerald-600 px-2.5 py-1 rounded-full font-medium shadow-sm">
+                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                        {t('mockup.open')}
+                      </span>
+                    </div>
+                    
+                    {/* Formules section with images */}
+                    <div className="text-left mb-4">
+                      <h4 className="text-xs font-semibold text-foreground mb-2">{t('mockup.ourPackages')}</h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
+                          <div className="aspect-[4/3] overflow-hidden">
+                            <img src={mockupWindowCleaning} alt="Nettoyage de vitres" className="w-full h-full object-cover" />
+                          </div>
+                          <div className="px-2 py-1.5">
+                            <p className="text-[9px] font-semibold text-foreground leading-tight">Nettoyage de vitres</p>
+                            <p className="text-[9px] font-medium text-muted-foreground italic">Sur devis</p>
+                          </div>
+                        </div>
+                        <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
+                          <div className="aspect-[4/3] overflow-hidden">
+                            <img src={mockupTerraceCleaning} alt="Nettoyage de terrasses" className="w-full h-full object-cover" />
+                          </div>
+                          <div className="px-2 py-1.5">
+                            <p className="text-[9px] font-semibold text-foreground leading-tight">Nettoyage de terrasses</p>
+                            <p className="text-[9px] font-medium text-muted-foreground italic">Sur devis</p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div className="px-4 lg:px-5 pb-5 pt-2">
-                      <div className="grid grid-cols-3 gap-x-3 gap-y-4 lg:gap-x-4 lg:gap-y-5">
-                        {dashboardIcons.map((item) => (
-                          <div key={item.label} className="flex flex-col items-center gap-1.5">
-                            <img src={item.icon} alt={item.label} className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 object-contain" />
-                            <span className="text-[8px] sm:text-[9px] lg:text-[10px] font-medium text-muted-foreground text-center leading-tight truncate max-w-[70px]">{item.label}</span>
+                    
+                    <button className="w-full bg-neutral-800 text-white py-3 rounded-xl text-sm font-semibold shadow-lg">
+                       {t('mockup.bookNow')}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Desktop Layout */}
+            <div className="hidden sm:block relative">
+              <div className="relative max-w-5xl mx-auto">
+                
+                {/* Central Page Preview - Banner Style */}
+                <div className="relative mx-auto w-[320px] lg:w-[340px]">
+                  <div className="bg-card rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-border/20">
+                    {/* Banner */}
+                    <div className="h-32 lg:h-36 relative">
+                      <img src={mockupPrestigeBanner} alt="Service Prestige" className="w-full h-full object-cover" />
+                      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 z-20">
+                        <div className="w-16 h-16 rounded-2xl shadow-xl ring-4 ring-card overflow-hidden">
+                          <img src={mockupLogoClean} alt="Logo" className="w-full h-full object-cover" />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="px-6 pb-6 pt-11 text-center">
+                      <h3 className="text-base font-bold text-foreground mb-0.5 tracking-wide">SERVICE PRESTIGE</h3>
+                      <p className="text-xs text-muted-foreground leading-relaxed mb-3">
+                        Expertise & Excellence in Luxury Cleaning
+                      </p>
+                      
+                      {/* Open badge */}
+                      <div className="flex justify-center mb-4">
+                        <span className="inline-flex items-center gap-2 text-xs bg-white dark:bg-card border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 px-4 py-1.5 rounded-full font-medium shadow-sm">
+                          <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                           {t('mockup.open')}
+                        </span>
+                      </div>
+                      
+                      {/* Social icons row */}
+                      <div className="flex justify-center gap-3 mb-5">
+                        {[Instagram, Facebook, Mail].map((Icon, i) => (
+                          <div key={i} className="w-10 h-10 rounded-full flex items-center justify-center bg-card border-2 border-foreground/20">
+                            <Icon className="w-4.5 h-4.5 text-foreground" />
                           </div>
                         ))}
                       </div>
+                      
+                      {/* Formules section with images */}
+                      <div className="text-left mb-5">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="text-base font-semibold text-foreground">{t('mockup.ourPackages')}</h4>
+                          <span className="text-xs text-primary font-medium">{t('mockup.seeAll')}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
+                            <div className="aspect-[4/3] overflow-hidden">
+                              <img src={mockupWindowCleaning} alt="Nettoyage de vitres" className="w-full h-full object-cover" />
+                            </div>
+                            <div className="px-2.5 py-2">
+                              <p className="text-[10px] lg:text-xs font-semibold text-foreground leading-tight">Nettoyage de vitres</p>
+                              <p className="text-[11px] lg:text-sm font-medium text-muted-foreground italic">Sur devis</p>
+                            </div>
+                          </div>
+                          <div className="rounded-xl overflow-hidden bg-card shadow-sm ring-1 ring-border/20">
+                            <div className="aspect-[4/3] overflow-hidden">
+                              <img src={mockupTerraceCleaning} alt="Nettoyage de terrasses" className="w-full h-full object-cover" />
+                            </div>
+                            <div className="px-2.5 py-2">
+                              <p className="text-[10px] lg:text-xs font-semibold text-foreground leading-tight">Nettoyage de terrasses</p>
+                              <p className="text-[11px] lg:text-sm font-medium text-muted-foreground italic">Sur devis</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* CTA Button */}
+                      <button className="w-full bg-neutral-800 dark:bg-neutral-700 text-white py-4 rounded-2xl text-base font-semibold shadow-lg">
+                        {t('mockup.bookNow')}
+                      </button>
                     </div>
                   </div>
                 </div>
 
-                {/* GoCleaning Page Card - In front, left */}
-                <div className="absolute top-10 sm:top-8 left-0 lg:top-6 lg:left-4 z-20">
-                  <div 
-                    className="bg-card rounded-[2rem] overflow-hidden w-[250px] lg:w-[280px] shadow-2xl shadow-black/20 ring-1 ring-border/40"
-                    style={{ transform: 'rotate(-3deg)' }}
-                  >
-                    <div className="flex items-center justify-between px-3 lg:px-4 py-2.5">
-                      <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-xl overflow-hidden ring-1 ring-border/30">
-                        <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
-                      </div>
-                      <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-zinc-700 flex items-center justify-center">
-                        <Phone className="w-3.5 h-3.5 text-white" />
+                {/* Floating Elements - Desktop only */}
+                
+                {/* Colors palette with color picker - Top Left */}
+                <div 
+                  className="absolute top-12 lg:top-16 left-4 lg:left-12 z-30 animate-float"
+                  style={{ animationDelay: '0s' }}
+                >
+                  <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm relative">
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">{t('mockup.colors')}</p>
+                    <div className="flex gap-2">
+                      {['bg-emerald-500', 'bg-blue-500', 'bg-violet-500'].map((bg, i) => (
+                        <div key={i} className={`w-7 h-7 ${bg} rounded-full ${i === 0 ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''} shadow-sm`} />
+                      ))}
+                      {/* Color picker button */}
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 shadow-sm flex items-center justify-center">
+                        <Plus className="w-3.5 h-3.5 text-white drop-shadow-md" />
                       </div>
                     </div>
-                    <div className="border-t border-border/40" />
-                    <div className="px-3.5 lg:px-4 pb-3 pt-4 text-center">
-                      <h3 className="text-sm lg:text-base font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
-                      <p className="text-[8px] lg:text-[9px] text-muted-foreground mb-2">Expert du nettoyage automobile depuis 2018</p>
-                      <div className="flex justify-center mb-2">
-                        <span className="inline-flex items-center gap-1 text-[9px] border border-emerald-200 text-emerald-600 px-2 py-0.5 rounded-full font-semibold">
-                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                          {t('mockup.open')}
-                        </span>
-                      </div>
-                      <div className="flex justify-center gap-2 mb-2.5">
-                        <div className="w-8 h-8 bg-secondary/30 rounded-full flex items-center justify-center border border-border/40">
-                          <Instagram className="w-3.5 h-3.5 text-foreground/70" />
-                        </div>
-                        <div className="w-8 h-8 bg-secondary/30 rounded-full flex items-center justify-center border border-border/40">
-                          <svg className="w-3.5 h-3.5 text-foreground/70" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.73a8.19 8.19 0 0 0 4.77 1.53V6.81a4.82 4.82 0 0 1-1-.12z"/></svg>
-                        </div>
-                      </div>
-                      <div className="bg-secondary/25 rounded-xl px-3 py-2 flex items-center gap-2 mb-3">
-                        <Mail className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-                        <span className="text-[7px] lg:text-[8px] text-muted-foreground">Formule personnalisée ? Identifiez-vous</span>
-                      </div>
-                      <div className="flex items-center justify-between mb-2.5">
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-muted-foreground" />
-                          <span className="text-[8px] text-emerald-600 font-semibold">{t('mockup.open')}</span>
-                          <span className="text-[8px] text-muted-foreground">· Ferme à 19h00</span>
-                        </div>
-                        <ChevronRight className="w-3 h-3 text-muted-foreground rotate-90" />
-                      </div>
-                      <div className="mb-2.5">
-                        <p className="text-[11px] lg:text-xs font-bold text-foreground text-left mb-2">Nos formules</p>
-                        <div className="grid grid-cols-2 gap-1.5">
-                          <div>
-                            <div className="rounded-2xl overflow-hidden relative aspect-square">
-                              <img src={mockupExterior} alt="Lavage complet" className="w-full h-full object-cover" />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                              <div className="absolute bottom-0 left-0 right-0 p-2">
-                                <p className="text-[9px] lg:text-[10px] font-extrabold text-white uppercase tracking-wide">Lavage complet</p>
-                                <p className="text-[10px] lg:text-[11px] font-bold text-white/90">dès 65€</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-1 mt-1 px-0.5">
-                              <Clock className="w-2.5 h-2.5 text-muted-foreground" />
-                              <span className="text-[8px] text-muted-foreground">1h</span>
-                            </div>
-                          </div>
-                          <div>
-                            <div className="rounded-2xl overflow-hidden relative aspect-square">
-                              <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-full object-cover" />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                              <div className="absolute bottom-0 left-0 right-0 p-2">
-                                <p className="text-[9px] lg:text-[10px] font-extrabold text-white">Nettoyage intérieur</p>
-                                <p className="text-[10px] lg:text-[11px] font-bold text-white/90">dès 50€</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-1 mt-1 px-0.5">
-                              <Clock className="w-2.5 h-2.5 text-muted-foreground" />
-                              <span className="text-[8px] text-muted-foreground">1h</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <button className="w-full bg-zinc-600 text-white rounded-xl py-2 text-[10px] font-semibold">Réserver</button>
+                    {/* Cursor icon */}
+                    <div className="absolute -bottom-2 -right-2 animate-pulse">
+                      <MousePointer2 className="w-6 h-6 text-foreground drop-shadow-lg" />
                     </div>
                   </div>
                 </div>
+                
+                {/* Calendar / Availability with hours - Top Right */}
+                <div 
+                  className="absolute top-8 lg:top-12 right-4 lg:right-12 z-30 animate-float"
+                  style={{ animationDelay: '0.15s' }}
+                >
+                  <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">{t('mockup.availability')}</p>
+                    <div className="space-y-1.5">
+                      {[
+                        { day: t('mockup.mon'), hours: '9h-18h', active: true },
+                        { day: t('mockup.tue'), hours: '9h-18h', active: true },
+                        { day: t('mockup.wed'), hours: '14h-18h', active: true },
+                        { day: t('mockup.sat'), hours: t('mockup.closed'), active: false },
+                      ].map((d, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <span className="text-[9px] w-6 text-muted-foreground">{d.day}</span>
+                          <span className={`text-[9px] w-12 ${d.active ? 'text-foreground' : 'text-muted-foreground'}`}>{d.hours}</span>
+                          <div className={`w-6 h-3 rounded-full ${d.active ? 'bg-emerald-500' : 'bg-secondary'} relative transition-colors`}>
+                            <div className={`absolute w-2 h-2 bg-white rounded-full top-0.5 shadow-sm transition-all ${d.active ? 'right-0.5' : 'left-0.5'}`} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Formulas editor - Left Middle */}
+                <div 
+                  className="absolute top-1/2 -translate-y-1/2 left-0 lg:left-4 z-30 animate-float hidden lg:block"
+                  style={{ animationDelay: '0.25s' }}
+                >
+                  <div className="bg-card rounded-2xl p-4 shadow-xl ring-1 ring-border/30 backdrop-blur-sm w-40">
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">{t('mockup.packages')}</p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-foreground font-medium">Express</span>
+                        <span className="text-primary font-bold">35€</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-foreground font-medium">Complet</span>
+                        <span className="text-primary font-bold">89€</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-foreground font-medium">Premium</span>
+                        <span className="text-primary font-bold">129€</span>
+                      </div>
+                      <button className="w-full text-[10px] text-primary font-medium py-1.5 border border-dashed border-primary/40 rounded-lg mt-1 hover:bg-primary/5 transition-colors">
+                        {t('mockup.add')}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Text block - Bottom Left */}
+                <div 
+                  className="absolute bottom-8 lg:bottom-12 left-8 lg:left-16 z-30 animate-float"
+                  style={{ animationDelay: '0.4s' }}
+                >
+                  <div className="bg-card rounded-2xl px-4 py-3 shadow-xl ring-1 ring-border/30 backdrop-blur-sm flex items-center gap-3">
+                    <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center">
+                      <Type className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-muted-foreground">{t('mockup.text')}</p>
+                      <p className="text-xs font-medium text-foreground">{t('mockup.addContent')}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Images/Gallery - Bottom Right */}
+                <div 
+                  className="absolute bottom-8 lg:bottom-12 right-8 lg:right-16 z-30 animate-float"
+                  style={{ animationDelay: '0.5s' }}
+                >
+                  <div className="bg-card rounded-2xl p-3 shadow-xl ring-1 ring-border/30 backdrop-blur-sm">
+                    <p className="text-[10px] text-muted-foreground mb-2 font-medium">{t('mockup.gallery')}</p>
+                    <div className="flex gap-1.5">
+                      <div className="w-10 h-10 bg-secondary rounded-lg overflow-hidden">
+                        <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="w-10 h-10 bg-secondary rounded-lg overflow-hidden">
+                        <img src={sofaBanner} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="w-10 h-10 bg-secondary/60 rounded-lg flex items-center justify-center border-2 border-dashed border-border">
+                        <Plus className="w-4 h-4 text-muted-foreground" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
               </div>
             </div>
           </div>
