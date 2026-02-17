@@ -16,6 +16,8 @@ import sofaBanner from '@/assets/sofa-cleaning-banner.jpg';
 import gocleanLogo from '@/assets/gocleaning-logo.png';
 import mockupCarCleaning from '@/assets/mockup-car-cleaning.jpg';
 import mockupLogoClean from '@/assets/mockup-logo-cleaning.png';
+import mockupInterior from '@/assets/mockup-interior-cleaning.png';
+import mockupExterior from '@/assets/mockup-exterior-cleaning.png';
 
 import iconReservations from '@/assets/icons/icon-reservations.webp';
 import iconAgenda from '@/assets/icons/icon-agenda.webp';
@@ -299,13 +301,19 @@ export default function Index() {
                       <div className="mb-3">
                         <p className="text-[10px] font-semibold text-foreground text-left mb-1.5">{t('mockup.ourPackages')}</p>
                         <div className="grid grid-cols-2 gap-1.5">
-                          <div className="bg-secondary/30 rounded-lg p-2 text-left border border-border/30">
-                            <p className="text-[9px] font-medium text-foreground">Express</p>
-                            <p className="text-xs font-bold text-muted-foreground">35€</p>
+                          <div className="rounded-xl overflow-hidden border border-border/30 text-left">
+                            <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-12 object-cover" />
+                            <div className="p-1.5">
+                              <p className="text-[8px] font-medium text-foreground leading-tight">Nettoyage intérieur</p>
+                              <p className="text-[10px] font-bold text-muted-foreground">dès 55€</p>
+                            </div>
                           </div>
-                          <div className="bg-secondary/30 rounded-lg p-2 text-left border border-border/30">
-                            <p className="text-[9px] font-medium text-foreground">Complet</p>
-                            <p className="text-xs font-bold text-muted-foreground">89€</p>
+                          <div className="rounded-xl overflow-hidden border border-border/30 text-left">
+                            <img src={mockupExterior} alt="Nettoyage extérieur" className="w-full h-12 object-cover" />
+                            <div className="p-1.5">
+                              <p className="text-[8px] font-medium text-foreground leading-tight">Nettoyage extérieur</p>
+                              <p className="text-[10px] font-bold text-muted-foreground">dès 35€</p>
+                            </div>
                           </div>
                         </div>
                       </div>
