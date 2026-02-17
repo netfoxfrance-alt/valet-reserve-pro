@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Settings, LogOut, LayoutGrid, X } from 'lucide-react';
-import { Logo } from '@/components/ui/Logo';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useAuth } from '@/hooks/useAuth';
@@ -40,17 +39,21 @@ export function DashboardLayout({ title, subtitle, children }: DashboardLayoutPr
   const { t } = useTranslation();
   const [navOpen, setNavOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleLogout = async () => {
     await signOut();
     navigate('/');
   };
 
-  // Close panel on click outside
+  // Close on click outside
   useEffect(() => {
     if (!navOpen) return;
     const handler = (e: MouseEvent) => {
-      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+      if (
+        panelRef.current && !panelRef.current.contains(e.target as Node) &&
+        buttonRef.current && !buttonRef.current.contains(e.target as Node)
+      ) {
         setNavOpen(false);
       }
     };
@@ -76,15 +79,16 @@ export function DashboardLayout({ title, subtitle, children }: DashboardLayoutPr
           </div>
         </div>
         
-        <div className="flex items-center gap-1">
-          {/* Grid nav button */}
+        <div className="flex items-center gap-1 relative">
+          {/* Grid nav trigger */}
           <Button
+            ref={buttonRef}
             variant="ghost"
             size="icon"
             className="rounded-xl"
             onClick={() => setNavOpen(!navOpen)}
           >
-            {navOpen ? <X className="w-4 h-4" /> : <LayoutGrid className="w-4 h-4" />}
+            <LayoutGrid className="w-4 h-4" />
           </Button>
           <LanguageSwitcher />
           <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => navigate('/dashboard/settings')}>
@@ -93,37 +97,46 @@ export function DashboardLayout({ title, subtitle, children }: DashboardLayoutPr
           <Button variant="ghost" size="icon" className="rounded-xl text-muted-foreground" onClick={handleLogout}>
             <LogOut className="w-4 h-4" />
           </Button>
+
+          {/* Google-style popover grid */}
+          {navOpen && (
+            <div
+              ref={panelRef}
+              className="absolute top-12 right-0 w-[280px] sm:w-[320px] max-h-[70vh] overflow-y-auto rounded-2xl bg-card border border-border shadow-2xl z-[100] p-4 animate-in fade-in slide-in-from-top-2 duration-200"
+            >
+              <p className="text-xs font-semibold text-muted-foreground mb-3 px-1">Outils</p>
+              <div className="grid grid-cols-3 gap-2">
+                {navItems.map((item) => {
+                  const isActive = location.pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      to={item.href}
+                      onClick={() => setNavOpen(false)}
+                      className={`flex flex-col items-center gap-1.5 p-3 rounded-xl transition-colors duration-150 ${
+                        isActive
+                          ? 'bg-accent'
+                          : 'hover:bg-accent/50'
+                      }`}
+                    >
+                      <img
+                        src={item.icon}
+                        alt={item.label}
+                        className="w-12 h-12 object-contain"
+                      />
+                      <span className={`text-[10px] sm:text-[11px] font-medium text-center leading-tight ${
+                        isActive ? 'text-foreground' : 'text-muted-foreground'
+                      }`}>
+                        {item.label}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </header>
-
-      {/* Sliding nav panel */}
-      <div
-        ref={panelRef}
-        className={`sticky top-14 z-40 overflow-hidden transition-all duration-300 ease-in-out border-b border-border bg-background ${navOpen ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0 border-b-0'}`}
-      >
-        <div className="flex gap-4 px-4 py-3 overflow-x-auto scrollbar-hide">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                to={item.href}
-                onClick={() => setNavOpen(false)}
-                className={`flex flex-col items-center gap-1 flex-shrink-0 transition-opacity duration-200 ${isActive ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
-              >
-                <img
-                  src={item.icon}
-                  alt={item.label}
-                  className={`w-12 h-12 object-contain transition-transform duration-200 ${isActive ? 'scale-110' : ''}`}
-                />
-                <span className={`text-[10px] font-medium whitespace-nowrap ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
-                  {item.label}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
       
       <main className="p-4 lg:p-8 max-w-6xl mx-auto">
         {children}
