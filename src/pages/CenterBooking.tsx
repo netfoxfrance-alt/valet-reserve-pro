@@ -498,8 +498,8 @@ export default function CenterBooking() {
     return (
       <div className="min-h-screen bg-background">
         <BookingHeader centerName={center.name} />
-        <main className="px-4 pb-16 pt-8">
-          <div className="max-w-3xl mx-auto">
+        <main className="px-4 sm:px-6 pb-16 pt-8">
+          <div className="max-w-5xl mx-auto">
             {showBackButton && (
               <div className="mb-6">
                 <Button 
@@ -514,61 +514,82 @@ export default function CenterBooking() {
               </div>
             )}
 
-            {/* Hero image — full width */}
-            {selectedPack.image_url ? (
-              <div className="rounded-3xl overflow-hidden mb-8">
-                <img
-                  src={selectedPack.image_url}
-                  alt={selectedPack.name}
-                  className="w-full aspect-[16/9] object-cover"
-                  loading="lazy"
-                />
-              </div>
-            ) : (
-              <div className="rounded-3xl bg-secondary/20 aspect-[16/9] flex items-center justify-center mb-8">
-                <FileText className="w-16 h-16 text-muted-foreground/20" />
-              </div>
-            )}
-
-            {/* Title + Description */}
-            <div className="space-y-4 mb-8">
-              <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
-                {selectedPack.name}
-              </h1>
-
-              {selectedPack.description && (
-                <div className="prose prose-neutral max-w-none text-muted-foreground">
-                  <RichDescription text={selectedPack.description} />
+            {/* Hero: Image left + Info right on desktop, stacked on mobile */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
+              {/* Left: Image */}
+              {selectedPack.image_url ? (
+                <div className="rounded-3xl overflow-hidden">
+                  <img
+                    src={selectedPack.image_url}
+                    alt={selectedPack.name}
+                    className="w-full aspect-[4/3] object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ) : (
+                <div className="rounded-3xl bg-secondary/20 aspect-[4/3] flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center">
+                    <span className="text-3xl font-bold text-primary">{selectedPack.name.charAt(0)}</span>
+                  </div>
                 </div>
               )}
+
+              {/* Right: Name, description, CTA */}
+              <div className="flex flex-col justify-center space-y-5 lg:py-4">
+                <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground tracking-tight leading-[1.1]">
+                  {selectedPack.name}
+                </h1>
+
+                {selectedPack.description && (
+                  <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                    {selectedPack.description.split('\n')[0].replace(/[*#\-]/g, '').trim()}
+                  </p>
+                )}
+
+                {selectedPack.duration && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Clock className="w-4 h-4" />
+                    <span>Durée estimée : {selectedPack.duration}</span>
+                  </div>
+                )}
+
+                <Button 
+                  variant="premium" 
+                  size="xl" 
+                  className="w-full sm:w-auto sm:px-12 mt-2"
+                  onClick={() => setCurrentStep('quote-form')}
+                >
+                  Obtenir un devis
+                </Button>
+              </div>
             </div>
 
-            {/* Features */}
+            {/* Features section */}
             {selectedPack.features && selectedPack.features.length > 0 && (
-              <div className="mb-10">
-                <h2 className="text-lg font-semibold text-foreground mb-4">Ce qui est inclus</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="mt-12 lg:mt-16">
+                <h2 className="text-xl font-semibold text-foreground mb-6">Ce qui est inclus</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {selectedPack.features.map((feature, i) => (
-                    <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-secondary/30">
-                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Check className="w-3.5 h-3.5 text-primary" />
+                    <div key={i} className="flex items-center gap-3 p-4 rounded-2xl bg-secondary/30">
+                      <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Check className="w-4 h-4 text-primary" />
                       </div>
-                      <span className="text-sm text-foreground">{feature}</span>
+                      <span className="text-sm font-medium text-foreground">{feature}</span>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* CTA */}
-            <Button 
-              variant="premium" 
-              size="xl" 
-              className="w-full"
-              onClick={() => setCurrentStep('quote-form')}
-            >
-              Obtenir un devis
-            </Button>
+            {/* Full description below */}
+            {selectedPack.description && selectedPack.description.includes('\n') && (
+              <div className="mt-12 lg:mt-16 max-w-3xl">
+                <h2 className="text-xl font-semibold text-foreground mb-4">À propos</h2>
+                <div className="prose prose-neutral max-w-none text-muted-foreground">
+                  <RichDescription text={selectedPack.description} />
+                </div>
+              </div>
+            )}
           </div>
         </main>
       </div>
