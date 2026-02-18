@@ -746,7 +746,7 @@ export default function CenterBooking() {
                                 {pack.name}
                               </p>
                               <p className="text-white/90 font-semibold text-lg sm:text-xl">
-                                {hasVariants ? `dès ${minPrice}€` : `${pack.price}€`}
+                                {isQuote ? 'Sur devis' : hasVariants ? `dès ${minPrice}€` : `${pack.price}€`}
                               </p>
                             </div>
                           </>
@@ -764,7 +764,7 @@ export default function CenterBooking() {
                               {pack.name}
                             </p>
                             <p className="font-semibold text-lg text-primary">
-                              {hasVariants ? `dès ${minPrice}€` : `${pack.price}€`}
+                              {isQuote ? 'Sur devis' : hasVariants ? `dès ${minPrice}€` : `${pack.price}€`}
                             </p>
                           </div>
                         )}
