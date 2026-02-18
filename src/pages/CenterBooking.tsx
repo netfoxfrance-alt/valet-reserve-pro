@@ -73,7 +73,6 @@ type BookingStep =
   | 'quote-form'
   | 'quote-confirmation'
   | 'select-pack'
-  | 'select-variant'
   | 'calendar'
   | 'client-info'
   | 'confirmation';
@@ -164,9 +163,6 @@ export default function CenterBooking() {
       case 'select-pack':
         setCurrentStep('landing');
         break;
-      case 'select-variant':
-        setCurrentStep('pack-detail');
-        break;
       case 'calendar':
         if (recognizedClient?.service_id) {
           setCurrentStep('landing');
@@ -227,7 +223,6 @@ export default function CenterBooking() {
 
   const handleSelectVariant = (variant: PriceVariant) => {
     setSelectedVariant(variant);
-    setCurrentStep('calendar');
   };
   
   const handleDateSelect = (date: Date, time: string) => {
@@ -550,14 +545,22 @@ export default function CenterBooking() {
                   </p>
                 )}
 
-                {/* Pricing card */}
+                {/* Pricing card with variant selection */}
                 <Card variant="elevated" className="p-5">
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Tarifs (TTC)</p>
                   {hasVariants ? (
-                    <div className="divide-y divide-border/50">
+                    <div className="space-y-2">
                       {selectedPack.price_variants.map((variant, i) => (
-                        <div key={i} className="flex items-center justify-between py-2.5">
-                          <span className="text-sm text-foreground">{variant.name}</span>
+                        <div 
+                          key={i} 
+                          className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-200 ${
+                            selectedVariant?.name === variant.name 
+                              ? 'bg-primary/10 ring-2 ring-primary' 
+                              : 'hover:bg-secondary/50'
+                          }`}
+                          onClick={() => setSelectedVariant(variant)}
+                        >
+                          <span className="text-sm font-medium text-foreground">{variant.name}</span>
                           <span className="text-base font-bold text-foreground">{variant.price}€</span>
                         </div>
                       ))}
@@ -581,16 +584,14 @@ export default function CenterBooking() {
                   variant="premium" 
                   size="xl" 
                   className="w-full sm:w-auto sm:px-12 mt-2"
-                  onClick={() => {
-                    if (hasVariants) {
-                      setCurrentStep('select-variant');
-                    } else {
-                      setCurrentStep('calendar');
-                    }
-                  }}
+                  disabled={hasVariants && !selectedVariant}
+                  onClick={() => setCurrentStep('calendar')}
                 >
                   Réserver
                 </Button>
+                {hasVariants && !selectedVariant && (
+                  <p className="text-xs text-muted-foreground">Sélectionnez une catégorie ci-dessus</p>
+                )}
               </div>
             </div>
 
@@ -927,91 +928,7 @@ export default function CenterBooking() {
             </div>
           )}
 
-          {/* Variant Selection */}
-          {currentStep === 'select-variant' && selectedPack && (
-            <div className="max-w-3xl mx-auto">
-              {/* Hero image */}
-              {selectedPack.image_url && (
-                <div className="rounded-2xl overflow-hidden mb-8 shadow-lg">
-                  <img
-                    src={selectedPack.image_url}
-                    alt={selectedPack.name}
-                    className="w-full aspect-[16/9] sm:aspect-[2/1] object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              )}
 
-              {/* Title & description */}
-              <div className="mb-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
-                  {selectedPack.name}
-                </h1>
-                {selectedPack.description && (
-                  <p className="text-muted-foreground text-base">
-                    {selectedPack.description}
-                  </p>
-                )}
-              </div>
-
-              {/* Features as specs row */}
-              {selectedPack.features && selectedPack.features.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
-                  {selectedPack.features.map((feature, i) => (
-                    <div 
-                      key={i} 
-                      className="flex items-center gap-2.5 p-3 rounded-xl bg-secondary/30"
-                    >
-                      <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                      <span className="text-sm text-foreground">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Duration info */}
-              {selectedPack.duration && (
-                <div className="flex items-center gap-2 text-muted-foreground mb-6">
-                  <Clock className="w-4 h-4" />
-                  <span className="text-sm">Durée estimée : {selectedPack.duration}</span>
-                </div>
-              )}
-
-              {/* Variant selection heading */}
-              <div className="mb-4">
-                <h2 className="text-lg font-semibold text-foreground">
-                  Sélectionnez votre catégorie
-                </h2>
-              </div>
-
-              {/* Variants grid - Apple style cards */}
-              <div className="grid grid-cols-2 gap-3">
-                {selectedPack.price_variants.map((variant, index) => (
-                  <Card 
-                    key={index}
-                    variant="elevated"
-                    className={`p-4 sm:p-5 cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] ${
-                      selectedVariant?.name === variant.name ? 'ring-2 ring-primary shadow-lg' : ''
-                    }`}
-                    onClick={() => handleSelectVariant(variant)}
-                  >
-                    <p className="font-semibold text-sm sm:text-base text-foreground uppercase tracking-wide mb-1">
-                      {variant.name}
-                    </p>
-                    {selectedPack.duration && (
-                      <p className="text-xs text-muted-foreground flex items-center gap-1 mb-3">
-                        <Clock className="w-3 h-3" />
-                        {selectedPack.duration}
-                      </p>
-                    )}
-                    <p className="text-2xl sm:text-3xl font-bold text-foreground">
-                      {variant.price}€
-                    </p>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
           
           {/* Calendar */}
           {currentStep === 'calendar' && packData && (
