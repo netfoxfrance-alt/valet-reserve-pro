@@ -3,6 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useMyCenter } from './useCenter';
 import { CustomService } from './useCustomServices';
 
+export type ClientType = 'particulier' | 'professionnel';
+
 export interface Client {
   id: string;
   center_id: string;
@@ -13,6 +15,7 @@ export interface Client {
   default_service_id: string | null;
   notes: string | null;
   source: 'manual' | 'booking';
+  client_type: ClientType;
   created_at: string;
   updated_at: string;
   // Joined data

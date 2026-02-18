@@ -1,14 +1,14 @@
+import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Client } from '@/hooks/useClients';
 import { useClientHistory } from '@/hooks/useClientHistory';
 import { useClientInvoices } from '@/hooks/useClientInvoices';
 import { useClientServices } from '@/hooks/useClientServices';
 import { useMyCustomServices } from '@/hooks/useCustomServices';
-import { Phone, Mail, MapPin, Euro, Calendar, TrendingUp, Clock, Sparkles, FileText, FileCheck } from 'lucide-react';
+import { Phone, Mail, MapPin, Euro, Calendar, Sparkles, FileText, FileCheck, Building2, User } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +30,8 @@ const invoiceStatusColorMap: Record<string, string> = {
   cancelled: 'bg-red-100 text-red-600',
 };
 
+type ActiveSection = 'appointments' | 'invoices' | null;
+
 interface ClientDetailDialogProps {
   client: Client | null;
   open: boolean;
@@ -39,18 +41,24 @@ interface ClientDetailDialogProps {
 export function ClientDetailDialog({ client, open, onOpenChange }: ClientDetailDialogProps) {
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
+  const [activeSection, setActiveSection] = useState<ActiveSection>(null);
   const { appointments, loading: loadingAppointments, stats } = useClientHistory(client?.id || null);
   const { invoices, loading: loadingInvoices, stats: invoiceStats } = useClientInvoices(client?.id || null);
   const { serviceIds } = useClientServices(client?.id || null);
   const { services } = useMyCustomServices();
 
-  // Resolve service objects from IDs
   const clientServices = services.filter(s => serviceIds.includes(s.id));
 
   if (!client) return null;
 
+  const isPro = client.client_type === 'professionnel';
+
+  const toggleSection = (section: ActiveSection) => {
+    setActiveSection(prev => prev === section ? null : section);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) setActiveSection(null); }}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
@@ -59,9 +67,15 @@ export function ClientDetailDialog({ client, open, onOpenChange }: ClientDetailD
             </div>
             <div>
               <p className="text-xl font-semibold">{client.name}</p>
-              <span className={`text-xs px-2 py-0.5 rounded-full ${client.source === 'booking' ? 'bg-blue-500/10 text-blue-600' : 'bg-muted text-muted-foreground'}`}>
-                {client.source === 'booking' ? t('clientDetail.viaBooking') : t('clientDetail.manualAdd')}
-              </span>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className={`text-xs px-2 py-0.5 rounded-full inline-flex items-center gap-1 ${isPro ? 'bg-blue-500/10 text-blue-600' : 'bg-muted text-muted-foreground'}`}>
+                  {isPro ? <Building2 className="w-3 h-3" /> : <User className="w-3 h-3" />}
+                  {isPro ? 'Professionnel' : 'Particulier'}
+                </span>
+                <span className={`text-xs px-2 py-0.5 rounded-full ${client.source === 'booking' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-muted text-muted-foreground'}`}>
+                  {client.source === 'booking' ? t('clientDetail.viaBooking') : t('clientDetail.manualAdd')}
+                </span>
+              </div>
             </div>
           </DialogTitle>
           <DialogDescription className="sr-only">{client.name}</DialogDescription>
@@ -87,11 +101,44 @@ export function ClientDetailDialog({ client, open, onOpenChange }: ClientDetailD
             </div>
           )}
 
+          {/* Clickable stat cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Card variant="elevated" className="p-3 text-center"><Calendar className="w-5 h-5 mx-auto text-primary mb-1" /><p className="text-xl font-bold">{stats.totalAppointments}</p><p className="text-xs text-muted-foreground">{t('clientDetail.reservations')}</p></Card>
-            <Card variant="elevated" className="p-3 text-center"><Euro className="w-5 h-5 mx-auto text-green-600 mb-1" /><p className="text-xl font-bold">{stats.totalRevenue}€</p><p className="text-xs text-muted-foreground">{t('clientDetail.revenueServices')}</p></Card>
-            <Card variant="elevated" className="p-3 text-center"><FileText className="w-5 h-5 mx-auto text-blue-600 mb-1" /><p className="text-xl font-bold">{invoiceStats.totalInvoices}</p><p className="text-xs text-muted-foreground">{t('clientDetail.invoicesLabel')}</p></Card>
-            <Card variant="elevated" className="p-3 text-center"><FileCheck className="w-5 h-5 mx-auto text-purple-600 mb-1" /><p className="text-xl font-bold">{invoiceStats.totalQuotes}</p><p className="text-xs text-muted-foreground">{t('clientDetail.quotesLabel')}</p></Card>
+            <Card 
+              variant="elevated" 
+              className={`p-3 text-center cursor-pointer transition-all hover:ring-2 hover:ring-primary/30 ${activeSection === 'appointments' ? 'ring-2 ring-primary' : ''}`}
+              onClick={() => toggleSection('appointments')}
+            >
+              <Calendar className="w-5 h-5 mx-auto text-primary mb-1" />
+              <p className="text-xl font-bold">{stats.totalAppointments}</p>
+              <p className="text-xs text-muted-foreground">{t('clientDetail.reservations')}</p>
+            </Card>
+            <Card 
+              variant="elevated" 
+              className={`p-3 text-center cursor-pointer transition-all hover:ring-2 hover:ring-primary/30 ${activeSection === 'appointments' ? 'ring-2 ring-primary' : ''}`}
+              onClick={() => toggleSection('appointments')}
+            >
+              <Euro className="w-5 h-5 mx-auto text-green-600 mb-1" />
+              <p className="text-xl font-bold">{stats.totalRevenue}€</p>
+              <p className="text-xs text-muted-foreground">{t('clientDetail.revenueServices')}</p>
+            </Card>
+            <Card 
+              variant="elevated" 
+              className={`p-3 text-center cursor-pointer transition-all hover:ring-2 hover:ring-primary/30 ${activeSection === 'invoices' ? 'ring-2 ring-primary' : ''}`}
+              onClick={() => toggleSection('invoices')}
+            >
+              <FileText className="w-5 h-5 mx-auto text-blue-600 mb-1" />
+              <p className="text-xl font-bold">{invoiceStats.totalInvoices}</p>
+              <p className="text-xs text-muted-foreground">{t('clientDetail.invoicesLabel')}</p>
+            </Card>
+            <Card 
+              variant="elevated" 
+              className={`p-3 text-center cursor-pointer transition-all hover:ring-2 hover:ring-primary/30 ${activeSection === 'invoices' ? 'ring-2 ring-primary' : ''}`}
+              onClick={() => toggleSection('invoices')}
+            >
+              <FileCheck className="w-5 h-5 mx-auto text-purple-600 mb-1" />
+              <p className="text-xl font-bold">{invoiceStats.totalQuotes}</p>
+              <p className="text-xs text-muted-foreground">{t('clientDetail.quotesLabel')}</p>
+            </Card>
           </div>
 
           {client.notes && (
@@ -101,13 +148,10 @@ export function ClientDetailDialog({ client, open, onOpenChange }: ClientDetailD
             </div>
           )}
 
-          <Tabs defaultValue="appointments" className="w-full">
-            <TabsList className="w-full grid grid-cols-2">
-              <TabsTrigger value="appointments">{t('clientDetail.services')}</TabsTrigger>
-              <TabsTrigger value="invoices">{t('clientDetail.invoicesAndQuotes')}</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="appointments" className="mt-4">
+          {/* Appointments section - shown when clicking Réservations or CA */}
+          {activeSection === 'appointments' && (
+            <div className="animate-fade-in">
+              <p className="text-sm font-medium text-muted-foreground mb-3">{t('clientDetail.services')}</p>
               {loadingAppointments ? (
                 <div className="space-y-2">{[1, 2, 3].map(i => <Skeleton key={i} className="h-16" />)}</div>
               ) : appointments.length === 0 ? (
@@ -132,9 +176,13 @@ export function ClientDetailDialog({ client, open, onOpenChange }: ClientDetailD
                   })}
                 </div>
               )}
-            </TabsContent>
-            
-            <TabsContent value="invoices" className="mt-4">
+            </div>
+          )}
+
+          {/* Invoices section - shown when clicking Factures or Devis */}
+          {activeSection === 'invoices' && (
+            <div className="animate-fade-in">
+              <p className="text-sm font-medium text-muted-foreground mb-3">{t('clientDetail.invoicesAndQuotes')}</p>
               {loadingInvoices ? (
                 <div className="space-y-2">{[1, 2, 3].map(i => <Skeleton key={i} className="h-16" />)}</div>
               ) : invoices.length === 0 ? (
@@ -163,8 +211,8 @@ export function ClientDetailDialog({ client, open, onOpenChange }: ClientDetailD
                   })}
                 </div>
               )}
-            </TabsContent>
-          </Tabs>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

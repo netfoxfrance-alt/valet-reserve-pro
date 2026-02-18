@@ -16,7 +16,8 @@ import { useClientServices } from '@/hooks/useClientServices';
 import { ClientDetailDialog } from '@/components/clients/ClientDetailDialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { Search, Phone, Mail, MapPin, Plus, Pencil, Trash2, Loader2, Eye } from 'lucide-react';
+import { Search, Phone, Mail, MapPin, Plus, Pencil, Trash2, Loader2, Eye, Building2, User } from 'lucide-react';
+import { ClientType } from '@/hooks/useClients';
 import { format, parseISO } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
@@ -39,7 +40,8 @@ export default function DashboardClients() {
     email: '',
     phone: '',
     address: '',
-    notes: ''
+    notes: '',
+    client_type: 'particulier' as ClientType
   });
   const [newServiceIds, setNewServiceIds] = useState<string[]>([]);
 
@@ -50,7 +52,8 @@ export default function DashboardClients() {
     email: '',
     phone: '',
     address: '',
-    notes: ''
+    notes: '',
+    client_type: 'particulier' as ClientType
   });
   const [saving, setSaving] = useState(false);
   const [viewingClient, setViewingClient] = useState<Client | null>(null);
@@ -70,7 +73,7 @@ export default function DashboardClients() {
   const bookingClients = clients.filter(c => c.source === 'booking').length;
 
   const resetCreateForm = () => {
-    setNewClient({ name: '', email: '', phone: '', address: '', notes: '' });
+    setNewClient({ name: '', email: '', phone: '', address: '', notes: '', client_type: 'particulier' });
     setNewServiceIds([]);
   };
 
@@ -86,7 +89,8 @@ export default function DashboardClients() {
       phone: newClient.phone.trim() || undefined,
       address: newClient.address.trim() || undefined,
       notes: newClient.notes.trim() || undefined,
-    });
+      client_type: newClient.client_type,
+    } as any);
 
     // Save services for the new client
     if (!error && createdClient && newServiceIds.length > 0) {
@@ -115,7 +119,8 @@ export default function DashboardClients() {
       email: client.email || '',
       phone: client.phone || '',
       address: client.address || '',
-      notes: client.notes || ''
+      notes: client.notes || '',
+      client_type: client.client_type || 'particulier'
     });
   };
 
@@ -128,6 +133,7 @@ export default function DashboardClients() {
       phone: editForm.phone.trim() || null,
       address: editForm.address.trim() || null,
       notes: editForm.notes.trim() || null,
+      client_type: editForm.client_type,
     });
 
     // Save services
@@ -209,6 +215,30 @@ export default function DashboardClients() {
                       </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 pt-4">
+                      {/* Type client */}
+                      <div className="space-y-2">
+                        <Label>Type de client</Label>
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant={newClient.client_type === 'particulier' ? 'default' : 'outline'}
+                            size="sm"
+                            className="flex-1 gap-2"
+                            onClick={() => setNewClient({ ...newClient, client_type: 'particulier' })}
+                          >
+                            <User className="w-4 h-4" /> Particulier
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={newClient.client_type === 'professionnel' ? 'default' : 'outline'}
+                            size="sm"
+                            className="flex-1 gap-2"
+                            onClick={() => setNewClient({ ...newClient, client_type: 'professionnel' })}
+                          >
+                            <Building2 className="w-4 h-4" /> Professionnel
+                          </Button>
+                        </div>
+                      </div>
                       <div className="space-y-2">
                         <Label>Nom *</Label>
                         <Input
@@ -321,12 +351,12 @@ export default function DashboardClients() {
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2 flex-wrap">
                               <p className="font-medium text-foreground truncate">{client.name}</p>
-                              <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
-                                client.source === 'booking' 
-                                  ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400' 
+                              <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 inline-flex items-center gap-1 ${
+                                client.client_type === 'professionnel'
+                                  ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400'
                                   : 'bg-muted text-muted-foreground'
                               }`}>
-                                {client.source === 'booking' ? t('clients.resa') : t('clients.manualShort')}
+                                {client.client_type === 'professionnel' ? <><Building2 className="w-3 h-3" /> Pro</> : <><User className="w-3 h-3" /> Particulier</>}
                               </span>
                             </div>
                             <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground mt-1">
@@ -380,6 +410,30 @@ export default function DashboardClients() {
                 Client ajouté {editingClient.source === 'booking' ? 'via réservation' : 'manuellement'} le {format(parseISO(editingClient.created_at), 'd MMMM yyyy', { locale: fr })}
               </p>
             )}
+            {/* Type client */}
+            <div className="space-y-2">
+              <Label>Type de client</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={editForm.client_type === 'particulier' ? 'default' : 'outline'}
+                  size="sm"
+                  className="flex-1 gap-2"
+                  onClick={() => setEditForm({ ...editForm, client_type: 'particulier' })}
+                >
+                  <User className="w-4 h-4" /> Particulier
+                </Button>
+                <Button
+                  type="button"
+                  variant={editForm.client_type === 'professionnel' ? 'default' : 'outline'}
+                  size="sm"
+                  className="flex-1 gap-2"
+                  onClick={() => setEditForm({ ...editForm, client_type: 'professionnel' })}
+                >
+                  <Building2 className="w-4 h-4" /> Professionnel
+                </Button>
+              </div>
+            </div>
             <div className="space-y-2">
               <Label>Nom *</Label>
               <Input
