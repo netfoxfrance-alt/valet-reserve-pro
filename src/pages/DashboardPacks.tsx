@@ -276,8 +276,9 @@ export default function DashboardPacks() {
                       placeholder="Nettoyage Complet"
                     />
                   </div>
+                  {/* Duration - optional for quote type */}
                   <div className="space-y-2">
-                    <Label>Durée estimée</Label>
+                    <Label>Durée estimée {newPack.pricing_type === 'quote' && <span className="text-muted-foreground font-normal">(optionnelle)</span>}</Label>
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-1">
                         <Input
@@ -475,7 +476,7 @@ export default function DashboardPacks() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label>Durée</Label>
+                            <Label>Durée {editForm.pricing_type === 'quote' && <span className="text-muted-foreground font-normal">(optionnelle)</span>}</Label>
                             <div className="flex items-center gap-2">
                               <div className="flex items-center gap-1">
                                 <Input
