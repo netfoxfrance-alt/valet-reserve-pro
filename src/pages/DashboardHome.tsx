@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { SubscriptionBanner } from '@/components/dashboard/SubscriptionBanner';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+
 
 import iconDemandes from '@/assets/icons/icon-demandes.webp';
 import iconAgenda from '@/assets/icons/icon-agenda.webp';
@@ -67,56 +67,42 @@ export default function DashboardHome() {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Desktop sidebar - same as DashboardLayout */}
-      <aside className="hidden lg:flex flex-col items-center w-[72px] fixed inset-y-0 left-0 z-40 bg-card border-r border-border">
+      <aside className="hidden lg:flex flex-col items-center w-20 fixed inset-y-0 left-0 z-40 bg-card border-r border-border">
         <Link to="/dashboard" className="py-4 px-2">
           <Logo size="sm" />
         </Link>
         <nav className="flex-1 flex flex-col items-center gap-1 px-2 py-3 overflow-y-auto">
           {menuItems.map((item) => (
-            <Tooltip key={item.href}>
-              <TooltipTrigger asChild>
-                <Link
-                  to={item.href}
-                  className="flex flex-col items-center gap-1 p-2 rounded-2xl transition-all duration-200 hover:bg-accent/60 hover:scale-105 active:scale-95"
-                >
-                  <img src={item.icon} alt={item.label} className="w-10 h-10 object-contain" />
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="font-medium">
+            <Link
+              key={item.href}
+              to={item.href}
+              className="flex flex-col items-center gap-0.5 px-1 py-1.5 rounded-xl transition-all duration-200 hover:bg-accent/60 active:scale-95 w-full"
+            >
+              <img src={item.icon} alt={item.label} className="w-8 h-8 object-contain" />
+              <span className="text-[9px] font-medium leading-tight text-center truncate w-full text-muted-foreground">
                 {item.label}
-              </TooltipContent>
-            </Tooltip>
+              </span>
+            </Link>
           ))}
         </nav>
-        <div className="flex flex-col items-center gap-1 px-2 py-3 border-t border-border">
+        <div className="flex flex-col items-center gap-1 px-2 py-3 border-t border-border w-full">
           {bottomItems.map((item) => (
-            <Tooltip key={item.href}>
-              <TooltipTrigger asChild>
-                <Link
-                  to={item.href}
-                  className="flex items-center justify-center p-2.5 rounded-xl text-muted-foreground hover:bg-accent/60 hover:text-foreground transition-all"
-                >
-                  <item.icon className="w-5 h-5" />
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="font-medium">
-                {item.label}
-              </TooltipContent>
-            </Tooltip>
+            <Link
+              key={item.href}
+              to={item.href}
+              className="flex flex-col items-center gap-0.5 px-1 py-1.5 rounded-xl text-muted-foreground hover:bg-accent/60 hover:text-foreground transition-all w-full"
+            >
+              <item.icon className="w-4 h-4" />
+              <span className="text-[9px] font-medium leading-tight">{item.label}</span>
+            </Link>
           ))}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={handleLogout}
-                className="flex items-center justify-center p-2.5 rounded-xl text-muted-foreground hover:bg-accent/60 hover:text-foreground transition-all"
-              >
-                <LogOut className="w-5 h-5" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="right" className="font-medium">
-              {t('nav.logout')}
-            </TooltipContent>
-          </Tooltip>
+          <button
+            onClick={handleLogout}
+            className="flex flex-col items-center gap-0.5 px-1 py-1.5 rounded-xl text-muted-foreground hover:bg-accent/60 hover:text-foreground transition-all w-full"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="text-[9px] font-medium leading-tight">{t('nav.logout')}</span>
+          </button>
         </div>
       </aside>
 
@@ -164,7 +150,7 @@ export default function DashboardHome() {
       </Sheet>
 
       {/* Main content */}
-      <div className="flex-1 lg:ml-[72px] flex flex-col min-h-screen">
+      <div className="flex-1 lg:ml-20 flex flex-col min-h-screen">
         <header className="h-14 border-b border-border bg-background/80 backdrop-blur-lg sticky top-0 z-30 flex items-center justify-between px-4 lg:px-6">
           <div className="flex items-center gap-3">
             <Button

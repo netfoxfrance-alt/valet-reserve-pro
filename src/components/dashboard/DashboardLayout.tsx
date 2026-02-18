@@ -56,52 +56,45 @@ export function DashboardLayout({ title, subtitle, children }: DashboardLayoutPr
   const isActive = (href: string) => location.pathname === href;
 
   const NavIcon = ({ item, onClick }: { item: typeof navItems[0]; onClick?: () => void }) => (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Link
-          to={item.href}
-          onClick={onClick}
-          className={cn(
-            "flex flex-col items-center gap-1 p-2 rounded-2xl transition-all duration-200",
-            isActive(item.href)
-              ? "bg-accent ring-2 ring-primary/20 scale-105"
-              : "hover:bg-accent/60 hover:scale-105 active:scale-95"
-          )}
-        >
-          <img src={item.icon} alt={item.label} className="w-10 h-10 object-contain" />
-        </Link>
-      </TooltipTrigger>
-      <TooltipContent side="right" className="font-medium">
+    <Link
+      to={item.href}
+      onClick={onClick}
+      className={cn(
+        "flex flex-col items-center gap-0.5 px-1 py-1.5 rounded-xl transition-all duration-200 w-full",
+        isActive(item.href)
+          ? "bg-accent ring-1 ring-primary/20"
+          : "hover:bg-accent/60 active:scale-95"
+      )}
+    >
+      <img src={item.icon} alt={item.label} className="w-8 h-8 object-contain" />
+      <span className={cn(
+        "text-[9px] font-medium leading-tight text-center truncate w-full",
+        isActive(item.href) ? "text-foreground" : "text-muted-foreground"
+      )}>
         {item.label}
-      </TooltipContent>
-    </Tooltip>
+      </span>
+    </Link>
   );
 
   const BottomNavIcon = ({ item }: { item: typeof bottomItems[0] }) => (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Link
-          to={item.href}
-          className={cn(
-            "flex items-center justify-center p-2.5 rounded-xl transition-all",
-            isActive(item.href)
-              ? "bg-accent text-foreground"
-              : "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
-          )}
-        >
-          <item.icon className="w-5 h-5" />
-        </Link>
-      </TooltipTrigger>
-      <TooltipContent side="right" className="font-medium">
-        {item.label}
-      </TooltipContent>
-    </Tooltip>
+    <Link
+      to={item.href}
+      className={cn(
+        "flex flex-col items-center gap-0.5 px-1 py-1.5 rounded-xl transition-all w-full",
+        isActive(item.href)
+          ? "bg-accent text-foreground"
+          : "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
+      )}
+    >
+      <item.icon className="w-4 h-4" />
+      <span className="text-[9px] font-medium leading-tight">{item.label}</span>
+    </Link>
   );
 
   return (
     <div className="min-h-screen bg-background flex">
       {/* Desktop sidebar - always visible */}
-      <aside className="hidden lg:flex flex-col items-center w-[72px] fixed inset-y-0 left-0 z-40 bg-card border-r border-border">
+      <aside className="hidden lg:flex flex-col items-center w-20 fixed inset-y-0 left-0 z-40 bg-card border-r border-border">
         {/* Logo */}
         <Link to="/dashboard" className="py-4 px-2">
           <Logo size="sm" />
@@ -115,23 +108,17 @@ export function DashboardLayout({ title, subtitle, children }: DashboardLayoutPr
         </nav>
 
         {/* Bottom actions */}
-        <div className="flex flex-col items-center gap-1 px-2 py-3 border-t border-border">
+        <div className="flex flex-col items-center gap-1 px-2 py-3 border-t border-border w-full">
           {bottomItems.map((item) => (
             <BottomNavIcon key={item.href} item={item} />
           ))}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={handleLogout}
-                className="flex items-center justify-center p-2.5 rounded-xl text-muted-foreground hover:bg-accent/60 hover:text-foreground transition-all"
-              >
-                <LogOut className="w-5 h-5" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="right" className="font-medium">
-              {t('nav.logout')}
-            </TooltipContent>
-          </Tooltip>
+          <button
+            onClick={handleLogout}
+            className="flex flex-col items-center gap-0.5 px-1 py-1.5 rounded-xl text-muted-foreground hover:bg-accent/60 hover:text-foreground transition-all w-full"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="text-[9px] font-medium leading-tight">{t('nav.logout')}</span>
+          </button>
         </div>
       </aside>
 
@@ -189,7 +176,7 @@ export function DashboardLayout({ title, subtitle, children }: DashboardLayoutPr
       </Sheet>
 
       {/* Main content */}
-      <div className="flex-1 lg:ml-[72px] flex flex-col min-h-screen">
+      <div className="flex-1 lg:ml-20 flex flex-col min-h-screen">
         {/* Header */}
         <header className="h-14 border-b border-border bg-background/80 backdrop-blur-lg sticky top-0 z-30 flex items-center justify-between px-4 lg:px-6">
           <div className="flex items-center gap-3">
