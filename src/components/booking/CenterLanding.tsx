@@ -300,17 +300,6 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                     </div>
                   )}
                 </div>
-                {/* Duration / Sur devis below */}
-                <p 
-                  className="text-xs flex items-center gap-1 px-1"
-                  style={{ color: textColors.secondary }}
-                >
-                  {isQuote ? (
-                    <><FileText className="w-3 h-3" /> Demande de devis</>
-                  ) : pack.duration ? (
-                    <><Clock className="w-3 h-3" /> {pack.duration}</>
-                  ) : null}
-                </p>
               </div>
             );
           })}
@@ -1165,16 +1154,6 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                     {customization.texts.tagline}
                   </p>
                 )}
-                {/* Open Status */}
-                <div 
-                  className={cn(
-                    "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium",
-                    isOpen ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-500"
-                  )}
-                >
-                  <span className={cn("w-2 h-2 rounded-full", isOpen ? "bg-green-500" : "bg-red-500")} />
-                  {isOpen ? 'Ouvert' : 'Fermé'}
-                </div>
               </div>
             </div>
           </div>
@@ -1199,35 +1178,12 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                 {customization.texts.tagline}
               </p>
             )}
-            <div 
-              className={cn(
-                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium",
-                isOpen ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-500"
-              )}
-            >
-              <span className={cn("w-2 h-2 rounded-full", isOpen ? "bg-green-500" : "bg-red-500")} />
-              {isOpen ? 'Ouvert' : 'Fermé'}
-            </div>
           </div>
         </div>
       )}
 
       {/* Main Content Area */}
       <div className={cn("max-w-5xl mx-auto px-4", !isPreview && "lg:px-8")}>
-        {/* Open status badge (when cover exists) */}
-        {hasCover && !isMinimalHeader && (
-          <div className={cn("flex justify-center mb-4", !isPreview && "lg:justify-start")}>
-            <div 
-              className={cn(
-                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium",
-                isOpen ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-500"
-              )}
-            >
-              <span className={cn("w-2 h-2 rounded-full", isOpen ? "bg-green-500" : "bg-red-500")} />
-              {isOpen ? 'Ouvert' : 'Fermé'}
-            </div>
-          </div>
-        )}
 
         {/* Social Icons */}
         {socialLinks.length > 0 && (
