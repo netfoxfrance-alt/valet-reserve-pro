@@ -19,25 +19,27 @@ import { useToast } from '@/hooks/use-toast';
 import { useSEO } from '@/hooks/useSEO';
 import { LocalBusinessSchema } from '@/components/seo/LocalBusinessSchema';
 
-// Simple markdown-like rich text renderer
+// Rich description renderer — supports HTML (from TipTap) and legacy markdown
 function RichDescription({ text }: { text: string }) {
+  // If text contains HTML tags, render as HTML
+  if (text.includes('<') && text.includes('>')) {
+    return (
+      <div 
+        className="prose prose-sm prose-neutral max-w-none [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-foreground [&_h2]:mt-6 [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-foreground [&_p]:text-muted-foreground [&_p]:leading-relaxed [&_strong]:text-foreground [&_ul]:space-y-1 [&_li]:text-muted-foreground"
+        dangerouslySetInnerHTML={{ __html: text }} 
+      />
+    );
+  }
+
+  // Legacy markdown fallback
   const lines = text.split('\n');
-  
   return (
     <div className="space-y-3">
       {lines.map((line, i) => {
         const trimmed = line.trim();
         if (!trimmed) return <div key={i} className="h-2" />;
-        
-        // ## Heading 2
-        if (trimmed.startsWith('## ')) {
-          return <h3 key={i} className="text-xl font-bold text-foreground mt-6 mb-2">{trimmed.slice(3)}</h3>;
-        }
-        // ### Heading 3
-        if (trimmed.startsWith('### ')) {
-          return <h4 key={i} className="text-lg font-semibold text-foreground mt-4 mb-1">{trimmed.slice(4)}</h4>;
-        }
-        // - List item
+        if (trimmed.startsWith('## ')) return <h3 key={i} className="text-xl font-bold text-foreground mt-6 mb-2">{trimmed.slice(3)}</h3>;
+        if (trimmed.startsWith('### ')) return <h4 key={i} className="text-lg font-semibold text-foreground mt-4 mb-1">{trimmed.slice(4)}</h4>;
         if (trimmed.startsWith('- ') || trimmed.startsWith('• ')) {
           return (
             <div key={i} className="flex items-start gap-2 pl-1">
@@ -46,14 +48,12 @@ function RichDescription({ text }: { text: string }) {
             </div>
           );
         }
-        // Regular paragraph with inline bold
         return <p key={i} className="text-muted-foreground leading-relaxed">{renderInline(trimmed)}</p>;
       })}
     </div>
   );
 }
 
-// Render inline **bold** text
 function renderInline(text: string): React.ReactNode {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((part, i) => {
