@@ -499,7 +499,7 @@ export default function CenterBooking() {
       <div className="min-h-screen bg-background">
         <BookingHeader centerName={center.name} />
         <main className="px-4 pb-16 pt-8">
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-3xl mx-auto">
             {showBackButton && (
               <div className="mb-6">
                 <Button 
@@ -514,129 +514,61 @@ export default function CenterBooking() {
               </div>
             )}
 
-            {/* Hero section: Image left + Info right */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-              {/* Left: Hero image */}
-              {selectedPack.image_url ? (
-                <div className="rounded-2xl overflow-hidden">
-                  <img
-                    src={selectedPack.image_url}
-                    alt={selectedPack.name}
-                    className="w-full aspect-[4/3] object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              ) : (
-                <div className="rounded-2xl bg-secondary/30 aspect-[4/3] flex items-center justify-center">
-                  <FileText className="w-16 h-16 text-muted-foreground/30" />
+            {/* Hero image — full width */}
+            {selectedPack.image_url ? (
+              <div className="rounded-3xl overflow-hidden mb-8">
+                <img
+                  src={selectedPack.image_url}
+                  alt={selectedPack.name}
+                  className="w-full aspect-[16/9] object-cover"
+                  loading="lazy"
+                />
+              </div>
+            ) : (
+              <div className="rounded-3xl bg-secondary/20 aspect-[16/9] flex items-center justify-center mb-8">
+                <FileText className="w-16 h-16 text-muted-foreground/20" />
+              </div>
+            )}
+
+            {/* Title + Description */}
+            <div className="space-y-4 mb-8">
+              <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
+                {selectedPack.name}
+              </h1>
+
+              {selectedPack.description && (
+                <div className="prose prose-neutral max-w-none text-muted-foreground">
+                  <RichDescription text={selectedPack.description} />
                 </div>
               )}
-
-              {/* Right: Title + CTA */}
-              <div className="flex flex-col justify-center space-y-6">
-                <div>
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground tracking-tight leading-tight">
-                    {selectedPack.name}
-                  </h1>
-                </div>
-
-                {/* Short description preview */}
-                {selectedPack.description && (
-                  <p className="text-lg text-muted-foreground leading-relaxed line-clamp-3">
-                    {selectedPack.description.split('\n')[0].replace(/[*#\-]/g, '').trim()}
-                  </p>
-                )}
-
-                {/* Meta info */}
-                <div className="flex flex-wrap items-center gap-4">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <FileText className="w-4 h-4" />
-                    <span>Tarification sur devis</span>
-                  </div>
-                  {selectedPack.duration && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Clock className="w-4 h-4" />
-                      <span>Durée estimée : {selectedPack.duration}</span>
-                    </div>
-                  )}
-                </div>
-
-                <Button 
-                  variant="premium" 
-                  size="xl" 
-                  className="w-full sm:w-auto sm:px-12"
-                  onClick={() => setCurrentStep('quote-form')}
-                >
-                  Obtenir un devis
-                </Button>
-              </div>
             </div>
 
-            {/* Content section below */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
-              {/* Left: Description + Features */}
-              <div className="lg:col-span-2 space-y-8">
-                {selectedPack.description && (
-                  <div>
-                    <h2 className="text-2xl font-bold text-foreground mb-6">À propos du service</h2>
-                    <div className="prose prose-neutral max-w-none">
-                      <RichDescription text={selectedPack.description} />
-                    </div>
-                  </div>
-                )}
-
-                {selectedPack.features && selectedPack.features.length > 0 && (
-                  <div>
-                    <h2 className="text-2xl font-bold text-foreground mb-4">Ce qui est inclus</h2>
-                    <ul className="space-y-3">
-                      {selectedPack.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-3">
-                          <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                          <span className="text-foreground">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              {/* Right: Sticky sidebar CTA */}
-              <div className="lg:col-span-1">
-                <div className="lg:sticky lg:top-8">
-                  <Card variant="elevated" className="p-6 rounded-2xl space-y-5">
-                    <h3 className="text-lg font-bold text-foreground">{selectedPack.name}</h3>
-                    
-                    {selectedPack.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-3">
-                        {selectedPack.description.split('\n')[0].replace(/[*#\-]/g, '').trim()}
-                      </p>
-                    )}
-
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <FileText className="w-4 h-4" />
-                        <span>Tarification sur devis</span>
+            {/* Features */}
+            {selectedPack.features && selectedPack.features.length > 0 && (
+              <div className="mb-10">
+                <h2 className="text-lg font-semibold text-foreground mb-4">Ce qui est inclus</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {selectedPack.features.map((feature, i) => (
+                    <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-secondary/30">
+                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Check className="w-3.5 h-3.5 text-primary" />
                       </div>
-                      {selectedPack.duration && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Clock className="w-4 h-4" />
-                          <span>Durée estimée : {selectedPack.duration}</span>
-                        </div>
-                      )}
+                      <span className="text-sm text-foreground">{feature}</span>
                     </div>
-
-                    <Button 
-                      variant="premium" 
-                      size="xl" 
-                      className="w-full"
-                      onClick={() => setCurrentStep('quote-form')}
-                    >
-                      Obtenir un devis
-                    </Button>
-                  </Card>
+                  ))}
                 </div>
               </div>
-            </div>
+            )}
+
+            {/* CTA */}
+            <Button 
+              variant="premium" 
+              size="xl" 
+              className="w-full"
+              onClick={() => setCurrentStep('quote-form')}
+            >
+              Obtenir un devis
+            </Button>
           </div>
         </main>
       </div>
