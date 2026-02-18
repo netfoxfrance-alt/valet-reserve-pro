@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 
 import { useMyPacks, Pack, useMyCenter } from '@/hooks/useCenter';
 import { useAuth } from '@/hooks/useAuth';
@@ -367,16 +368,11 @@ export default function DashboardPacks() {
 
                 <div className="space-y-2">
                   <Label htmlFor="new-description">Description</Label>
-                  <Textarea
-                    id="new-description"
-                    value={newPack.description}
-                    onChange={(e) => setNewPack({ ...newPack, description: e.target.value })}
-                    placeholder="Utilisez **gras**, ## Titre, - liste pour formater..."
-                    rows={4}
+                  <RichTextEditor
+                    content={newPack.description}
+                    onChange={(html) => setNewPack({ ...newPack, description: html })}
+                    placeholder="Décrivez votre prestation..."
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Formatage : **gras**, ## Titre, ### Sous-titre, - liste à puces
-                  </p>
                 </div>
 
                 <FeaturesEditor 
@@ -561,16 +557,11 @@ export default function DashboardPacks() {
 
                         <div className="space-y-2">
                           <Label htmlFor={`description-${pack.id}`}>Description</Label>
-                          <Textarea
-                            id={`description-${pack.id}`}
-                            value={editForm.description || ''}
-                            onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                            placeholder="Utilisez **gras**, ## Titre, - liste pour formater..."
-                            rows={4}
+                          <RichTextEditor
+                            content={editForm.description || ''}
+                            onChange={(html) => setEditForm({ ...editForm, description: html })}
+                            placeholder="Décrivez votre prestation..."
                           />
-                          <p className="text-xs text-muted-foreground">
-                            Formatage : **gras**, ## Titre, ### Sous-titre, - liste à puces
-                          </p>
                         </div>
 
                         <FeaturesEditor 
