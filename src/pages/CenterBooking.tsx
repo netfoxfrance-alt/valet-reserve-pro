@@ -25,7 +25,7 @@ function RichDescription({ text }: { text: string }) {
   if (text.includes('<') && text.includes('>')) {
     return (
       <div 
-        className="prose prose-sm prose-neutral max-w-none [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-foreground [&_h2]:mt-6 [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-foreground [&_p]:text-muted-foreground [&_p]:leading-relaxed [&_strong]:text-foreground [&_ul]:space-y-1 [&_li]:text-muted-foreground"
+      className="prose prose-sm prose-neutral max-w-none [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:text-foreground [&_h1]:mt-6 [&_h1]:mb-2 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-foreground [&_h2]:mt-6 [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-foreground [&_h3]:mt-4 [&_h3]:mb-1 [&_p]:text-muted-foreground [&_p]:leading-relaxed [&_strong]:text-foreground [&_ul]:space-y-1 [&_li]:text-muted-foreground"
         dangerouslySetInnerHTML={{ __html: text }} 
       />
     );
@@ -68,6 +68,7 @@ type BookingStep =
   | 'landing'
   | 'contact-form'
   | 'contact-confirmation'
+  | 'pack-detail'
   | 'quote-detail'
   | 'quote-form'
   | 'quote-confirmation'
@@ -143,6 +144,13 @@ export default function CenterBooking() {
       case 'contact-form':
         setCurrentStep('landing');
         break;
+      case 'pack-detail':
+        if (packs.length > 1) {
+          setCurrentStep('select-pack');
+        } else {
+          setCurrentStep('landing');
+        }
+        break;
       case 'quote-detail':
         if (packs.length > 1) {
           setCurrentStep('select-pack');
@@ -157,21 +165,15 @@ export default function CenterBooking() {
         setCurrentStep('landing');
         break;
       case 'select-variant':
-        if (packs.length > 1) {
-          setCurrentStep('select-pack');
-        } else {
-          setCurrentStep('landing');
-        }
+        setCurrentStep('pack-detail');
         break;
       case 'calendar':
         if (recognizedClient?.service_id) {
           setCurrentStep('landing');
-        } else if (selectedPack?.price_variants && selectedPack.price_variants.length > 0) {
-          setCurrentStep('select-variant');
-        } else if (packs.length > 1) {
-          setCurrentStep('select-pack');
+        } else if (selectedPack?.pricing_type === 'quote') {
+          setCurrentStep('quote-detail');
         } else {
-          setCurrentStep('landing');
+          setCurrentStep('pack-detail');
         }
         break;
       case 'client-info':
@@ -196,10 +198,10 @@ export default function CenterBooking() {
       if (packs.length === 1) {
         const pack = packs[0];
         setSelectedPack(pack);
-        if (pack.price_variants && pack.price_variants.length > 0) {
-          setCurrentStep('select-variant');
+        if (pack.pricing_type === 'quote') {
+          setCurrentStep('quote-detail');
         } else {
-          setCurrentStep('calendar');
+          setCurrentStep('pack-detail');
         }
       } else {
         setCurrentStep('select-pack');
@@ -213,17 +215,14 @@ export default function CenterBooking() {
     setSelectedPack(pack);
     setSelectedVariant(null);
     
-    // Quote-based pack → show detail page
+    // Quote-based pack → show quote detail page
     if (pack.pricing_type === 'quote') {
       setCurrentStep('quote-detail');
       return;
     }
     
-    if (pack.price_variants && pack.price_variants.length > 0) {
-      setCurrentStep('select-variant');
-    } else {
-      setCurrentStep('calendar');
-    }
+    // All fixed-price packs → show detail page
+    setCurrentStep('pack-detail');
   };
 
   const handleSelectVariant = (variant: PriceVariant) => {
@@ -493,6 +492,138 @@ export default function CenterBooking() {
     );
   }
 
+  // Fixed-price pack detail page (inspired by reference design)
+  if (currentStep === 'pack-detail' && selectedPack) {
+    const hasVariants = selectedPack.price_variants && selectedPack.price_variants.length > 0;
+    const minPrice = hasVariants 
+      ? Math.min(...selectedPack.price_variants.map(v => v.price))
+      : selectedPack.price;
+
+    return (
+      <div className="min-h-screen bg-background">
+        <BookingHeader centerName={center.name} />
+        <main className="px-4 sm:px-6 pb-16 pt-8">
+          <div className="max-w-5xl mx-auto">
+            {showBackButton && (
+              <div className="mb-6">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={goToPrevStep}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  Retour
+                </Button>
+              </div>
+            )}
+
+            {/* Hero: Image left + Info right on desktop */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
+              {/* Left: Image */}
+              {selectedPack.image_url ? (
+                <div className="rounded-3xl overflow-hidden">
+                  <img
+                    src={selectedPack.image_url}
+                    alt={selectedPack.name}
+                    className="w-full aspect-[4/3] object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ) : (
+                <div className="rounded-3xl bg-secondary/20 aspect-[4/3] flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center">
+                    <span className="text-3xl font-bold text-primary">{selectedPack.name.charAt(0)}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Right: Info + Tarifs + CTA */}
+              <div className="flex flex-col justify-center space-y-5 lg:py-4">
+                <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground tracking-tight leading-[1.1]">
+                  {selectedPack.name}
+                </h1>
+
+                {selectedPack.description && !selectedPack.description.includes('\n') && !selectedPack.description.includes('<') && (
+                  <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                    {selectedPack.description}
+                  </p>
+                )}
+
+                {/* Pricing card */}
+                <Card variant="elevated" className="p-5">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Tarifs (TTC)</p>
+                  {hasVariants ? (
+                    <div className="divide-y divide-border/50">
+                      {selectedPack.price_variants.map((variant, i) => (
+                        <div key={i} className="flex items-center justify-between py-2.5">
+                          <span className="text-sm text-foreground">{variant.name}</span>
+                          <span className="text-base font-bold text-foreground">{variant.price}€</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between py-1">
+                      <span className="text-sm text-foreground">Prix</span>
+                      <span className="text-2xl font-bold text-foreground">{selectedPack.price}€</span>
+                    </div>
+                  )}
+                </Card>
+
+                {selectedPack.duration && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Clock className="w-4 h-4" />
+                    <span>Durée estimée : {selectedPack.duration}</span>
+                  </div>
+                )}
+
+                <Button 
+                  variant="premium" 
+                  size="xl" 
+                  className="w-full sm:w-auto sm:px-12 mt-2"
+                  onClick={() => {
+                    if (hasVariants) {
+                      setCurrentStep('select-variant');
+                    } else {
+                      setCurrentStep('calendar');
+                    }
+                  }}
+                >
+                  Réserver
+                </Button>
+              </div>
+            </div>
+
+            {/* Features grid */}
+            {selectedPack.features && selectedPack.features.length > 0 && (
+              <div className="mt-12 lg:mt-16">
+                <h2 className="text-xl font-semibold text-foreground mb-6">Ce qui est inclus</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {selectedPack.features.map((feature, i) => (
+                    <div key={i} className="flex items-center gap-3 p-4 rounded-2xl bg-secondary/30">
+                      <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Check className="w-4 h-4 text-primary" />
+                      </div>
+                      <span className="text-sm font-medium text-foreground">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Full description */}
+            {selectedPack.description && (selectedPack.description.includes('\n') || selectedPack.description.includes('<')) && (
+              <div className="mt-12 lg:mt-16 max-w-3xl">
+                <h2 className="text-xl font-semibold text-foreground mb-4">À propos</h2>
+                <RichDescription text={selectedPack.description} />
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   // Quote detail page (Apple-style presentation)
   if (currentStep === 'quote-detail' && selectedPack) {
     return (
@@ -546,6 +677,14 @@ export default function CenterBooking() {
                   </p>
                 )}
 
+                <Card variant="elevated" className="p-5">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Tarif</p>
+                  <div className="flex items-center justify-between py-1">
+                    <span className="text-sm text-foreground">Prix</span>
+                    <span className="text-lg font-bold text-primary">Sur devis</span>
+                  </div>
+                </Card>
+
                 {selectedPack.duration && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Clock className="w-4 h-4" />
@@ -582,12 +721,10 @@ export default function CenterBooking() {
             )}
 
             {/* Full description below */}
-            {selectedPack.description && selectedPack.description.includes('\n') && (
+            {selectedPack.description && (selectedPack.description.includes('\n') || selectedPack.description.includes('<')) && (
               <div className="mt-12 lg:mt-16 max-w-3xl">
                 <h2 className="text-xl font-semibold text-foreground mb-4">À propos</h2>
-                <div className="prose prose-neutral max-w-none text-muted-foreground">
-                  <RichDescription text={selectedPack.description} />
-                </div>
+                <RichDescription text={selectedPack.description} />
               </div>
             )}
           </div>

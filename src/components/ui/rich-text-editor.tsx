@@ -1,7 +1,7 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
-import { Bold, Italic, Underline as UnderlineIcon, List, Heading2, Minus, Plus } from 'lucide-react';
+import { Bold, Italic, Underline as UnderlineIcon, List, Heading1, Heading2, Heading3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEffect, useRef } from 'react';
 
@@ -44,7 +44,7 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        heading: { levels: [2, 3] },
+        heading: { levels: [1, 2, 3] },
       }),
       Underline,
     ],
@@ -78,14 +78,28 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
   return (
     <div className={cn("rounded-xl border border-input bg-background overflow-hidden", className)}>
       {/* Toolbar */}
-      <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-border/50 bg-secondary/20">
-        {/* Font size controls */}
+      <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-border/50 bg-secondary/20 flex-wrap">
+        {/* Heading controls */}
+        <ToolbarButton
+          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          active={editor.isActive('heading', { level: 1 })}
+          title="Titre 1"
+        >
+          <Heading1 className="w-4 h-4" />
+        </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           active={editor.isActive('heading', { level: 2 })}
-          title="Titre"
+          title="Titre 2"
         >
           <Heading2 className="w-4 h-4" />
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          active={editor.isActive('heading', { level: 3 })}
+          title="Titre 3"
+        >
+          <Heading3 className="w-4 h-4" />
         </ToolbarButton>
 
         <div className="w-px h-5 bg-border/50 mx-1" />
