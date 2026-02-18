@@ -12,7 +12,7 @@ import {
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter } from '@/hooks/useCenter';
 import { useBlockedPeriods } from '@/hooks/useAvailability';
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, isToday, parseISO, isBefore } from 'date-fns';
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addWeeks, subWeeks, isSameMonth, isSameDay, isToday, parseISO, isBefore, getHours, getMinutes } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -40,6 +40,8 @@ export default function DashboardCalendar() {
   const dateLocale = i18n.language === 'en' ? enUS : fr;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
+  const [viewMode, setViewMode] = useState<'month' | 'week'>('month');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [appointmentToReschedule, setAppointmentToReschedule] = useState<Appointment | null>(null);
@@ -57,12 +59,15 @@ export default function DashboardCalendar() {
   // Calendar navigation
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
+  const prevWeek = () => setCurrentWeekStart(subWeeks(currentWeekStart, 1));
+  const nextWeek = () => setCurrentWeekStart(addWeeks(currentWeekStart, 1));
   const goToToday = () => {
     setCurrentMonth(new Date());
+    setCurrentWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 }));
     setSelectedDate(new Date());
   };
 
-  // Generate calendar days
+  // Generate calendar days (month view)
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
   const calendarStart = startOfWeek(monthStart, { weekStartsOn: 1 });
@@ -74,6 +79,16 @@ export default function DashboardCalendar() {
     days.push(day);
     day = addDays(day, 1);
   }
+
+  // Generate week days (week view)
+  const weekDaysArr: Date[] = [];
+  for (let i = 0; i < 7; i++) {
+    weekDaysArr.push(addDays(currentWeekStart, i));
+  }
+
+  // Working hours for week view
+  const HOUR_START = 7;
+  const HOUR_END = 21;
 
   // Get appointments for a specific day
   const getAppointmentsForDay = (date: Date) => {
@@ -162,21 +177,43 @@ export default function DashboardCalendar() {
     <>
     <DashboardLayout title={t('calendar.title')} subtitle={center?.name}>
       <div className="max-w-7xl">
-          {/* Header with navigation - mobile optimized */}
+          {/* Header with navigation */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="flex items-center gap-2 sm:gap-3">
-              <Button variant="outline" size="icon" onClick={prevMonth} className="h-9 w-9 rounded-xl">
+              <Button variant="outline" size="icon" onClick={viewMode === 'month' ? prevMonth : prevWeek} className="h-9 w-9 rounded-xl">
                 <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
               <h2 className="text-lg sm:text-xl font-bold text-foreground min-w-[140px] sm:min-w-[180px] text-center capitalize">
-                {format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}
+                {viewMode === 'month' 
+                  ? format(currentMonth, 'MMMM yyyy', { locale: dateLocale })
+                  : `${format(currentWeekStart, 'd MMM', { locale: dateLocale })} – ${format(addDays(currentWeekStart, 6), 'd MMM yyyy', { locale: dateLocale })}`
+                }
               </h2>
-              <Button variant="outline" size="icon" onClick={nextMonth} className="h-9 w-9 rounded-xl">
+              <Button variant="outline" size="icon" onClick={viewMode === 'month' ? nextMonth : nextWeek} className="h-9 w-9 rounded-xl">
                 <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </div>
             
             <div className="flex gap-2">
+              {/* View mode toggle */}
+              <div className="flex bg-secondary/50 rounded-xl p-0.5">
+                <Button 
+                  variant={viewMode === 'month' ? 'default' : 'ghost'} 
+                  size="sm"
+                  onClick={() => setViewMode('month')}
+                  className="rounded-lg h-8 text-xs px-3"
+                >
+                  {t('calendar.month', 'Mois')}
+                </Button>
+                <Button 
+                  variant={viewMode === 'week' ? 'default' : 'ghost'} 
+                  size="sm"
+                  onClick={() => setViewMode('week')}
+                  className="rounded-lg h-8 text-xs px-3"
+                >
+                  {t('calendar.week', 'Semaine')}
+                </Button>
+              </div>
               <Button variant="outline" onClick={goToToday} className="rounded-xl flex-1 sm:flex-none h-9 text-sm">
                 <CalendarIcon className="w-4 h-4 mr-1.5" />
                 {t('calendar.today')}
@@ -199,84 +236,311 @@ export default function DashboardCalendar() {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-[1fr_320px] gap-4 sm:gap-6">
-            {/* Calendar Grid */}
-            <Card className="p-3 sm:p-6 rounded-2xl">
-              {/* Week days header */}
-              <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-2">
-                {weekDays.map(day => (
-                  <div key={day} className="text-center text-xs sm:text-sm font-medium text-muted-foreground py-1 sm:py-2">
-                    {day}
+          {viewMode === 'month' ? (
+            /* ===== MONTH VIEW ===== */
+            <div className="grid lg:grid-cols-[1fr_320px] gap-4 sm:gap-6">
+              {/* Calendar Grid */}
+              <Card className="p-3 sm:p-6 rounded-2xl">
+                {/* Week days header */}
+                <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-2">
+                  {weekDays.map(d => (
+                    <div key={d} className="text-center text-xs sm:text-sm font-medium text-muted-foreground py-1 sm:py-2">
+                      {d}
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Days grid */}
+                <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
+                  {days.map((d, idx) => {
+                    const dayAppointments = getAppointmentsForDay(d);
+                    const isCurrentMonth = isSameMonth(d, currentMonth);
+                    const isSelected = selectedDate && isSameDay(d, selectedDate);
+                    const blocked = isDateBlocked(d);
+                    const isPast = isBefore(d, new Date()) && !isToday(d);
+                    
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedDate(d)}
+                        className={cn(
+                          "relative aspect-square p-0.5 sm:p-2 rounded-lg sm:rounded-xl transition-all flex flex-col items-center justify-start pt-1 sm:pt-2",
+                          !isCurrentMonth && "opacity-30",
+                          isCurrentMonth && !isSelected && "hover:bg-secondary",
+                          isSelected && "bg-primary text-primary-foreground",
+                          isToday(d) && !isSelected && "ring-2 ring-primary/50",
+                          blocked && "bg-red-50 dark:bg-red-950/30",
+                          isPast && "opacity-60"
+                        )}
+                      >
+                        <span className={cn(
+                          "text-xs sm:text-sm font-medium",
+                          isSelected ? "text-primary-foreground" : "text-foreground"
+                        )}>
+                          {format(d, 'd')}
+                        </span>
+                        
+                        {dayAppointments.length > 0 && (
+                          <div className="flex gap-0.5 mt-0.5 sm:mt-1 flex-wrap justify-center">
+                            {dayAppointments.slice(0, 2).map((apt, i) => (
+                              <div
+                                key={i}
+                                className={cn(
+                                  "w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full",
+                                  isSelected ? "bg-primary-foreground/80" : statusColors[apt.status] || 'bg-primary'
+                                )}
+                              />
+                            ))}
+                            {dayAppointments.length > 2 && (
+                              <span className={cn(
+                                "text-[8px] sm:text-[10px] font-medium",
+                                isSelected ? "text-primary-foreground" : "text-muted-foreground"
+                              )}>
+                                +{dayAppointments.length - 2}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        
+                        {blocked && (
+                          <Ban className={cn(
+                            "w-2.5 h-2.5 sm:w-3 sm:h-3 absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1",
+                            isSelected ? "text-primary-foreground/70" : "text-red-400"
+                          )} />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+                
+                {/* Legend */}
+                <div className="flex flex-wrap gap-3 sm:gap-5 mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-border">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-amber-400" />
+                    <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">{t('calendar.pending')}</span>
                   </div>
-                ))}
-              </div>
-              
-              {/* Days grid */}
-              <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
-                {days.map((day, idx) => {
-                  const dayAppointments = getAppointmentsForDay(day);
-                  const isCurrentMonth = isSameMonth(day, currentMonth);
-                  const isSelected = selectedDate && isSameDay(day, selectedDate);
-                  const blocked = isDateBlocked(day);
-                  const isPast = isBefore(day, new Date()) && !isToday(day);
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">{t('calendar.confirmed')}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-blue-400" />
+                    <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">{t('calendar.completed')}</span>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Side panel - Selected day details */}
+              <div className="space-y-3 sm:space-y-4">
+                <Card className="p-4 sm:p-5 rounded-2xl">
+                  <h3 className="font-semibold text-base sm:text-lg text-foreground mb-3 sm:mb-4">
+                    {selectedDate 
+                      ? format(selectedDate, "EEE d MMM", { locale: dateLocale }) 
+                      : t('calendar.selectDay')
+                    }
+                  </h3>
                   
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => setSelectedDate(day)}
-                      className={cn(
-                        "relative aspect-square p-0.5 sm:p-2 rounded-lg sm:rounded-xl transition-all flex flex-col items-center justify-start pt-1 sm:pt-2",
-                        !isCurrentMonth && "opacity-30",
-                        isCurrentMonth && !isSelected && "hover:bg-secondary",
-                        isSelected && "bg-primary text-primary-foreground",
-                        isToday(day) && !isSelected && "ring-2 ring-primary/50",
-                        blocked && "bg-red-50 dark:bg-red-950/30",
-                        isPast && "opacity-60"
-                      )}
-                    >
-                      <span className={cn(
-                        "text-xs sm:text-sm font-medium",
-                        isSelected ? "text-primary-foreground" : "text-foreground"
-                      )}>
-                        {format(day, 'd')}
-                      </span>
-                      
-                      {/* Appointment indicators */}
-                      {dayAppointments.length > 0 && (
-                        <div className="flex gap-0.5 mt-0.5 sm:mt-1 flex-wrap justify-center">
-                          {dayAppointments.slice(0, 2).map((apt, i) => (
-                            <div
-                              key={i}
-                              className={cn(
-                                "w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full",
-                                isSelected ? "bg-primary-foreground/80" : statusColors[apt.status] || 'bg-primary'
-                              )}
-                            />
+                  {selectedDate && (
+                    <>
+                      {loading ? (
+                        <div className="flex items-center justify-center py-6 sm:py-8">
+                          <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-muted-foreground" />
+                        </div>
+                      ) : selectedDayAppointments.length > 0 ? (
+                        <div className="space-y-2 sm:space-y-3">
+                          {selectedDayAppointments.sort((a, b) => 
+                            a.appointment_time.localeCompare(b.appointment_time)
+                          ).map(apt => (
+                            <div 
+                              key={apt.id}
+                              className="group p-2.5 sm:p-3 bg-secondary/50 rounded-xl hover:bg-secondary transition-colors cursor-pointer"
+                              onClick={() => {
+                                setSelectedAppointment(apt);
+                                setRescheduleForm({ 
+                                  date: apt.appointment_date, 
+                                  time: apt.appointment_time.slice(0, 5) 
+                                });
+                              }}
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-0.5">
+                                    <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-muted-foreground shrink-0" />
+                                    <span className="font-semibold text-foreground text-sm">
+                                      {apt.appointment_time.slice(0, 5)}
+                                    </span>
+                                    <div className={cn(
+                                      "w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full shrink-0",
+                                      statusColors[apt.status]
+                                    )} />
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <User className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-muted-foreground shrink-0" />
+                                    <span className="text-sm text-foreground truncate">
+                                      {apt.client_name}
+                                    </span>
+                                  </div>
+                                  {(apt.pack || apt.custom_service) && (
+                                    <p className="text-xs text-muted-foreground mt-0.5 ml-5 truncate">
+                                      {apt.custom_service?.name || apt.pack?.name} • {apt.custom_price ?? apt.custom_service?.price ?? apt.pack?.price ?? 0}€
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
                           ))}
-                          {dayAppointments.length > 2 && (
-                            <span className={cn(
-                              "text-[8px] sm:text-[10px] font-medium",
-                              isSelected ? "text-primary-foreground" : "text-muted-foreground"
-                            )}>
-                              +{dayAppointments.length - 2}
-                            </span>
-                          )}
+                        </div>
+                      ) : (
+                        <div className="text-center py-6 sm:py-8 text-muted-foreground">
+                          <CalendarIcon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-2 sm:mb-3 opacity-30" />
+                          <p className="text-sm">{t('calendar.noAppointments')}</p>
                         </div>
                       )}
-                      
-                      {blocked && (
-                        <Ban className={cn(
-                          "w-2.5 h-2.5 sm:w-3 sm:h-3 absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1",
-                          isSelected ? "text-primary-foreground/70" : "text-red-400"
-                        )} />
+                    </>
+                  )}
+                </Card>
+
+                {/* Blocked periods */}
+                {blockedPeriods.length > 0 && (
+                  <Card className="p-5 rounded-2xl">
+                    <h3 className="font-semibold text-foreground mb-3">{t('calendar.blockedPeriods')}</h3>
+                    <div className="space-y-2">
+                      {blockedPeriods.map(period => (
+                        <div key={period.id} className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-950/30 rounded-lg">
+                          <div>
+                            <p className="text-sm font-medium text-foreground">
+                              {format(parseISO(period.start_date), "d MMM", { locale: dateLocale })} → {format(parseISO(period.end_date), "d MMM", { locale: dateLocale })}
+                            </p>
+                            {period.reason && (
+                              <p className="text-xs text-muted-foreground">{period.reason}</p>
+                            )}
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-100"
+                            onClick={() => removeBlockedPeriod(period.id)}
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                )}
+              </div>
+            </div>
+          ) : (
+            /* ===== WEEK VIEW ===== */
+            <Card className="rounded-2xl overflow-hidden">
+              {/* Week header row */}
+              <div className="grid grid-cols-[60px_repeat(7,1fr)] border-b border-border">
+                <div className="p-2" />
+                {weekDaysArr.map((d, idx) => {
+                  const dayAppts = getAppointmentsForDay(d);
+                  return (
+                    <div 
+                      key={idx} 
+                      className={cn(
+                        "p-2 sm:p-3 text-center border-l border-border",
+                        isToday(d) && "bg-primary/5"
                       )}
-                    </button>
+                    >
+                      <p className="text-xs text-muted-foreground capitalize">
+                        {format(d, 'EEE', { locale: dateLocale })}
+                      </p>
+                      <p className={cn(
+                        "text-lg sm:text-xl font-bold",
+                        isToday(d) ? "text-primary" : "text-foreground"
+                      )}>
+                        {format(d, 'd')}
+                      </p>
+                      {dayAppts.length > 0 && (
+                        <p className="text-[10px] text-muted-foreground">{dayAppts.length} rdv</p>
+                      )}
+                    </div>
                   );
                 })}
               </div>
-              
+
+              {/* Time grid */}
+              <div className="grid grid-cols-[60px_repeat(7,1fr)] overflow-y-auto" style={{ maxHeight: 'calc(100vh - 280px)' }}>
+                {Array.from({ length: HOUR_END - HOUR_START }, (_, i) => {
+                  const hour = HOUR_START + i;
+                  return (
+                    <div key={hour} className="contents">
+                      {/* Hour label */}
+                      <div className="relative h-16 border-b border-border/50 flex items-start justify-end pr-2 pt-0.5">
+                        <span className="text-[10px] sm:text-xs text-muted-foreground font-medium">
+                          {String(hour).padStart(2, '0')}:00
+                        </span>
+                      </div>
+                      {/* Day cells */}
+                      {weekDaysArr.map((d, dayIdx) => {
+                        const blocked = isDateBlocked(d);
+                        const cellAppts = appointments.filter(apt => {
+                          if (apt.status === 'cancelled') return false;
+                          if (!isSameDay(parseISO(apt.appointment_date), d)) return false;
+                          const [h] = apt.appointment_time.split(':').map(Number);
+                          return h === hour;
+                        });
+
+                        return (
+                          <div 
+                            key={dayIdx} 
+                            className={cn(
+                              "relative h-16 border-l border-b border-border/50 p-0.5",
+                              blocked && "bg-red-50/50 dark:bg-red-950/10",
+                              isToday(d) && "bg-primary/[0.02]"
+                            )}
+                          >
+                            {cellAppts.map((apt) => {
+                              const [, m] = apt.appointment_time.split(':').map(Number);
+                              const topOffset = (m / 60) * 100;
+                              const durationMin = apt.duration_minutes || 60;
+                              const heightPct = Math.min((durationMin / 60) * 100, 200);
+                              
+                              return (
+                                <div
+                                  key={apt.id}
+                                  className={cn(
+                                    "absolute left-0.5 right-0.5 rounded-lg px-1.5 py-0.5 cursor-pointer transition-all hover:shadow-md hover:z-10 overflow-hidden text-left",
+                                    apt.status === 'pending' && "bg-amber-100 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-800",
+                                    apt.status === 'confirmed' && "bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-800",
+                                    apt.status === 'completed' && "bg-blue-100 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800",
+                                  )}
+                                  style={{ 
+                                    top: `${topOffset}%`, 
+                                    minHeight: `${Math.min(heightPct, 100)}%`,
+                                    zIndex: 1,
+                                  }}
+                                  onClick={() => {
+                                    setSelectedAppointment(apt);
+                                    setRescheduleForm({ 
+                                      date: apt.appointment_date, 
+                                      time: apt.appointment_time.slice(0, 5) 
+                                    });
+                                  }}
+                                >
+                                  <p className="text-[10px] sm:text-xs font-semibold text-foreground truncate leading-tight">
+                                    {apt.appointment_time.slice(0, 5)}
+                                  </p>
+                                  <p className="text-[9px] sm:text-[10px] text-foreground/80 truncate leading-tight">
+                                    {apt.client_name}
+                                  </p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
+
               {/* Legend */}
-              <div className="flex flex-wrap gap-3 sm:gap-5 mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-border">
+              <div className="flex flex-wrap gap-3 sm:gap-5 p-3 sm:p-4 border-t border-border">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-amber-400" />
                   <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">{t('calendar.pending')}</span>
@@ -291,107 +555,7 @@ export default function DashboardCalendar() {
                 </div>
               </div>
             </Card>
-
-            {/* Side panel - Selected day details */}
-            <div className="space-y-3 sm:space-y-4">
-              <Card className="p-4 sm:p-5 rounded-2xl">
-                <h3 className="font-semibold text-base sm:text-lg text-foreground mb-3 sm:mb-4">
-                  {selectedDate 
-                    ? format(selectedDate, "EEE d MMM", { locale: dateLocale }) 
-                    : t('calendar.selectDay')
-                  }
-                </h3>
-                
-                {selectedDate && (
-                  <>
-                    {loading ? (
-                      <div className="flex items-center justify-center py-6 sm:py-8">
-                        <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-muted-foreground" />
-                      </div>
-                    ) : selectedDayAppointments.length > 0 ? (
-                      <div className="space-y-2 sm:space-y-3">
-                        {selectedDayAppointments.sort((a, b) => 
-                          a.appointment_time.localeCompare(b.appointment_time)
-                        ).map(apt => (
-                          <div 
-                            key={apt.id}
-                            className="group p-2.5 sm:p-3 bg-secondary/50 rounded-xl hover:bg-secondary transition-colors cursor-pointer"
-                            onClick={() => {
-                              setSelectedAppointment(apt);
-                              setRescheduleForm({ 
-                                date: apt.appointment_date, 
-                                time: apt.appointment_time.slice(0, 5) 
-                              });
-                            }}
-                          >
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-0.5">
-                                  <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-muted-foreground shrink-0" />
-                                  <span className="font-semibold text-foreground text-sm">
-                                    {apt.appointment_time.slice(0, 5)}
-                                  </span>
-                                  <div className={cn(
-                                    "w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full shrink-0",
-                                    statusColors[apt.status]
-                                  )} />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <User className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-muted-foreground shrink-0" />
-                                  <span className="text-sm text-foreground truncate">
-                                    {apt.client_name}
-                                  </span>
-                                </div>
-                                {(apt.pack || apt.custom_service) && (
-                                  <p className="text-xs text-muted-foreground mt-0.5 ml-5 truncate">
-                                    {apt.custom_service?.name || apt.pack?.name} • {apt.custom_price ?? apt.custom_service?.price ?? apt.pack?.price ?? 0}€
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-6 sm:py-8 text-muted-foreground">
-                        <CalendarIcon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-2 sm:mb-3 opacity-30" />
-                        <p className="text-sm">{t('calendar.noAppointments')}</p>
-                      </div>
-                    )}
-                  </>
-                )}
-              </Card>
-
-              {/* Blocked periods */}
-              {blockedPeriods.length > 0 && (
-                <Card className="p-5 rounded-2xl">
-                  <h3 className="font-semibold text-foreground mb-3">{t('calendar.blockedPeriods')}</h3>
-                  <div className="space-y-2">
-                    {blockedPeriods.map(period => (
-                      <div key={period.id} className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-950/30 rounded-lg">
-                        <div>
-                          <p className="text-sm font-medium text-foreground">
-                            {format(parseISO(period.start_date), "d MMM", { locale: dateLocale })} → {format(parseISO(period.end_date), "d MMM", { locale: dateLocale })}
-                          </p>
-                          {period.reason && (
-                            <p className="text-xs text-muted-foreground">{period.reason}</p>
-                          )}
-                        </div>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-100"
-                          onClick={() => removeBlockedPeriod(period.id)}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </Card>
-              )}
-            </div>
-          </div>
+          )}
         </div>
       </DashboardLayout>
       {/* Appointment Details Dialog */}
