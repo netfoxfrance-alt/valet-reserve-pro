@@ -15,6 +15,7 @@ export interface ContactRequest {
   service_name: string | null;
   created_at: string;
   contacted_at: string | null;
+  images: string[] | null;
 }
 
 export function useCreateContactRequest() {
@@ -29,10 +30,10 @@ export function useCreateContactRequest() {
     message?: string;
     request_type?: 'contact' | 'quote';
     service_name?: string;
+    images?: string[];
   }) => {
     setLoading(true);
     try {
-      // 1. Créer ou rattacher à un client existant (anti-doublon)
       await findOrCreateClient({
         center_id: data.center_id,
         name: data.client_name,
@@ -42,7 +43,6 @@ export function useCreateContactRequest() {
         source: 'contact_request',
       });
       
-      // 2. Créer la demande de contact
       const { error } = await supabase
         .from('contact_requests')
         .insert({
@@ -54,6 +54,7 @@ export function useCreateContactRequest() {
           message: data.message || null,
           request_type: data.request_type || 'contact',
           service_name: data.service_name || null,
+          images: data.images || [],
         });
       
       return { error };
