@@ -312,6 +312,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
   const renderGallery = (block: PageBlock) => {
     const images = block.images || [];
     if (images.length === 0) return null;
+    const captions = block.imageCaptions || {};
+    const hasCaptions = Object.values(captions).some(c => c && c.trim());
 
     const openLightbox = (index: number) => {
       setLightboxImages(images);
@@ -327,25 +329,60 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
         >
           {block.title}
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-          {images.slice(0, 8).map((url, index) => (
-            <button 
-              key={index} 
-              className="aspect-square rounded-xl overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 transition-transform duration-300 hover:scale-[1.03] animate-fade-in"
-              style={{ 
-                '--tw-ring-color': customization.colors.primary,
-                animationDelay: `${index * 0.05}s`,
-              } as React.CSSProperties}
-              onClick={() => openLightbox(index)}
-            >
-              <img
-                src={url}
-                alt={`${block.title} ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-            </button>
-          ))}
-        </div>
+        {hasCaptions ? (
+          /* Card layout with captions - Apple style */
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {images.slice(0, 8).map((url, index) => (
+              <button
+                key={index}
+                className="group text-left rounded-2xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300 hover:shadow-lg animate-fade-in"
+                style={{
+                  '--tw-ring-color': customization.colors.primary,
+                  animationDelay: `${index * 0.05}s`,
+                  backgroundColor: customization.layout.dark_mode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
+                } as React.CSSProperties}
+                onClick={() => openLightbox(index)}
+              >
+                <div className="aspect-[4/3] overflow-hidden">
+                  <img
+                    src={url}
+                    alt={captions[url] || `${block.title} ${index + 1}`}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                {captions[url] && (
+                  <p 
+                    className="px-4 py-3 text-sm font-medium"
+                    style={{ color: textColors.primary }}
+                  >
+                    {captions[url]}
+                  </p>
+                )}
+              </button>
+            ))}
+          </div>
+        ) : (
+          /* Classic grid without captions */
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+            {images.slice(0, 8).map((url, index) => (
+              <button 
+                key={index} 
+                className="aspect-square rounded-2xl overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 transition-transform duration-300 hover:scale-[1.03] animate-fade-in"
+                style={{ 
+                  '--tw-ring-color': customization.colors.primary,
+                  animationDelay: `${index * 0.05}s`,
+                } as React.CSSProperties}
+                onClick={() => openLightbox(index)}
+              >
+                <img
+                  src={url}
+                  alt={`${block.title} ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     );
   };
