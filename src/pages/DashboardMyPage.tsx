@@ -90,27 +90,83 @@ export default function DashboardMyPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] 2xl:grid-cols-[1fr_420px] gap-6 xl:gap-8">
+            {/* Preview - appears second on mobile, first on desktop */}
             <div className="order-2 xl:order-1">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-base sm:text-lg font-semibold text-foreground">{t('myPage.preview')}</h2>
-                <div className="flex items-center gap-1 sm:gap-2">
-                  <div className="flex bg-secondary rounded-lg p-1">
-                    <button onClick={() => setPreviewMode('mobile')} className={cn("p-1.5 sm:p-2 rounded-md transition-colors", previewMode === 'mobile' ? "bg-background shadow-sm" : "hover:bg-background/50")}><Smartphone className="w-4 h-4" /></button>
-                    <button onClick={() => setPreviewMode('desktop')} className={cn("p-1.5 sm:p-2 rounded-md transition-colors hidden sm:flex", previewMode === 'desktop' ? "bg-background shadow-sm" : "hover:bg-background/50")}><Monitor className="w-4 h-4" /></button>
+                <div className="flex items-center gap-1.5">
+                  <div className="flex bg-muted rounded-lg p-0.5">
+                    <button 
+                      onClick={() => setPreviewMode('mobile')} 
+                      className={cn(
+                        "p-1.5 sm:p-2 rounded-md transition-all duration-200",
+                        previewMode === 'mobile' ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <Smartphone className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={() => setPreviewMode('desktop')} 
+                      className={cn(
+                        "p-1.5 sm:p-2 rounded-md transition-all duration-200 hidden sm:flex",
+                        previewMode === 'desktop' ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <Monitor className="w-4 h-4" />
+                    </button>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={handleRefreshPreview} className="p-1.5 sm:p-2 h-auto"><RefreshCw className="w-4 h-4" /></Button>
+                  <Button variant="ghost" size="icon" onClick={handleRefreshPreview} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                    <RefreshCw className="w-3.5 h-3.5" />
+                  </Button>
                 </div>
               </div>
-              <div className={cn("bg-secondary/30 rounded-xl sm:rounded-2xl p-2 sm:p-4 flex justify-center overflow-hidden", previewMode === 'desktop' ? "min-h-[500px] sm:min-h-[700px]" : "min-h-[450px] sm:min-h-[600px]")}>
-                <div key={previewKey} className={cn("bg-background rounded-lg sm:rounded-xl shadow-xl overflow-hidden transition-all duration-300 relative", previewMode === 'mobile' ? "w-full max-w-[320px] sm:max-w-[375px]" : "w-full max-w-[800px]")}
-                  style={{ height: previewMode === 'mobile' ? 'calc(100vh - 350px)' : '600px', maxHeight: previewMode === 'mobile' ? '580px' : '600px', minHeight: previewMode === 'mobile' ? '400px' : '500px' }}>
-                  <div className="h-full overflow-y-auto relative">
-                    {previewCenter && <CenterLanding center={previewCenter} packs={packs} onStartBooking={() => {}} onSelectPack={() => {}} hasPacks={packs.length > 0} isPro={center?.subscription_plan === 'pro' || center?.subscription_plan === 'trial'} isPreview />}
+
+              {/* Preview container with device frame */}
+              <div className={cn(
+                "rounded-2xl flex justify-center transition-all duration-300",
+                previewMode === 'desktop' 
+                  ? "bg-muted/40 p-3 sm:p-5" 
+                  : "bg-muted/40 p-3 sm:p-6"
+              )}>
+                <div 
+                  key={previewKey} 
+                  className={cn(
+                    "bg-background overflow-hidden transition-all duration-300 relative flex flex-col",
+                    previewMode === 'mobile' 
+                      ? "w-full max-w-[375px] rounded-[2.5rem] ring-[6px] ring-foreground/10 shadow-2xl" 
+                      : "w-full rounded-xl ring-1 ring-border shadow-lg"
+                  )}
+                  style={{ 
+                    height: previewMode === 'mobile' ? 'min(680px, calc(100vh - 280px))' : 'min(620px, calc(100vh - 280px))',
+                  }}
+                >
+                  {/* iPhone notch (mobile only) */}
+                  {previewMode === 'mobile' && (
+                    <div className="relative z-10 flex justify-center pt-2 pb-1 bg-background">
+                      <div className="w-[120px] h-[28px] bg-foreground/10 rounded-full" />
+                    </div>
+                  )}
+
+                  {/* Scrollable content */}
+                  <div className="flex-1 overflow-y-auto overflow-x-hidden">
+                    {previewCenter && (
+                      <CenterLanding 
+                        center={previewCenter} 
+                        packs={packs} 
+                        onStartBooking={() => {}} 
+                        onSelectPack={() => {}} 
+                        hasPacks={packs.length > 0} 
+                        isPro={center?.subscription_plan === 'pro' || center?.subscription_plan === 'trial'} 
+                        isPreview 
+                      />
+                    )}
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Customization panel - appears first on mobile */}
             <div className="order-1 xl:order-2">
               <h2 className="text-lg font-semibold text-foreground mb-4">{t('myPage.customization')}</h2>
               {center && user && (
@@ -121,7 +177,6 @@ export default function DashboardMyPage() {
             </div>
           </div>
         </div>
-
       <Dialog open={requestDialogOpen} onOpenChange={setRequestDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
