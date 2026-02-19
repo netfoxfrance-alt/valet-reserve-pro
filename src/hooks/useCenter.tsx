@@ -21,6 +21,7 @@ export interface Center {
   latitude?: number | null;
   longitude?: number | null;
   intervention_radius_km?: number;
+  quote_form_message?: string | null;
   created_at: string;
   updated_at: string;
 }

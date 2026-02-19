@@ -308,6 +308,7 @@ export default function CenterBooking() {
       client_phone: data.phone,
       client_address: data.address,
       message: data.message,
+      images: data.images,
     });
     
     if (error) {
@@ -336,6 +337,7 @@ export default function CenterBooking() {
       message: data.message,
       request_type: 'quote',
       service_name: selectedPack.name,
+      images: data.images,
     });
     
     if (error) {
@@ -760,6 +762,7 @@ export default function CenterBooking() {
               title={`Demander un devis · ${selectedPack.name}`}
               subtitle="Décrivez votre besoin, nous vous envoyons un devis personnalisé."
               submitLabel="Envoyer ma demande de devis"
+              precisionMessage={center.quote_form_message || undefined}
             />
           </div>
         </main>
