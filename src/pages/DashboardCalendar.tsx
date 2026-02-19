@@ -6,12 +6,15 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { 
-  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight, LayoutGrid, CalendarDays
+  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight, LayoutGrid, CalendarDays, CalendarPlus
 } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter } from '@/hooks/useCenter';
 import { useBlockedPeriods } from '@/hooks/useAvailability';
+import { useMyCustomServices } from '@/hooks/useCustomServices';
 import { format, addMonths, subMonths, addWeeks, subWeeks, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, isToday, parseISO, isBefore } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -19,6 +22,9 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
 import { WeeklyCalendarView } from '@/components/dashboard/WeeklyCalendarView';
+import { ConfirmationCalendarDialog } from '@/components/dashboard/ConfirmationCalendarDialog';
+import { useCalendarSync } from '@/hooks/useCalendarSync';
+import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
 
 interface BlockedPeriod {
   id: string;
@@ -52,9 +58,28 @@ export default function DashboardCalendar() {
   const [loadingReschedule, setLoadingReschedule] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   
-  const { appointments, loading, updateStatus, deleteAppointment, refetch } = useMyAppointments();
+  const { appointments, loading, updateStatus, createAppointment, deleteAppointment, refetch } = useMyAppointments();
   const { center } = useMyCenter();
   const { blockedPeriods, addBlockedPeriod, removeBlockedPeriod: deleteBlockedPeriod } = useBlockedPeriods(center?.id);
+  const { services: customServices } = useMyCustomServices();
+  const { markAsSynced, isSynced } = useCalendarSync();
+  
+  // Create appointment state
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showCalendarSyncDialog, setShowCalendarSyncDialog] = useState(false);
+  const [lastCreatedAppointment, setLastCreatedAppointment] = useState<Appointment | null>(null);
+  const [loadingCreate, setLoadingCreate] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    client_name: '',
+    client_email: '',
+    client_phone: '',
+    client_address: '',
+    vehicle_type: 'berline',
+    appointment_date: '',
+    appointment_time: '',
+    custom_service_id: '',
+    notes: '',
+  });
 
   // Calendar navigation
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
@@ -175,6 +200,94 @@ export default function DashboardCalendar() {
 
   const weekDays = t('calendar.weekDays', { returnObjects: true }) as string[];
 
+  // Open create dialog with pre-filled date/time
+  const openCreateDialog = (date?: string, time?: string) => {
+    setCreateForm({
+      client_name: '',
+      client_email: '',
+      client_phone: '',
+      client_address: '',
+      vehicle_type: 'berline',
+      appointment_date: date || format(new Date(), 'yyyy-MM-dd'),
+      appointment_time: time || '09:00',
+      custom_service_id: '',
+      notes: '',
+    });
+    setShowCreateDialog(true);
+  };
+
+  // Handle create appointment
+  const handleCreateAppointment = async () => {
+    if (!createForm.client_name || !createForm.client_phone || !createForm.appointment_date || !createForm.appointment_time) {
+      toast.error('Veuillez remplir les champs obligatoires');
+      return;
+    }
+    setLoadingCreate(true);
+    
+    const selectedService = customServices.find(s => s.id === createForm.custom_service_id);
+    
+    const { error } = await createAppointment({
+      client_name: createForm.client_name,
+      client_email: createForm.client_email,
+      client_phone: createForm.client_phone,
+      client_address: createForm.client_address,
+      vehicle_type: createForm.vehicle_type,
+      appointment_date: createForm.appointment_date,
+      appointment_time: createForm.appointment_time,
+      custom_service_id: createForm.custom_service_id || null,
+      custom_price: selectedService?.price || null,
+      duration_minutes: selectedService?.duration_minutes || 60,
+      notes: createForm.notes,
+      service_name: selectedService?.name,
+      send_email: !!createForm.client_email,
+    });
+    
+    setLoadingCreate(false);
+    
+    if (error) {
+      toast.error('Erreur lors de la création');
+    } else {
+      toast.success('Rendez-vous créé !');
+      setShowCreateDialog(false);
+      await refetch();
+      
+      // Find the newly created appointment and offer calendar sync
+      // We'll use a timeout to allow refetch to complete
+      setTimeout(() => {
+        const newApt = appointments.find(a => 
+          a.appointment_date === createForm.appointment_date && 
+          a.appointment_time.startsWith(createForm.appointment_time) &&
+          a.client_name === createForm.client_name
+        );
+        if (newApt) {
+          setLastCreatedAppointment(newApt);
+          setShowCalendarSyncDialog(true);
+        }
+      }, 500);
+    }
+  };
+
+  const handleAddToGoogleCalendar = () => {
+    if (!lastCreatedAppointment) return;
+    const url = generateAppointmentCalendarUrl({
+      id: lastCreatedAppointment.id,
+      client_name: lastCreatedAppointment.client_name,
+      client_phone: lastCreatedAppointment.client_phone,
+      client_email: lastCreatedAppointment.client_email,
+      client_address: lastCreatedAppointment.client_address,
+      appointment_date: lastCreatedAppointment.appointment_date,
+      appointment_time: lastCreatedAppointment.appointment_time,
+      duration_minutes: lastCreatedAppointment.duration_minutes,
+      vehicle_type: lastCreatedAppointment.vehicle_type,
+      notes: lastCreatedAppointment.notes,
+      pack: lastCreatedAppointment.pack ? { name: lastCreatedAppointment.pack.name, price: lastCreatedAppointment.pack.price } : null,
+      custom_service: lastCreatedAppointment.custom_service ? { name: lastCreatedAppointment.custom_service.name, price: lastCreatedAppointment.custom_service.price } : null,
+      center_address: center?.address || undefined,
+    });
+    window.open(url, '_blank');
+    markAsSynced(lastCreatedAppointment.id);
+    setShowCalendarSyncDialog(false);
+  };
   return (
     <>
     <DashboardLayout title={t('calendar.title')} subtitle={center?.name}>
@@ -193,7 +306,14 @@ export default function DashboardCalendar() {
               </Button>
             </div>
             
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
+              {/* Add appointment button */}
+              <Button onClick={() => openCreateDialog()} className="rounded-xl h-9 text-sm">
+                <Plus className="w-4 h-4 mr-1.5" />
+                <span className="hidden sm:inline">Ajouter un RDV</span>
+                <span className="sm:hidden">RDV</span>
+              </Button>
+
               {/* View toggle */}
               <div className="flex rounded-xl border border-border overflow-hidden">
                 <button
@@ -218,7 +338,7 @@ export default function DashboardCalendar() {
                 </button>
               </div>
               
-              <Button variant="outline" onClick={goToToday} className="rounded-xl flex-1 sm:flex-none h-9 text-sm">
+              <Button variant="outline" onClick={goToToday} className="rounded-xl h-9 text-sm">
                 <CalendarIcon className="w-4 h-4 mr-1.5" />
                 {t('calendar.today')}
               </Button>
@@ -232,7 +352,7 @@ export default function DashboardCalendar() {
                   });
                   setShowBlockDialog(true);
                 }}
-                className="rounded-xl flex-1 sm:flex-none h-9 text-sm"
+                className="rounded-xl h-9 text-sm"
               >
                 <Ban className="w-4 h-4 mr-1.5" />
                 <span className="hidden sm:inline">{t('calendar.block')}</span>
@@ -253,6 +373,7 @@ export default function DashboardCalendar() {
                     time: apt.appointment_time.slice(0, 5) 
                   });
                 }}
+                onSlotClick={(date, time) => openCreateDialog(date, time)}
                 blockedPeriods={blockedPeriods}
               />
             </div>
@@ -692,6 +813,160 @@ export default function DashboardCalendar() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Create Appointment Dialog */}
+      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <DialogContent className="max-w-md rounded-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plus className="w-5 h-5 text-primary" />
+              Nouveau rendez-vous
+            </DialogTitle>
+            <DialogDescription className="sr-only">Créer un nouveau rendez-vous</DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-sm">Date *</Label>
+                <Input
+                  type="date"
+                  value={createForm.appointment_date}
+                  onChange={(e) => setCreateForm(prev => ({ ...prev, appointment_date: e.target.value }))}
+                  className="h-10 rounded-xl"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-sm">Heure *</Label>
+                <Input
+                  type="time"
+                  value={createForm.appointment_time}
+                  onChange={(e) => setCreateForm(prev => ({ ...prev, appointment_time: e.target.value }))}
+                  className="h-10 rounded-xl"
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-1.5">
+              <Label className="text-sm">Nom du client *</Label>
+              <Input
+                value={createForm.client_name}
+                onChange={(e) => setCreateForm(prev => ({ ...prev, client_name: e.target.value }))}
+                placeholder="Jean Dupont"
+                className="h-10 rounded-xl"
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-sm">Téléphone *</Label>
+                <Input
+                  value={createForm.client_phone}
+                  onChange={(e) => setCreateForm(prev => ({ ...prev, client_phone: e.target.value }))}
+                  placeholder="06 12 34 56 78"
+                  className="h-10 rounded-xl"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-sm">Email</Label>
+                <Input
+                  type="email"
+                  value={createForm.client_email}
+                  onChange={(e) => setCreateForm(prev => ({ ...prev, client_email: e.target.value }))}
+                  placeholder="email@exemple.fr"
+                  className="h-10 rounded-xl"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-sm">Prestation</Label>
+              <Select value={createForm.custom_service_id} onValueChange={(v) => setCreateForm(prev => ({ ...prev, custom_service_id: v }))}>
+                <SelectTrigger className="h-10 rounded-xl">
+                  <SelectValue placeholder="Choisir une prestation" />
+                </SelectTrigger>
+                <SelectContent>
+                  {customServices.filter(s => s.active).map(service => (
+                    <SelectItem key={service.id} value={service.id}>
+                      {service.name} — {service.price}€ ({service.duration_minutes}min)
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-sm">Type véhicule</Label>
+                <Select value={createForm.vehicle_type} onValueChange={(v) => setCreateForm(prev => ({ ...prev, vehicle_type: v }))}>
+                  <SelectTrigger className="h-10 rounded-xl">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="citadine">Citadine</SelectItem>
+                    <SelectItem value="berline">Berline</SelectItem>
+                    <SelectItem value="suv">SUV</SelectItem>
+                    <SelectItem value="utilitaire">Utilitaire</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-sm">Adresse</Label>
+                <Input
+                  value={createForm.client_address}
+                  onChange={(e) => setCreateForm(prev => ({ ...prev, client_address: e.target.value }))}
+                  placeholder="Adresse"
+                  className="h-10 rounded-xl"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-sm">Notes</Label>
+              <Textarea
+                value={createForm.notes}
+                onChange={(e) => setCreateForm(prev => ({ ...prev, notes: e.target.value }))}
+                placeholder="Notes internes..."
+                className="rounded-xl resize-none"
+                rows={2}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter className="gap-2 pt-2">
+            <Button variant="outline" onClick={() => setShowCreateDialog(false)} className="rounded-xl">
+              Annuler
+            </Button>
+            <Button 
+              onClick={handleCreateAppointment}
+              disabled={loadingCreate || !createForm.client_name || !createForm.client_phone}
+              className="rounded-xl min-w-[140px]"
+            >
+              {loadingCreate ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                <>
+                  <Plus className="w-4 h-4 mr-1.5" />
+                  Créer le RDV
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Calendar Sync Dialog after creation */}
+      <ConfirmationCalendarDialog
+        open={showCalendarSyncDialog}
+        onOpenChange={setShowCalendarSyncDialog}
+        appointment={lastCreatedAppointment}
+        centerAddress={center?.address || undefined}
+        isAlreadySynced={lastCreatedAppointment ? isSynced(lastCreatedAppointment.id) : false}
+        onAddToCalendar={() => {
+          if (lastCreatedAppointment) {
+            markAsSynced(lastCreatedAppointment.id);
+          }
+          setShowCalendarSyncDialog(false);
+        }}
+      />
     </>
   );
 }
