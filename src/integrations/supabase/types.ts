@@ -238,6 +238,7 @@ export type Database = {
           name: string
           owner_id: string
           phone: string | null
+          quote_form_message: string | null
           slug: string
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
@@ -262,6 +263,7 @@ export type Database = {
           name: string
           owner_id: string
           phone?: string | null
+          quote_form_message?: string | null
           slug: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
@@ -286,6 +288,7 @@ export type Database = {
           name?: string
           owner_id?: string
           phone?: string | null
+          quote_form_message?: string | null
           slug?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
@@ -416,6 +419,7 @@ export type Database = {
           contacted_at: string | null
           created_at: string
           id: string
+          images: string[] | null
           message: string | null
           request_type: string
           service_name: string | null
@@ -430,6 +434,7 @@ export type Database = {
           contacted_at?: string | null
           created_at?: string
           id?: string
+          images?: string[] | null
           message?: string | null
           request_type?: string
           service_name?: string | null
@@ -444,6 +449,7 @@ export type Database = {
           contacted_at?: string | null
           created_at?: string
           id?: string
+          images?: string[] | null
           message?: string | null
           request_type?: string
           service_name?: string | null
