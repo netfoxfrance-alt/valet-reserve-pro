@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,20 +7,21 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { useMyCenter } from '@/hooks/useCenter';
 import { useMyContactRequests, ContactRequest } from '@/hooks/useContactRequests';
-import { MessageSquare, Phone, Clock, CheckCircle, XCircle, MapPin, Mail, FileText, Image, Save, Pencil, Info } from 'lucide-react';
+import { MessageSquare, Phone, Clock, CheckCircle, XCircle, MapPin, Mail, FileText, Image, Save, Pencil, Info, FileCheck } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import type { Locale } from 'date-fns';
 
-function RequestCard({ request, dateLocale, t, onMarkContacted, onMarkConverted, onMarkClosed }: {
+function RequestCard({ request, dateLocale, t, onMarkContacted, onMarkConverted, onMarkClosed, onCreateQuote }: {
   request: ContactRequest;
   dateLocale: Locale;
   t: (key: string) => string;
   onMarkContacted: (id: string) => void;
   onMarkConverted: (id: string) => void;
   onMarkClosed: (id: string) => void;
+  onCreateQuote: (request: ContactRequest) => void;
 }) {
   const [showImages, setShowImages] = useState(false);
   const images = request.images || [];
@@ -123,9 +125,14 @@ function RequestCard({ request, dateLocale, t, onMarkContacted, onMarkConverted,
                 <Phone className="w-4 h-4 mr-1.5" />{t('requests.markContacted')}
               </Button>
             )}
+            {request.request_type === 'quote' && request.status !== 'closed' && (
+              <Button variant="default" size="sm" onClick={() => onCreateQuote(request)} className="flex-1 sm:flex-none h-9 rounded-xl bg-primary">
+                <FileCheck className="w-4 h-4 mr-1.5" />Créer un devis
+              </Button>
+            )}
             {(request.status === 'new' || request.status === 'contacted') && (
               <>
-                <Button variant="default" size="sm" onClick={() => onMarkConverted(request.id)} className="flex-1 sm:flex-none h-9 rounded-xl">
+                <Button variant="outline" size="sm" onClick={() => onMarkConverted(request.id)} className="flex-1 sm:flex-none h-9 rounded-xl">
                   <CheckCircle className="w-4 h-4 mr-1.5" />{t('requests.markAnswered')}
                 </Button>
                 <Button variant="ghost" size="sm" onClick={() => onMarkClosed(request.id)} className="h-9 rounded-xl">
@@ -143,6 +150,7 @@ function RequestCard({ request, dateLocale, t, onMarkContacted, onMarkConverted,
 export default function DashboardRequests() {
   const { t, i18n } = useTranslation();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
   const { center, loading: centerLoading, updateCenter } = useMyCenter();
   const { requests, loading, fetchRequests, updateStatus } = useMyContactRequests();
@@ -161,6 +169,22 @@ export default function DashboardRequests() {
   const contactRequests = useMemo(() => requests.filter(r => r.request_type !== 'quote'), [requests]);
   const quoteRequests = useMemo(() => requests.filter(r => r.request_type === 'quote'), [requests]);
   const filteredRequests = activeTab === 'contact' ? contactRequests : quoteRequests;
+
+  const handleCreateQuote = (request: ContactRequest) => {
+    navigate('/dashboard/invoices', {
+      state: {
+        type: 'quote' as const,
+        prefill: {
+          clientName: request.client_name,
+          clientEmail: request.client_email || '',
+          clientPhone: request.client_phone,
+          clientAddress: request.client_address || '',
+          serviceName: request.service_name || '',
+          message: request.message || '',
+        },
+      },
+    });
+  };
 
   const handleSaveMessage = async () => {
     if (!updateCenter) return;
@@ -267,6 +291,7 @@ export default function DashboardRequests() {
                 onMarkContacted={(id) => updateStatus(id, 'contacted', true)}
                 onMarkConverted={(id) => updateStatus(id, 'converted')}
                 onMarkClosed={(id) => updateStatus(id, 'closed')}
+                onCreateQuote={handleCreateQuote}
               />
             ))}
           </div>
