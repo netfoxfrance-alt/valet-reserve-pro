@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import type { Locale } from 'date-fns';
 
-function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted, onMarkConverted, onMarkClosed, onCreateQuote, onCreateClient }: {
+function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted, onMarkConverted, onMarkClosed, onCreateQuote }: {
   request: ContactRequest;
   dateLocale: Locale;
   t: (key: string) => string;
@@ -25,7 +25,6 @@ function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted
   onMarkConverted: (id: string) => void;
   onMarkClosed: (id: string) => void;
   onCreateQuote: (request: ContactRequest) => void;
-  onCreateClient: (request: ContactRequest) => void;
 }) {
   const [showImages, setShowImages] = useState(false);
   const images = request.images || [];
@@ -62,6 +61,13 @@ function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted
           </div>
           <div className="flex flex-col items-end gap-1.5">
             {getStatusBadge(request.status)}
+            {request.request_type === 'quote' && (
+              isExistingClient ? (
+                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Client existant</Badge>
+              ) : (
+                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">Nouveau prospect</Badge>
+              )
+            )}
             {request.service_name && (
               <Badge variant="outline" className="text-xs">{request.service_name}</Badge>
             )}
@@ -129,14 +135,9 @@ function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted
                 <Phone className="w-4 h-4 mr-1.5" />{t('requests.markContacted')}
               </Button>
             )}
-            {request.request_type === 'quote' && request.status !== 'closed' && isExistingClient && (
+            {request.request_type === 'quote' && request.status !== 'closed' && (
               <Button variant="default" size="sm" onClick={() => onCreateQuote(request)} className="flex-1 sm:flex-none h-9 rounded-xl bg-primary">
                 <FileCheck className="w-4 h-4 mr-1.5" />Créer un devis
-              </Button>
-            )}
-            {request.request_type === 'quote' && request.status !== 'closed' && !isExistingClient && (
-              <Button variant="default" size="sm" onClick={() => onCreateClient(request)} className="flex-1 sm:flex-none h-9 rounded-xl bg-primary">
-                <UserPlus className="w-4 h-4 mr-1.5" />Créer fiche client
               </Button>
             )}
             {(request.status === 'new' || request.status === 'contacted') && (
@@ -194,7 +195,27 @@ export default function DashboardRequests() {
 
 
 
-  const handleCreateQuote = (request: ContactRequest) => {
+  const handleCreateQuote = async (request: ContactRequest) => {
+    if (!center) return;
+    
+    // Always ensure client exists (create if needed, find if existing)
+    const { clientId, error } = await findOrCreateClient({
+      center_id: center.id,
+      name: request.client_name,
+      phone: request.client_phone,
+      email: request.client_email,
+      address: request.client_address,
+      source: 'contact_request',
+    });
+    
+    if (error || !clientId) {
+      toast({ title: 'Erreur', description: error || 'Impossible de traiter le client', variant: 'destructive' });
+      return;
+    }
+    
+    // Refresh clients list in background
+    refetchClients();
+    
     navigate('/dashboard/invoices', {
       state: {
         type: 'quote' as const,
@@ -208,25 +229,6 @@ export default function DashboardRequests() {
         },
       },
     });
-  };
-
-  const handleCreateClient = async (request: ContactRequest) => {
-    if (!center) return;
-    const { clientId, error } = await findOrCreateClient({
-      center_id: center.id,
-      name: request.client_name,
-      phone: request.client_phone,
-      email: request.client_email,
-      address: request.client_address,
-      source: 'contact_request',
-    });
-    if (error || !clientId) {
-      toast({ title: 'Erreur', description: error || 'Impossible de créer le client', variant: 'destructive' });
-      return;
-    }
-    toast({ title: 'Client créé avec succès' });
-    await refetchClients();
-    handleCreateQuote(request);
   };
 
   const handleSaveMessage = async () => {
@@ -336,7 +338,6 @@ export default function DashboardRequests() {
                 onMarkConverted={(id) => updateStatus(id, 'converted')}
                 onMarkClosed={(id) => updateStatus(id, 'closed')}
                 onCreateQuote={handleCreateQuote}
-                onCreateClient={handleCreateClient}
               />
             ))}
           </div>
