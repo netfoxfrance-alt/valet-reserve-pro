@@ -16,6 +16,8 @@ export interface ContactRequest {
   created_at: string;
   contacted_at: string | null;
   images: string[] | null;
+  client_type: string;
+  company_name: string | null;
 }
 
 export function useCreateContactRequest() {
@@ -31,6 +33,8 @@ export function useCreateContactRequest() {
     request_type?: 'contact' | 'quote';
     service_name?: string;
     images?: string[];
+    client_type?: string;
+    company_name?: string;
   }) => {
     setLoading(true);
     try {
@@ -55,6 +59,8 @@ export function useCreateContactRequest() {
           request_type: data.request_type || 'contact',
           service_name: data.service_name || null,
           images: data.images || [],
+          client_type: data.client_type || 'particulier',
+          company_name: data.company_name || null,
         });
       
       return { error };

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { User, Phone, MessageSquare, MapPin, Mail, ImagePlus, X, Loader2, Info } from 'lucide-react';
+import { User, Phone, MessageSquare, MapPin, Mail, ImagePlus, X, Loader2, Info, Building2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface ContactRequestData {
@@ -14,6 +14,8 @@ export interface ContactRequestData {
   address: string;
   message: string;
   images: string[];
+  client_type: 'particulier' | 'professionnel';
+  company_name: string;
 }
 
 interface ContactRequestFormProps {
@@ -33,6 +35,8 @@ export function ContactRequestForm({ onSubmit, isSubmitting, title, subtitle, su
   const [message, setMessage] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [clientType, setClientType] = useState<'particulier' | 'professionnel'>('particulier');
+  const [companyName, setCompanyName] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +74,7 @@ export function ContactRequestForm({ onSubmit, isSubmitting, title, subtitle, su
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ name, email, phone, address, message, images });
+    onSubmit({ name, email, phone, address, message, images, client_type: clientType, company_name: companyName });
   };
 
   return (
@@ -93,6 +97,50 @@ export function ContactRequestForm({ onSubmit, isSubmitting, title, subtitle, su
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Client Type */}
+          <div className="space-y-2">
+            <Label>Type de client</Label>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant={clientType === 'particulier' ? 'default' : 'outline'}
+                size="sm"
+                className="flex-1 gap-2"
+                onClick={() => setClientType('particulier')}
+              >
+                <User className="w-4 h-4" /> Particulier
+              </Button>
+              <Button
+                type="button"
+                variant={clientType === 'professionnel' ? 'default' : 'outline'}
+                size="sm"
+                className="flex-1 gap-2"
+                onClick={() => setClientType('professionnel')}
+              >
+                <Building2 className="w-4 h-4" /> Professionnel
+              </Button>
+            </div>
+          </div>
+
+          {/* Company name for pro */}
+          {clientType === 'professionnel' && (
+            <div className="space-y-2">
+              <Label htmlFor="companyName">Nom de la société *</Label>
+              <div className="relative">
+                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input
+                  id="companyName"
+                  type="text"
+                  placeholder="Ma Société SAS"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  className="pl-12 h-12 rounded-xl"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="name">Votre nom *</Label>
             <div className="relative">
