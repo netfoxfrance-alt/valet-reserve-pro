@@ -135,9 +135,14 @@ function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted
                 <Phone className="w-4 h-4 mr-1.5" />{t('requests.markContacted')}
               </Button>
             )}
-            {request.request_type === 'quote' && request.status !== 'closed' && (
+            {request.request_type === 'quote' && request.status !== 'closed' && isExistingClient && (
               <Button variant="default" size="sm" onClick={() => onCreateQuote(request)} className="flex-1 sm:flex-none h-9 rounded-xl bg-primary">
                 <FileCheck className="w-4 h-4 mr-1.5" />Créer un devis
+              </Button>
+            )}
+            {request.request_type === 'quote' && request.status !== 'closed' && !isExistingClient && (
+              <Button variant="default" size="sm" onClick={() => onCreateQuote(request)} className="flex-1 sm:flex-none h-9 rounded-xl bg-primary">
+                <UserPlus className="w-4 h-4 mr-1.5" />Créer fiche client
               </Button>
             )}
             {(request.status === 'new' || request.status === 'contacted') && (
@@ -220,6 +225,7 @@ export default function DashboardRequests() {
       state: {
         type: 'quote' as const,
         prefill: {
+          clientId,
           clientName: request.client_name,
           clientEmail: request.client_email || '',
           clientPhone: request.client_phone,

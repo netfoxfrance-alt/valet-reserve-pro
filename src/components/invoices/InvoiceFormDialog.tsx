@@ -12,6 +12,7 @@ import { Plus, Trash2, FileText, FileCheck, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface InvoicePrefillData {
+  clientId?: string;
   clientName?: string;
   clientEmail?: string;
   clientPhone?: string;
@@ -116,19 +117,26 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
         setClientPhone(prefillData.clientPhone || '');
         setClientAddress(prefillData.clientAddress || '');
         
-        // Auto-select matching client
-        if (clients.length > 0) {
-          const matchingClient = clients.find(c => 
+        // Auto-select client: prefer explicit clientId, fallback to phone/email matching
+        let matchedClient: typeof clients[number] | undefined;
+        
+        if (prefillData.clientId && clients.length > 0) {
+          matchedClient = clients.find(c => c.id === prefillData.clientId);
+        }
+        
+        if (!matchedClient && clients.length > 0) {
+          matchedClient = clients.find(c => 
             (prefillData.clientPhone && c.phone && c.phone.replace(/[^0-9+]/g, '') === prefillData.clientPhone.replace(/[^0-9+]/g, '')) ||
             (prefillData.clientEmail && c.email && c.email.toLowerCase() === prefillData.clientEmail.toLowerCase())
           );
-          if (matchingClient) {
-            setSelectedClientId(matchingClient.id);
-            setClientName(matchingClient.name);
-            setClientEmail(matchingClient.email || '');
-            setClientPhone(matchingClient.phone || '');
-            setClientAddress(matchingClient.address || '');
-          }
+        }
+        
+        if (matchedClient) {
+          setSelectedClientId(matchedClient.id);
+          setClientName(matchedClient.name);
+          setClientEmail(matchedClient.email || '');
+          setClientPhone(matchedClient.phone || '');
+          setClientAddress(matchedClient.address || '');
         }
         
         // Pre-fill service as first item description
