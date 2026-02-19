@@ -181,6 +181,22 @@ export default function DashboardClients() {
           </div>
         ) : (
           <>
+            {/* KPI Cards */}
+            <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
+              <Card variant="elevated" className="p-5 rounded-2xl">
+                <p className="text-sm font-medium text-muted-foreground mb-1">{t('clients.totalClients')}</p>
+                <p className="text-3xl font-bold text-foreground tracking-tight">{totalClients}</p>
+              </Card>
+              <Card variant="elevated" className="p-5 rounded-2xl">
+                <p className="text-sm font-medium text-muted-foreground mb-1">Particuliers</p>
+                <p className="text-3xl font-bold text-foreground tracking-tight">{partClients}</p>
+              </Card>
+              <Card variant="elevated" className="p-5 rounded-2xl">
+                <p className="text-sm font-medium text-muted-foreground mb-1">Professionnels</p>
+                <p className="text-3xl font-bold text-foreground tracking-tight">{proClients}</p>
+              </Card>
+            </div>
+
             {/* Filter Chips */}
             <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-1">
               {filterButtons.map(f => (
