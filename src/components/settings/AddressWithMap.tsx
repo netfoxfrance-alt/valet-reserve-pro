@@ -143,8 +143,10 @@ export function AddressWithMap({
           <LocationMap
             latitude={latitude}
             longitude={longitude}
+            radiusKm={radiusKm}
             address={address}
-            height="180px"
+            height="200px"
+            className="shadow-sm"
           />
 
           {/* Radius slider */}
