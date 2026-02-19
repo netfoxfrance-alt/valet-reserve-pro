@@ -11,11 +11,21 @@ import { useToast } from '@/hooks/use-toast';
 import { Plus, Trash2, FileText, FileCheck, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+export interface InvoicePrefillData {
+  clientName?: string;
+  clientEmail?: string;
+  clientPhone?: string;
+  clientAddress?: string;
+  serviceName?: string;
+  message?: string;
+}
+
 interface InvoiceFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   type?: 'invoice' | 'quote';
   invoice?: Invoice | null;
+  prefillData?: InvoicePrefillData | null;
 }
 
 interface FormItem {
@@ -26,7 +36,7 @@ interface FormItem {
   vat_rate: number;
 }
 
-export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoice }: InvoiceFormDialogProps) {
+export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoice, prefillData }: InvoiceFormDialogProps) {
   const { createInvoice, updateInvoice, getInvoiceWithItems, generateNextNumber } = useInvoices();
   const { vatRates } = useVatRates();
   const { clients } = useMyClients();
@@ -98,10 +108,43 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
       const type = initialType || 'invoice';
       setSelectedType(type);
       generateNextNumber(type).then(num => setDocumentNumber(num));
-      setClientName('');
-      setClientEmail('');
-      setClientPhone('');
-      setClientAddress('');
+      
+      // Apply prefill data if provided
+      if (prefillData) {
+        setClientName(prefillData.clientName || '');
+        setClientEmail(prefillData.clientEmail || '');
+        setClientPhone(prefillData.clientPhone || '');
+        setClientAddress(prefillData.clientAddress || '');
+        
+        // Auto-select matching client
+        if (clients.length > 0) {
+          const matchingClient = clients.find(c => 
+            (prefillData.clientPhone && c.phone && c.phone.replace(/[^0-9+]/g, '') === prefillData.clientPhone.replace(/[^0-9+]/g, '')) ||
+            (prefillData.clientEmail && c.email && c.email.toLowerCase() === prefillData.clientEmail.toLowerCase())
+          );
+          if (matchingClient) {
+            setSelectedClientId(matchingClient.id);
+            setClientName(matchingClient.name);
+            setClientEmail(matchingClient.email || '');
+            setClientPhone(matchingClient.phone || '');
+            setClientAddress(matchingClient.address || '');
+          }
+        }
+        
+        // Pre-fill service as first item description
+        const firstItemDesc = prefillData.serviceName || '';
+        setItems([{ id: crypto.randomUUID(), description: firstItemDesc, quantity: 1, unit_price: 0, vat_rate: defaultVatRate }]);
+        setNotes(prefillData.message || '');
+      } else {
+        setClientName('');
+        setClientEmail('');
+        setClientPhone('');
+        setClientAddress('');
+        setSelectedClientId('');
+        setItems([{ id: crypto.randomUUID(), description: '', quantity: 1, unit_price: 0, vat_rate: defaultVatRate }]);
+        setNotes('');
+      }
+      
       setIssueDate(new Date().toISOString().split('T')[0]);
       setDueDate(type === 'invoice' 
         ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
@@ -112,12 +155,9 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
         : ''
       );
       setStatus('draft');
-      setNotes('');
       setTerms('');
-      setSelectedClientId('');
-      setItems([{ id: crypto.randomUUID(), description: '', quantity: 1, unit_price: 0, vat_rate: defaultVatRate }]);
     }
-  }, [invoice, open, initialType]);
+  }, [invoice, open, initialType, prefillData]);
 
   // Update number when type changes for new documents
   useEffect(() => {

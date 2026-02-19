@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useInvoices, Invoice } from '@/hooks/useInvoices';
 import { useMyCenter } from '@/hooks/useCenter';
@@ -30,7 +31,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
-import { InvoiceFormDialog } from '@/components/invoices/InvoiceFormDialog';
+import { InvoiceFormDialog, InvoicePrefillData } from '@/components/invoices/InvoiceFormDialog';
 import { InvoicePreviewDialog } from '@/components/invoices/InvoicePreviewDialog';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
@@ -56,6 +57,7 @@ const statusColors: Record<string, string> = {
 
 export default function DashboardInvoices() {
   const { t } = useTranslation();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { center, loading: centerLoading } = useMyCenter();
   const { invoices, loading, deleteInvoice, convertQuoteToInvoice, updateInvoice } = useInvoices();
@@ -71,6 +73,20 @@ export default function DashboardInvoices() {
   const [invoiceToDelete, setInvoiceToDelete] = useState<Invoice | null>(null);
   const [convertDialogOpen, setConvertDialogOpen] = useState(false);
   const [quoteToConvert, setQuoteToConvert] = useState<Invoice | null>(null);
+  const [prefillData, setPrefillData] = useState<InvoicePrefillData | null>(null);
+
+  // Auto-open form from navigation state (e.g., from quote request)
+  useEffect(() => {
+    const state = location.state as { prefill?: InvoicePrefillData; type?: 'invoice' | 'quote' } | null;
+    if (state?.prefill) {
+      setPrefillData(state.prefill);
+      setFormType(state.type || 'quote');
+      setEditingInvoice(null);
+      setFormOpen(true);
+      // Clear navigation state to prevent re-opening on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const filteredInvoices = invoices.filter(invoice => {
     const matchesTab = activeTab === 'all' || 
@@ -361,9 +377,13 @@ export default function DashboardInvoices() {
       {/* Form Dialog */}
       <InvoiceFormDialog
         open={formOpen}
-        onOpenChange={setFormOpen}
+        onOpenChange={(open) => {
+          setFormOpen(open);
+          if (!open) setPrefillData(null);
+        }}
         type={formType}
         invoice={editingInvoice}
+        prefillData={prefillData}
       />
 
       {/* Preview Dialog */}
