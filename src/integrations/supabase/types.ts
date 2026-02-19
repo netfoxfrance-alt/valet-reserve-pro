@@ -950,6 +950,7 @@ export type Database = {
           longitude: number | null
           name: string | null
           phone: string | null
+          quote_form_message: string | null
           slug: string | null
           subscription_plan:
             | Database["public"]["Enums"]["subscription_plan"]
@@ -969,6 +970,7 @@ export type Database = {
           longitude?: number | null
           name?: string | null
           phone?: string | null
+          quote_form_message?: string | null
           slug?: string | null
           subscription_plan?:
             | Database["public"]["Enums"]["subscription_plan"]
@@ -988,6 +990,7 @@ export type Database = {
           longitude?: number | null
           name?: string | null
           phone?: string | null
+          quote_form_message?: string | null
           slug?: string | null
           subscription_plan?:
             | Database["public"]["Enums"]["subscription_plan"]
