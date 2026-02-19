@@ -7,17 +7,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { 
-  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight
+  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight, LayoutGrid, CalendarDays
 } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter } from '@/hooks/useCenter';
 import { useBlockedPeriods } from '@/hooks/useAvailability';
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, isToday, parseISO, isBefore } from 'date-fns';
+import { format, addMonths, subMonths, addWeeks, subWeeks, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, isToday, parseISO, isBefore } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
+import { WeeklyCalendarView } from '@/components/dashboard/WeeklyCalendarView';
 
 interface BlockedPeriod {
   id: string;
@@ -38,8 +39,9 @@ const statusColors: Record<string, string> = {
 export default function DashboardCalendar() {
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'month' | 'week'>('month');
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentWeekDate, setCurrentWeekDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [appointmentToReschedule, setAppointmentToReschedule] = useState<Appointment | null>(null);
@@ -57,10 +59,25 @@ export default function DashboardCalendar() {
   // Calendar navigation
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
+  const prevWeek = () => setCurrentWeekDate(subWeeks(currentWeekDate, 1));
+  const nextWeek = () => setCurrentWeekDate(addWeeks(currentWeekDate, 1));
+  
+  const handlePrev = () => viewMode === 'month' ? prevMonth() : prevWeek();
+  const handleNext = () => viewMode === 'month' ? nextMonth() : nextWeek();
+  
   const goToToday = () => {
     setCurrentMonth(new Date());
+    setCurrentWeekDate(new Date());
     setSelectedDate(new Date());
   };
+  
+  const headerLabel = viewMode === 'month'
+    ? format(currentMonth, 'MMMM yyyy', { locale: dateLocale })
+    : (() => {
+        const ws = startOfWeek(currentWeekDate, { weekStartsOn: 1 });
+        const we = addDays(ws, 6);
+        return `${format(ws, 'd MMM', { locale: dateLocale })} – ${format(we, 'd MMM yyyy', { locale: dateLocale })}`;
+      })();
 
   // Generate calendar days
   const monthStart = startOfMonth(currentMonth);
@@ -162,21 +179,45 @@ export default function DashboardCalendar() {
     <>
     <DashboardLayout title={t('calendar.title')} subtitle={center?.name}>
       <div className="max-w-7xl">
-          {/* Header with navigation - mobile optimized */}
+          {/* Header with navigation */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="flex items-center gap-2 sm:gap-3">
-              <Button variant="outline" size="icon" onClick={prevMonth} className="h-9 w-9 rounded-xl">
+              <Button variant="outline" size="icon" onClick={handlePrev} className="h-9 w-9 rounded-xl">
                 <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
-              <h2 className="text-lg sm:text-xl font-bold text-foreground min-w-[140px] sm:min-w-[180px] text-center capitalize">
-                {format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}
+              <h2 className="text-lg sm:text-xl font-bold text-foreground min-w-[140px] sm:min-w-[220px] text-center capitalize">
+                {headerLabel}
               </h2>
-              <Button variant="outline" size="icon" onClick={nextMonth} className="h-9 w-9 rounded-xl">
+              <Button variant="outline" size="icon" onClick={handleNext} className="h-9 w-9 rounded-xl">
                 <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </div>
             
             <div className="flex gap-2">
+              {/* View toggle */}
+              <div className="flex rounded-xl border border-border overflow-hidden">
+                <button
+                  onClick={() => setViewMode('month')}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 h-9 text-sm font-medium transition-colors",
+                    viewMode === 'month' ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Mois</span>
+                </button>
+                <button
+                  onClick={() => setViewMode('week')}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 h-9 text-sm font-medium transition-colors border-l border-border",
+                    viewMode === 'week' ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <CalendarDays className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Semaine</span>
+                </button>
+              </div>
+              
               <Button variant="outline" onClick={goToToday} className="rounded-xl flex-1 sm:flex-none h-9 text-sm">
                 <CalendarIcon className="w-4 h-4 mr-1.5" />
                 {t('calendar.today')}
@@ -199,6 +240,26 @@ export default function DashboardCalendar() {
             </div>
           </div>
 
+          {/* WEEK VIEW */}
+          {viewMode === 'week' && (
+            <div className="h-[calc(100vh-220px)] min-h-[500px]">
+              <WeeklyCalendarView
+                currentDate={currentWeekDate}
+                appointments={appointments}
+                onAppointmentClick={(apt) => {
+                  setSelectedAppointment(apt);
+                  setRescheduleForm({ 
+                    date: apt.appointment_date, 
+                    time: apt.appointment_time.slice(0, 5) 
+                  });
+                }}
+                blockedPeriods={blockedPeriods}
+              />
+            </div>
+          )}
+
+          {/* MONTH VIEW */}
+          {viewMode === 'month' && (
           <div className="grid lg:grid-cols-[1fr_320px] gap-4 sm:gap-6">
             {/* Calendar Grid */}
             <Card className="p-3 sm:p-6 rounded-2xl">
@@ -392,6 +453,7 @@ export default function DashboardCalendar() {
               )}
             </div>
           </div>
+          )}
         </div>
       </DashboardLayout>
       {/* Appointment Details Dialog */}
