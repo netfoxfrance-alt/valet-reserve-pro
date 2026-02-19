@@ -5,18 +5,24 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useMyCenter } from '@/hooks/useCenter';
 import { useMyContactRequests, ContactRequest } from '@/hooks/useContactRequests';
-import { useMyClients } from '@/hooks/useClients';
-import { findOrCreateClient, normalizePhone, normalizeEmail } from '@/lib/clientService';
-import { MessageSquare, Phone, Clock, CheckCircle, XCircle, MapPin, Mail, FileText, Image, Save, Pencil, Info, FileCheck, UserPlus } from 'lucide-react';
+import { useMyClients, ClientType } from '@/hooks/useClients';
+import { useMyCustomServices, formatDuration } from '@/hooks/useCustomServices';
+import { normalizePhone, normalizeEmail } from '@/lib/clientService';
+import { supabase } from '@/integrations/supabase/client';
+import { MessageSquare, Phone, Clock, CheckCircle, XCircle, MapPin, Mail, FileText, Image, Save, Pencil, Info, FileCheck, UserPlus, Building2, User, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import type { Locale } from 'date-fns';
 
-function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted, onMarkConverted, onMarkClosed, onCreateQuote }: {
+function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted, onMarkConverted, onMarkClosed, onCreateQuote, onCreateClient }: {
   request: ContactRequest;
   dateLocale: Locale;
   t: (key: string) => string;
@@ -25,6 +31,7 @@ function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted
   onMarkConverted: (id: string) => void;
   onMarkClosed: (id: string) => void;
   onCreateQuote: (request: ContactRequest) => void;
+  onCreateClient: (request: ContactRequest) => void;
 }) {
   const [showImages, setShowImages] = useState(false);
   const images = request.images || [];
@@ -141,7 +148,7 @@ function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted
               </Button>
             )}
             {request.request_type === 'quote' && request.status !== 'closed' && !isExistingClient && (
-              <Button variant="default" size="sm" onClick={() => onCreateQuote(request)} className="flex-1 sm:flex-none h-9 rounded-xl bg-primary">
+              <Button variant="default" size="sm" onClick={() => onCreateClient(request)} className="flex-1 sm:flex-none h-9 rounded-xl bg-primary">
                 <UserPlus className="w-4 h-4 mr-1.5" />Créer fiche client
               </Button>
             )}
@@ -169,11 +176,22 @@ export default function DashboardRequests() {
   const dateLocale = i18n.language === 'en' ? enUS : fr;
   const { center, loading: centerLoading, updateCenter } = useMyCenter();
   const { requests, loading, fetchRequests, updateStatus } = useMyContactRequests();
-  const { clients, refetch: refetchClients } = useMyClients();
+  const { clients, createClient, refetch: refetchClients } = useMyClients();
+  const { services } = useMyCustomServices();
   const [activeTab, setActiveTab] = useState<'contact' | 'quote'>('contact');
   const [editingMessage, setEditingMessage] = useState(false);
   const [quoteMessage, setQuoteMessage] = useState('');
   const [savingMessage, setSavingMessage] = useState(false);
+  
+  // Client creation dialog state
+  const [createClientDialogOpen, setCreateClientDialogOpen] = useState(false);
+  const [creatingClient, setCreatingClient] = useState(false);
+  const [newClientForm, setNewClientForm] = useState({
+    name: '', email: '', phone: '', address: '', notes: '',
+    client_type: 'particulier' as ClientType,
+    company_name: '',
+  });
+  const [newServiceIds, setNewServiceIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (center) {
@@ -198,34 +216,71 @@ export default function DashboardRequests() {
     });
   }, [clients]);
 
-
-
-  const handleCreateQuote = async (request: ContactRequest) => {
-    if (!center) return;
-    
-    // Always ensure client exists (create if needed, find if existing)
-    const { clientId, error } = await findOrCreateClient({
-      center_id: center.id,
+  // "Créer fiche client" — opens dialog pre-filled
+  const handleOpenCreateClient = (request: ContactRequest) => {
+    setNewClientForm({
       name: request.client_name,
+      email: request.client_email || '',
       phone: request.client_phone,
-      email: request.client_email,
-      address: request.client_address,
-      source: 'contact_request',
+      address: request.client_address || '',
+      notes: '',
+      client_type: (request.client_type as ClientType) || 'particulier',
+      company_name: request.company_name || '',
     });
-    
-    if (error || !clientId) {
-      toast({ title: 'Erreur', description: error || 'Impossible de traiter le client', variant: 'destructive' });
+    setNewServiceIds([]);
+    setCreateClientDialogOpen(true);
+  };
+
+  const handleSubmitCreateClient = async () => {
+    if (!newClientForm.name.trim()) {
+      toast({ title: 'Erreur', description: 'Le nom est requis', variant: 'destructive' });
       return;
     }
-    
-    // Refresh clients list in background
-    refetchClients();
-    
+    setCreatingClient(true);
+    const { error, data: createdClient } = await createClient({
+      name: newClientForm.name.trim(),
+      email: newClientForm.email.trim() || undefined,
+      phone: newClientForm.phone.trim() || undefined,
+      address: newClientForm.address.trim() || undefined,
+      notes: newClientForm.notes.trim() || undefined,
+      client_type: newClientForm.client_type,
+    } as any);
+
+    // Save services
+    if (!error && createdClient && newServiceIds.length > 0) {
+      const clientId = (createdClient as any).id;
+      if (clientId) {
+        await supabase
+          .from('client_services')
+          .insert(newServiceIds.map(sid => ({ client_id: clientId, service_id: sid })));
+      }
+    }
+    setCreatingClient(false);
+    if (error) {
+      toast({ title: 'Erreur', description: error, variant: 'destructive' });
+    } else {
+      toast({ title: 'Client créé avec succès' });
+      setCreateClientDialogOpen(false);
+      await refetchClients();
+    }
+  };
+
+  // "Créer un devis" — navigates (client already exists)
+  const handleCreateQuote = (request: ContactRequest) => {
+    // Find matching client
+    const phone = request.client_phone ? normalizePhone(request.client_phone) : '';
+    const email = request.client_email ? normalizeEmail(request.client_email) : '';
+    const matchedClient = clients.find(c => {
+      if (phone && c.phone && normalizePhone(c.phone) === phone) return true;
+      if (email && c.email && normalizeEmail(c.email) === email) return true;
+      return false;
+    });
+
     navigate('/dashboard/invoices', {
       state: {
         type: 'quote' as const,
         prefill: {
-          clientId,
+          clientId: matchedClient?.id || undefined,
           clientName: request.client_name,
           clientEmail: request.client_email || '',
           clientPhone: request.client_phone,
@@ -344,11 +399,125 @@ export default function DashboardRequests() {
                 onMarkConverted={(id) => updateStatus(id, 'converted')}
                 onMarkClosed={(id) => updateStatus(id, 'closed')}
                 onCreateQuote={handleCreateQuote}
+                onCreateClient={handleOpenCreateClient}
               />
             ))}
           </div>
         )}
       </div>
+
+      {/* Client Creation Dialog */}
+      <Dialog open={createClientDialogOpen} onOpenChange={setCreateClientDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Nouveau client</DialogTitle>
+            <DialogDescription className="sr-only">Formulaire pour créer un nouveau client</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            {/* Client type */}
+            <div className="space-y-2">
+              <Label>Type de client</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={newClientForm.client_type === 'particulier' ? 'default' : 'outline'}
+                  size="sm"
+                  className="flex-1 gap-2"
+                  onClick={() => setNewClientForm(f => ({ ...f, client_type: 'particulier' }))}
+                >
+                  <User className="w-4 h-4" /> Particulier
+                </Button>
+                <Button
+                  type="button"
+                  variant={newClientForm.client_type === 'professionnel' ? 'default' : 'outline'}
+                  size="sm"
+                  className="flex-1 gap-2"
+                  onClick={() => setNewClientForm(f => ({ ...f, client_type: 'professionnel' }))}
+                >
+                  <Building2 className="w-4 h-4" /> Professionnel
+                </Button>
+              </div>
+            </div>
+            {newClientForm.client_type === 'professionnel' && (
+              <div className="space-y-2">
+                <Label>Nom de la société</Label>
+                <Input
+                  placeholder="Ma Société SAS"
+                  value={newClientForm.company_name}
+                  onChange={(e) => setNewClientForm(f => ({ ...f, company_name: e.target.value }))}
+                />
+              </div>
+            )}
+            <div className="space-y-2">
+              <Label>Nom *</Label>
+              <Input
+                placeholder="Jean Dupont"
+                value={newClientForm.name}
+                onChange={(e) => setNewClientForm(f => ({ ...f, name: e.target.value }))}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Téléphone</Label>
+                <Input
+                  placeholder="06 12 34 56 78"
+                  value={newClientForm.phone}
+                  onChange={(e) => setNewClientForm(f => ({ ...f, phone: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  placeholder="jean@email.com"
+                  value={newClientForm.email}
+                  onChange={(e) => setNewClientForm(f => ({ ...f, email: e.target.value }))}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Adresse</Label>
+              <Input
+                placeholder="123 rue Example, 75000 Paris"
+                value={newClientForm.address}
+                onChange={(e) => setNewClientForm(f => ({ ...f, address: e.target.value }))}
+              />
+            </div>
+            {services.length > 0 && (
+              <div className="space-y-2">
+                <Label>Prestations personnalisées</Label>
+                <div className="space-y-2 max-h-40 overflow-y-auto border rounded-lg p-3">
+                  {services.map((s) => (
+                    <label key={s.id} className="flex items-center gap-3 cursor-pointer hover:bg-secondary/30 rounded-lg p-1.5 transition-colors">
+                      <Checkbox
+                        checked={newServiceIds.includes(s.id)}
+                        onCheckedChange={(checked) => {
+                          setNewServiceIds(prev =>
+                            checked ? [...prev, s.id] : prev.filter(id => id !== s.id)
+                          );
+                        }}
+                      />
+                      <span className="text-sm text-foreground">{s.name} - {formatDuration(s.duration_minutes)} - {s.price}€</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="space-y-2">
+              <Label>Notes</Label>
+              <Textarea
+                placeholder="Informations supplémentaires..."
+                value={newClientForm.notes}
+                onChange={(e) => setNewClientForm(f => ({ ...f, notes: e.target.value }))}
+              />
+            </div>
+            <Button onClick={handleSubmitCreateClient} className="w-full" disabled={creatingClient}>
+              {creatingClient && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Ajouter le client
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

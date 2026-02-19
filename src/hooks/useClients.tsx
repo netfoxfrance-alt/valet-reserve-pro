@@ -16,6 +16,7 @@ export interface Client {
   notes: string | null;
   source: 'manual' | 'booking';
   client_type: ClientType;
+  company_name: string | null;
   created_at: string;
   updated_at: string;
   // Joined data

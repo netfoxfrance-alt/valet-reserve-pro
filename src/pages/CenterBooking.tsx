@@ -309,6 +309,8 @@ export default function CenterBooking() {
       client_address: data.address,
       message: data.message,
       images: data.images,
+      client_type: data.client_type,
+      company_name: data.company_name,
     });
     
     if (error) {
@@ -338,6 +340,8 @@ export default function CenterBooking() {
       request_type: 'quote',
       service_name: selectedPack.name,
       images: data.images,
+      client_type: data.client_type,
+      company_name: data.company_name,
     });
     
     if (error) {

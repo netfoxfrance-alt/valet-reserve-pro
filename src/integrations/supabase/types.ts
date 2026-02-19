@@ -340,6 +340,7 @@ export type Database = {
           address: string | null
           center_id: string
           client_type: string
+          company_name: string | null
           created_at: string
           default_service_id: string | null
           email: string | null
@@ -354,6 +355,7 @@ export type Database = {
           address?: string | null
           center_id: string
           client_type?: string
+          company_name?: string | null
           created_at?: string
           default_service_id?: string | null
           email?: string | null
@@ -368,6 +370,7 @@ export type Database = {
           address?: string | null
           center_id?: string
           client_type?: string
+          company_name?: string | null
           created_at?: string
           default_service_id?: string | null
           email?: string | null
@@ -416,6 +419,8 @@ export type Database = {
           client_email: string | null
           client_name: string
           client_phone: string
+          client_type: string
+          company_name: string | null
           contacted_at: string | null
           created_at: string
           id: string
@@ -431,6 +436,8 @@ export type Database = {
           client_email?: string | null
           client_name: string
           client_phone: string
+          client_type?: string
+          company_name?: string | null
           contacted_at?: string | null
           created_at?: string
           id?: string
@@ -446,6 +453,8 @@ export type Database = {
           client_email?: string | null
           client_name?: string
           client_phone?: string
+          client_type?: string
+          company_name?: string | null
           contacted_at?: string | null
           created_at?: string
           id?: string
