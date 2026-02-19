@@ -167,6 +167,32 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
     }
   }, [invoice, open, initialType, prefillData]);
 
+  // Re-run client matching when clients load after prefill
+  useEffect(() => {
+    if (!invoice && open && prefillData && clients.length > 0 && !selectedClientId) {
+      let matchedClient: typeof clients[number] | undefined;
+      
+      if (prefillData.clientId) {
+        matchedClient = clients.find(c => c.id === prefillData.clientId);
+      }
+      
+      if (!matchedClient) {
+        matchedClient = clients.find(c => 
+          (prefillData.clientPhone && c.phone && c.phone.replace(/[^0-9+]/g, '') === prefillData.clientPhone.replace(/[^0-9+]/g, '')) ||
+          (prefillData.clientEmail && c.email && c.email.toLowerCase() === prefillData.clientEmail.toLowerCase())
+        );
+      }
+      
+      if (matchedClient) {
+        setSelectedClientId(matchedClient.id);
+        setClientName(matchedClient.name);
+        setClientEmail(matchedClient.email || '');
+        setClientPhone(matchedClient.phone || '');
+        setClientAddress(matchedClient.address || '');
+      }
+    }
+  }, [clients, open, invoice, prefillData, selectedClientId]);
+
   // Update number when type changes for new documents
   useEffect(() => {
     if (!invoice && open) {
