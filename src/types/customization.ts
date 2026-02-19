@@ -35,7 +35,8 @@ export interface PageBlock {
   // Content varies by type
   content?: string;           // For text_block
   images?: string[];          // For gallery
-  galleryType?: 'gallery' | 'realizations' | 'before_after';  // Subtype for gallery
+  imageCaptions?: Record<string, string>; // For gallery - caption per image URL
+  galleryType?: 'gallery' | 'realizations' | 'before_after';  // Subtype for gallery (legacy)
   infoStyle?: InfoBlockStyle; // For phone, address, hours - display style
   // Review block properties
   reviewPlatform?: ReviewPlatform;  // google or tripadvisor

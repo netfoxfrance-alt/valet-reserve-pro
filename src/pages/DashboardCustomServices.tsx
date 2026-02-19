@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +13,7 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/component
 import { useMyCustomServices, formatDuration, CustomService } from '@/hooks/useCustomServices';
 import { useMyClients } from '@/hooks/useClients';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Pencil, Trash2, Clock, FileText, Loader2, Users, ChevronDown, ChevronRight } from 'lucide-react';
+import { Plus, Pencil, Trash2, Clock, FileText, Loader2, Users, ChevronDown, ChevronRight, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export default function DashboardCustomServices() {
@@ -152,8 +152,17 @@ export default function DashboardCustomServices() {
     onChange: (ids: string[]) => void;
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
-  }) => (
-    clients.length > 0 ? (
+  }) => {
+    const [clientSearch, setClientSearch] = useState('');
+    const filteredClients = useMemo(() => 
+      clients.filter(c => c.name.toLowerCase().includes(clientSearch.toLowerCase()) ||
+        (c.phone && c.phone.includes(clientSearch)) ||
+        (c.email && c.email.toLowerCase().includes(clientSearch.toLowerCase()))
+      ), [clients, clientSearch]);
+
+    if (clients.length === 0) return null;
+
+    return (
       <Collapsible open={isOpen} onOpenChange={onOpenChange}>
         <CollapsibleTrigger asChild>
           <button className="flex items-center justify-between w-full text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2">
@@ -165,24 +174,37 @@ export default function DashboardCustomServices() {
           </button>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <div className="space-y-1.5 max-h-48 overflow-y-auto border rounded-xl p-3 mt-1">
-            {clients.map((c) => (
-              <label key={c.id} className="flex items-center gap-3 cursor-pointer hover:bg-secondary/30 rounded-lg p-2 transition-colors">
-                <Checkbox
-                  checked={selectedIds.includes(c.id)}
-                  onCheckedChange={(checked) => onChange(checked ? [...selectedIds, c.id] : selectedIds.filter(id => id !== c.id))}
-                />
-                <span className="text-sm text-foreground">{c.name}</span>
-                {c.client_type === 'professionnel' && (
-                  <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600">PRO</span>
-                )}
-              </label>
-            ))}
+          <div className="border rounded-xl p-3 mt-1 space-y-2">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+              <Input
+                placeholder="Rechercher un client..."
+                value={clientSearch}
+                onChange={(e) => setClientSearch(e.target.value)}
+                className="h-9 pl-8 text-sm rounded-lg bg-secondary/30 border-0"
+              />
+            </div>
+            <div className="space-y-1 max-h-48 overflow-y-auto">
+              {filteredClients.length === 0 ? (
+                <p className="text-xs text-muted-foreground text-center py-3">Aucun client trouvé</p>
+              ) : filteredClients.map((c) => (
+                <label key={c.id} className="flex items-center gap-3 cursor-pointer hover:bg-secondary/30 rounded-lg p-2 transition-colors">
+                  <Checkbox
+                    checked={selectedIds.includes(c.id)}
+                    onCheckedChange={(checked) => onChange(checked ? [...selectedIds, c.id] : selectedIds.filter(id => id !== c.id))}
+                  />
+                  <span className="text-sm text-foreground">{c.name}</span>
+                  {c.client_type === 'professionnel' && (
+                    <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600">PRO</span>
+                  )}
+                </label>
+              ))}
+            </div>
           </div>
         </CollapsibleContent>
       </Collapsible>
-    ) : null
-  );
+    );
+  };
 
   return (
     <>

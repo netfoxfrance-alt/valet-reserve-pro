@@ -74,6 +74,12 @@ const GALLERY_TYPES = [
   { value: 'before_after', label: 'Avant/Après' },
 ];
 
+const updateImageCaption = (blocks: PageBlock[], blockId: string, imageUrl: string, caption: string, onUpdateBlocks: (blocks: PageBlock[]) => void) => {
+  onUpdateBlocks(blocks.map(b => 
+    b.id === blockId ? { ...b, imageCaptions: { ...(b.imageCaptions || {}), [imageUrl]: caption } } : b
+  ));
+};
+
 const LINK_ICONS = [
   { value: 'link', label: 'Lien', icon: Link2 },
   { value: 'shop', label: 'Boutique', icon: ShoppingBag },
@@ -429,64 +435,67 @@ export function BlocksEditor({
         const isUploading = uploadingFor === block.id;
         return (
           <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-3">
-            <Select
-              value={block.galleryType || 'gallery'}
-              onValueChange={(v) => updateGalleryType(block.id, v as PageBlock['galleryType'])}
-            >
-              <SelectTrigger className="w-40 h-8 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {GALLERY_TYPES.map(t => (
-                  <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {/* Custom title input */}
+            <Input
+              value={block.title}
+              onChange={(e) => updateBlockTitle(block.id, e.target.value)}
+              placeholder="Titre de la section (ex: Réalisations, Avant/Après...)"
+              className="h-9 text-sm rounded-xl"
+            />
             
-            <div className="grid grid-cols-4 gap-2">
+            {/* Images grid with captions */}
+            <div className="space-y-3">
               {(block.images || []).map((url, imgIndex) => (
-                <div key={imgIndex} className="relative group aspect-square">
-                  <img
-                    src={url}
-                    alt={`Image ${imgIndex + 1}`}
-                    className="w-full h-full object-cover rounded-lg"
+                <div key={imgIndex} className="flex gap-3 items-start bg-secondary/20 rounded-xl p-2">
+                  <div className="relative group w-20 h-20 shrink-0">
+                    <img
+                      src={url}
+                      alt={`Image ${imgIndex + 1}`}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                    <button
+                      onClick={() => removeImage(block.id, url)}
+                      className="absolute top-0.5 right-0.5 p-0.5 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                  <Input
+                    value={(block.imageCaptions || {})[url] || ''}
+                    onChange={(e) => updateImageCaption(blocks, block.id, url, e.target.value, onUpdateBlocks)}
+                    placeholder="Légende (optionnel)"
+                    className="h-9 text-sm rounded-lg flex-1"
                   />
-                  <button
-                    onClick={() => removeImage(block.id, url)}
-                    className="absolute top-1 right-1 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
                 </div>
               ))}
-              
-              {(block.images || []).length < 8 && (
-                <div className="aspect-square border-2 border-dashed border-border rounded-lg flex items-center justify-center">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => handleImageUpload(block.id, e)}
-                    className="sr-only"
-                    id={`gallery-upload-${block.id}`}
-                    disabled={isUploading}
-                  />
-                  <Label
-                    htmlFor={`gallery-upload-${block.id}`}
-                    className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 rounded-lg transition-colors"
-                  >
-                    {isUploading ? (
-                      <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-                    ) : (
-                      <>
-                        <Upload className="w-5 h-5 text-muted-foreground" />
-                        <span className="text-[10px] text-muted-foreground mt-1">Ajouter</span>
-                      </>
-                    )}
-                  </Label>
-                </div>
-              )}
             </div>
+              
+            {(block.images || []).length < 8 && (
+              <div className="border-2 border-dashed border-border rounded-xl p-4 flex items-center justify-center">
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => handleImageUpload(block.id, e)}
+                  className="sr-only"
+                  id={`gallery-upload-${block.id}`}
+                  disabled={isUploading}
+                />
+                <Label
+                  htmlFor={`gallery-upload-${block.id}`}
+                  className="flex flex-col items-center cursor-pointer hover:bg-muted/50 rounded-lg p-2 transition-colors"
+                >
+                  {isUploading ? (
+                    <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                  ) : (
+                    <>
+                      <Upload className="w-5 h-5 text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground mt-1">Ajouter des images</span>
+                    </>
+                  )}
+                </Label>
+              </div>
+            )}
             <p className="text-xs text-muted-foreground">
               {(block.images || []).length}/8 images • Max 5 Mo
             </p>
