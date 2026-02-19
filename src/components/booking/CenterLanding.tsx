@@ -636,8 +636,10 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
             <LocationMap
               latitude={center.latitude!}
               longitude={center.longitude!}
+              radiusKm={radiusKm || undefined}
               address={center.address || undefined}
               height="200px"
+              darkMode={customization.layout.dark_mode}
             />
           )}
           
