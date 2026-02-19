@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
@@ -7,21 +7,25 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { useMyCenter } from '@/hooks/useCenter';
 import { useMyContactRequests, ContactRequest } from '@/hooks/useContactRequests';
-import { MessageSquare, Phone, Clock, CheckCircle, XCircle, MapPin, Mail, FileText, Image, Save, Pencil, Info, FileCheck } from 'lucide-react';
+import { useMyClients } from '@/hooks/useClients';
+import { findOrCreateClient, normalizePhone, normalizeEmail } from '@/lib/clientService';
+import { MessageSquare, Phone, Clock, CheckCircle, XCircle, MapPin, Mail, FileText, Image, Save, Pencil, Info, FileCheck, UserPlus } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import type { Locale } from 'date-fns';
 
-function RequestCard({ request, dateLocale, t, onMarkContacted, onMarkConverted, onMarkClosed, onCreateQuote }: {
+function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted, onMarkConverted, onMarkClosed, onCreateQuote, onCreateClient }: {
   request: ContactRequest;
   dateLocale: Locale;
   t: (key: string) => string;
+  isExistingClient: boolean;
   onMarkContacted: (id: string) => void;
   onMarkConverted: (id: string) => void;
   onMarkClosed: (id: string) => void;
   onCreateQuote: (request: ContactRequest) => void;
+  onCreateClient: (request: ContactRequest) => void;
 }) {
   const [showImages, setShowImages] = useState(false);
   const images = request.images || [];
@@ -125,9 +129,14 @@ function RequestCard({ request, dateLocale, t, onMarkContacted, onMarkConverted,
                 <Phone className="w-4 h-4 mr-1.5" />{t('requests.markContacted')}
               </Button>
             )}
-            {request.request_type === 'quote' && request.status !== 'closed' && (
+            {request.request_type === 'quote' && request.status !== 'closed' && isExistingClient && (
               <Button variant="default" size="sm" onClick={() => onCreateQuote(request)} className="flex-1 sm:flex-none h-9 rounded-xl bg-primary">
                 <FileCheck className="w-4 h-4 mr-1.5" />Créer un devis
+              </Button>
+            )}
+            {request.request_type === 'quote' && request.status !== 'closed' && !isExistingClient && (
+              <Button variant="default" size="sm" onClick={() => onCreateClient(request)} className="flex-1 sm:flex-none h-9 rounded-xl bg-primary">
+                <UserPlus className="w-4 h-4 mr-1.5" />Créer fiche client
               </Button>
             )}
             {(request.status === 'new' || request.status === 'contacted') && (
@@ -154,6 +163,7 @@ export default function DashboardRequests() {
   const dateLocale = i18n.language === 'en' ? enUS : fr;
   const { center, loading: centerLoading, updateCenter } = useMyCenter();
   const { requests, loading, fetchRequests, updateStatus } = useMyContactRequests();
+  const { clients, refetch: refetchClients } = useMyClients();
   const [activeTab, setActiveTab] = useState<'contact' | 'quote'>('contact');
   const [editingMessage, setEditingMessage] = useState(false);
   const [quoteMessage, setQuoteMessage] = useState('');
@@ -170,6 +180,20 @@ export default function DashboardRequests() {
   const quoteRequests = useMemo(() => requests.filter(r => r.request_type === 'quote'), [requests]);
   const filteredRequests = activeTab === 'contact' ? contactRequests : quoteRequests;
 
+  // Check if a request's client already exists in the DB
+  const isClientExisting = useCallback((request: ContactRequest): boolean => {
+    if (!clients.length) return false;
+    const phone = request.client_phone ? normalizePhone(request.client_phone) : '';
+    const email = request.client_email ? normalizeEmail(request.client_email) : '';
+    return clients.some(c => {
+      if (phone && c.phone && normalizePhone(c.phone) === phone) return true;
+      if (email && c.email && normalizeEmail(c.email) === email) return true;
+      return false;
+    });
+  }, [clients]);
+
+
+
   const handleCreateQuote = (request: ContactRequest) => {
     navigate('/dashboard/invoices', {
       state: {
@@ -184,6 +208,25 @@ export default function DashboardRequests() {
         },
       },
     });
+  };
+
+  const handleCreateClient = async (request: ContactRequest) => {
+    if (!center) return;
+    const { clientId, error } = await findOrCreateClient({
+      center_id: center.id,
+      name: request.client_name,
+      phone: request.client_phone,
+      email: request.client_email,
+      address: request.client_address,
+      source: 'contact_request',
+    });
+    if (error || !clientId) {
+      toast({ title: 'Erreur', description: error || 'Impossible de créer le client', variant: 'destructive' });
+      return;
+    }
+    toast({ title: 'Client créé avec succès' });
+    await refetchClients();
+    handleCreateQuote(request);
   };
 
   const handleSaveMessage = async () => {
@@ -288,10 +331,12 @@ export default function DashboardRequests() {
                 request={request}
                 dateLocale={dateLocale}
                 t={t}
+                isExistingClient={isClientExisting(request)}
                 onMarkContacted={(id) => updateStatus(id, 'contacted', true)}
                 onMarkConverted={(id) => updateStatus(id, 'converted')}
                 onMarkClosed={(id) => updateStatus(id, 'closed')}
                 onCreateQuote={handleCreateQuote}
+                onCreateClient={handleCreateClient}
               />
             ))}
           </div>
