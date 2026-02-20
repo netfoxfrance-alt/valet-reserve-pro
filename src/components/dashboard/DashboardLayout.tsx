@@ -6,7 +6,6 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useAuth } from '@/hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 
-import iconReservations from '@/assets/icons/icon-reservations.webp';
 import iconAgenda from '@/assets/icons/icon-agenda.webp';
 import iconFactures from '@/assets/icons/icon-factures.webp';
 import iconClients from '@/assets/icons/icon-clients.webp';
@@ -16,7 +15,6 @@ import iconDemandes from '@/assets/icons/icon-demandes.webp';
 import iconStatistiques from '@/assets/icons/icon-statistiques.webp';
 
 const navItems = [
-  { icon: iconReservations, label: 'Réservations', href: '/dashboard/reservations' },
   { icon: iconAgenda, label: 'Agenda', href: '/dashboard/calendar' },
   { icon: iconFactures, label: 'Factures & Devis', href: '/dashboard/invoices' },
   { icon: iconClients, label: 'Clients', href: '/dashboard/clients' },
