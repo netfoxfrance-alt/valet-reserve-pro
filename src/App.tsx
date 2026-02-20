@@ -9,7 +9,7 @@ import CenterBooking from "./pages/CenterBooking";
 import Booking from "./pages/Booking";
 import Auth from "./pages/Auth";
 import DashboardHome from "./pages/DashboardHome";
-// Dashboard (Reservations) removed - merged into Agenda + Demandes
+import Dashboard from "./pages/Dashboard";
 import DashboardCalendar from "./pages/DashboardCalendar";
 import DashboardAvailability from "./pages/DashboardAvailability";
 import DashboardPacks from "./pages/DashboardPacks";
@@ -55,7 +55,11 @@ const App = () => (
                 <DashboardHome />
               </ProtectedRoute>
             } />
-            {/* /dashboard/reservations removed - merged into Agenda + Demandes */}
+            <Route path="/dashboard/reservations" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
             <Route path="/dashboard/formules" element={
               <ProtectedRoute>
                 <DashboardFormules />

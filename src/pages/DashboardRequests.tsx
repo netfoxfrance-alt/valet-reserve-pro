@@ -13,21 +13,14 @@ import { useMyCenter } from '@/hooks/useCenter';
 import { useMyContactRequests, ContactRequest } from '@/hooks/useContactRequests';
 import { useMyClients, ClientType } from '@/hooks/useClients';
 import { useMyCustomServices, formatDuration } from '@/hooks/useCustomServices';
-import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
-import { useCalendarSync } from '@/hooks/useCalendarSync';
 import { normalizePhone, normalizeEmail } from '@/lib/clientService';
-import { sendBookingEmail, getClientEmail, buildEmailPayload, EmailType } from '@/lib/emailService';
-import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
 import { supabase } from '@/integrations/supabase/client';
-import { MessageSquare, Phone, Clock, CheckCircle, XCircle, MapPin, Mail, FileText, Image, Save, Pencil, Info, FileCheck, UserPlus, Building2, User, Loader2, Calendar, Check, X, CalendarPlus } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { MessageSquare, Phone, Clock, CheckCircle, XCircle, MapPin, Mail, FileText, Image, Save, Pencil, Info, FileCheck, UserPlus, Building2, User, Loader2 } from 'lucide-react';
+import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
-import { ConfirmationCalendarDialog } from '@/components/dashboard/ConfirmationCalendarDialog';
 import type { Locale } from 'date-fns';
-
-// ─── RequestCard (unchanged) ────────────────────────────────────────────────
 
 function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted, onMarkConverted, onMarkClosed, onCreateQuote, onCreateClient }: {
   request: ContactRequest;
@@ -176,115 +169,6 @@ function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted
   );
 }
 
-// ─── AppointmentRequestCard (NEW – for pending_validation appointments) ──────
-
-const statusColorMap: Record<string, string> = {
-  pending_validation: 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400',
-  pending: 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400',
-};
-
-function AppointmentRequestCard({ appointment, dateLocale, t, onConfirm, onRefuse }: {
-  appointment: Appointment;
-  dateLocale: Locale;
-  t: (key: string) => string;
-  onConfirm: (appointment: Appointment) => void;
-  onRefuse: (appointment: Appointment) => void;
-}) {
-  const date = parseISO(appointment.appointment_date);
-  const serviceName = appointment.custom_service?.name || appointment.pack?.name;
-  const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
-
-  return (
-    <Card variant="elevated" className="p-4 sm:p-5 rounded-2xl">
-      <div className="flex flex-col gap-3 sm:gap-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <span className="text-sm font-bold text-primary">
-                {appointment.client_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
-              </span>
-            </div>
-            <div className="min-w-0">
-              <h3 className="font-semibold text-foreground truncate">{appointment.client_name}</h3>
-              <a href={`tel:${appointment.client_phone}`} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                {appointment.client_phone}
-              </a>
-              {appointment.client_email && appointment.client_email !== 'non-fourni@example.com' && (
-                <span className="text-sm text-muted-foreground block">{appointment.client_email}</span>
-              )}
-            </div>
-          </div>
-          <Badge className={statusColorMap.pending_validation}>
-            {t('status.pending_validation')}
-          </Badge>
-        </div>
-
-        {/* Service + date info */}
-        <div className="flex flex-wrap gap-2">
-          <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 rounded-xl">
-            <Calendar className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm font-medium text-foreground">
-              {format(date, "EEE d MMM", { locale: dateLocale })}
-            </span>
-            <span className="text-sm text-muted-foreground">{appointment.appointment_time.slice(0, 5)}</span>
-          </div>
-          {serviceName && (
-            <Badge variant="outline" className="text-xs">{serviceName}</Badge>
-          )}
-          {(price !== undefined && price !== null) && (
-            <Badge variant="outline" className="text-xs font-bold">{price}€</Badge>
-          )}
-          <Badge variant="outline" className="text-xs capitalize">
-            {t(`vehicles.${appointment.vehicle_type}`) || appointment.vehicle_type}
-          </Badge>
-        </div>
-
-        {appointment.client_address && (
-          <div className="flex items-start gap-2 bg-primary/5 rounded-xl p-3">
-            <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-            <p className="text-foreground text-sm">{appointment.client_address}</p>
-          </div>
-        )}
-
-        {appointment.notes && (
-          <div className="bg-muted/50 rounded-xl p-3">
-            <p className="text-foreground text-sm whitespace-pre-wrap">{appointment.notes}</p>
-          </div>
-        )}
-
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-border/50">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Clock className="w-3.5 h-3.5" />
-            {t('requests.receivedOn')} {format(new Date(appointment.created_at || ''), "d MMM yyyy", { locale: dateLocale })}
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9 rounded-xl text-primary hover:text-primary hover:bg-primary/10 flex-1 sm:flex-none"
-              onClick={() => onConfirm(appointment)}
-            >
-              <Check className="w-4 h-4 mr-1.5" />
-              Confirmer
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9 rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10 flex-1 sm:flex-none"
-              onClick={() => onRefuse(appointment)}
-            >
-              <X className="w-4 h-4 mr-1.5" />
-              Refuser
-            </Button>
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-// ─── Main component ─────────────────────────────────────────────────────────
-
 export default function DashboardRequests() {
   const { t, i18n } = useTranslation();
   const { toast } = useToast();
@@ -294,16 +178,10 @@ export default function DashboardRequests() {
   const { requests, loading, fetchRequests, updateStatus } = useMyContactRequests();
   const { clients, createClient, refetch: refetchClients } = useMyClients();
   const { services } = useMyCustomServices();
-  const { appointments, loading: appointmentsLoading, updateStatus: updateAppointmentStatus } = useMyAppointments();
-  const { markAsSynced } = useCalendarSync();
-  const [activeTab, setActiveTab] = useState<'contact' | 'quote' | 'rdv'>('contact');
+  const [activeTab, setActiveTab] = useState<'contact' | 'quote'>('contact');
   const [editingMessage, setEditingMessage] = useState(false);
   const [quoteMessage, setQuoteMessage] = useState('');
   const [savingMessage, setSavingMessage] = useState(false);
-  
-  // Confirmation calendar dialog
-  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [justConfirmedAppointment, setJustConfirmedAppointment] = useState<Appointment | null>(null);
   
   // Client creation dialog state
   const [createClientDialogOpen, setCreateClientDialogOpen] = useState(false);
@@ -324,13 +202,6 @@ export default function DashboardRequests() {
 
   const contactRequests = useMemo(() => requests.filter(r => r.request_type !== 'quote'), [requests]);
   const quoteRequests = useMemo(() => requests.filter(r => r.request_type === 'quote'), [requests]);
-  
-  // Pending validation appointments for the RDV tab
-  const pendingAppointments = useMemo(() => 
-    appointments.filter(a => a.status === 'pending_validation' || a.status === 'pending'),
-    [appointments]
-  );
-
   const filteredRequests = activeTab === 'contact' ? contactRequests : quoteRequests;
 
   // Check if a request's client already exists in the DB
@@ -396,6 +267,7 @@ export default function DashboardRequests() {
 
   // "Créer un devis" — navigates (client already exists)
   const handleCreateQuote = (request: ContactRequest) => {
+    // Find matching client
     const phone = request.client_phone ? normalizePhone(request.client_phone) : '';
     const email = request.client_email ? normalizeEmail(request.client_email) : '';
     const matchedClient = clients.find(c => {
@@ -431,40 +303,6 @@ export default function DashboardRequests() {
     }
   };
 
-  // ─── Appointment actions (confirm / refuse) ───────────────────────────────
-
-  const sendStatusEmail = async (appointment: Appointment, emailType: EmailType) => {
-    if (!center) return;
-    const serviceName = appointment.custom_service?.name || appointment.pack?.name;
-    const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
-    if (!serviceName || price === undefined) return;
-    const clientEmail = await getClientEmail(appointment.client_email, appointment.client_id);
-    if (!clientEmail) return;
-    const payload = buildEmailPayload(center.id, appointment, clientEmail, serviceName, price, emailType);
-    sendBookingEmail(payload).catch(() => {});
-  };
-
-  const handleConfirmAppointment = async (appointment: Appointment) => {
-    const { error } = await updateAppointmentStatus(appointment.id, 'confirmed');
-    if (error) {
-      toast({ title: t('dashboard.confirmError'), variant: 'destructive' });
-      return;
-    }
-    setJustConfirmedAppointment(appointment);
-    setConfirmDialogOpen(true);
-    sendStatusEmail(appointment, 'confirmation');
-  };
-
-  const handleRefuseAppointment = async (appointment: Appointment) => {
-    const { error } = await updateAppointmentStatus(appointment.id, 'refused');
-    if (error) {
-      toast({ title: t('dashboard.refuseError'), variant: 'destructive' });
-      return;
-    }
-    toast({ title: t('dashboard.refused') });
-    sendStatusEmail(appointment, 'refused');
-  };
-
   if (centerLoading || loading) {
     return (
       <DashboardLayout title={t('requests.title')}>
@@ -477,141 +315,94 @@ export default function DashboardRequests() {
 
   const newContactCount = contactRequests.filter(r => r.status === 'new').length;
   const newQuoteCount = quoteRequests.filter(r => r.status === 'new').length;
-  const pendingRdvCount = pendingAppointments.length;
 
   return (
     <DashboardLayout title={t('requests.title')}>
       <div className="max-w-4xl">
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
-          <Button variant={activeTab === 'contact' ? 'default' : 'outline'} size="sm" className="rounded-xl shrink-0" onClick={() => setActiveTab('contact')}>
+        <div className="flex gap-2 mb-6">
+          <Button variant={activeTab === 'contact' ? 'default' : 'outline'} size="sm" className="rounded-xl" onClick={() => setActiveTab('contact')}>
             <MessageSquare className="w-4 h-4 mr-1.5" />
             Demandes de contact
             {newContactCount > 0 && (
               <Badge variant="secondary" className="ml-2 h-5 min-w-5 px-1.5 text-xs">{newContactCount}</Badge>
             )}
           </Button>
-          <Button variant={activeTab === 'quote' ? 'default' : 'outline'} size="sm" className="rounded-xl shrink-0" onClick={() => setActiveTab('quote')}>
+          <Button variant={activeTab === 'quote' ? 'default' : 'outline'} size="sm" className="rounded-xl" onClick={() => setActiveTab('quote')}>
             <FileText className="w-4 h-4 mr-1.5" />
             Demandes de devis
             {newQuoteCount > 0 && (
               <Badge variant="secondary" className="ml-2 h-5 min-w-5 px-1.5 text-xs">{newQuoteCount}</Badge>
             )}
           </Button>
-          <Button variant={activeTab === 'rdv' ? 'default' : 'outline'} size="sm" className="rounded-xl shrink-0" onClick={() => setActiveTab('rdv')}>
-            <CalendarPlus className="w-4 h-4 mr-1.5" />
-            Demandes de RDV
-            {pendingRdvCount > 0 && (
-              <Badge variant="secondary" className="ml-2 h-5 min-w-5 px-1.5 text-xs">{pendingRdvCount}</Badge>
-            )}
-          </Button>
         </div>
 
-        {/* ─── RDV Tab ─── */}
-        {activeTab === 'rdv' && (
-          <>
-            {appointmentsLoading ? (
-              <div className="animate-pulse space-y-3">
-                {[1, 2, 3].map(i => <div key={i} className="h-32 bg-muted rounded-xl" />)}
+        {/* Quote precision message editor */}
+        {activeTab === 'quote' && (
+          <Card variant="elevated" className="p-4 rounded-2xl mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Info className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium text-foreground">Message de précision pour les devis</span>
               </div>
-            ) : pendingAppointments.length === 0 ? (
-              <Card variant="elevated" className="p-8 sm:p-12 text-center rounded-2xl">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <CalendarPlus className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground/50" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Aucune demande de RDV</h3>
-                <p className="text-sm text-muted-foreground">Les demandes de rendez-vous de vos clients apparaîtront ici.</p>
-              </Card>
+              {!editingMessage ? (
+                <Button variant="ghost" size="sm" className="h-8 rounded-xl" onClick={() => setEditingMessage(true)}>
+                  <Pencil className="w-3.5 h-3.5 mr-1.5" />Modifier
+                </Button>
+              ) : (
+                <Button variant="default" size="sm" className="h-8 rounded-xl" onClick={handleSaveMessage} disabled={savingMessage}>
+                  <Save className="w-3.5 h-3.5 mr-1.5" />{savingMessage ? 'Enregistrement...' : 'Enregistrer'}
+                </Button>
+              )}
+            </div>
+            {editingMessage ? (
+              <Textarea
+                value={quoteMessage}
+                onChange={(e) => setQuoteMessage(e.target.value)}
+                placeholder="Ex: Pouvez-vous m'envoyer 1 photo par type de vitre + quantité, et me dire si certaines sont en hauteur/difficiles d'accès ? Merci !"
+                className="min-h-[80px] rounded-xl resize-none text-sm"
+              />
             ) : (
-              <div className="space-y-3">
-                {pendingAppointments
-                  .sort((a, b) => (a.created_at || '').localeCompare(b.created_at || ''))
-                  .map(apt => (
-                    <AppointmentRequestCard
-                      key={apt.id}
-                      appointment={apt}
-                      dateLocale={dateLocale}
-                      t={t}
-                      onConfirm={handleConfirmAppointment}
-                      onRefuse={handleRefuseAppointment}
-                    />
-                  ))}
-              </div>
+              <p className="text-sm text-muted-foreground">
+                {quoteMessage || <span className="italic">Aucun message — cliquez sur Modifier pour ajouter une précision qui sera affichée aux clients.</span>}
+              </p>
             )}
-          </>
+          </Card>
         )}
 
-        {/* ─── Contact & Quote Tabs (unchanged) ─── */}
-        {activeTab !== 'rdv' && (
-          <>
-            {/* Quote precision message editor */}
-            {activeTab === 'quote' && (
-              <Card variant="elevated" className="p-4 rounded-2xl mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <Info className="w-4 h-4 text-primary" />
-                    <span className="text-sm font-medium text-foreground">Message de précision pour les devis</span>
-                  </div>
-                  {!editingMessage ? (
-                    <Button variant="ghost" size="sm" className="h-8 rounded-xl" onClick={() => setEditingMessage(true)}>
-                      <Pencil className="w-3.5 h-3.5 mr-1.5" />Modifier
-                    </Button>
-                  ) : (
-                    <Button variant="default" size="sm" className="h-8 rounded-xl" onClick={handleSaveMessage} disabled={savingMessage}>
-                      <Save className="w-3.5 h-3.5 mr-1.5" />{savingMessage ? 'Enregistrement...' : 'Enregistrer'}
-                    </Button>
-                  )}
-                </div>
-                {editingMessage ? (
-                  <Textarea
-                    value={quoteMessage}
-                    onChange={(e) => setQuoteMessage(e.target.value)}
-                    placeholder="Ex: Pouvez-vous m'envoyer 1 photo par type de vitre + quantité, et me dire si certaines sont en hauteur/difficiles d'accès ? Merci !"
-                    className="min-h-[80px] rounded-xl resize-none text-sm"
-                  />
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    {quoteMessage || <span className="italic">Aucun message — cliquez sur Modifier pour ajouter une précision qui sera affichée aux clients.</span>}
-                  </p>
-                )}
-              </Card>
-            )}
-
-            {filteredRequests.length === 0 ? (
-              <Card variant="elevated" className="p-8 sm:p-12 text-center rounded-2xl">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  {activeTab === 'contact' ? (
-                    <MessageSquare className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground/50" />
-                  ) : (
-                    <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground/50" />
-                  )}
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {activeTab === 'contact' ? t('requests.noRequests') : 'Aucune demande de devis'}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {activeTab === 'contact' ? t('requests.requestsWillAppear') : 'Les demandes de devis de vos services apparaîtront ici.'}
-                </p>
-              </Card>
-            ) : (
-              <div className="space-y-3">
-                {filteredRequests.map((request) => (
-                  <RequestCard
-                    key={request.id}
-                    request={request}
-                    dateLocale={dateLocale}
-                    t={t}
-                    isExistingClient={isClientExisting(request)}
-                    onMarkContacted={(id) => updateStatus(id, 'contacted', true)}
-                    onMarkConverted={(id) => updateStatus(id, 'converted')}
-                    onMarkClosed={(id) => updateStatus(id, 'closed')}
-                    onCreateQuote={handleCreateQuote}
-                    onCreateClient={handleOpenCreateClient}
-                  />
-                ))}
-              </div>
-            )}
-          </>
+        {filteredRequests.length === 0 ? (
+          <Card variant="elevated" className="p-8 sm:p-12 text-center rounded-2xl">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
+              {activeTab === 'contact' ? (
+                <MessageSquare className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground/50" />
+              ) : (
+                <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground/50" />
+              )}
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">
+              {activeTab === 'contact' ? t('requests.noRequests') : 'Aucune demande de devis'}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {activeTab === 'contact' ? t('requests.requestsWillAppear') : 'Les demandes de devis de vos services apparaîtront ici.'}
+            </p>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {filteredRequests.map((request) => (
+              <RequestCard
+                key={request.id}
+                request={request}
+                dateLocale={dateLocale}
+                t={t}
+                isExistingClient={isClientExisting(request)}
+                onMarkContacted={(id) => updateStatus(id, 'contacted', true)}
+                onMarkConverted={(id) => updateStatus(id, 'converted')}
+                onMarkClosed={(id) => updateStatus(id, 'closed')}
+                onCreateQuote={handleCreateQuote}
+                onCreateClient={handleOpenCreateClient}
+              />
+            ))}
+          </div>
         )}
       </div>
 
@@ -727,17 +518,6 @@ export default function DashboardRequests() {
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Calendar sync dialog after confirming a RDV */}
-      {justConfirmedAppointment && (
-        <ConfirmationCalendarDialog
-          appointment={justConfirmedAppointment}
-          centerAddress={center?.address || undefined}
-          open={confirmDialogOpen}
-          onOpenChange={setConfirmDialogOpen}
-          onAddToCalendar={() => markAsSynced(justConfirmedAppointment.id)}
-        />
-      )}
     </DashboardLayout>
   );
 }

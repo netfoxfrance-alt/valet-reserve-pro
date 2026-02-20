@@ -16,10 +16,11 @@ import iconClients from '@/assets/icons/icon-clients.webp';
 import iconFactures from '@/assets/icons/icon-factures.webp';
 import iconFormules from '@/assets/icons/icon-formules.webp';
 import iconMaPage from '@/assets/icons/icon-mapage.webp';
-// iconReservations removed - Reservations merged into Agenda + Demandes
+import iconReservations from '@/assets/icons/icon-reservations.webp';
 import iconStatistiques from '@/assets/icons/icon-statistiques.webp';
 
 const menuItems = [
+  { icon: iconReservations, label: 'Réservations', href: '/dashboard/reservations' },
   { icon: iconAgenda, label: 'Agenda', href: '/dashboard/calendar' },
   { icon: iconFactures, label: 'Factures & Devis', href: '/dashboard/invoices' },
   { icon: iconClients, label: 'Clients', href: '/dashboard/clients' },
