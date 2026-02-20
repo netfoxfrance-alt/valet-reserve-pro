@@ -9,12 +9,13 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { 
-  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight, LayoutGrid, CalendarDays, CalendarPlus
+  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight, LayoutGrid, CalendarDays, CalendarPlus, Users
 } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
-import { useMyCenter } from '@/hooks/useCenter';
+import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
 import { useBlockedPeriods } from '@/hooks/useAvailability';
-import { useMyCustomServices } from '@/hooks/useCustomServices';
+import { useMyCustomServices, formatDuration } from '@/hooks/useCustomServices';
+import { useMyClients } from '@/hooks/useClients';
 import { format, addMonths, subMonths, addWeeks, subWeeks, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, isToday, parseISO, isBefore } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -60,8 +61,10 @@ export default function DashboardCalendar() {
   
   const { appointments, loading, updateStatus, createAppointment, deleteAppointment, refetch } = useMyAppointments();
   const { center } = useMyCenter();
+  const { packs } = useMyPacks();
   const { blockedPeriods, addBlockedPeriod, removeBlockedPeriod: deleteBlockedPeriod } = useBlockedPeriods(center?.id);
   const { services: customServices } = useMyCustomServices();
+  const { clients } = useMyClients();
   const { markAsSynced, isSynced } = useCalendarSync();
   
   // Create appointment state
@@ -69,6 +72,8 @@ export default function DashboardCalendar() {
   const [showCalendarSyncDialog, setShowCalendarSyncDialog] = useState(false);
   const [lastCreatedAppointment, setLastCreatedAppointment] = useState<Appointment | null>(null);
   const [loadingCreate, setLoadingCreate] = useState(false);
+  const [selectedClientId, setSelectedClientId] = useState('');
+  const [serviceType, setServiceType] = useState<'pack' | 'custom'>('pack');
   const [createForm, setCreateForm] = useState({
     client_name: '',
     client_email: '',
@@ -77,7 +82,9 @@ export default function DashboardCalendar() {
     vehicle_type: 'berline',
     appointment_date: '',
     appointment_time: '',
+    pack_id: '',
     custom_service_id: '',
+    custom_price: '',
     notes: '',
   });
 
@@ -200,8 +207,60 @@ export default function DashboardCalendar() {
 
   const weekDays = t('calendar.weekDays', { returnObjects: true }) as string[];
 
+  // Client selection handler
+  const handleClientSelect = (clientId: string) => {
+    setSelectedClientId(clientId);
+    if (clientId) {
+      const client = clients.find(c => c.id === clientId);
+      if (client) {
+        setCreateForm(prev => ({
+          ...prev,
+          client_name: client.name,
+          client_email: client.email || '',
+          client_phone: client.phone || '',
+          client_address: client.address || '',
+          custom_service_id: '',
+          custom_price: '',
+          pack_id: '',
+        }));
+      }
+    } else {
+      setCreateForm(prev => ({
+        ...prev,
+        client_name: '',
+        client_email: '',
+        client_phone: '',
+        client_address: '',
+        custom_service_id: '',
+        custom_price: '',
+        pack_id: '',
+      }));
+      setServiceType('pack');
+    }
+  };
+
+  const handleServiceTypeChange = (type: 'pack' | 'custom') => {
+    setServiceType(type);
+    if (type === 'pack') {
+      setCreateForm(prev => ({ ...prev, custom_service_id: '', custom_price: '' }));
+    } else {
+      setCreateForm(prev => ({ ...prev, pack_id: '' }));
+    }
+  };
+
+  const handleCustomServiceChange = (serviceId: string) => {
+    const service = customServices.find(s => s.id === serviceId);
+    setCreateForm(prev => ({
+      ...prev,
+      custom_service_id: serviceId,
+      custom_price: service?.price?.toString() || '',
+    }));
+  };
+
   // Open create dialog with pre-filled date/time
   const openCreateDialog = (date?: string, time?: string) => {
+    setSelectedClientId('');
+    setServiceType('pack');
     setCreateForm({
       client_name: '',
       client_email: '',
@@ -210,7 +269,9 @@ export default function DashboardCalendar() {
       vehicle_type: 'berline',
       appointment_date: date || format(new Date(), 'yyyy-MM-dd'),
       appointment_time: time || '09:00',
+      pack_id: '',
       custom_service_id: '',
+      custom_price: '',
       notes: '',
     });
     setShowCreateDialog(true);
@@ -225,22 +286,34 @@ export default function DashboardCalendar() {
     setLoadingCreate(true);
     
     const selectedService = customServices.find(s => s.id === createForm.custom_service_id);
+    const selectedPack = packs.find(p => p.id === createForm.pack_id);
     
-    const { error } = await createAppointment({
+    const payload: any = {
       client_name: createForm.client_name,
-      client_email: createForm.client_email,
+      client_email: createForm.client_email || 'non-fourni@example.com',
       client_phone: createForm.client_phone,
       client_address: createForm.client_address,
-      vehicle_type: createForm.vehicle_type,
+      vehicle_type: createForm.vehicle_type || 'standard',
       appointment_date: createForm.appointment_date,
       appointment_time: createForm.appointment_time,
-      custom_service_id: createForm.custom_service_id || null,
-      custom_price: selectedService?.price || null,
-      duration_minutes: selectedService?.duration_minutes || 60,
       notes: createForm.notes,
-      service_name: selectedService?.name,
-      send_email: !!createForm.client_email,
-    });
+      send_email: !!createForm.client_email && createForm.client_email !== 'non-fourni@example.com',
+    };
+
+    if (selectedClientId) {
+      payload.client_id = selectedClientId;
+    }
+
+    if (serviceType === 'custom' && createForm.custom_service_id) {
+      payload.custom_service_id = createForm.custom_service_id;
+      payload.custom_price = parseFloat(createForm.custom_price) || selectedService?.price;
+      payload.duration_minutes = selectedService?.duration_minutes;
+      payload.service_name = selectedService?.name;
+    } else if (serviceType === 'pack' && createForm.pack_id) {
+      payload.pack_id = createForm.pack_id;
+    }
+    
+    const { error } = await createAppointment(payload);
     
     setLoadingCreate(false);
     
@@ -249,10 +322,10 @@ export default function DashboardCalendar() {
     } else {
       toast.success('Rendez-vous créé !');
       setShowCreateDialog(false);
+      setSelectedClientId('');
+      setServiceType('pack');
       await refetch();
       
-      // Find the newly created appointment and offer calendar sync
-      // We'll use a timeout to allow refetch to complete
       setTimeout(() => {
         const newApt = appointments.find(a => 
           a.appointment_date === createForm.appointment_date && 
@@ -814,142 +887,155 @@ export default function DashboardCalendar() {
         </DialogContent>
       </Dialog>
 
-      {/* Create Appointment Dialog */}
+      {/* Create Appointment Dialog — same as Reservations */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="max-w-md rounded-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg rounded-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Plus className="w-5 h-5 text-primary" />
-              Nouveau rendez-vous
-            </DialogTitle>
+            <DialogTitle className="text-xl">{t('dashboard.addReservation')}</DialogTitle>
             <DialogDescription className="sr-only">Créer un nouveau rendez-vous</DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-sm">Date *</Label>
-                <Input
-                  type="date"
-                  value={createForm.appointment_date}
-                  onChange={(e) => setCreateForm(prev => ({ ...prev, appointment_date: e.target.value }))}
-                  className="h-10 rounded-xl"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-sm">Heure *</Label>
-                <Input
-                  type="time"
-                  value={createForm.appointment_time}
-                  onChange={(e) => setCreateForm(prev => ({ ...prev, appointment_time: e.target.value }))}
-                  className="h-10 rounded-xl"
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-1.5">
-              <Label className="text-sm">Nom du client *</Label>
-              <Input
-                value={createForm.client_name}
-                onChange={(e) => setCreateForm(prev => ({ ...prev, client_name: e.target.value }))}
-                placeholder="Jean Dupont"
-                className="h-10 rounded-xl"
-              />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-sm">Téléphone *</Label>
-                <Input
-                  value={createForm.client_phone}
-                  onChange={(e) => setCreateForm(prev => ({ ...prev, client_phone: e.target.value }))}
-                  placeholder="06 12 34 56 78"
-                  className="h-10 rounded-xl"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-sm">Email</Label>
-                <Input
-                  type="email"
-                  value={createForm.client_email}
-                  onChange={(e) => setCreateForm(prev => ({ ...prev, client_email: e.target.value }))}
-                  placeholder="email@exemple.fr"
-                  className="h-10 rounded-xl"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-sm">Prestation</Label>
-              <Select value={createForm.custom_service_id} onValueChange={(v) => setCreateForm(prev => ({ ...prev, custom_service_id: v }))}>
-                <SelectTrigger className="h-10 rounded-xl">
-                  <SelectValue placeholder="Choisir une prestation" />
-                </SelectTrigger>
-                <SelectContent>
-                  {customServices.filter(s => s.active).map(service => (
-                    <SelectItem key={service.id} value={service.id}>
-                      {service.name} — {service.price}€ ({service.duration_minutes}min)
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-sm">Type véhicule</Label>
-                <Select value={createForm.vehicle_type} onValueChange={(v) => setCreateForm(prev => ({ ...prev, vehicle_type: v }))}>
-                  <SelectTrigger className="h-10 rounded-xl">
-                    <SelectValue />
+          <div className="space-y-5 mt-4">
+            {/* Client selector */}
+            {clients.length > 0 && (
+              <div className="space-y-2">
+                <Label>{t('dashboard.registeredClient')}</Label>
+                <Select value={selectedClientId || "new"} onValueChange={(v) => handleClientSelect(v === "new" ? "" : v)}>
+                  <SelectTrigger className="h-11 rounded-xl">
+                    <SelectValue placeholder={t('dashboard.selectOrNew')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="citadine">Citadine</SelectItem>
-                    <SelectItem value="berline">Berline</SelectItem>
-                    <SelectItem value="suv">SUV</SelectItem>
-                    <SelectItem value="utilitaire">Utilitaire</SelectItem>
+                    <SelectItem value="new">{t('dashboard.newClient')}</SelectItem>
+                    {clients.map((client) => (
+                      <SelectItem key={client.id} value={client.id}>
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4 text-primary" />
+                          <span>{client.name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-sm">Adresse</Label>
-                <Input
-                  value={createForm.client_address}
-                  onChange={(e) => setCreateForm(prev => ({ ...prev, client_address: e.target.value }))}
-                  placeholder="Adresse"
-                  className="h-10 rounded-xl"
-                />
+            )}
+
+            {/* Service type toggle */}
+            <div className="space-y-3">
+              <Label>{t('dashboard.serviceType')}</Label>
+              <div className="flex bg-muted/60 rounded-xl p-1">
+                <button type="button" onClick={() => handleServiceTypeChange('pack')}
+                  className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    serviceType === 'pack' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                  }`}>
+                  {t('dashboard.formulas')}
+                </button>
+                {customServices.filter(s => s.active).length > 0 && (
+                  <button type="button" onClick={() => handleServiceTypeChange('custom')}
+                    className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                      serviceType === 'custom' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                    }`}>
+                    {t('dashboard.customServiceShort')}
+                  </button>
+                )}
               </div>
+
+              {serviceType === 'pack' && (
+                <div className="space-y-2">
+                  <Select value={createForm.pack_id} onValueChange={(v) => setCreateForm(prev => ({ ...prev, pack_id: v }))}>
+                    <SelectTrigger className="h-11 rounded-xl">
+                      <SelectValue placeholder={t('dashboard.selectFormula')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {packs.map((pack) => (
+                        <SelectItem key={pack.id} value={pack.id}>
+                          {pack.name} - {pack.price}€
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {createForm.pack_id && packs.find(p => p.id === createForm.pack_id) && (
+                    <div className="bg-primary/5 rounded-lg p-3 text-sm">
+                      <p className="font-medium text-primary">{packs.find(p => p.id === createForm.pack_id)?.name}</p>
+                      <p className="text-muted-foreground">
+                        {packs.find(p => p.id === createForm.pack_id)?.duration || t('common.duration')} • {packs.find(p => p.id === createForm.pack_id)?.price}€
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {serviceType === 'custom' && customServices.filter(s => s.active).length > 0 && (
+                <div className="space-y-2">
+                  <Select value={createForm.custom_service_id} onValueChange={handleCustomServiceChange}>
+                    <SelectTrigger className="h-11 rounded-xl">
+                      <SelectValue placeholder={t('dashboard.selectService')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {customServices.filter(s => s.active).map((service) => (
+                        <SelectItem key={service.id} value={service.id}>
+                          {service.name} - {service.price}€ ({formatDuration(service.duration_minutes)})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {createForm.custom_service_id && customServices.find(s => s.id === createForm.custom_service_id) && (
+                    <div className="bg-primary/5 rounded-lg p-3 text-sm">
+                      <p className="font-medium text-primary">{customServices.find(s => s.id === createForm.custom_service_id)?.name}</p>
+                      <p className="text-muted-foreground">
+                        {formatDuration(customServices.find(s => s.id === createForm.custom_service_id)?.duration_minutes || 0)} • {customServices.find(s => s.id === createForm.custom_service_id)?.price}€
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-sm">Notes</Label>
-              <Textarea
-                value={createForm.notes}
-                onChange={(e) => setCreateForm(prev => ({ ...prev, notes: e.target.value }))}
-                placeholder="Notes internes..."
-                className="rounded-xl resize-none"
-                rows={2}
-              />
+            {/* Client info */}
+            <div className="space-y-2">
+              <Label>{t('dashboard.clientName')}</Label>
+              <Input value={createForm.client_name} onChange={(e) => setCreateForm(prev => ({ ...prev, client_name: e.target.value }))} placeholder="Jean Dupont" className="h-11 rounded-xl" disabled={!!selectedClientId} />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t('dashboard.phoneStar')}</Label>
+                <Input value={createForm.client_phone} onChange={(e) => setCreateForm(prev => ({ ...prev, client_phone: e.target.value }))} placeholder="06 12 34 56 78" className="h-11 rounded-xl" disabled={!!selectedClientId} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('common.email')}</Label>
+                <Input type="email" value={createForm.client_email} onChange={(e) => setCreateForm(prev => ({ ...prev, client_email: e.target.value }))} placeholder="jean@email.com" className="h-11 rounded-xl" disabled={!!selectedClientId} />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t('dashboard.dateStar')}</Label>
+                <Input type="date" value={createForm.appointment_date} onChange={(e) => setCreateForm(prev => ({ ...prev, appointment_date: e.target.value }))} className="h-11 rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('dashboard.timeStar')}</Label>
+                <Input type="time" value={createForm.appointment_time} onChange={(e) => setCreateForm(prev => ({ ...prev, appointment_time: e.target.value }))} className="h-11 rounded-xl" />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>{t('common.notes')}</Label>
+              <Textarea value={createForm.notes} onChange={(e) => setCreateForm(prev => ({ ...prev, notes: e.target.value }))} placeholder={t('dashboard.additionalInfo')} rows={2} className="rounded-xl resize-none" />
             </div>
           </div>
           
-          <DialogFooter className="gap-2 pt-2">
-            <Button variant="outline" onClick={() => setShowCreateDialog(false)} className="rounded-xl">
-              Annuler
+          <div className="flex justify-end gap-3 pt-2">
+            <Button variant="ghost" onClick={() => setShowCreateDialog(false)} className="rounded-xl">
+              {t('common.cancel')}
             </Button>
             <Button 
               onClick={handleCreateAppointment}
               disabled={loadingCreate || !createForm.client_name || !createForm.client_phone}
-              className="rounded-xl min-w-[140px]"
+              className="rounded-xl min-w-[120px]"
             >
-              {loadingCreate ? <Loader2 className="w-4 h-4 animate-spin" /> : (
-                <>
-                  <Plus className="w-4 h-4 mr-1.5" />
-                  Créer le RDV
-                </>
-              )}
+              {loadingCreate ? <Loader2 className="w-4 h-4 animate-spin" /> : t('common.add')}
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
 
