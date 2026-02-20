@@ -123,7 +123,7 @@ export function WeeklyCalendarView({ currentDate, appointments, onAppointmentCli
       </div>
 
       {/* ── SCROLLABLE BODY ── */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto relative">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto relative" style={{ scrollbarGutter: 'stable' }}>
         <div className="flex" style={{ minHeight: TOTAL_HOURS * HOUR_HEIGHT }}>
           {/* Time labels */}
           <div className="shrink-0 relative" style={{ width: TIME_COL, minWidth: TIME_COL }}>
