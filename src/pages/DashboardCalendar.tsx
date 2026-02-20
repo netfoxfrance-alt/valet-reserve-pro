@@ -435,7 +435,7 @@ export default function DashboardCalendar() {
 
           {/* WEEK VIEW */}
           {viewMode === 'week' && (
-            <div className="h-[calc(100vh-220px)] min-h-[500px]">
+            <div className="h-[calc(100vh-180px)] sm:h-[calc(100vh-220px)] min-h-[400px] -mx-3 sm:mx-0">
               <WeeklyCalendarView
                 currentDate={currentWeekDate}
                 appointments={appointments}
