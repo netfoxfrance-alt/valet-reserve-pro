@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Settings, LogOut, LayoutGrid } from 'lucide-react';
+import { ArrowLeft, Settings, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useAuth } from '@/hooks/useAuth';
@@ -86,7 +86,17 @@ export function DashboardLayout({ title, subtitle, children }: DashboardLayoutPr
             className="rounded-xl"
             onClick={() => setNavOpen(!navOpen)}
           >
-            <LayoutGrid className="w-4 h-4" />
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4">
+              <circle cx="3" cy="3" r="1.5" />
+              <circle cx="8" cy="3" r="1.5" />
+              <circle cx="13" cy="3" r="1.5" />
+              <circle cx="3" cy="8" r="1.5" />
+              <circle cx="8" cy="8" r="1.5" />
+              <circle cx="13" cy="8" r="1.5" />
+              <circle cx="3" cy="13" r="1.5" />
+              <circle cx="8" cy="13" r="1.5" />
+              <circle cx="13" cy="13" r="1.5" />
+            </svg>
           </Button>
           <LanguageSwitcher />
           <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => navigate('/dashboard/settings')}>

@@ -49,36 +49,39 @@ function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted
   return (
     <Card variant="elevated" className="p-4 sm:p-5 rounded-2xl">
       <div className="flex flex-col gap-3 sm:gap-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <span className="text-sm font-bold text-primary">
-                {request.client_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
-              </span>
-            </div>
-            <div className="min-w-0">
+        {/* Header: avatar + name + status */}
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+            <span className="text-sm font-bold text-primary">
+              {request.client_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+            </span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between gap-2">
               <h3 className="font-semibold text-foreground truncate">{request.client_name}</h3>
-              <a href={`tel:${request.client_phone}`} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                {request.client_phone}
-              </a>
-              {request.client_email && (
-                <span className="text-sm text-muted-foreground block">{request.client_email}</span>
-              )}
+              {getStatusBadge(request.status)}
             </div>
-          </div>
-          <div className="flex flex-col items-end gap-1.5">
-            {getStatusBadge(request.status)}
-            {request.request_type === 'quote' && (
-              isExistingClient ? (
-                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Client existant</Badge>
-              ) : (
-                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">Nouveau prospect</Badge>
-              )
-            )}
-            {request.service_name && (
-              <Badge variant="outline" className="text-xs">{request.service_name}</Badge>
+            <a href={`tel:${request.client_phone}`} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              {request.client_phone}
+            </a>
+            {request.client_email && (
+              <span className="text-sm text-muted-foreground block truncate">{request.client_email}</span>
             )}
           </div>
+        </div>
+
+        {/* Tags row */}
+        <div className="flex flex-wrap gap-1.5">
+          {request.request_type === 'quote' && (
+            isExistingClient ? (
+              <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">Client existant</Badge>
+            ) : (
+              <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">Nouveau prospect</Badge>
+            )
+          )}
+          {request.service_name && (
+            <Badge variant="outline" className="text-xs">{request.service_name}</Badge>
+          )}
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -112,50 +115,50 @@ function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted
         {request.client_address && (
           <div className="flex items-start gap-2 bg-primary/5 rounded-xl p-3">
             <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-            <p className="text-foreground text-sm">{request.client_address}</p>
+            <p className="text-foreground text-sm break-words">{request.client_address}</p>
           </div>
         )}
 
         {request.message && (
           <div className="bg-muted/50 rounded-xl p-3">
-            <p className="text-foreground text-sm whitespace-pre-wrap">{request.message}</p>
+            <p className="text-foreground text-sm whitespace-pre-wrap break-words">{request.message}</p>
           </div>
         )}
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-border/50">
+        <div className="flex flex-col gap-3 pt-2 border-t border-border/50">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Clock className="w-3.5 h-3.5" />
+              <Clock className="w-3.5 h-3.5 shrink-0" />
               {t('requests.receivedOn')} {format(new Date(request.created_at), "d MMM yyyy", { locale: dateLocale })}
             </div>
             {request.contacted_at && (
               <div className="flex items-center gap-2 text-xs text-green-600">
-                <CheckCircle className="w-3.5 h-3.5" />
+                <CheckCircle className="w-3.5 h-3.5 shrink-0" />
                 {t('requests.contactedOn')} {format(new Date(request.contacted_at), "d MMM yyyy", { locale: dateLocale })}
               </div>
             )}
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
             {request.status === 'new' && (
-              <Button variant="outline" size="sm" onClick={() => onMarkContacted(request.id)} className="flex-1 sm:flex-none h-9 rounded-xl">
-                <Phone className="w-4 h-4 mr-1.5" />{t('requests.markContacted')}
+              <Button variant="outline" size="sm" onClick={() => onMarkContacted(request.id)} className="h-9 rounded-xl text-xs sm:text-sm">
+                <Phone className="w-4 h-4 mr-1 sm:mr-1.5 shrink-0" /><span className="truncate">{t('requests.markContacted')}</span>
               </Button>
             )}
             {request.request_type === 'quote' && request.status !== 'closed' && isExistingClient && (
-              <Button variant="default" size="sm" onClick={() => onCreateQuote(request)} className="flex-1 sm:flex-none h-9 rounded-xl bg-primary">
-                <FileCheck className="w-4 h-4 mr-1.5" />Créer un devis
+              <Button variant="default" size="sm" onClick={() => onCreateQuote(request)} className="h-9 rounded-xl bg-primary text-xs sm:text-sm">
+                <FileCheck className="w-4 h-4 mr-1 sm:mr-1.5 shrink-0" /><span className="truncate">Créer un devis</span>
               </Button>
             )}
             {request.request_type === 'quote' && request.status !== 'closed' && !isExistingClient && (
-              <Button variant="default" size="sm" onClick={() => onCreateClient(request)} className="flex-1 sm:flex-none h-9 rounded-xl bg-primary">
-                <UserPlus className="w-4 h-4 mr-1.5" />Créer fiche client
+              <Button variant="default" size="sm" onClick={() => onCreateClient(request)} className="h-9 rounded-xl bg-primary text-xs sm:text-sm">
+                <UserPlus className="w-4 h-4 mr-1 sm:mr-1.5 shrink-0" /><span className="truncate">Créer fiche client</span>
               </Button>
             )}
             {(request.status === 'new' || request.status === 'contacted') && (
               <>
-                <Button variant="outline" size="sm" onClick={() => onMarkConverted(request.id)} className="flex-1 sm:flex-none h-9 rounded-xl">
-                  <CheckCircle className="w-4 h-4 mr-1.5" />{t('requests.markAnswered')}
+                <Button variant="outline" size="sm" onClick={() => onMarkConverted(request.id)} className="h-9 rounded-xl text-xs sm:text-sm">
+                  <CheckCircle className="w-4 h-4 mr-1 sm:mr-1.5 shrink-0" /><span className="truncate">{t('requests.markAnswered')}</span>
                 </Button>
                 <Button variant="ghost" size="sm" onClick={() => onMarkClosed(request.id)} className="h-9 rounded-xl">
                   <XCircle className="w-4 h-4" />
@@ -456,7 +459,7 @@ export default function DashboardRequests() {
                 onChange={(e) => setNewClientForm(f => ({ ...f, name: e.target.value }))}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Téléphone</Label>
                 <Input
