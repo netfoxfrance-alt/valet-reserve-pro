@@ -1,20 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { Calendar, Check, X, Plus, Loader2, ChevronLeft, ChevronRight, Phone, Mail, Users, MoreHorizontal, CalendarPlus, CalendarCheck } from 'lucide-react';
+import { 
+  Search, Check, X, Clock, CalendarDays, CalendarClock, 
+  Phone, Mail, MoreHorizontal, CalendarPlus, CalendarCheck,
+  ArrowUpDown, ChevronDown
+} from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
-import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
-import { useMyClients, Client } from '@/hooks/useClients';
-import { useMyCustomServices, formatDuration, CustomService } from '@/hooks/useCustomServices';
+import { useMyCenter } from '@/hooks/useCenter';
+import { useMyClients } from '@/hooks/useClients';
 import { useCalendarSync } from '@/hooks/useCalendarSync';
-import { format, isToday, isTomorrow, parseISO, startOfDay, isBefore, addDays, addMonths, startOfMonth, endOfMonth, isSameMonth } from 'date-fns';
+import { format, parseISO, startOfDay, isBefore, addDays, isToday, isTomorrow, startOfWeek, endOfWeek } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
@@ -28,10 +27,12 @@ import { sendBookingEmail, getClientEmail, buildEmailPayload, EmailType } from '
 import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
 import { AppointmentDetailDialog } from '@/components/dashboard/AppointmentDetailDialog';
 import { ConfirmationCalendarDialog } from '@/components/dashboard/ConfirmationCalendarDialog';
-import { SubscriptionBanner } from '@/components/dashboard/SubscriptionBanner';
 import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
 
-// Status colors only - labels come from translations
+// ─── Status Colors ───
 const statusColorMap: Record<string, string> = {
   pending_validation: 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400',
   pending: 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400',
@@ -41,34 +42,41 @@ const statusColorMap: Record<string, string> = {
   refused: 'bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-400',
 };
 
-function AppointmentRow({ appointment, centerAddress, isSynced, onUpdateStatus, onConfirmAppointment, onRefuseAppointment, onCancelAppointment, onSendEmail, onViewDetails, onAddToCalendar }: { 
-  appointment: Appointment; 
-  centerAddress?: string;
-  isSynced: boolean;
+// ─── Compact Appointment Card ───
+function InboxCard({ 
+  appointment, centerAddress, isSynced,
+  onConfirm, onRefuse, onCancel, onUpdateStatus, onSendEmail, onViewDetails, onAddToCalendar 
+}: { 
+  appointment: Appointment; centerAddress?: string; isSynced: boolean;
+  onConfirm: (a: Appointment) => void;
+  onRefuse: (a: Appointment) => void;
+  onCancel: (a: Appointment) => void;
   onUpdateStatus: (id: string, status: Appointment['status']) => void;
-  onConfirmAppointment: (appointment: Appointment) => void;
-  onRefuseAppointment: (appointment: Appointment) => void;
-  onCancelAppointment: (appointment: Appointment) => void;
-  onSendEmail: (appointment: Appointment, kind: 'confirmation' | 'reminder') => void;
-  onViewDetails: (appointment: Appointment) => void;
-  onAddToCalendar: (appointment: Appointment) => void;
+  onSendEmail: (a: Appointment, kind: 'confirmation' | 'reminder') => void;
+  onViewDetails: (a: Appointment) => void;
+  onAddToCalendar: (a: Appointment) => void;
 }) {
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
-  const statusColor = statusColorMap[appointment.status] || statusColorMap.pending_validation;
-  const statusLabel = t(`status.${appointment.status}`);
+  const statusColor = statusColorMap[appointment.status] || statusColorMap.pending;
   const date = parseISO(appointment.appointment_date);
+  const isPending = appointment.status === 'pending_validation' || appointment.status === 'pending';
   
   let dateLabel = format(date, "EEE d MMM", { locale: dateLocale });
   if (isToday(date)) dateLabel = t('common.today');
   if (isTomorrow(date)) dateLabel = t('common.tomorrow');
   
-  const canSendEmail = Boolean(appointment.client_email && appointment.client_email !== 'non-fourni@example.com');
-  const hasCustomService = Boolean(appointment.custom_service_id);
-  const serviceName = appointment.custom_service?.name || appointment.pack?.name;
+  const serviceName = appointment.custom_service?.name || appointment.pack?.name || '';
   const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
+  const canSendEmail = Boolean(appointment.client_email && appointment.client_email !== 'non-fourni@example.com');
 
-  const handleAddToCalendar = () => {
+  const initials = appointment.client_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+  // Deterministic color from name
+  const hue = appointment.client_name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % 360;
+
+  const handleAddToCalendar = (e: React.MouseEvent) => {
+    e.stopPropagation();
     const url = generateAppointmentCalendarUrl({
       id: appointment.id,
       client_name: appointment.client_name,
@@ -90,469 +98,211 @@ function AppointmentRow({ appointment, centerAddress, isSynced, onUpdateStatus, 
 
   return (
     <div 
-      className="group flex flex-col sm:flex-row sm:items-center gap-4 p-5 bg-card border border-border/50 rounded-2xl hover:border-border hover:shadow-md transition-all duration-200 cursor-pointer"
+      className={cn(
+        "group flex items-center gap-3 p-3.5 sm:p-4 bg-card border rounded-2xl transition-all duration-200 cursor-pointer",
+        isPending 
+          ? "border-amber-200/80 dark:border-amber-800/50 hover:border-amber-300 hover:shadow-md" 
+          : "border-border/50 hover:border-border hover:shadow-md"
+      )}
       onClick={() => onViewDetails(appointment)}
     >
-      <div className="flex items-center gap-4 flex-1 min-w-0">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0 shadow-sm">
-          <span className="text-base font-bold text-primary">
-            {appointment.client_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+      {/* Avatar */}
+      <div 
+        className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center flex-shrink-0 text-white font-bold text-sm"
+        style={{ backgroundColor: `hsl(${hue}, 55%, 50%)` }}
+      >
+        {initials}
+      </div>
+
+      {/* Info */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-0.5">
+          <p className="font-semibold text-foreground truncate text-sm sm:text-base">{appointment.client_name}</p>
+          <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0", statusColor)}>
+            {t(`status.${appointment.status}`)}
           </span>
         </div>
-        <div className="min-w-0 flex-1">
-          <p className="font-semibold text-foreground truncate text-base">{appointment.client_name}</p>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-            {appointment.pack && (
-              <span className="font-medium text-foreground/80">{appointment.pack.name}</span>
-            )}
-            <span className="hidden sm:inline">•</span>
-            <span className="capitalize">{t(`vehicles.${appointment.vehicle_type}`) || appointment.vehicle_type}</span>
-          </div>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <span className="font-medium">{dateLabel}</span>
+          <span>•</span>
+          <span>{appointment.appointment_time.slice(0, 5)}</span>
+          {serviceName && (
+            <>
+              <span className="hidden sm:inline">•</span>
+              <span className="hidden sm:inline truncate">{serviceName}</span>
+            </>
+          )}
         </div>
       </div>
-      
-      <div className="flex items-center gap-3 sm:gap-5 flex-wrap sm:flex-nowrap">
-        <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 rounded-xl">
-          <Calendar className="w-4 h-4 text-muted-foreground" />
-          <div className="text-sm">
-            <span className="font-medium text-foreground">{dateLabel}</span>
-            <span className="text-muted-foreground ml-2">{appointment.appointment_time.slice(0, 5)}</span>
-          </div>
-        </div>
-        
-        {(price !== undefined && price !== null) && (
-          <div className="hidden sm:block text-right min-w-[60px]">
-            <p className="text-lg font-bold text-foreground">{price}€</p>
-          </div>
+
+      {/* Price */}
+      {price !== undefined && price !== null && (
+        <span className="text-sm sm:text-base font-bold text-foreground flex-shrink-0">{price}€</span>
+      )}
+
+      {/* Quick Actions */}
+      <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
+        {isPending && (
+          <>
+            <Button 
+              variant="ghost" size="icon" 
+              className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+              onClick={() => onConfirm(appointment)}
+            >
+              <Check className="w-4 h-4" />
+            </Button>
+            <Button 
+              variant="ghost" size="icon" 
+              className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+              onClick={() => onRefuse(appointment)}
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </>
         )}
-        
-        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${statusColor}`}>
-          {statusLabel}
-        </span>
-        
-        <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
-          {appointment.status === 'confirmed' && canSendEmail && serviceName && price !== undefined && (
+        {appointment.status === 'confirmed' && (
+          <>
+            <Button 
+              variant="ghost" size="icon" 
+              className={cn("h-8 w-8 sm:h-9 sm:w-9 rounded-xl", isSynced ? "text-primary" : "text-muted-foreground hover:text-primary")}
+              onClick={handleAddToCalendar}
+            >
+              {isSynced ? <CalendarCheck className="w-4 h-4" /> : <CalendarPlus className="w-4 h-4" />}
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl" title="Actions">
+                <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl">
                   <MoreHorizontal className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64">
-                <DropdownMenuItem onClick={() => onSendEmail(appointment, 'reminder')}>
-                  <Mail className="w-4 h-4 mr-2" />
-                  {t('dashboard.sendReminderEmail')}
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={() => onUpdateStatus(appointment.id, 'completed')}>
+                  <Check className="w-4 h-4 mr-2" />{t('dashboard.finish')}
+                </DropdownMenuItem>
+                {canSendEmail && serviceName && price !== undefined && (
+                  <DropdownMenuItem onClick={() => onSendEmail(appointment, 'reminder')}>
+                    <Mail className="w-4 h-4 mr-2" />{t('dashboard.sendReminderEmail')}
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem className="text-destructive" onClick={() => onCancel(appointment)}>
+                  <X className="w-4 h-4 mr-2" />{t('common.cancel')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          )}
-          
-          {(appointment.status === 'pending_validation' || appointment.status === 'pending') && (
-            <>
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-primary hover:text-primary hover:bg-primary/10" onClick={() => onConfirmAppointment(appointment)}>
-                <Check className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onRefuseAppointment(appointment)}>
-                <X className="w-4 h-4" />
-              </Button>
-            </>
-          )}
-          {appointment.status === 'confirmed' && (
-            <>
-              {isSynced ? (
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-primary hover:text-primary hover:bg-primary/10" onClick={handleAddToCalendar}>
-                  <CalendarCheck className="w-4 h-4" />
-                </Button>
-              ) : (
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10" onClick={handleAddToCalendar}>
-                  <CalendarPlus className="w-4 h-4" />
-                </Button>
-              )}
-              <Button variant="outline" size="sm" className="h-9 rounded-xl text-xs font-medium" onClick={() => onUpdateStatus(appointment.id, 'completed')}>
-                {t('dashboard.finish')}
-              </Button>
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onCancelAppointment(appointment)}>
-                <X className="w-4 h-4" />
-              </Button>
-            </>
-          )}
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
 }
 
-function AddAppointmentDialog({ onAdd, clients, services }: { 
-  onAdd: (data: any) => Promise<void>;
-  clients: Client[];
-  services: CustomService[];
-}) {
-  const { t } = useTranslation();
-  const { packs } = useMyPacks();
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [selectedClientId, setSelectedClientId] = useState('');
-  const [serviceType, setServiceType] = useState<'pack' | 'custom'>('pack');
-  const [form, setForm] = useState({
-    client_name: '',
-    client_email: '',
-    client_phone: '',
-    client_address: '',
-    pack_id: '',
-    custom_service_id: '',
-    custom_price: '',
-    appointment_date: format(new Date(), 'yyyy-MM-dd'),
-    appointment_time: '09:00',
-    notes: ''
-  });
-
-  // When a registered client is selected, pre-fill form with their data
-  const handleClientSelect = (clientId: string) => {
-    setSelectedClientId(clientId);
-    if (clientId) {
-      const client = clients.find(c => c.id === clientId);
-      if (client) {
-        setForm({
-          ...form,
-          client_name: client.name,
-          client_email: client.email || '',
-          client_phone: client.phone || '',
-          client_address: client.address || '',
-          custom_service_id: '',
-          custom_price: '',
-          pack_id: '',
-        });
-      }
-    } else {
-      setForm({
-        ...form,
-        client_name: '',
-        client_email: '',
-        client_phone: '',
-        client_address: '',
-        custom_service_id: '',
-        custom_price: '',
-        pack_id: '',
-      });
-      setServiceType('pack');
-    }
-  };
-
-  // When service type changes, reset the respective field
-  const handleServiceTypeChange = (type: 'pack' | 'custom') => {
-    setServiceType(type);
-    if (type === 'pack') {
-      setForm({ ...form, custom_service_id: '', custom_price: '' });
-    } else {
-      setForm({ ...form, pack_id: '' });
-    }
-  };
-
-  // When custom service is changed, update price accordingly
-  const handleCustomServiceChange = (serviceId: string) => {
-    const service = services.find(s => s.id === serviceId);
-    setForm({
-      ...form,
-      custom_service_id: serviceId,
-      custom_price: service?.price?.toString() || '',
-    });
-  };
-
-  // When pack is changed
-  const handlePackChange = (packId: string) => {
-    setForm({ ...form, pack_id: packId });
-  };
-
-  // Get selected service/pack details
-  const selectedCustomService = services.find(s => s.id === form.custom_service_id);
-  const selectedPack = packs.find(p => p.id === form.pack_id);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.client_name || !form.client_phone) {
-      toast.error(t('dashboard.fillNamePhone'));
-      return;
-    }
-    setLoading(true);
-    
-    const payload: any = {
-      client_name: form.client_name,
-      client_email: form.client_email || 'non-fourni@example.com',
-      client_phone: form.client_phone,
-      client_address: form.client_address || undefined,
-      appointment_date: form.appointment_date,
-      appointment_time: form.appointment_time,
-      notes: form.notes || undefined,
-      vehicle_type: 'standard',
-    };
-
-    if (selectedClientId) {
-      payload.client_id = selectedClientId;
-    }
-
-    if (serviceType === 'custom' && form.custom_service_id) {
-      payload.custom_service_id = form.custom_service_id;
-      payload.custom_price = parseFloat(form.custom_price) || selectedCustomService?.price;
-      payload.duration_minutes = selectedCustomService?.duration_minutes;
-      payload.service_name = selectedCustomService?.name;
-    } else if (serviceType === 'pack' && form.pack_id) {
-      payload.pack_id = form.pack_id;
-    }
-
-    await onAdd(payload);
-    setLoading(false);
-    setOpen(false);
-    setSelectedClientId('');
-    setServiceType('pack');
-    setForm({
-      client_name: '',
-      client_email: '',
-      client_phone: '',
-      client_address: '',
-      pack_id: '',
-      custom_service_id: '',
-      custom_price: '',
-      appointment_date: format(new Date(), 'yyyy-MM-dd'),
-      appointment_time: '09:00',
-      notes: ''
-    });
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="rounded-xl shadow-sm">
-          <Plus className="w-4 h-4 mr-2" />
-          {t('dashboard.newReservation')}
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-lg rounded-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl">{t('dashboard.addReservation')}</DialogTitle>
-          <DialogDescription className="sr-only">
-            {t('dashboard.formDescription')}
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-5 mt-4">
-          {clients.length > 0 && (
-            <div className="space-y-2">
-              <Label>{t('dashboard.registeredClient')}</Label>
-              <Select value={selectedClientId || "new"} onValueChange={(v) => handleClientSelect(v === "new" ? "" : v)}>
-                <SelectTrigger className="h-11 rounded-xl">
-                  <SelectValue placeholder={t('dashboard.selectOrNew')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="new">{t('dashboard.newClient')}</SelectItem>
-                  {clients.map((client) => (
-                    <SelectItem key={client.id} value={client.id}>
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-primary" />
-                        <span>{client.name}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          <div className="space-y-3">
-            <Label>{t('dashboard.serviceType')}</Label>
-            <div className="flex bg-muted/60 rounded-xl p-1">
-              <button type="button" onClick={() => handleServiceTypeChange('pack')}
-                className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                  serviceType === 'pack' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
-                }`}>
-                {t('dashboard.formulas')}
-              </button>
-              {services.length > 0 && (
-                <button type="button" onClick={() => handleServiceTypeChange('custom')}
-                  className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                    serviceType === 'custom' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
-                  }`}>
-                  {t('dashboard.customServiceShort')}
-                </button>
-              )}
-            </div>
-
-            {serviceType === 'pack' && (
-              <div className="space-y-2">
-                <Select value={form.pack_id} onValueChange={handlePackChange}>
-                  <SelectTrigger className="h-11 rounded-xl">
-                    <SelectValue placeholder={t('dashboard.selectFormula')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {packs.map((pack) => (
-                      <SelectItem key={pack.id} value={pack.id}>
-                        {pack.name} - {pack.price}€
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {selectedPack && (
-                  <div className="bg-primary/5 rounded-lg p-3 text-sm">
-                    <p className="font-medium text-primary">{selectedPack.name}</p>
-                    <p className="text-muted-foreground">
-                      {selectedPack.duration || t('common.duration')} • {selectedPack.price}€
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {serviceType === 'custom' && services.length > 0 && (
-              <div className="space-y-2">
-                <Select value={form.custom_service_id} onValueChange={handleCustomServiceChange}>
-                  <SelectTrigger className="h-11 rounded-xl">
-                    <SelectValue placeholder={t('dashboard.selectService')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {services.map((service) => (
-                      <SelectItem key={service.id} value={service.id}>
-                        {service.name} - {service.price}€ ({formatDuration(service.duration_minutes)})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {selectedCustomService && (
-                  <div className="bg-primary/5 rounded-lg p-3 text-sm">
-                    <p className="font-medium text-primary">{selectedCustomService.name}</p>
-                    <p className="text-muted-foreground">
-                      {formatDuration(selectedCustomService.duration_minutes)} • {selectedCustomService.price}€
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="client_name">{t('dashboard.clientName')}</Label>
-            <Input id="client_name" value={form.client_name} onChange={(e) => setForm({ ...form, client_name: e.target.value })} placeholder="Jean Dupont" className="h-11 rounded-xl" disabled={!!selectedClientId} />
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="client_phone">{t('dashboard.phoneStar')}</Label>
-              <Input id="client_phone" value={form.client_phone} onChange={(e) => setForm({ ...form, client_phone: e.target.value })} placeholder="06 12 34 56 78" className="h-11 rounded-xl" disabled={!!selectedClientId} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="client_email">{t('common.email')}</Label>
-              <Input id="client_email" type="email" value={form.client_email} onChange={(e) => setForm({ ...form, client_email: e.target.value })} placeholder="jean@email.com" className="h-11 rounded-xl" disabled={!!selectedClientId} />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="appointment_date">{t('dashboard.dateStar')}</Label>
-              <Input id="appointment_date" type="date" value={form.appointment_date} onChange={(e) => setForm({ ...form, appointment_date: e.target.value })} className="h-11 rounded-xl" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="appointment_time">{t('dashboard.timeStar')}</Label>
-              <Input id="appointment_time" type="time" value={form.appointment_time} onChange={(e) => setForm({ ...form, appointment_time: e.target.value })} className="h-11 rounded-xl" />
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="notes">{t('common.notes')}</Label>
-            <Textarea id="notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder={t('dashboard.additionalInfo')} rows={2} className="rounded-xl resize-none" />
-          </div>
-          
-          <div className="flex justify-end gap-3 pt-2">
-            <Button type="button" variant="ghost" onClick={() => setOpen(false)} className="rounded-xl">
-              {t('common.cancel')}
-            </Button>
-            <Button type="submit" disabled={loading} className="rounded-xl min-w-[120px]">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : t('common.add')}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-type FilterType = 'all' | 'today' | 'week' | 'month' | 'pending';
+// ─── Filter Types ───
+type StatusFilter = 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
+type QuickFilter = 'none' | 'pending' | 'today' | 'week';
+type SortOrder = 'newest' | 'oldest';
 
 export default function Dashboard() {
   const { t, i18n } = useTranslation();
+  const isMobile = useIsMobile();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
-  const [filter, setFilter] = useState<FilterType>('all');
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [quickFilter, setQuickFilter] = useState<QuickFilter>('none');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [justConfirmedAppointment, setJustConfirmedAppointment] = useState<Appointment | null>(null);
-  const { appointments, loading, updateStatus, createAppointment } = useMyAppointments();
+  
+  const { appointments, loading, updateStatus } = useMyAppointments();
   const { center } = useMyCenter();
   const { clients } = useMyClients();
-  const { services } = useMyCustomServices();
   const { markAsSynced, isSynced: checkIsSynced } = useCalendarSync();
   
   const today = startOfDay(new Date());
-  const weekEnd = addDays(today, 7);
-  const monthStart = startOfMonth(currentMonth);
-  const monthEnd = endOfMonth(currentMonth);
-  
-  const todayAppointments = appointments.filter(a => {
-    const date = parseISO(a.appointment_date);
-    return isToday(date) && a.status !== 'cancelled';
-  });
-  
-  const pendingAppointments = appointments.filter(a => 
-    a.status === 'pending' || a.status === 'pending_validation'
-  );
-  
-  const upcomingAppointments = appointments.filter(a => {
-    const date = parseISO(a.appointment_date);
-    return !isBefore(date, today) && a.status !== 'cancelled';
-  });
-  
-  const weekAppointments = upcomingAppointments.filter(a => {
-    const date = parseISO(a.appointment_date);
-    return isBefore(date, weekEnd);
-  });
+  const weekStart = startOfWeek(today, { weekStartsOn: 1 });
+  const weekEnd = endOfWeek(today, { weekStartsOn: 1 });
 
-  const monthAppointments = appointments.filter(a => {
-    const date = parseISO(a.appointment_date);
-    return isSameMonth(date, currentMonth) && a.status !== 'cancelled';
-  });
+  // ─── Counters ───
+  const pendingCount = useMemo(() => 
+    appointments.filter(a => a.status === 'pending' || a.status === 'pending_validation').length
+  , [appointments]);
+  
+  const todayCount = useMemo(() => 
+    appointments.filter(a => isToday(parseISO(a.appointment_date)) && a.status !== 'cancelled' && a.status !== 'refused').length
+  , [appointments]);
+  
+  const weekCount = useMemo(() => {
+    return appointments.filter(a => {
+      const d = parseISO(a.appointment_date);
+      return d >= weekStart && d <= weekEnd && a.status !== 'cancelled' && a.status !== 'refused';
+    }).length;
+  }, [appointments, weekStart, weekEnd]);
 
-  const filteredAppointments = (() => {
-    switch (filter) {
-      case 'today': return todayAppointments;
-      case 'week': return weekAppointments;
-      case 'month': return monthAppointments;
-      case 'pending': return pendingAppointments;
-      default: return upcomingAppointments;
+  // ─── Filtering Pipeline ───
+  const filteredAppointments = useMemo(() => {
+    let result = [...appointments];
+
+    // Quick filter
+    if (quickFilter === 'pending') {
+      result = result.filter(a => a.status === 'pending' || a.status === 'pending_validation');
+    } else if (quickFilter === 'today') {
+      result = result.filter(a => isToday(parseISO(a.appointment_date)) && a.status !== 'cancelled' && a.status !== 'refused');
+    } else if (quickFilter === 'week') {
+      result = result.filter(a => {
+        const d = parseISO(a.appointment_date);
+        return d >= weekStart && d <= weekEnd && a.status !== 'cancelled' && a.status !== 'refused';
+      });
     }
-  })();
 
-  const groupedAppointments = filteredAppointments.reduce((groups, appointment) => {
-    const date = appointment.appointment_date;
-    if (!groups[date]) groups[date] = [];
-    groups[date].push(appointment);
-    return groups;
-  }, {} as Record<string, Appointment[]>);
+    // Status filter
+    if (statusFilter !== 'all') {
+      if (statusFilter === 'pending') {
+        result = result.filter(a => a.status === 'pending' || a.status === 'pending_validation');
+      } else if (statusFilter === 'cancelled') {
+        result = result.filter(a => a.status === 'cancelled' || a.status === 'refused');
+      } else {
+        result = result.filter(a => a.status === statusFilter);
+      }
+    }
 
-  const sortedDates = Object.keys(groupedAppointments).sort();
+    // Search
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      result = result.filter(a =>
+        a.client_name.toLowerCase().includes(q) ||
+        a.client_phone.includes(q) ||
+        (a.client_email && a.client_email.toLowerCase().includes(q))
+      );
+    }
 
+    // Sort
+    result.sort((a, b) => {
+      const cmp = a.appointment_date.localeCompare(b.appointment_date) || a.appointment_time.localeCompare(b.appointment_time);
+      return sortOrder === 'newest' ? -cmp : cmp;
+    });
+
+    return result;
+  }, [appointments, quickFilter, statusFilter, searchQuery, sortOrder, weekStart, weekEnd]);
+
+  // ─── Group by date ───
+  const groupedAppointments = useMemo(() => {
+    const groups: Record<string, Appointment[]> = {};
+    filteredAppointments.forEach(a => {
+      if (!groups[a.appointment_date]) groups[a.appointment_date] = [];
+      groups[a.appointment_date].push(a);
+    });
+    const dates = Object.keys(groups);
+    dates.sort((a, b) => sortOrder === 'newest' ? b.localeCompare(a) : a.localeCompare(b));
+    return { groups, dates };
+  }, [filteredAppointments, sortOrder]);
+
+  // ─── Handlers (kept from original) ───
   const handleUpdateStatus = async (id: string, status: Appointment['status']) => {
     const { error } = await updateStatus(id, status);
-    if (error) {
-      toast.error(t('dashboard.statusUpdateError'));
-    } else {
-      toast.success(t('dashboard.statusUpdated'));
-    }
-  };
-
-  const handleAddAppointment = async (data: any) => {
-    const { error } = await createAppointment(data);
-    if (error) {
-      toast.error(t('dashboard.createError'));
-    } else {
-      toast.success(t('dashboard.reservationAdded'));
-    }
+    if (error) toast.error(t('dashboard.statusUpdateError'));
+    else toast.success(t('dashboard.statusUpdated'));
   };
 
   const handleViewDetails = (appointment: Appointment) => {
@@ -572,24 +322,15 @@ export default function Dashboard() {
     if (!center) return;
     const serviceName = appointment.custom_service?.name || appointment.pack?.name;
     const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price;
-    if (!serviceName || price === undefined) {
-      toast.error(t('dashboard.missingServiceInfo'));
-      return;
-    }
+    if (!serviceName || price === undefined) { toast.error(t('dashboard.missingServiceInfo')); return; }
     const clientEmail = await getClientEmail(appointment.client_email, appointment.client_id);
-    if (!clientEmail) {
-      toast.error(t('dashboard.noValidEmail'));
-      return;
-    }
+    if (!clientEmail) { toast.error(t('dashboard.noValidEmail')); return; }
     const toastId = toast.loading(kind === 'reminder' ? t('dashboard.sendingReminder') : t('dashboard.sendingConfirmation'));
     const payload = buildEmailPayload(center.id, appointment, clientEmail, serviceName, price, kind as EmailType);
     const result = await sendBookingEmail(payload);
     toast.dismiss(toastId);
-    if (result.success) {
-      toast.success(kind === 'reminder' ? t('dashboard.reminderSent') : t('dashboard.confirmationSent'));
-    } else {
-      toast.error(t('dashboard.emailFailed'));
-    }
+    if (result.success) toast.success(kind === 'reminder' ? t('dashboard.reminderSent') : t('dashboard.confirmationSent'));
+    else toast.error(t('dashboard.emailFailed'));
   };
 
   const sendStatusEmail = async (appointment: Appointment, emailType: EmailType) => {
@@ -603,120 +344,177 @@ export default function Dashboard() {
     sendBookingEmail(payload).catch(() => {});
   };
 
-  const handleConfirmAppointment = async (appointment: Appointment) => {
+  const handleConfirm = async (appointment: Appointment) => {
     const { error } = await updateStatus(appointment.id, 'confirmed');
-    if (error) {
-      toast.error(t('dashboard.confirmError'));
-      return;
-    }
+    if (error) { toast.error(t('dashboard.confirmError')); return; }
     setJustConfirmedAppointment(appointment);
     setConfirmDialogOpen(true);
     sendStatusEmail(appointment, 'confirmation');
   };
 
-  const handleRefuseAppointment = async (appointment: Appointment) => {
+  const handleRefuse = async (appointment: Appointment) => {
     const { error } = await updateStatus(appointment.id, 'refused');
-    if (error) {
-      toast.error(t('dashboard.refuseError'));
-      return;
-    }
+    if (error) { toast.error(t('dashboard.refuseError')); return; }
     toast.success(t('dashboard.refused'));
     sendStatusEmail(appointment, 'refused');
   };
 
-  const handleCancelAppointment = async (appointment: Appointment) => {
+  const handleCancel = async (appointment: Appointment) => {
     const { error } = await updateStatus(appointment.id, 'cancelled');
-    if (error) {
-      toast.error(t('dashboard.cancelError'));
-      return;
-    }
+    if (error) { toast.error(t('dashboard.cancelError')); return; }
     toast.success(t('dashboard.cancelled'));
     sendStatusEmail(appointment, 'cancelled');
   };
 
-  const stats = [
-    { name: t('dashboard.todayStat'), value: todayAppointments.length, highlight: todayAppointments.length > 0 },
-    { name: t('dashboard.pendingStat'), value: pendingAppointments.length, highlight: pendingAppointments.length > 0, isWarning: true },
-    { name: t('dashboard.weekStat'), value: weekAppointments.length, highlight: false },
-    { name: t('dashboard.upcomingStat'), value: upcomingAppointments.length, highlight: false },
+  const handleQuickFilter = (f: QuickFilter) => {
+    setQuickFilter(prev => prev === f ? 'none' : f);
+    setStatusFilter('all');
+  };
+
+  // ─── Status chips ───
+  const statusChips: { key: StatusFilter; label: string }[] = [
+    { key: 'all', label: t('dashboard.all', { defaultValue: 'Tous' }) },
+    { key: 'pending', label: t('dashboard.pendingStat') },
+    { key: 'confirmed', label: t('status.confirmed', { defaultValue: 'Confirmés' }) },
+    { key: 'completed', label: t('status.completed', { defaultValue: 'Terminés' }) },
+    { key: 'cancelled', label: t('status.cancelled', { defaultValue: 'Annulés' }) },
   ];
 
-  const filters: { key: FilterType; label: string }[] = [
-    { key: 'all', label: t('dashboard.upcoming') },
-    { key: 'today', label: t('dashboard.todayStat') },
-    { key: 'week', label: t('dashboard.thisWeek') },
-    { key: 'month', label: t('dashboard.thisMonth') },
-    { key: 'pending', label: t('dashboard.pendingStat') },
-  ];
-  
   return (
     <>
-    <DashboardLayout title={t('nav.reservations')} subtitle={center?.name}>
-      <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
-            {stats.map((stat) => (
-              <Card key={stat.name} variant="elevated" className="p-4 sm:p-5 rounded-2xl hover:shadow-lg transition-all duration-200">
-                <div className="flex items-center justify-between mb-1 sm:mb-2">
-                  <p className="text-xs sm:text-sm font-medium text-muted-foreground">{stat.name}</p>
-                  {stat.highlight && (
-                    <span className={`w-2 h-2 rounded-full ${stat.isWarning ? 'bg-amber-400' : 'bg-emerald-400'} animate-pulse`} />
-                  )}
-                </div>
-                <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{stat.value}</p>
-              </Card>
+      <DashboardLayout title={t('nav.reservations')} subtitle={center?.name}>
+        <div className="space-y-4 sm:space-y-5">
+          {/* ─── Counter Cards ─── */}
+          <div className="grid grid-cols-3 gap-2.5 sm:gap-4">
+            <button 
+              onClick={() => handleQuickFilter('pending')}
+              className={cn(
+                "text-left p-3.5 sm:p-5 rounded-2xl border transition-all duration-200",
+                quickFilter === 'pending' 
+                  ? "border-amber-300 bg-amber-50/80 dark:bg-amber-950/30 dark:border-amber-700 shadow-sm" 
+                  : "border-border/50 bg-card hover:border-border hover:shadow-sm"
+              )}
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <Clock className="w-4 h-4 text-amber-500" />
+                {pendingCount > 0 && (
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                )}
+              </div>
+              <p className="text-2xl sm:text-3xl font-bold text-foreground">{pendingCount}</p>
+              <p className="text-[11px] sm:text-xs text-muted-foreground font-medium mt-0.5">{t('dashboard.pendingStat')}</p>
+            </button>
+
+            <button 
+              onClick={() => handleQuickFilter('today')}
+              className={cn(
+                "text-left p-3.5 sm:p-5 rounded-2xl border transition-all duration-200",
+                quickFilter === 'today' 
+                  ? "border-primary/50 bg-primary/5 shadow-sm" 
+                  : "border-border/50 bg-card hover:border-border hover:shadow-sm"
+              )}
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <CalendarDays className="w-4 h-4 text-primary" />
+                {todayCount > 0 && (
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                )}
+              </div>
+              <p className="text-2xl sm:text-3xl font-bold text-foreground">{todayCount}</p>
+              <p className="text-[11px] sm:text-xs text-muted-foreground font-medium mt-0.5">{t('dashboard.todayStat')}</p>
+            </button>
+
+            <button 
+              onClick={() => handleQuickFilter('week')}
+              className={cn(
+                "text-left p-3.5 sm:p-5 rounded-2xl border transition-all duration-200",
+                quickFilter === 'week' 
+                  ? "border-primary/50 bg-primary/5 shadow-sm" 
+                  : "border-border/50 bg-card hover:border-border hover:shadow-sm"
+              )}
+            >
+              <div className="flex items-center mb-1.5">
+                <CalendarClock className="w-4 h-4 text-primary" />
+              </div>
+              <p className="text-2xl sm:text-3xl font-bold text-foreground">{weekCount}</p>
+              <p className="text-[11px] sm:text-xs text-muted-foreground font-medium mt-0.5">{t('dashboard.weekStat')}</p>
+            </button>
+          </div>
+
+          {/* ─── Search + Sort ─── */}
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder={t('dashboard.searchPlaceholder', { defaultValue: 'Rechercher par nom ou téléphone...' })}
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="pl-9 h-10 rounded-xl bg-muted/40 border-0 focus-visible:ring-1"
+              />
+            </div>
+            <Button 
+              variant="ghost" size="icon" 
+              className="h-10 w-10 rounded-xl flex-shrink-0"
+              onClick={() => setSortOrder(prev => prev === 'newest' ? 'oldest' : 'newest')}
+              title={sortOrder === 'newest' ? 'Plus récent d\'abord' : 'Plus ancien d\'abord'}
+            >
+              <ArrowUpDown className="w-4 h-4" />
+            </Button>
+          </div>
+
+          {/* ─── Status Chips ─── */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 -mx-1 px-1 scrollbar-none">
+            {statusChips.map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => { setStatusFilter(key); setQuickFilter('none'); }}
+                className={cn(
+                  "px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 whitespace-nowrap flex-shrink-0",
+                  statusFilter === key && quickFilter === 'none'
+                    ? "bg-foreground text-background shadow-sm" 
+                    : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
+              >
+                {label}
+                {key === 'pending' && pendingCount > 0 && (
+                  <span className="ml-1.5 bg-amber-400/20 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full text-[10px] font-bold">
+                    {pendingCount}
+                  </span>
+                )}
+              </button>
             ))}
           </div>
 
-          <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h2 className="text-lg sm:text-xl font-bold text-foreground">{t('dashboard.planning')}</h2>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  {t('dashboard.reservationCount', { count: filteredAppointments.length })}
-                </p>
-              </div>
-              <AddAppointmentDialog onAdd={handleAddAppointment} clients={clients} services={services} />
-            </div>
-            
-            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
-              <div className="flex bg-muted/60 rounded-xl p-1 shrink-0">
-                {filters.map(({ key, label }) => (
-                  <button
-                    key={key}
-                    onClick={() => setFilter(key)}
-                    className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
-                      filter === key 
-                        ? 'bg-background text-foreground shadow-sm' 
-                        : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-          
+          {/* ─── Results count ─── */}
+          <p className="text-xs text-muted-foreground">
+            {filteredAppointments.length} {filteredAppointments.length === 1 ? 'réservation' : 'réservations'}
+            {searchQuery && ` pour "${searchQuery}"`}
+          </p>
+
+          {/* ─── Appointment List ─── */}
           {loading ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map(i => (
-                <Skeleton key={i} className="h-24 rounded-2xl" />
-              ))}
+            <div className="space-y-3">
+              {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-[72px] rounded-2xl" />)}
             </div>
           ) : filteredAppointments.length === 0 ? (
             <Card variant="elevated" className="p-8 sm:p-12 text-center rounded-2xl">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Calendar className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground/50" />
+              <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Search className="w-7 h-7 text-muted-foreground/50" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">{t('dashboard.noAppointments')}</h3>
-              <p className="text-sm text-muted-foreground">{t('dashboard.appointmentsWillAppear')}</p>
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                {searchQuery ? t('dashboard.noResults', { defaultValue: 'Aucun résultat' }) : t('dashboard.noAppointments')}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {searchQuery 
+                  ? t('dashboard.tryDifferentSearch', { defaultValue: 'Essayez une autre recherche' })
+                  : t('dashboard.appointmentsWillAppear')
+                }
+              </p>
             </Card>
           ) : (
-            <div className="space-y-6">
-              {sortedDates.map(dateStr => {
-                const dateAppts = groupedAppointments[dateStr].sort(
-                  (a, b) => a.appointment_time.localeCompare(b.appointment_time)
-                );
+            <div className="space-y-5">
+              {groupedAppointments.dates.map(dateStr => {
+                const dateAppts = groupedAppointments.groups[dateStr];
                 const date = parseISO(dateStr);
                 let sectionTitle = format(date, "EEEE d MMMM", { locale: dateLocale });
                 if (isToday(date)) sectionTitle = t('common.today');
@@ -724,18 +522,18 @@ export default function Dashboard() {
                 
                 return (
                   <div key={dateStr}>
-                    <h3 className="text-sm font-semibold text-muted-foreground mb-3 capitalize">{sectionTitle}</h3>
-                    <div className="space-y-3">
+                    <h3 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">{sectionTitle}</h3>
+                    <div className="space-y-2">
                       {dateAppts.map(apt => (
-                        <AppointmentRow
+                        <InboxCard
                           key={apt.id}
                           appointment={apt}
                           centerAddress={center?.address || undefined}
                           isSynced={checkIsSynced(apt.id)}
+                          onConfirm={handleConfirm}
+                          onRefuse={handleRefuse}
+                          onCancel={handleCancel}
                           onUpdateStatus={handleUpdateStatus}
-                          onConfirmAppointment={handleConfirmAppointment}
-                          onRefuseAppointment={handleRefuseAppointment}
-                          onCancelAppointment={handleCancelAppointment}
                           onSendEmail={handleSendEmail}
                           onViewDetails={handleViewDetails}
                           onAddToCalendar={() => markAsSynced(apt.id)}
@@ -754,6 +552,7 @@ export default function Dashboard() {
         <AppointmentDetailDialog
           appointment={selectedAppointment}
           client={selectedClient}
+          centerAddress={center?.address || undefined}
           open={detailDialogOpen}
           onOpenChange={setDetailDialogOpen}
         />
