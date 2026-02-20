@@ -210,6 +210,7 @@ export default function Dashboard() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [quickFilter, setQuickFilter] = useState<QuickFilter>('none');
   const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
+  const [serviceFilter, setServiceFilter] = useState<string>('all');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -240,6 +241,17 @@ export default function Dashboard() {
     }).length;
   }, [appointments, weekStart, weekEnd]);
 
+  // ─── Unique services list ───
+  const availableServices = useMemo(() => {
+    const map = new Map<string, string>();
+    appointments.forEach(a => {
+      const name = a.custom_service?.name || a.pack?.name;
+      const id = a.custom_service_id || a.pack_id;
+      if (name && id) map.set(id, name);
+    });
+    return Array.from(map.entries()).map(([id, name]) => ({ id, name })).sort((a, b) => a.name.localeCompare(b.name));
+  }, [appointments]);
+
   // ─── Filtering Pipeline ───
   const filteredAppointments = useMemo(() => {
     let result = [...appointments];
@@ -267,6 +279,13 @@ export default function Dashboard() {
       }
     }
 
+    // Service filter
+    if (serviceFilter !== 'all') {
+      result = result.filter(a => 
+        a.custom_service_id === serviceFilter || a.pack_id === serviceFilter
+      );
+    }
+
     // Search
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
@@ -284,7 +303,7 @@ export default function Dashboard() {
     });
 
     return result;
-  }, [appointments, quickFilter, statusFilter, searchQuery, sortOrder, weekStart, weekEnd]);
+  }, [appointments, quickFilter, statusFilter, serviceFilter, searchQuery, sortOrder, weekStart, weekEnd]);
 
   // ─── Group by date ───
   const groupedAppointments = useMemo(() => {
@@ -462,7 +481,7 @@ export default function Dashboard() {
             </Button>
           </div>
 
-          {/* ─── Status Chips ─── */}
+          {/* ─── Status Chips + Service Filter ─── */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 -mx-1 px-1 scrollbar-none">
             {statusChips.map(({ key, label }) => (
               <button
@@ -483,6 +502,39 @@ export default function Dashboard() {
                 )}
               </button>
             ))}
+
+            {/* Service filter */}
+            {availableServices.length > 0 && (
+              <>
+                <span className="w-px h-5 bg-border/60 mx-1 flex-shrink-0" />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className={cn(
+                      "px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 whitespace-nowrap flex-shrink-0 flex items-center gap-1",
+                      serviceFilter !== 'all'
+                        ? "bg-primary/10 text-primary shadow-sm"
+                        : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}>
+                      {serviceFilter !== 'all' 
+                        ? availableServices.find(s => s.id === serviceFilter)?.name || 'Prestation'
+                        : t('dashboard.serviceFilterLabel', { defaultValue: 'Prestation' })
+                      }
+                      <ChevronDown className="w-3 h-3" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-56 max-h-64 overflow-y-auto">
+                    <DropdownMenuItem onClick={() => setServiceFilter('all')} className={cn(serviceFilter === 'all' && "font-semibold")}>
+                      {t('dashboard.allServices', { defaultValue: 'Toutes les prestations' })}
+                    </DropdownMenuItem>
+                    {availableServices.map(s => (
+                      <DropdownMenuItem key={s.id} onClick={() => setServiceFilter(s.id)} className={cn(serviceFilter === s.id && "font-semibold text-primary")}>
+                        {s.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            )}
           </div>
 
           {/* ─── Results count ─── */}
