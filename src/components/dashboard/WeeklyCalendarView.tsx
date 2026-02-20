@@ -88,8 +88,8 @@ export function WeeklyCalendarView({ currentDate, appointments, onAppointmentCli
 
   return (
     <div className="flex flex-col h-full rounded-2xl border border-border bg-card overflow-hidden">
-      {/* Day headers */}
-      <div className="grid shrink-0 border-b border-border bg-card z-10" style={{ gridTemplateColumns: '56px repeat(7, 1fr)' }}>
+      {/* Day headers — sticky */}
+      <div className="grid shrink-0 border-b border-border bg-card z-10" style={{ gridTemplateColumns: '60px repeat(7, 1fr)' }}>
         <div className="border-r border-border" />
         {weekDays.map((day, idx) => (
           <div
@@ -116,13 +116,13 @@ export function WeeklyCalendarView({ currentDate, appointments, onAppointmentCli
 
       {/* Scrollable time grid */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto overflow-x-hidden">
-        <div className="grid relative" style={{ gridTemplateColumns: '56px repeat(7, 1fr)', minHeight: TOTAL_HOURS * HOUR_HEIGHT }}>
+        <div className="grid relative" style={{ gridTemplateColumns: '60px repeat(7, 1fr)', minHeight: TOTAL_HOURS * HOUR_HEIGHT }}>
           {/* Time labels column */}
           <div className="relative border-r border-border">
             {hours.map(hour => (
               <div
                 key={hour}
-                className="absolute right-2 -translate-y-1/2 text-[11px] text-muted-foreground font-medium tabular-nums"
+                className="absolute right-3 -translate-y-1/2 text-[11px] text-muted-foreground font-medium tabular-nums"
                 style={{ top: (hour - START_HOUR) * HOUR_HEIGHT }}
               >
                 {`${hour}:00`}
