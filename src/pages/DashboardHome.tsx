@@ -10,14 +10,14 @@ import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { SubscriptionBanner } from '@/components/dashboard/SubscriptionBanner';
 
-import iconDemandes from '@/assets/icons/icon-demandes.webp';
-import iconAgenda from '@/assets/icons/icon-agenda.webp';
-import iconClients from '@/assets/icons/icon-clients.webp';
-import iconFactures from '@/assets/icons/icon-factures.webp';
-import iconFormules from '@/assets/icons/icon-formules.webp';
-import iconMaPage from '@/assets/icons/icon-mapage.webp';
-import iconReservations from '@/assets/icons/icon-reservations.webp';
-import iconStatistiques from '@/assets/icons/icon-statistiques.webp';
+import iconDemandes from '@/assets/icons/dash-demandes.png';
+import iconAgenda from '@/assets/icons/dash-agenda.png';
+import iconClients from '@/assets/icons/dash-clients.png';
+import iconFactures from '@/assets/icons/dash-factures.png';
+import iconFormules from '@/assets/icons/dash-formules.png';
+import iconMaPage from '@/assets/icons/dash-mapage.png';
+import iconReservations from '@/assets/icons/dash-reservations.png';
+import iconStatistiques from '@/assets/icons/dash-stats.png';
 
 const menuItems = [
   { icon: iconReservations, label: 'Réservations', href: '/dashboard/reservations' },
