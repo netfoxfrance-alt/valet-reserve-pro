@@ -30,31 +30,27 @@ serve(async (req) => {
     }
     logStep("Authorization header found");
 
-    // Create client with user's auth header for getClaims
+    // Create service role client for user verification
     const supabaseAuth = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-      { global: { headers: { Authorization: authHeader } } }
-    );
-
-    // Verify JWT and get claims
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
-      throw new Error(`Authentication error: ${claimsError?.message || "Invalid token"}`);
-    }
-
-    const userId = claimsData.claims.sub as string;
-    const userEmail = claimsData.claims.email as string;
-    if (!userId || !userEmail) throw new Error("User not authenticated or email not available");
-    logStep("User authenticated", { userId, email: userEmail });
-
-    // Create service role client for database operations
-    const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
       { auth: { persistSession: false } }
     );
+
+    // Verify JWT and get user
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userError } = await supabaseAuth.auth.getUser(token);
+    if (userError || !userData?.user) {
+      throw new Error(`Authentication error: ${userError?.message || "Invalid token"}`);
+    }
+
+    const userId = userData.user.id;
+    const userEmail = userData.user.email as string;
+    if (!userId || !userEmail) throw new Error("User not authenticated or email not available");
+    logStep("User authenticated", { userId, email: userEmail });
+
+    // Use same client for database operations (already service role)
+    const supabaseClient = supabaseAuth;
 
     // Pro bypass - always return subscribed for whitelisted emails
     const proBypassEmails = ["contact@netfox-agency.com", "sf.autodetail@hotmail.com", "contact@vitclean.net"];
