@@ -972,12 +972,12 @@ export default function CenterBooking() {
           {/* Confirmation */}
           {currentStep === 'confirmation' && packData && selectedDate && selectedTime && clientData && (() => {
             // Calculate deposit amount if deposit is enabled
-            const isDepositEnabled = (center as any)?.deposit_enabled && (center as any)?.stripe_connect_status === 'active';
+            const isDepositEnabled = center?.deposit_enabled && center?.stripe_connect_status === 'active';
             let depositAmount: number | undefined;
             if (isDepositEnabled) {
               const servicePrice = packData.price;
-              const depositType = (center as any)?.deposit_type || 'percentage';
-              const depositValue = (center as any)?.deposit_value || 30;
+              const depositType = center?.deposit_type || 'percentage';
+              const depositValue = center?.deposit_value || 30;
               depositAmount = depositType === 'percentage' 
                 ? Math.round(servicePrice * (depositValue / 100) * 100) / 100
                 : depositValue;

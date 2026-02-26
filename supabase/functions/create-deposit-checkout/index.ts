@@ -42,6 +42,15 @@ serve(async (req) => {
 
     if (aptError || !appointment) throw new Error("Appointment not found");
 
+    // Protect against double payment
+    if (appointment.deposit_status === 'paid') {
+      logStep("Deposit already paid, rejecting");
+      return new Response(JSON.stringify({ error: "Acompte déjà payé pour ce rendez-vous." }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
     const center = (appointment as any).centers;
     if (!center) throw new Error("Center not found");
     logStep("Appointment and center found", { centerId: center.id, depositEnabled: center.deposit_enabled });

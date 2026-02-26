@@ -17,11 +17,18 @@ export interface Center {
   ai_enabled: boolean;
   subscription_plan: 'free' | 'pro' | 'trial' | 'expired' | 'past_due';
   customization: CenterCustomization;
-  ical_token?: string | null; // Token for iCal calendar sync - owner only
+  ical_token?: string | null;
   latitude?: number | null;
   longitude?: number | null;
   intervention_radius_km?: number;
   quote_form_message?: string | null;
+  email_language?: string;
+  // Stripe Connect & Deposit fields
+  deposit_enabled?: boolean;
+  deposit_type?: string;
+  deposit_value?: number;
+  stripe_connect_status?: string;
+  stripe_connect_account_id?: string | null;
   created_at: string;
   updated_at: string;
 }
