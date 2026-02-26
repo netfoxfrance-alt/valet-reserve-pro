@@ -71,6 +71,7 @@ serve(async (req) => {
     }
 
     if (depositAmount <= 0) throw new Error("Invalid deposit amount");
+    if (depositAmount > 50) depositAmount = 50;
     logStep("Deposit amount calculated", { depositAmount, servicePrice, type: center.deposit_type, value: center.deposit_value });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });

@@ -188,7 +188,7 @@ export function DepositSettingsSection({ center, subscribed, onUpdate }: Deposit
                       id="deposit-value"
                       type="number"
                       min={1}
-                      max={depositType === 'percentage' ? 100 : 10000}
+                      max={depositType === 'percentage' ? 100 : 50}
                       value={depositValue}
                       onChange={(e) => setDepositValue(Number(e.target.value))}
                       className="w-24"
