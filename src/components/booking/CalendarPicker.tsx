@@ -107,7 +107,7 @@ export function CalendarPicker({ onSelect, duration, centerId }: CalendarPickerP
         {/* Days grid */}
         <div className="grid grid-cols-7 gap-2 mb-6">
           {weekDays.map((day) => {
-            const available = isDayAvailable(day);
+            const available = checkDayAvailable(day);
             const selected = selectedDate && isSameDay(day, selectedDate);
             
             return (
