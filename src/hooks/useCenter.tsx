@@ -29,6 +29,7 @@ export interface Center {
   deposit_value?: number;
   stripe_connect_status?: string;
   stripe_connect_account_id?: string | null;
+  payments_mode?: 'live' | 'test';
   created_at: string;
   updated_at: string;
 }
