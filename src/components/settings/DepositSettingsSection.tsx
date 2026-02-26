@@ -12,15 +12,10 @@ import { useTranslation } from 'react-i18next';
 import { Loader2, CreditCard, CheckCircle2, Clock, ExternalLink, Ban } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+import type { Center } from '@/hooks/useCenter';
+
 interface DepositSettingsSectionProps {
-  center: {
-    id: string;
-    stripe_connect_account_id?: string | null;
-    stripe_connect_status?: string;
-    deposit_enabled?: boolean;
-    deposit_type?: string;
-    deposit_value?: number;
-  } | null;
+  center: Center | null;
   subscribed: boolean;
   onUpdate: (updates: Record<string, unknown>) => Promise<{ error: string | null }>;
 }
@@ -35,14 +30,14 @@ export function DepositSettingsSection({ center, subscribed, onUpdate }: Deposit
   const [depositValue, setDepositValue] = useState(30);
   const [savingDeposit, setSavingDeposit] = useState(false);
 
-  const connectStatus = (center as any)?.stripe_connect_status || 'none';
-  const connectAccountId = (center as any)?.stripe_connect_account_id || null;
+  const connectStatus = center?.stripe_connect_status || 'none';
+  const connectAccountId = center?.stripe_connect_account_id || null;
 
   useEffect(() => {
     if (center) {
-      setDepositEnabled((center as any)?.deposit_enabled || false);
-      setDepositType((center as any)?.deposit_type || 'percentage');
-      setDepositValue((center as any)?.deposit_value || 30);
+      setDepositEnabled(center.deposit_enabled || false);
+      setDepositType(center.deposit_type || 'percentage');
+      setDepositValue(center.deposit_value || 30);
     }
   }, [center]);
 

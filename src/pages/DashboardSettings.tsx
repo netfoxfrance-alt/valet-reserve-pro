@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
-
+import { useSearchParams } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -37,6 +37,7 @@ export default function DashboardSettings() {
   const { center, loading, updateCenter } = useMyCenter();
   const { user, session, subscription } = useAuth();
   const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
@@ -67,12 +68,12 @@ export default function DashboardSettings() {
         name: center.name || '',
         address: center.address || '',
         phone: center.phone || '',
-        latitude: (center as any).latitude || null,
-        longitude: (center as any).longitude || null,
-        intervention_radius_km: (center as any).intervention_radius_km || 30,
+        latitude: center.latitude || null,
+        longitude: center.longitude || null,
+        intervention_radius_km: center.intervention_radius_km || 30,
       });
       setLogoUrl(center.logo_url);
-      setEmailLanguage((center as any).email_language || i18n.language || 'fr');
+      setEmailLanguage(center.email_language || i18n.language || 'fr');
       setSlug(center.slug || '');
       setSlugInput(center.slug || '');
       if (center.customization) {
@@ -80,6 +81,30 @@ export default function DashboardSettings() {
       }
     }
   }, [center]);
+
+  // Auto-refresh Stripe Connect status on return from onboarding
+  useEffect(() => {
+    const connectParam = searchParams.get('connect');
+    if (connectParam === 'success' && session?.access_token) {
+      // Remove the query param to avoid re-triggering
+      searchParams.delete('connect');
+      setSearchParams(searchParams, { replace: true });
+
+      // Call create-connect-account to verify & update status
+      const refreshConnectStatus = async () => {
+        try {
+          await supabase.functions.invoke('create-connect-account', {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          });
+          // Reload to get fresh center data
+          window.location.reload();
+        } catch (err) {
+          console.error('Failed to refresh Connect status:', err);
+        }
+      };
+      refreshConnectStatus();
+    }
+  }, [searchParams, session?.access_token]);
 
   const handleSave = async () => {
     setSaving(true);

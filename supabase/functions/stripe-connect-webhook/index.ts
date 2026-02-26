@@ -46,16 +46,55 @@ serve(async (req) => {
           logStep("Deposit payment completed", { appointmentId, sessionId: session.id });
 
           // Update deposit status to paid AND auto-confirm the appointment
-          await supabaseClient
+          const { data: updatedApt } = await supabaseClient
             .from("appointments")
             .update({ 
               deposit_status: "paid",
               status: "confirmed"
             })
             .eq("id", appointmentId)
-            .eq("deposit_checkout_session_id", session.id);
+            .eq("deposit_checkout_session_id", session.id)
+            .select("*, centers!appointments_center_id_fkey(name, email, phone, address, email_language), packs(name)")
+            .single();
 
           logStep("Appointment deposit status updated to paid and status set to confirmed");
+
+          // Send confirmation email to client and pro
+          if (updatedApt) {
+            const centerData = (updatedApt as any).centers;
+            const packData = (updatedApt as any).packs;
+            const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+            const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+
+            try {
+              const emailPayload = {
+                center_id: updatedApt.center_id,
+                client_name: updatedApt.client_name,
+                client_email: updatedApt.client_email,
+                client_phone: updatedApt.client_phone,
+                pack_name: packData?.name || updatedApt.vehicle_type || "Prestation",
+                price: updatedApt.custom_price || 0,
+                appointment_date: updatedApt.appointment_date,
+                appointment_time: updatedApt.appointment_time,
+                email_type: "confirmation",
+              };
+
+              // Call send-booking-emails using service role key (server-to-server)
+              const emailRes = await fetch(`${supabaseUrl}/functions/v1/send-booking-emails`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+                },
+                body: JSON.stringify(emailPayload),
+              });
+
+              logStep("Confirmation email sent", { status: emailRes.status });
+            } catch (emailError) {
+              // Fire-and-forget: don't fail the webhook if email fails
+              logStep("Email sending failed (non-blocking)", { error: String(emailError) });
+            }
+          }
         }
         break;
       }
