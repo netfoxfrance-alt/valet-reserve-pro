@@ -249,6 +249,7 @@ export type Database = {
           longitude: number | null
           name: string
           owner_id: string
+          payments_mode: string
           phone: string | null
           quote_form_message: string | null
           slug: string
@@ -279,6 +280,7 @@ export type Database = {
           longitude?: number | null
           name: string
           owner_id: string
+          payments_mode?: string
           phone?: string | null
           quote_form_message?: string | null
           slug: string
@@ -309,6 +311,7 @@ export type Database = {
           longitude?: number | null
           name?: string
           owner_id?: string
+          payments_mode?: string
           phone?: string | null
           quote_form_message?: string | null
           slug?: string
