@@ -266,6 +266,40 @@ export function BlocksEditor({
     ));
   };
 
+  // Auto-fetch Google reviews
+  const [fetchingReviewsBlockId, setFetchingReviewsBlockId] = useState<string | null>(null);
+  const fetchGoogleReviews = async (blockId: string, url: string) => {
+    if (!url?.trim()) {
+      toast({ title: 'Erreur', description: 'Veuillez entrer un lien Google avis', variant: 'destructive' });
+      return;
+    }
+    setFetchingReviewsBlockId(blockId);
+    try {
+      const { data, error } = await supabase.functions.invoke('fetch-google-reviews', {
+        body: { url: url.trim() },
+      });
+      if (error) throw error;
+      if (data?.error && !data?.rating && !data?.reviewCount) {
+        toast({ title: 'Impossible de récupérer', description: data.error, variant: 'destructive' });
+        return;
+      }
+      const updates: { reviewRating?: number; reviewCount?: number } = {};
+      if (data?.rating != null) updates.reviewRating = Math.round(data.rating * 10) / 10;
+      if (data?.reviewCount != null) updates.reviewCount = data.reviewCount;
+      if (Object.keys(updates).length > 0) {
+        updateReviewBlock(blockId, updates);
+        toast({ title: 'Avis récupérés !', description: `Note: ${updates.reviewRating ?? '?'}/5 — ${updates.reviewCount ?? '?'} avis` });
+      } else {
+        toast({ title: 'Aucune donnée trouvée', description: 'Vérifiez que le lien pointe bien vers votre fiche Google.', variant: 'destructive' });
+      }
+    } catch (err: any) {
+      console.error('Error fetching reviews:', err);
+      toast({ title: 'Erreur', description: err.message || 'Impossible de récupérer les avis', variant: 'destructive' });
+    } finally {
+      setFetchingReviewsBlockId(null);
+    }
+  };
+
   // Style selector for info blocks (phone, address, hours)
   const INFO_STYLES: { value: InfoBlockStyle; label: string; preview: string }[] = [
     { value: 'minimal', label: 'Minimal', preview: 'Discret' },
@@ -614,18 +648,41 @@ export function BlocksEditor({
               <span className="font-medium text-foreground">{isGoogle ? 'Google' : 'TripAdvisor'}</span>
             </div>
             
-            {/* URL */}
+            {/* URL + auto-fetch */}
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Lien vers votre fiche</Label>
-              <Input
-                value={block.reviewUrl || ''}
-                onChange={(e) => updateReviewBlock(block.id, { reviewUrl: e.target.value })}
-                placeholder={isGoogle ? 'https://g.page/...' : 'https://tripadvisor.com/...'}
-                className="h-9 text-sm"
-              />
+              <div className="flex gap-2">
+                <Input
+                  value={block.reviewUrl || ''}
+                  onChange={(e) => updateReviewBlock(block.id, { reviewUrl: e.target.value })}
+                  placeholder={isGoogle ? 'https://g.page/...' : 'https://tripadvisor.com/...'}
+                  className="h-9 text-sm flex-1"
+                />
+                {isGoogle && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="h-9 whitespace-nowrap"
+                    disabled={fetchingReviewsBlockId === block.id || !block.reviewUrl?.trim()}
+                    onClick={() => fetchGoogleReviews(block.id, block.reviewUrl || '')}
+                  >
+                    {fetchingReviewsBlockId === block.id ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      'Récupérer'
+                    )}
+                  </Button>
+                )}
+              </div>
+              {isGoogle && (
+                <p className="text-xs text-muted-foreground">
+                  Cliquez sur « Récupérer » pour obtenir automatiquement la note et le nombre d'avis.
+                </p>
+              )}
             </div>
             
-            {/* Rating */}
+            {/* Rating & count - editable as fallback */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Note (sur 5)</Label>
