@@ -127,7 +127,14 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: errorMessage });
-    return new Response(JSON.stringify({ error: "Impossible de créer le compte. Veuillez réessayer." }), {
+
+    // Stripe platform profile not configured
+    let userMessage = "Impossible de créer le compte. Veuillez réessayer.";
+    if (errorMessage.includes("platform-profile") || errorMessage.includes("responsibilities")) {
+      userMessage = "Votre compte Stripe plateforme n'est pas encore configuré. Veuillez valider votre profil Connect sur dashboard.stripe.com/settings/connect avant de continuer.";
+    }
+
+    return new Response(JSON.stringify({ error: userMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
