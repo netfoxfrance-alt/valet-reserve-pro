@@ -71,12 +71,16 @@ serve(async (req) => {
         if (appointmentId) {
           logStep("Deposit payment completed", { appointmentId, sessionId: session.id, livemode: event.livemode });
 
+          // Get payment_intent_id from session
+          const paymentIntentId = typeof session.payment_intent === 'string' ? session.payment_intent : null;
+
           // Update deposit status to paid AND auto-confirm the appointment
           const { data: updatedApt } = await supabaseClient
             .from("appointments")
             .update({ 
               deposit_status: "paid",
-              status: "confirmed"
+              status: "confirmed",
+              deposit_payment_intent_id: paymentIntentId,
             })
             .eq("id", appointmentId)
             .eq("deposit_checkout_session_id", session.id)

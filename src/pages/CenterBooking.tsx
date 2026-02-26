@@ -993,6 +993,7 @@ export default function CenterBooking() {
                 depositEnabled={isDepositEnabled}
                 depositAmount={depositAmount}
                 appointmentId={lastAppointmentId || undefined}
+                cancellationPolicy={(center?.cancellation_policy as 'no_refund' | 'no_refund_48h') || 'no_refund'}
               />
             );
           })()}
