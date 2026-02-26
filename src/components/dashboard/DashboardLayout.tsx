@@ -6,14 +6,14 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useAuth } from '@/hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 
-import iconReservations from '@/assets/icons/icon-reservations.webp';
-import iconAgenda from '@/assets/icons/icon-agenda.webp';
-import iconFactures from '@/assets/icons/icon-factures.webp';
-import iconClients from '@/assets/icons/icon-clients.webp';
-import iconMaPage from '@/assets/icons/icon-mapage.webp';
-import iconFormules from '@/assets/icons/icon-formules.webp';
-import iconDemandes from '@/assets/icons/icon-demandes.webp';
-import iconStatistiques from '@/assets/icons/icon-statistiques.webp';
+import iconReservations from '@/assets/icons/icon-reservations.png';
+import iconAgenda from '@/assets/icons/icon-agenda.png';
+import iconFactures from '@/assets/icons/icon-factures.png';
+import iconClients from '@/assets/icons/icon-clients.png';
+import iconMaPage from '@/assets/icons/icon-mapage.png';
+import iconFormules from '@/assets/icons/icon-formules.png';
+import iconDemandes from '@/assets/icons/icon-demandes.png';
+import iconStatistiques from '@/assets/icons/icon-statistiques.png';
 
 const navItems = [
   { icon: iconReservations, label: 'Réservations', href: '/dashboard/reservations' },
