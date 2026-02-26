@@ -28,16 +28,17 @@ export function DepositSettingsSection({ center, subscribed, onUpdate }: Deposit
   const [depositEnabled, setDepositEnabled] = useState(false);
   const [depositType, setDepositType] = useState('percentage');
   const [depositValue, setDepositValue] = useState(30);
+  const [cancellationPolicy, setCancellationPolicy] = useState<'no_refund' | 'no_refund_48h'>('no_refund');
   const [savingDeposit, setSavingDeposit] = useState(false);
 
   const connectStatus = center?.stripe_connect_status || 'none';
-  const connectAccountId = center?.stripe_connect_account_id || null;
 
   useEffect(() => {
     if (center) {
       setDepositEnabled(center.deposit_enabled || false);
       setDepositType(center.deposit_type || 'percentage');
       setDepositValue(center.deposit_value || 30);
+      setCancellationPolicy(center.cancellation_policy || 'no_refund');
     }
   }, [center]);
 
@@ -68,6 +69,7 @@ export function DepositSettingsSection({ center, subscribed, onUpdate }: Deposit
       deposit_enabled: depositEnabled,
       deposit_type: depositType,
       deposit_value: depositValue,
+      cancellation_policy: cancellationPolicy,
     });
     setSavingDeposit(false);
 
@@ -197,6 +199,23 @@ export function DepositSettingsSection({ center, subscribed, onUpdate }: Deposit
                       {depositType === 'percentage' ? t('settings.depositPercentageLabel') : t('settings.depositFixedLabel')}
                     </span>
                   </div>
+                </div>
+
+                {/* Cancellation Policy */}
+                <div className="space-y-2">
+                  <Label>Politique d'annulation client</Label>
+                  <Select value={cancellationPolicy} onValueChange={(v) => setCancellationPolicy(v as 'no_refund' | 'no_refund_48h')}>
+                    <SelectTrigger className="w-full sm:w-[400px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="no_refund">L'acompte n'est pas remboursé si le client annule</SelectItem>
+                      <SelectItem value="no_refund_48h">L'acompte n'est pas remboursé si le client annule moins de 48h avant</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    ℹ️ Si vous annulez un rendez-vous, l'acompte est automatiquement remboursé au client.
+                  </p>
                 </div>
 
                 <Button

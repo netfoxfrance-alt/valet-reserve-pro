@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Pack } from '@/types/booking';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock as ClockIcon, Calendar, MapPin, CreditCard, Loader2 } from 'lucide-react';
+import { Clock as ClockIcon, Calendar, MapPin, CreditCard, Loader2, ShieldCheck } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,9 +17,10 @@ interface ConfirmationViewProps {
   depositEnabled?: boolean;
   depositAmount?: number;
   appointmentId?: string;
+  cancellationPolicy?: 'no_refund' | 'no_refund_48h';
 }
 
-export function ConfirmationView({ pack, date, time, clientName, centerName = "Centre", centerAddress, depositEnabled, depositAmount, appointmentId }: ConfirmationViewProps) {
+export function ConfirmationView({ pack, date, time, clientName, centerName = "Centre", centerAddress, depositEnabled, depositAmount, appointmentId, cancellationPolicy = 'no_refund' }: ConfirmationViewProps) {
   const [payingDeposit, setPayingDeposit] = useState(false);
   const [depositError, setDepositError] = useState<string | null>(null);
 
@@ -47,6 +48,10 @@ export function ConfirmationView({ pack, date, time, clientName, centerName = "C
     }
   };
 
+  const cancellationPolicyText = cancellationPolicy === 'no_refund_48h'
+    ? "Si vous annulez votre rendez-vous moins de 48h avant, l'acompte ne sera pas remboursé."
+    : "En cas d'annulation de votre part, l'acompte ne sera pas remboursé.";
+
   return (
     <div className="w-full max-w-lg mx-auto text-center animate-scale-in">
       <div className="mb-8">
@@ -73,6 +78,19 @@ export function ConfirmationView({ pack, date, time, clientName, centerName = "C
           <p className="text-sm text-muted-foreground mb-4">
             Votre rendez-vous sera automatiquement confirmé après le paiement.
           </p>
+
+          {/* Refund policy info */}
+          <div className="bg-secondary/50 rounded-xl p-3 mb-4 text-left">
+            <div className="flex items-start gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+              <div className="text-xs text-muted-foreground space-y-1">
+                <p className="font-medium text-foreground">Conditions de remboursement :</p>
+                <p>✅ Si le professionnel annule le rendez-vous, l'acompte vous sera remboursé automatiquement.</p>
+                <p>❌ {cancellationPolicyText}</p>
+              </div>
+            </div>
+          </div>
+
           {depositError && (
             <p className="text-sm text-destructive mb-3">{depositError}</p>
           )}

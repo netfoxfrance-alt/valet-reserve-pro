@@ -8,13 +8,15 @@ import { Client } from '@/hooks/useClients';
 import { useClientHistory } from '@/hooks/useClientHistory';
 import { 
   Phone, Mail, MapPin, Euro, Calendar, TrendingUp, Clock, 
-  Car, FileText, ExternalLink, User, CalendarPlus, Copy, Check, CreditCard
+  Car, FileText, ExternalLink, User, CalendarPlus, Copy, Check, CreditCard, RotateCcw, Loader2
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { useState } from 'react';
 import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
 import { useTranslation } from 'react-i18next';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const statusColors: Record<string, string> = {
   pending_validation: 'bg-amber-100 text-amber-700',
@@ -31,6 +33,7 @@ interface AppointmentDetailDialogProps {
   centerAddress?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onRefundSuccess?: (appointmentId: string) => void;
 }
 
 export function AppointmentDetailDialog({ 
@@ -38,12 +41,14 @@ export function AppointmentDetailDialog({
   client, 
   centerAddress,
   open, 
-  onOpenChange 
+  onOpenChange,
+  onRefundSuccess
 }: AppointmentDetailDialogProps) {
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
   const { appointments: clientHistory, loading, stats } = useClientHistory(client?.id || null);
   const [copiedPhone, setCopiedPhone] = useState(false);
+  const [refunding, setRefunding] = useState(false);
 
   if (!appointment) return null;
 
@@ -57,6 +62,31 @@ export function AppointmentDetailDialog({
     await navigator.clipboard.writeText(phone);
     setCopiedPhone(true);
     setTimeout(() => setCopiedPhone(false), 2000);
+  };
+
+  const handleRefundDeposit = async () => {
+    if (!appointment) return;
+    if (!confirm('Êtes-vous sûr de vouloir rembourser l\'acompte de ' + (appointment.deposit_amount || 0) + '€ ?')) return;
+    setRefunding(true);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) throw new Error('Non authentifié');
+      
+      const { error } = await supabase.functions.invoke('refund-deposit', {
+        headers: { Authorization: `Bearer ${token}` },
+        body: { appointment_id: appointment.id },
+      });
+      
+      if (error) throw error;
+      toast.success('Acompte remboursé avec succès');
+      onRefundSuccess?.(appointment.id);
+    } catch (err) {
+      console.error('Refund error:', err);
+      toast.error('Erreur lors du remboursement');
+    } finally {
+      setRefunding(false);
+    }
   };
 
   const handleAddToCalendar = () => {
@@ -169,14 +199,35 @@ export function AppointmentDetailDialog({
                   </div>
                   <div>
                     <p className="text-muted-foreground">Statut</p>
-                    <Badge className={appointment.deposit_status === 'paid' 
-                      ? 'bg-emerald-100 text-emerald-700' 
-                      : 'bg-amber-100 text-amber-700'
+                    <Badge className={
+                      appointment.deposit_refund_status === 'refunded'
+                        ? 'bg-blue-100 text-blue-700'
+                        : appointment.deposit_status === 'paid' 
+                          ? 'bg-emerald-100 text-emerald-700' 
+                          : 'bg-amber-100 text-amber-700'
                     }>
-                      {appointment.deposit_status === 'paid' ? 'Payé' : 'En attente'}
+                      {appointment.deposit_refund_status === 'refunded' 
+                        ? 'Remboursé' 
+                        : appointment.deposit_status === 'paid' ? 'Payé' : 'En attente'}
                     </Badge>
                   </div>
                 </div>
+                {/* Manual refund button - show when deposit is paid but not refunded */}
+                {appointment.deposit_status === 'paid' && appointment.deposit_refund_status !== 'refunded' && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-3 w-full gap-2 text-blue-600 border-blue-200 hover:bg-blue-50"
+                    onClick={handleRefundDeposit}
+                    disabled={refunding}
+                  >
+                    {refunding ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" />Remboursement...</>
+                    ) : (
+                      <><RotateCcw className="w-4 h-4" />Rembourser l'acompte</>
+                    )}
+                  </Button>
+                )}
               </div>
             )}
             {appointment.notes && (

@@ -28,6 +28,8 @@ export interface Appointment {
   deposit_amount: number | null;
   deposit_status: string;
   deposit_checkout_session_id: string | null;
+  deposit_refund_status: string;
+  deposit_payment_intent_id: string | null;
   pack?: {
     id: string;
     name: string;
@@ -91,9 +93,31 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
       .eq('id', id);
 
     if (!error) {
+      const appointment = appointments.find(a => a.id === id);
       setAppointments(appointments.map(a => 
         a.id === id ? { ...a, status } : a
       ));
+
+      // Auto-refund deposit when pro cancels an appointment with a paid deposit
+      if (status === 'cancelled' && appointment?.deposit_status === 'paid' && appointment?.deposit_refund_status !== 'refunded') {
+        try {
+          const { data: sessionData } = await supabase.auth.getSession();
+          const token = sessionData?.session?.access_token;
+          if (token) {
+            const { error: refundError } = await supabase.functions.invoke('refund-deposit', {
+              headers: { Authorization: `Bearer ${token}` },
+              body: { appointment_id: id },
+            });
+            if (!refundError) {
+              setAppointments(prev => prev.map(a => 
+                a.id === id ? { ...a, status, deposit_refund_status: 'refunded' } : a
+              ));
+            }
+          }
+        } catch (refundErr) {
+          console.warn('[Auto-refund] Error:', refundErr);
+        }
+      }
     }
     return { error: error?.message || null };
   };

@@ -30,6 +30,7 @@ export interface Center {
   stripe_connect_status?: string;
   stripe_connect_account_id?: string | null;
   payments_mode?: 'live' | 'test';
+  cancellation_policy?: 'no_refund' | 'no_refund_48h';
   created_at: string;
   updated_at: string;
 }
@@ -112,6 +113,7 @@ export function useMyCenter() {
         setCenter({
           ...data,
           payments_mode: data.payments_mode as 'live' | 'test',
+          cancellation_policy: (data.cancellation_policy || 'no_refund') as 'no_refund' | 'no_refund_48h',
           customization: parseCustomization(data.customization),
         });
       }
@@ -180,6 +182,7 @@ export function useCenterBySlug(slug: string) {
 
       setCenter({
         ...centerData,
+        cancellation_policy: (centerData.cancellation_policy || 'no_refund') as 'no_refund' | 'no_refund_48h',
         customization: parseCustomization(centerData.customization),
       });
 
