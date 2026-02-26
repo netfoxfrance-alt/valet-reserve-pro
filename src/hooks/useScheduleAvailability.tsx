@@ -82,10 +82,27 @@ export function useScheduleAvailability() {
         return;
       }
 
-      // Si pas de données, utiliser le défaut (pas encore configuré)
+      // Si pas de données en DB, auto-sauvegarder les défauts pour que le calendrier public fonctionne
       if (!data || data.length === 0) {
         setSchedule(defaultSchedule);
         setOriginalSchedule(defaultSchedule);
+        
+        // Persister les défauts en DB automatiquement
+        const rows: { center_id: string; day_of_week: number; start_time: string; end_time: string; enabled: boolean }[] = [];
+        Object.entries(defaultSchedule).forEach(([day, daySchedule]) => {
+          const dayOfWeek = dayToNumber[day];
+          daySchedule.slots.forEach(slot => {
+            rows.push({
+              center_id: center.id,
+              day_of_week: dayOfWeek,
+              start_time: slot.start,
+              end_time: slot.end,
+              enabled: daySchedule.enabled,
+            });
+          });
+        });
+        await supabase.from('availability').insert(rows);
+        
         setLoading(false);
         return;
       }
