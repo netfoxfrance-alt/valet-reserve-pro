@@ -22,14 +22,14 @@ import mockupWindowCleaning from '@/assets/mockup-window-cleaning.png';
 import mockupTerraceCleaning from '@/assets/mockup-terrace-cleaning.png';
 import mockupPrestigeBanner from '@/assets/mockup-prestige-banner.png';
 
-import iconReservations from '@/assets/icons/icon-reservations.webp';
-import iconAgenda from '@/assets/icons/icon-agenda.webp';
-import iconFactures from '@/assets/icons/icon-factures.webp';
-import iconClients from '@/assets/icons/icon-clients.webp';
-import iconMaPage from '@/assets/icons/icon-mapage.webp';
-import iconFormules from '@/assets/icons/icon-formules.webp';
-import iconDemandes from '@/assets/icons/icon-demandes.webp';
-import iconStatistiques from '@/assets/icons/icon-statistiques.webp';
+import iconReservations from '@/assets/icons/icon-reservations.png';
+import iconAgenda from '@/assets/icons/icon-agenda.png';
+import iconFactures from '@/assets/icons/icon-factures.png';
+import iconClients from '@/assets/icons/icon-clients.png';
+import iconMaPage from '@/assets/icons/icon-mapage.png';
+import iconFormules from '@/assets/icons/icon-formules.png';
+import iconDemandes from '@/assets/icons/icon-demandes.png';
+import iconStatistiques from '@/assets/icons/icon-statistiques.png';
 
 import tabReservations from '@/assets/icons/tab-reservations.webp';
 import tabAgenda from '@/assets/icons/tab-agenda.webp';
