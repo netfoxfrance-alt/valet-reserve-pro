@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
-import { Sparkles, Upload, Trash2, Loader2, CreditCard, Crown, ExternalLink, Link2, Check, X } from 'lucide-react';
+import { Sparkles, Upload, Trash2, Loader2, CreditCard, Crown, ExternalLink, Link2, Check, X, Clock } from 'lucide-react';
 import { AddressWithMap } from '@/components/settings/AddressWithMap';
 import { DepositSettingsSection } from '@/components/settings/DepositSettingsSection';
 import { Link } from 'react-router-dom';
@@ -455,6 +455,32 @@ export default function DashboardSettings() {
                     <SelectItem value="en">🇬🇧 {t('settings.emailLanguageEn')}</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            </Card>
+          </section>
+
+          {/* Availability Section */}
+          <section className="mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">{t('settings.availability', 'Disponibilités')}</h2>
+            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">{t('settings.availabilityDesc', 'Gérez vos créneaux horaires et jours de disponibilité.')}</p>
+            
+            <Card variant="elevated" className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-foreground">{t('settings.manageAvailability', 'Horaires & disponibilités')}</p>
+                    <p className="text-sm text-muted-foreground">{t('settings.manageAvailabilityDesc', 'Définissez vos jours et heures de travail')}</p>
+                  </div>
+                </div>
+                <Link to="/dashboard/availability">
+                  <Button variant="outline" size="sm" className="w-full sm:w-auto gap-2">
+                    <ExternalLink className="w-4 h-4" />
+                    {t('settings.configure', 'Configurer')}
+                  </Button>
+                </Link>
               </div>
             </Card>
           </section>
