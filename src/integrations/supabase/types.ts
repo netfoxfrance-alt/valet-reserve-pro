@@ -29,6 +29,8 @@ export type Database = {
           custom_service_id: string | null
           deposit_amount: number | null
           deposit_checkout_session_id: string | null
+          deposit_payment_intent_id: string | null
+          deposit_refund_status: string
           deposit_status: string
           duration_minutes: number | null
           id: string
@@ -52,6 +54,8 @@ export type Database = {
           custom_service_id?: string | null
           deposit_amount?: number | null
           deposit_checkout_session_id?: string | null
+          deposit_payment_intent_id?: string | null
+          deposit_refund_status?: string
           deposit_status?: string
           duration_minutes?: number | null
           id?: string
@@ -75,6 +79,8 @@ export type Database = {
           custom_service_id?: string | null
           deposit_amount?: number | null
           deposit_checkout_session_id?: string | null
+          deposit_payment_intent_id?: string | null
+          deposit_refund_status?: string
           deposit_status?: string
           duration_minutes?: number | null
           id?: string
@@ -234,6 +240,7 @@ export type Database = {
         Row: {
           address: string | null
           ai_enabled: boolean | null
+          cancellation_policy: string
           created_at: string | null
           customization: Json | null
           deposit_enabled: boolean
@@ -265,6 +272,7 @@ export type Database = {
         Insert: {
           address?: string | null
           ai_enabled?: boolean | null
+          cancellation_policy?: string
           created_at?: string | null
           customization?: Json | null
           deposit_enabled?: boolean
@@ -296,6 +304,7 @@ export type Database = {
         Update: {
           address?: string | null
           ai_enabled?: boolean | null
+          cancellation_policy?: string
           created_at?: string | null
           customization?: Json | null
           deposit_enabled?: boolean
@@ -977,6 +986,7 @@ export type Database = {
         Row: {
           address: string | null
           ai_enabled: boolean | null
+          cancellation_policy: string | null
           created_at: string | null
           customization: Json | null
           deposit_enabled: boolean | null
@@ -1001,6 +1011,7 @@ export type Database = {
         Insert: {
           address?: string | null
           ai_enabled?: boolean | null
+          cancellation_policy?: string | null
           created_at?: string | null
           customization?: Json | null
           deposit_enabled?: boolean | null
@@ -1025,6 +1036,7 @@ export type Database = {
         Update: {
           address?: string | null
           ai_enabled?: boolean | null
+          cancellation_policy?: string | null
           created_at?: string | null
           customization?: Json | null
           deposit_enabled?: boolean | null
