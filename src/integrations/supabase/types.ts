@@ -27,6 +27,9 @@ export type Database = {
           created_at: string | null
           custom_price: number | null
           custom_service_id: string | null
+          deposit_amount: number | null
+          deposit_checkout_session_id: string | null
+          deposit_status: string
           duration_minutes: number | null
           id: string
           notes: string | null
@@ -47,6 +50,9 @@ export type Database = {
           created_at?: string | null
           custom_price?: number | null
           custom_service_id?: string | null
+          deposit_amount?: number | null
+          deposit_checkout_session_id?: string | null
+          deposit_status?: string
           duration_minutes?: number | null
           id?: string
           notes?: string | null
@@ -67,6 +73,9 @@ export type Database = {
           created_at?: string | null
           custom_price?: number | null
           custom_service_id?: string | null
+          deposit_amount?: number | null
+          deposit_checkout_session_id?: string | null
+          deposit_status?: string
           duration_minutes?: number | null
           id?: string
           notes?: string | null
@@ -227,6 +236,9 @@ export type Database = {
           ai_enabled: boolean | null
           created_at: string | null
           customization: Json | null
+          deposit_enabled: boolean
+          deposit_type: string
+          deposit_value: number
           email: string | null
           email_language: string
           ical_token: string | null
@@ -240,6 +252,8 @@ export type Database = {
           phone: string | null
           quote_form_message: string | null
           slug: string
+          stripe_connect_account_id: string | null
+          stripe_connect_status: string
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
           subscription_end_date: string | null
@@ -252,6 +266,9 @@ export type Database = {
           ai_enabled?: boolean | null
           created_at?: string | null
           customization?: Json | null
+          deposit_enabled?: boolean
+          deposit_type?: string
+          deposit_value?: number
           email?: string | null
           email_language?: string
           ical_token?: string | null
@@ -265,6 +282,8 @@ export type Database = {
           phone?: string | null
           quote_form_message?: string | null
           slug: string
+          stripe_connect_account_id?: string | null
+          stripe_connect_status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           subscription_end_date?: string | null
@@ -277,6 +296,9 @@ export type Database = {
           ai_enabled?: boolean | null
           created_at?: string | null
           customization?: Json | null
+          deposit_enabled?: boolean
+          deposit_type?: string
+          deposit_value?: number
           email?: string | null
           email_language?: string
           ical_token?: string | null
@@ -290,6 +312,8 @@ export type Database = {
           phone?: string | null
           quote_form_message?: string | null
           slug?: string
+          stripe_connect_account_id?: string | null
+          stripe_connect_status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           subscription_end_date?: string | null

@@ -8,3 +8,9 @@ verify_jwt = false
 
 [functions.calendar-ical]
 verify_jwt = false
+
+[functions.create-deposit-checkout]
+verify_jwt = false
+
+[functions.stripe-connect-webhook]
+verify_jwt = false
