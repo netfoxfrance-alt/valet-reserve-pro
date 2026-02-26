@@ -1,114 +1,61 @@
 
 
-# Système d'acompte : Analyse honnête et Plan
+## Plan : Finaliser le système d'acompte Stripe Connect
 
-## Ton constat est juste
+### Problèmes identifiés
 
-Tu as raison : l'approche "lien de paiement collé manuellement" pose des problèmes réels :
-- Chaque pro peut avoir 5-10 offres différentes → il faudrait un lien par offre, c'est ingérable
-- Le client doit quitter le flow de réservation → perte de conversion
-- Pas de suivi automatique → le pro ne sait pas qui a payé
-- Image pas professionnelle pour une plateforme SaaS
+1. **Interface `Center` incomplète** — Les champs `deposit_enabled`, `deposit_type`, `deposit_value`, `stripe_connect_status`, `stripe_connect_account_id` manquent dans l'interface TypeScript. Le code utilise des `(center as any)` partout, source potentielle de bugs silencieux.
 
-## Stripe Connect Express : ce que ça implique vraiment
+2. **Pas d'email de confirmation automatique** — Quand le webhook reçoit le paiement et confirme le RDV, aucun email de confirmation n'est envoyé au client ni au pro. Le client paie mais ne reçoit rien.
 
-Soyons transparents sur la complexité :
+3. **Pas de protection contre double paiement** — L'Edge Function `create-deposit-checkout` ne vérifie pas si l'acompte a déjà été payé. Un client pourrait relancer le paiement et payer deux fois.
 
-### Ce qu'il faut construire
-1. **Onboarding Stripe Connect** : une Edge Function qui crée un compte Express pour chaque pro et renvoie un lien d'onboarding Stripe (le pro remplit ses infos bancaires sur Stripe, pas chez nous)
-2. **Stockage du `stripe_account_id`** : une colonne dans la table `centers`
-3. **Création de Checkout Session avec `transfer_data`** : quand un client réserve, on crée un paiement qui va directement sur le compte du pro
-4. **Webhook Stripe** : pour savoir quand le paiement est confirmé et mettre à jour le statut du RDV
-5. **Gestion des statuts** : onboarding en cours / actif / paiement reçu
+4. **Rafraîchissement du statut Connect** — Quand le pro revient de Stripe onboarding (`?connect=success`), le statut n'est pas re-vérifié côté client. Il doit recharger la page manuellement.
 
-### Risques concrets
-- **KYC Stripe** : le pro doit compléter la vérification d'identité. Si Stripe refuse, ça bloque. On n'a aucun contrôle là-dessus
-- **Webhook** : si le webhook échoue, le statut "payé" ne se met pas à jour → le pro pense que le client n'a pas payé
-- **Multi-devises, remboursements** : cas edge à gérer
-- **Maintenance** : Stripe change ses APIs, il faut suivre
+5. **`DepositSettingsSection`** — Le composant utilise des casts `(center as any)` pour accéder aux champs deposit. À corriger avec l'interface mise à jour.
 
-## Ma recommandation : Stripe Connect Express, mais en version minimale
+### Étapes d'implémentation
 
-Malgré la complexité, c'est la bonne approche pour un produit sérieux. Voici comment on minimise les risques :
+#### 1. Mettre à jour l'interface `Center` dans `useCenter.tsx`
+Ajouter les champs : `deposit_enabled`, `deposit_type`, `deposit_value`, `stripe_connect_status`, `stripe_connect_account_id`. Supprimer tous les `(center as any)` dans `CenterBooking.tsx` et `DepositSettingsSection.tsx`.
 
-### Architecture simplifiée
+#### 2. Protéger contre le double paiement dans `create-deposit-checkout`
+Ajouter une vérification : si `deposit_status === 'paid'`, retourner une erreur "Acompte déjà payé".
 
-```text
-PRO (Dashboard Settings)          CLIENT (Page de réservation)
-┌─────────────────────┐           ┌──────────────────────┐
-│ "Activer les         │           │ Réservation normale   │
-│  acomptes"           │           │ + montant acompte     │
-│                      │           │ affiché               │
-│ → Onboarding Stripe  │           │                       │
-│   (formulaire Stripe)│           │ Après soumission :    │
-│                      │           │ → Redirect Stripe     │
-│ Réglages :           │           │   Checkout            │
-│ - % ou montant fixe  │           │ → Paiement            │
-│ - Activer/désactiver │           │ → Retour confirmation │
-└─────────────────────┘           └──────────────────────┘
+#### 3. Envoyer un email de confirmation dans le webhook
+Dans `stripe-connect-webhook`, après avoir mis à jour le statut du RDV à `confirmed`, appeler `send-booking-emails` avec `email_type: 'confirmation'` pour notifier le client et le pro.
 
-                    STRIPE
-                    ┌──────────────────┐
-                    │ Checkout Session  │
-                    │ mode: "payment"   │
-                    │ transfer_data →   │
-                    │   compte du pro   │
-                    └──────────────────┘
-```
+#### 4. Rafraîchir le statut Connect au retour de Stripe
+Dans `DashboardSettings.tsx`, détecter le paramètre URL `?connect=success` et déclencher un appel à `create-connect-account` (qui vérifie et met à jour le statut) puis rafraîchir les données du centre.
 
-### Plan d'implémentation en 6 étapes
-
-#### Etape 1 : Migration base de données
-Ajouter à la table `centers` :
-- `stripe_connect_account_id` (text, nullable) — l'ID du compte Express du pro
-- `stripe_connect_status` (text, default 'none') — 'none' | 'pending' | 'active'
-- `deposit_enabled` (boolean, default false) — le pro active/désactive les acomptes
-- `deposit_type` (text, default 'percentage') — 'percentage' ou 'fixed'
-- `deposit_value` (numeric, default 30) — ex: 30 = 30% ou 30€
-
-Ajouter à la table `appointments` :
-- `deposit_amount` (numeric, nullable) — montant de l'acompte dû
-- `deposit_status` (text, default 'none') — 'none' | 'pending' | 'paid'
-- `deposit_checkout_session_id` (text, nullable) — pour vérifier le paiement
-
-#### Etape 2 : Edge Function `create-connect-account`
-- Crée un compte Stripe Express pour le pro
-- Retourne le lien d'onboarding Stripe (le pro remplit ses infos bancaires directement sur Stripe)
-- Stocke le `stripe_connect_account_id` dans `centers`
-
-#### Etape 3 : Edge Function `create-deposit-checkout`
-- Appelée après la réservation du client
-- Crée un Stripe Checkout `mode: "payment"` avec `transfer_data` vers le compte du pro
-- Le montant est calculé selon les réglages du pro (% ou fixe)
-- Retourne l'URL de paiement
-
-#### Etape 4 : Edge Function `stripe-connect-webhook`
-- Écoute `checkout.session.completed`
-- Met à jour `deposit_status` = 'paid' sur le bon RDV
-- Écoute `account.updated` pour mettre à jour `stripe_connect_status`
-
-#### Etape 5 : UI Dashboard (Réglages)
-- Nouvelle section "Acomptes" dans les réglages du pro
-- Bouton "Connecter mon compte bancaire" → redirige vers Stripe onboarding
-- Statut de connexion affiché (en attente / actif)
-- Toggle activer/désactiver les acomptes
-- Choix pourcentage ou montant fixe + valeur
-
-#### Etape 6 : UI Réservation (côté client)
-- Après confirmation de réservation, si le pro a activé les acomptes :
-  - Afficher le montant de l'acompte
-  - Bouton "Payer l'acompte" → redirect Stripe Checkout
-  - Page de retour avec confirmation de paiement
-- Dans le dashboard du pro : badge "Acompte payé" / "En attente" sur chaque RDV
-
-### Points de vigilance
-- Le webhook nécessite un endpoint public avec vérification de signature Stripe
-- Il faudra configurer l'URL du webhook dans le dashboard Stripe du compte plateforme
-- Les pros en mode "free" n'auront pas accès à cette fonctionnalité (Pro only)
+#### 5. Redéployer les Edge Functions modifiées
+- `create-deposit-checkout` (protection double paiement)
+- `stripe-connect-webhook` (email de confirmation)
 
 ### Détails techniques
-- Stripe Connect Express gère toute la conformité KYC — on ne touche à rien
-- Le webhook utilisera `stripe.webhooks.constructEvent()` pour valider la signature
-- Les paiements utilisent `application_fee_amount` si tu veux prendre une commission (optionnel, à décider plus tard)
-- L'acompte est un paiement unique (pas un abonnement), donc `mode: "payment"`
+
+```text
+Flux complet après corrections :
+
+PRO (Paramètres)
+  1. Clique "Connecter Stripe" → ouvre onboarding Express
+  2. Revient sur /dashboard/settings?connect=success → statut se rafraîchit automatiquement
+  3. Active les acomptes + configure % ou montant fixe → sauvegarde
+
+CLIENT (Page de réservation)
+  1. Choisit pack → date → infos client → soumet
+  2. RDV créé avec status=pending_validation, deposit_status=none
+  3. Si deposit_enabled + stripe_connect_status=active :
+     → Voit bouton "Payer l'acompte de X€"
+     → Redirigé vers Stripe Checkout (sur le compte du pro)
+  4. Après paiement :
+     → Webhook reçoit checkout.session.completed
+     → deposit_status → paid, status → confirmed
+     → Email de confirmation envoyé au client + pro
+  5. Si pas de deposit → flow normal (attente validation manuelle)
+
+DASHBOARD (Calendrier/RDV)
+  - Badge "Acompte payé · X€" ou "Acompte en attente" visible
+  - Détail du RDV affiche les infos d'acompte
+```
 
