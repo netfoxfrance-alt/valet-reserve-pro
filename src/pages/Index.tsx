@@ -787,13 +787,13 @@ export default function Index() {
           </div>
           <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-wrap gap-2 sm:gap-3 mb-10 justify-center">
             {[
-               { img: tabReservations, label: t('mockup.reservations'), tab: 'reservations' as const, badge: '3' },
-               { img: tabAgenda, label: t('mockup.calendar'), tab: 'calendar' as const, badge: null },
-               { img: tabClients, label: t('mockup.clients'), tab: 'clients' as const, badge: null },
-               { img: tabFactures, label: t('mockup.invoices'), tab: 'invoices' as const, badge: null },
-               { img: tabStats, label: t('mockup.statistics'), tab: 'stats' as const, badge: null },
-               { img: tabMaPage, label: t('mockup.myPage'), tab: 'mypage' as const, badge: null },
-               { img: tabFormules, label: t('mockup.formulas'), tab: 'formules' as const, badge: null },
+               { img: iconReservations, label: t('mockup.reservations'), tab: 'reservations' as const, badge: '3' },
+               { img: iconAgenda, label: t('mockup.calendar'), tab: 'calendar' as const, badge: null },
+               { img: iconClients, label: t('mockup.clients'), tab: 'clients' as const, badge: null },
+               { img: iconFactures, label: t('mockup.invoices'), tab: 'invoices' as const, badge: null },
+               { img: iconStatistiques, label: t('mockup.statistics'), tab: 'stats' as const, badge: null },
+               { img: iconMaPage, label: t('mockup.myPage'), tab: 'mypage' as const, badge: null },
+               { img: iconFormules, label: t('mockup.formulas'), tab: 'formules' as const, badge: null },
             ].map((item) => (
               <button 
                 key={item.label}
