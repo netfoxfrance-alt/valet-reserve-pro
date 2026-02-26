@@ -6,6 +6,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import CenterBooking from "./pages/CenterBooking";
+import DepositPayment from "./pages/DepositPayment";
+import DepositSuccess from "./pages/DepositSuccess";
+import DepositCancel from "./pages/DepositCancel";
 import Booking from "./pages/Booking";
 import Auth from "./pages/Auth";
 import DashboardHome from "./pages/DashboardHome";
@@ -120,6 +123,11 @@ const App = () => (
                 <DashboardSupport />
               </ProtectedRoute>
             } />
+            
+            {/* Deposit payment pages */}
+            <Route path="/deposit-payment" element={<DepositPayment />} />
+            <Route path="/deposit-success" element={<DepositSuccess />} />
+            <Route path="/deposit-cancel" element={<DepositCancel />} />
             
             {/* Public center page - must be last before catch-all to avoid conflicts */}
             <Route path="/:slug" element={<CenterBooking />} />

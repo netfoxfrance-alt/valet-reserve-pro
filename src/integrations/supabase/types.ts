@@ -976,6 +976,9 @@ export type Database = {
           ai_enabled: boolean | null
           created_at: string | null
           customization: Json | null
+          deposit_enabled: boolean | null
+          deposit_type: string | null
+          deposit_value: number | null
           id: string | null
           intervention_radius_km: number | null
           latitude: number | null
@@ -985,6 +988,7 @@ export type Database = {
           phone: string | null
           quote_form_message: string | null
           slug: string | null
+          stripe_connect_status: string | null
           subscription_plan:
             | Database["public"]["Enums"]["subscription_plan"]
             | null
@@ -996,6 +1000,9 @@ export type Database = {
           ai_enabled?: boolean | null
           created_at?: string | null
           customization?: Json | null
+          deposit_enabled?: boolean | null
+          deposit_type?: string | null
+          deposit_value?: number | null
           id?: string | null
           intervention_radius_km?: number | null
           latitude?: number | null
@@ -1005,6 +1012,7 @@ export type Database = {
           phone?: string | null
           quote_form_message?: string | null
           slug?: string | null
+          stripe_connect_status?: string | null
           subscription_plan?:
             | Database["public"]["Enums"]["subscription_plan"]
             | null
@@ -1016,6 +1024,9 @@ export type Database = {
           ai_enabled?: boolean | null
           created_at?: string | null
           customization?: Json | null
+          deposit_enabled?: boolean | null
+          deposit_type?: string | null
+          deposit_value?: number | null
           id?: string | null
           intervention_radius_km?: number | null
           latitude?: number | null
@@ -1025,6 +1036,7 @@ export type Database = {
           phone?: string | null
           quote_form_message?: string | null
           slug?: string | null
+          stripe_connect_status?: string | null
           subscription_plan?:
             | Database["public"]["Enums"]["subscription_plan"]
             | null

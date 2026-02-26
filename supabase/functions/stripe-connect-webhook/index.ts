@@ -45,13 +45,17 @@ serve(async (req) => {
         if (appointmentId) {
           logStep("Deposit payment completed", { appointmentId, sessionId: session.id });
 
+          // Update deposit status to paid AND auto-confirm the appointment
           await supabaseClient
             .from("appointments")
-            .update({ deposit_status: "paid" })
+            .update({ 
+              deposit_status: "paid",
+              status: "confirmed"
+            })
             .eq("id", appointmentId)
             .eq("deposit_checkout_session_id", session.id);
 
-          logStep("Appointment deposit status updated to paid");
+          logStep("Appointment deposit status updated to paid and status set to confirmed");
         }
         break;
       }

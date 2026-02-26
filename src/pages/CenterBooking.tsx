@@ -91,7 +91,7 @@ export default function CenterBooking() {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [clientData, setClientData] = useState<ClientData | null>(null);
   const [contactData, setContactData] = useState<ContactRequestData | null>(null);
-  
+  const [lastAppointmentId, setLastAppointmentId] = useState<string | null>(null);
   // Recognized client state
   const [recognizedClient, setRecognizedClient] = useState<RecognizedClient | null>(null);
   
@@ -238,7 +238,7 @@ export default function CenterBooking() {
     
     // Recognized client with custom service
     if (recognizedClient?.service_id) {
-      const { error } = await createAppointment({
+      const { error, appointmentId } = await createAppointment({
         center_id: center.id,
         pack_id: '', // no pack
         client_name: data.name,
@@ -252,7 +252,6 @@ export default function CenterBooking() {
         duration: `${recognizedClient.service_duration_minutes}min`,
         pack_name: recognizedClient.service_name || 'Prestation personnalisée',
         price: recognizedClient.service_price || 0,
-        // Pass custom service data
         custom_service_id: recognizedClient.service_id,
         client_id: recognizedClient.client_id,
         custom_price: recognizedClient.service_price,
@@ -262,6 +261,7 @@ export default function CenterBooking() {
         toast({ title: 'Erreur', description: 'Impossible de créer le rendez-vous.', variant: 'destructive' });
         return;
       }
+      if (appointmentId) setLastAppointmentId(appointmentId);
       setCurrentStep('confirmation');
       return;
     }
@@ -271,7 +271,7 @@ export default function CenterBooking() {
     
     const finalPrice = selectedVariant?.price || selectedPack.price;
     
-    const { error } = await createAppointment({
+    const { error, appointmentId } = await createAppointment({
       center_id: center.id,
       pack_id: selectedPack.id,
       client_name: data.name,
@@ -293,6 +293,7 @@ export default function CenterBooking() {
       return;
     }
     
+    if (appointmentId) setLastAppointmentId(appointmentId);
     setCurrentStep('confirmation');
   };
 
@@ -969,16 +970,32 @@ export default function CenterBooking() {
           )}
           
           {/* Confirmation */}
-          {currentStep === 'confirmation' && packData && selectedDate && selectedTime && clientData && (
-            <ConfirmationView 
-              pack={packData}
-              date={selectedDate}
-              time={selectedTime}
-              clientName={clientData.name}
-              centerName={center.name}
-              centerAddress={center.address}
-            />
-          )}
+          {currentStep === 'confirmation' && packData && selectedDate && selectedTime && clientData && (() => {
+            // Calculate deposit amount if deposit is enabled
+            const isDepositEnabled = (center as any)?.deposit_enabled && (center as any)?.stripe_connect_status === 'active';
+            let depositAmount: number | undefined;
+            if (isDepositEnabled) {
+              const servicePrice = packData.price;
+              const depositType = (center as any)?.deposit_type || 'percentage';
+              const depositValue = (center as any)?.deposit_value || 30;
+              depositAmount = depositType === 'percentage' 
+                ? Math.round(servicePrice * (depositValue / 100) * 100) / 100
+                : depositValue;
+            }
+            return (
+              <ConfirmationView 
+                pack={packData}
+                date={selectedDate}
+                time={selectedTime}
+                clientName={clientData.name}
+                centerName={center.name}
+                centerAddress={center.address}
+                depositEnabled={isDepositEnabled}
+                depositAmount={depositAmount}
+                appointmentId={lastAppointmentId || undefined}
+              />
+            );
+          })()}
         </div>
       </main>
     </div>
