@@ -111,6 +111,7 @@ export function useMyCenter() {
       } else if (data) {
         setCenter({
           ...data,
+          payments_mode: data.payments_mode as 'live' | 'test',
           customization: parseCustomization(data.customization),
         });
       }
