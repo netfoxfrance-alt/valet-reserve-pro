@@ -12,6 +12,18 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CREATE-DEPOSIT-CHECKOUT] ${step}${detailsStr}`);
 };
 
+/** Pick the right Stripe key based on center's payments_mode */
+function getStripeKey(paymentsMode: string): string {
+  if (paymentsMode === "test") {
+    const testKey = Deno.env.get("STRIPE_TEST_SECRET_KEY");
+    if (!testKey) throw new Error("STRIPE_TEST_SECRET_KEY is not set");
+    return testKey;
+  }
+  const liveKey = Deno.env.get("STRIPE_SECRET_KEY");
+  if (!liveKey) throw new Error("STRIPE_SECRET_KEY is not set");
+  return liveKey;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -19,9 +31,6 @@ serve(async (req) => {
 
   try {
     logStep("Function started");
-
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
 
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -33,10 +42,10 @@ serve(async (req) => {
     if (!appointment_id) throw new Error("Missing appointment_id");
     logStep("Appointment ID received", { appointment_id });
 
-    // Get the appointment
+    // Get the appointment with center info including payments_mode
     const { data: appointment, error: aptError } = await supabaseClient
       .from("appointments")
-      .select("*, centers!appointments_center_id_fkey(id, name, stripe_connect_account_id, stripe_connect_status, deposit_enabled, deposit_type, deposit_value)")
+      .select("*, centers!appointments_center_id_fkey(id, name, stripe_connect_account_id, stripe_connect_status, deposit_enabled, deposit_type, deposit_value, payments_mode)")
       .eq("id", appointment_id)
       .single();
 
@@ -53,7 +62,9 @@ serve(async (req) => {
 
     const center = (appointment as any).centers;
     if (!center) throw new Error("Center not found");
-    logStep("Appointment and center found", { centerId: center.id, depositEnabled: center.deposit_enabled });
+
+    const paymentsMode = center.payments_mode || "live";
+    logStep("Appointment and center found", { centerId: center.id, depositEnabled: center.deposit_enabled, paymentsMode });
 
     // Validate deposit is enabled and Stripe Connect is active
     if (!center.deposit_enabled) throw new Error("Deposits are not enabled for this center");
@@ -74,6 +85,7 @@ serve(async (req) => {
     if (depositAmount > 50) depositAmount = 50;
     logStep("Deposit amount calculated", { depositAmount, servicePrice, type: center.deposit_type, value: center.deposit_value });
 
+    const stripeKey = getStripeKey(paymentsMode);
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const origin = req.headers.get("origin") || "https://lovable.dev";
 
@@ -88,7 +100,7 @@ serve(async (req) => {
               name: `Acompte - ${center.name}`,
               description: `Réservation du ${appointment.appointment_date} à ${appointment.appointment_time}`,
             },
-            unit_amount: Math.round(depositAmount * 100), // Convert to cents
+            unit_amount: Math.round(depositAmount * 100),
           },
           quantity: 1,
         },
@@ -107,7 +119,7 @@ serve(async (req) => {
       },
     });
 
-    logStep("Checkout session created", { sessionId: session.id });
+    logStep("Checkout session created", { sessionId: session.id, mode: paymentsMode });
 
     // Update the appointment with deposit info
     await supabaseClient

@@ -12,6 +12,18 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CREATE-CONNECT-ACCOUNT] ${step}${detailsStr}`);
 };
 
+/** Pick the right Stripe key based on center's payments_mode */
+function getStripeKey(paymentsMode: string): string {
+  if (paymentsMode === "test") {
+    const testKey = Deno.env.get("STRIPE_TEST_SECRET_KEY");
+    if (!testKey) throw new Error("STRIPE_TEST_SECRET_KEY is not set");
+    return testKey;
+  }
+  const liveKey = Deno.env.get("STRIPE_SECRET_KEY");
+  if (!liveKey) throw new Error("STRIPE_SECRET_KEY is not set");
+  return liveKey;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -19,9 +31,6 @@ serve(async (req) => {
 
   try {
     logStep("Function started");
-
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
 
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -42,13 +51,16 @@ serve(async (req) => {
     // Get the user's center
     const { data: center, error: centerError } = await supabaseClient
       .from("centers")
-      .select("id, stripe_connect_account_id, stripe_connect_status, name")
+      .select("id, stripe_connect_account_id, stripe_connect_status, name, payments_mode")
       .eq("owner_id", user.id)
       .single();
 
     if (centerError || !center) throw new Error("Center not found");
-    logStep("Center found", { centerId: center.id, currentStatus: center.stripe_connect_status });
 
+    const paymentsMode = center.payments_mode || "live";
+    logStep("Center found", { centerId: center.id, currentStatus: center.stripe_connect_status, paymentsMode });
+
+    const stripeKey = getStripeKey(paymentsMode);
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const origin = req.headers.get("origin") || "https://lovable.dev";
 
@@ -100,7 +112,7 @@ serve(async (req) => {
       },
     });
 
-    logStep("New Express account created", { accountId: account.id });
+    logStep("New Express account created", { accountId: account.id, mode: paymentsMode });
 
     // Store the account ID in the center
     await supabaseClient

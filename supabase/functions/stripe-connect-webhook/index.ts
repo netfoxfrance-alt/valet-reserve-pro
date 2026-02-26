@@ -7,8 +7,36 @@ const logStep = (step: string, details?: any) => {
   console.log(`[STRIPE-CONNECT-WEBHOOK] ${step}${detailsStr}`);
 };
 
+/**
+ * Try to verify the webhook signature against both live and test secrets.
+ * Returns the verified event or throws.
+ */
+async function verifyWebhookEvent(stripe: Stripe, body: string, signature: string): Promise<Stripe.Event> {
+  const liveSecret = Deno.env.get("STRIPE_CONNECT_WEBHOOK_SECRET");
+  const testSecret = Deno.env.get("STRIPE_TEST_CONNECT_WEBHOOK_SECRET");
+
+  // Try live secret first
+  if (liveSecret) {
+    try {
+      return await stripe.webhooks.constructEventAsync(body, signature, liveSecret);
+    } catch {
+      // fall through to test secret
+    }
+  }
+
+  // Try test secret
+  if (testSecret) {
+    try {
+      return await stripe.webhooks.constructEventAsync(body, signature, testSecret);
+    } catch {
+      // fall through
+    }
+  }
+
+  throw new Error("Webhook signature verification failed for both live and test secrets");
+}
+
 serve(async (req) => {
-  // Webhooks are POST only
   if (req.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
   }
@@ -17,9 +45,7 @@ serve(async (req) => {
     logStep("Webhook received");
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    const webhookSecret = Deno.env.get("STRIPE_CONNECT_WEBHOOK_SECRET");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
-    if (!webhookSecret) throw new Error("STRIPE_CONNECT_WEBHOOK_SECRET is not set");
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const body = await req.text();
@@ -27,9 +53,9 @@ serve(async (req) => {
 
     if (!signature) throw new Error("No stripe-signature header");
 
-    // Verify the webhook signature
-    const event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
-    logStep("Event verified", { type: event.type, id: event.id });
+    // Verify against both live and test webhook secrets
+    const event = await verifyWebhookEvent(stripe, body, signature);
+    logStep("Event verified", { type: event.type, id: event.id, livemode: event.livemode });
 
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -43,7 +69,7 @@ serve(async (req) => {
         const appointmentId = session.metadata?.appointment_id;
 
         if (appointmentId) {
-          logStep("Deposit payment completed", { appointmentId, sessionId: session.id });
+          logStep("Deposit payment completed", { appointmentId, sessionId: session.id, livemode: event.livemode });
 
           // Update deposit status to paid AND auto-confirm the appointment
           const { data: updatedApt } = await supabaseClient
@@ -64,7 +90,6 @@ serve(async (req) => {
             const centerData = (updatedApt as any).centers;
             const packData = (updatedApt as any).packs;
             const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-            const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 
             try {
               const emailPayload = {
@@ -79,7 +104,6 @@ serve(async (req) => {
                 email_type: "confirmation",
               };
 
-              // Call send-booking-emails using service role key (server-to-server)
               const emailRes = await fetch(`${supabaseUrl}/functions/v1/send-booking-emails`, {
                 method: "POST",
                 headers: {
@@ -91,7 +115,6 @@ serve(async (req) => {
 
               logStep("Confirmation email sent", { status: emailRes.status });
             } catch (emailError) {
-              // Fire-and-forget: don't fail the webhook if email fails
               logStep("Email sending failed (non-blocking)", { error: String(emailError) });
             }
           }
