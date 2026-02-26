@@ -174,7 +174,7 @@ const handler = async (req: Request): Promise<Response> => {
         "Authorization": `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: `${center?.name || "Facturation"} <onboarding@resend.dev>`,
+        from: `${center?.name || "Facturation"} <noreply@cleaningpage.com>`,
         to: [recipientEmail],
         subject: `${docType} ${invoice.number} - ${center?.name || ""}`,
         html: emailHtml,
