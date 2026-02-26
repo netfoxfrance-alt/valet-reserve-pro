@@ -42,9 +42,9 @@ import tabFormules from '@/assets/icons/tab-formules.webp';
 const dashboardIcons = [
   { icon: iconReservations, label: 'Réservations' },
   { icon: iconAgenda, label: 'Agenda' },
+  { icon: iconMaPage, label: 'Ma Page' },
   { icon: iconFactures, label: 'Factures' },
   { icon: iconClients, label: 'Clients' },
-  { icon: iconMaPage, label: 'Ma Page' },
   { icon: iconFormules, label: 'Formules' },
   { icon: iconDemandes, label: 'Demandes' },
   { icon: iconStatistiques, label: 'Statistiques' },

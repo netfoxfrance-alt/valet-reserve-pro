@@ -109,19 +109,19 @@ export default function DashboardHome() {
         )}
 
         {/* Icon Grid */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-4 gap-y-6 sm:gap-x-8 sm:gap-y-10 lg:gap-x-12 lg:gap-y-12">
+        <div className="grid grid-cols-4 gap-x-6 gap-y-8 sm:gap-x-10 sm:gap-y-10 lg:gap-x-14 lg:gap-y-12 max-w-2xl mx-auto">
           {menuItems.map((item) => (
             <Link
               key={item.href}
               to={item.href}
-              className="group flex flex-col items-center gap-2.5 hover:opacity-80 transition-opacity duration-200"
+              className="group flex flex-col items-center gap-2 hover:opacity-90 transition-all duration-200"
             >
               <img
                 src={item.icon}
                 alt={item.label}
-                className="w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 object-contain group-hover:scale-105 transition-transform duration-300"
+                className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 object-contain group-hover:scale-[1.06] transition-transform duration-300 ease-out"
               />
-              <span className="text-xs sm:text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">{item.label}</span>
+              <span className="text-[11px] sm:text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">{item.label}</span>
             </Link>
           ))}
         </div>
