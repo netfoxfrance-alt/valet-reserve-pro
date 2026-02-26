@@ -216,7 +216,7 @@ export default function Dashboard() {
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [justConfirmedAppointment, setJustConfirmedAppointment] = useState<Appointment | null>(null);
   
-  const { appointments, loading, updateStatus } = useMyAppointments();
+  const { appointments, loading, updateStatus, refetch } = useMyAppointments();
   const { center } = useMyCenter();
   const { clients } = useMyClients();
   const { markAsSynced, isSynced: checkIsSynced } = useCalendarSync();
@@ -607,6 +607,14 @@ export default function Dashboard() {
           centerAddress={center?.address || undefined}
           open={detailDialogOpen}
           onOpenChange={setDetailDialogOpen}
+          onRefundSuccess={async (appointmentId) => {
+            setSelectedAppointment(prev =>
+              prev && prev.id === appointmentId
+                ? { ...prev, deposit_refund_status: 'refunded' }
+                : prev
+            );
+            await refetch();
+          }}
         />
       )}
       

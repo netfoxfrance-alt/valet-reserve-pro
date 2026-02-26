@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
@@ -49,12 +49,18 @@ export function AppointmentDetailDialog({
   const { appointments: clientHistory, loading, stats } = useClientHistory(client?.id || null);
   const [copiedPhone, setCopiedPhone] = useState(false);
   const [refunding, setRefunding] = useState(false);
+  const [refundDone, setRefundDone] = useState(false);
+
+  useEffect(() => {
+    setRefundDone(appointment?.deposit_refund_status === 'refunded');
+  }, [appointment?.id, appointment?.deposit_refund_status]);
 
   if (!appointment) return null;
 
   const statusColor = statusColors[appointment.status] || statusColors.pending;
   const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price ?? 0;
   const serviceName = appointment.custom_service?.name || appointment.pack?.name || t('customServices.title');
+  const isDepositRefunded = refundDone || appointment.deposit_refund_status === 'refunded';
 
   const handleCopyPhone = async () => {
     const phone = client?.phone || appointment.client_phone;
@@ -65,25 +71,34 @@ export function AppointmentDetailDialog({
   };
 
   const handleRefundDeposit = async () => {
-    if (!appointment) return;
+    if (!appointment || isDepositRefunded) {
+      toast.info('Cet acompte est déjà remboursé');
+      return;
+    }
     if (!confirm('Êtes-vous sûr de vouloir rembourser l\'acompte de ' + (appointment.deposit_amount || 0) + '€ ?')) return;
+
     setRefunding(true);
     try {
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData?.session?.access_token;
       if (!token) throw new Error('Non authentifié');
-      
-      const { error } = await supabase.functions.invoke('refund-deposit', {
+
+      const { data, error } = await supabase.functions.invoke<{ success?: boolean; error?: string }>('refund-deposit', {
         headers: { Authorization: `Bearer ${token}` },
         body: { appointment_id: appointment.id },
       });
-      
+
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      if (!data?.success) throw new Error('Remboursement non confirmé');
+
+      setRefundDone(true);
       toast.success('Acompte remboursé avec succès');
       onRefundSuccess?.(appointment.id);
     } catch (err) {
       console.error('Refund error:', err);
-      toast.error('Erreur lors du remboursement');
+      const message = err instanceof Error ? err.message : 'Erreur lors du remboursement';
+      toast.error(message);
     } finally {
       setRefunding(false);
     }
@@ -200,20 +215,20 @@ export function AppointmentDetailDialog({
                   <div>
                     <p className="text-muted-foreground">Statut</p>
                     <Badge className={
-                      appointment.deposit_refund_status === 'refunded'
+                      isDepositRefunded
                         ? 'bg-blue-100 text-blue-700'
-                        : appointment.deposit_status === 'paid' 
-                          ? 'bg-emerald-100 text-emerald-700' 
+                        : appointment.deposit_status === 'paid'
+                          ? 'bg-emerald-100 text-emerald-700'
                           : 'bg-amber-100 text-amber-700'
                     }>
-                      {appointment.deposit_refund_status === 'refunded' 
-                        ? 'Remboursé' 
+                      {isDepositRefunded
+                        ? 'Remboursé'
                         : appointment.deposit_status === 'paid' ? 'Payé' : 'En attente'}
                     </Badge>
                   </div>
                 </div>
                 {/* Manual refund button - show when deposit is paid but not refunded */}
-                {appointment.deposit_status === 'paid' && appointment.deposit_refund_status !== 'refunded' && (
+                {appointment.deposit_status === 'paid' && !isDepositRefunded && (
                   <Button
                     variant="outline"
                     size="sm"
