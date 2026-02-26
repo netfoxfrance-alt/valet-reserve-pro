@@ -602,6 +602,11 @@ export default function DashboardCalendar() {
                                     {apt.custom_service?.name || apt.pack?.name} • {apt.custom_price ?? apt.custom_service?.price ?? apt.pack?.price ?? 0}€
                                   </p>
                                 )}
+                                {apt.deposit_status && apt.deposit_status !== 'none' && (
+                                  <p className={`text-xs mt-0.5 ml-5 font-medium ${apt.deposit_status === 'paid' ? 'text-emerald-600' : 'text-amber-600'}`}>
+                                    💳 {apt.deposit_status === 'paid' ? 'Acompte payé' : 'En attente'}
+                                  </p>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -682,6 +687,18 @@ export default function DashboardCalendar() {
                   <p className="text-sm text-muted-foreground ml-6">
                     {selectedAppointment.pack.name} • {selectedAppointment.pack.price}€
                   </p>
+                )}
+                {selectedAppointment.deposit_status && selectedAppointment.deposit_status !== 'none' && (
+                  <div className="flex items-center gap-2 ml-6 mt-1">
+                    <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
+                      selectedAppointment.deposit_status === 'paid' 
+                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400' 
+                        : 'bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400'
+                    }`}>
+                      💳 {selectedAppointment.deposit_status === 'paid' ? 'Acompte payé' : 'Acompte en attente'}
+                      {selectedAppointment.deposit_amount ? ` · ${selectedAppointment.deposit_amount}€` : ''}
+                    </span>
+                  </div>
                 )}
               </div>
               

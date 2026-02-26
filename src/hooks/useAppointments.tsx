@@ -25,6 +25,9 @@ export interface Appointment {
   duration_minutes: number | null;
   custom_service_id: string | null;
   custom_price: number | null;
+  deposit_amount: number | null;
+  deposit_status: string;
+  deposit_checkout_session_id: string | null;
   pack?: {
     id: string;
     name: string;
@@ -264,7 +267,7 @@ export function useCreateAppointment() {
     // Store the final price (variant or base pack price) in custom_price for accurate stats
     const finalPrice = data.price !== undefined ? data.price : null;
     
-    const { error } = await supabase
+    const { data: insertedData, error } = await supabase
       .from('appointments')
       .insert({
         center_id: data.center_id,
@@ -282,10 +285,12 @@ export function useCreateAppointment() {
         duration_minutes,
         custom_price: data.custom_price !== undefined && data.custom_price !== null ? data.custom_price : finalPrice,
         status: 'pending_validation',
-      });
+      })
+      .select('id')
+      .single();
 
     // Send "request received" email (not confirmation - waiting for pro validation)
-    if (!error && data.pack_name && data.price !== undefined) {
+    if (!error && insertedData && data.pack_name && data.price !== undefined) {
       (async () => {
         try {
           const response = await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
@@ -320,7 +325,7 @@ export function useCreateAppointment() {
     }
 
     setLoading(false);
-    return { error: error?.message || null };
+    return { error: error?.message || null, appointmentId: insertedData?.id || null };
   };
 
   return { createAppointment, loading };

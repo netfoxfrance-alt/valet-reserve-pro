@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, User, Car } from 'lucide-react';
+import { Calendar, Clock, User, Car, CreditCard } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -17,6 +17,8 @@ interface AppointmentCardProps {
     custom_price?: number | null;
     pack?: { name: string; price: number } | null;
     custom_service?: { name: string; price: number } | null;
+    deposit_amount?: number | null;
+    deposit_status?: string;
   };
 }
 
@@ -29,12 +31,20 @@ const statusColorMap: Record<string, string> = {
   refused: 'bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-400',
 };
 
+const depositStatusConfig: Record<string, { label: string; className: string }> = {
+  paid: { label: 'Acompte payé', className: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400' },
+  pending: { label: 'Acompte en attente', className: 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400' },
+};
+
 export function AppointmentCard({ appointment }: AppointmentCardProps) {
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
   const statusColor = statusColorMap[appointment.status] || statusColorMap.pending;
   const price = appointment.custom_price ?? appointment.custom_service?.price ?? appointment.pack?.price ?? 0;
   const serviceName = appointment.custom_service?.name || appointment.pack?.name || 'Service';
+  const depositConfig = appointment.deposit_status && appointment.deposit_status !== 'none' 
+    ? depositStatusConfig[appointment.deposit_status] 
+    : null;
   
   return (
     <Card variant="elevated" className="p-5 hover:shadow-lg transition-shadow">
@@ -49,9 +59,18 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
             <span>{t(`vehicles.${appointment.vehicle_type}`) || appointment.vehicle_type}</span>
           </div>
         </div>
-        <Badge className={cn("font-medium", statusColor)}>
-          {t(`status.${appointment.status}`)}
-        </Badge>
+        <div className="flex flex-col items-end gap-1">
+          <Badge className={cn("font-medium", statusColor)}>
+            {t(`status.${appointment.status}`)}
+          </Badge>
+          {depositConfig && (
+            <Badge className={cn("font-medium text-xs", depositConfig.className)}>
+              <CreditCard className="w-3 h-3 mr-1" />
+              {depositConfig.label}
+              {appointment.deposit_amount ? ` · ${appointment.deposit_amount}€` : ''}
+            </Badge>
+          )}
+        </div>
       </div>
       
       <div className="flex items-center gap-6 text-sm">

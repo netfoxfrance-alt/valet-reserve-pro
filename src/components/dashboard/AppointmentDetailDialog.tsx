@@ -8,7 +8,7 @@ import { Client } from '@/hooks/useClients';
 import { useClientHistory } from '@/hooks/useClientHistory';
 import { 
   Phone, Mail, MapPin, Euro, Calendar, TrendingUp, Clock, 
-  Car, FileText, ExternalLink, User, CalendarPlus, Copy, Check
+  Car, FileText, ExternalLink, User, CalendarPlus, Copy, Check, CreditCard
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
@@ -155,6 +155,30 @@ export function AppointmentDetailDialog({
                 </div>
               )}
             </div>
+            {/* Deposit info */}
+            {appointment.deposit_status && appointment.deposit_status !== 'none' && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <div className="flex items-center gap-2 mb-2">
+                  <CreditCard className="w-4 h-4 text-primary" />
+                  <span className="font-medium text-sm text-foreground">Acompte</span>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-muted-foreground">Montant</p>
+                    <p className="font-medium text-foreground">{appointment.deposit_amount || 0}€</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Statut</p>
+                    <Badge className={appointment.deposit_status === 'paid' 
+                      ? 'bg-emerald-100 text-emerald-700' 
+                      : 'bg-amber-100 text-amber-700'
+                    }>
+                      {appointment.deposit_status === 'paid' ? 'Payé' : 'En attente'}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            )}
             {appointment.notes && (
               <div className="mt-4 pt-4 border-t border-border">
                 <p className="text-muted-foreground text-sm mb-1 flex items-center gap-2">
