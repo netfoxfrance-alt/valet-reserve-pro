@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { Sparkles, Upload, Trash2, Loader2, CreditCard, Crown, ExternalLink, Link2, Check, X } from 'lucide-react';
 import { AddressWithMap } from '@/components/settings/AddressWithMap';
+import { DepositSettingsSection } from '@/components/settings/DepositSettingsSection';
 import { Link } from 'react-router-dom';
 import { CenterCustomization, defaultCustomization } from '@/types/customization';
 import { useTranslation } from 'react-i18next';
@@ -433,57 +434,17 @@ export default function DashboardSettings() {
             </Card>
           </section>
 
+          {/* Deposit Section */}
+          <DepositSettingsSection
+            center={center}
+            subscribed={subscription.subscribed}
+            onUpdate={updateCenter}
+          />
+
           {/* Subscription Section */}
           <section className="mb-6 sm:mb-8">
             <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">{t('settings.subscription')}</h2>
-            <p className="text-sm text-muted-foreground mb-4 sm:mb-6">{t('settings.subscriptionDesc')}</p>
-            
-            <Card variant="elevated" className="p-4 sm:p-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className={cn(
-                    "w-10 h-10 rounded-xl flex items-center justify-center",
-                    subscription.subscribed ? "bg-primary/10" : "bg-secondary"
-                  )}>
-                    {subscription.subscribed ? (
-                      <Crown className="w-5 h-5 text-primary" />
-                    ) : (
-                      <CreditCard className="w-5 h-5 text-muted-foreground" />
-                    )}
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground">
-                      {subscription.subscribed ? 'CleaningPage Pro' : 'CleaningPage Free'}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {subscription.subscribed 
-                        ? (subscription.subscriptionEnd 
-                            ? t('settings.renewalOn', { date: new Date(subscription.subscriptionEnd).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'fr-FR') })
-                            : t('settings.activeSubscription', { defaultValue: 'Abonnement actif' }))
-                        : t('settings.limitedAccess')
-                      }
-                    </p>
-                  </div>
-                </div>
-
-                {subscription.subscribed ? (
-                  <Button variant="outline" size="sm" onClick={handleManageSubscription} disabled={openingPortal} className="w-full sm:w-auto">
-                    {openingPortal ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t('settings.opening')}</>
-                    ) : (
-                      <><ExternalLink className="w-4 h-4 mr-2" />{t('settings.manageSubscription')}</>
-                    )}
-                  </Button>
-                ) : (
-                  <Link to="/dashboard/upgrade" className="w-full sm:w-auto">
-                    <Button variant="premium" size="sm" className="w-full">
-                      <Crown className="w-4 h-4 mr-2" />
-                      {t('settings.upgradeToPro')}
-                    </Button>
-                  </Link>
-                )}
-              </div>
-            </Card>
+...
           </section>
           
           <div className="flex justify-end">
