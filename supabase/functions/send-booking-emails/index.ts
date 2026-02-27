@@ -180,6 +180,52 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const data = await req.json();
 
+    // Handle custom request notification
+    if (data.type === 'custom_request') {
+      const { centerName, contactEmail, requestType, message } = data;
+      if (!centerName || !contactEmail || !message) {
+        return new Response(
+          JSON.stringify({ error: 'Missing custom request fields' }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const typeLabels: Record<string, string> = {
+        functionality: 'Des fonctionnalités en plus',
+        design: 'Un design plus poussé',
+        both: 'Autre chose',
+      };
+
+      const customRequestHtml = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
+          <h2 style="color: #111827; margin-bottom: 4px;">🎨 Demande personnalisée</h2>
+          <p style="color: #6b7280; margin-top: 0;">Un utilisateur a soumis une nouvelle demande de personnalisation.</p>
+          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;" />
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr><td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Centre</td><td style="padding: 8px 0; font-weight: 600; color: #111827;">${centerName}</td></tr>
+            <tr><td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Email du compte</td><td style="padding: 8px 0; font-weight: 600; color: #111827;"><a href="mailto:${contactEmail}" style="color: #3b82f6;">${contactEmail}</a></td></tr>
+            <tr><td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Type de demande</td><td style="padding: 8px 0; font-weight: 600; color: #111827;">${typeLabels[requestType] || requestType}</td></tr>
+          </table>
+          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;" />
+          <h3 style="color: #111827; font-size: 14px; margin-bottom: 8px;">Message :</h3>
+          <div style="background: #f9fafb; border-radius: 12px; padding: 16px; white-space: pre-wrap; color: #111827; font-size: 14px; line-height: 1.6;">${message}</div>
+        </div>
+      `;
+
+      await resend.emails.send({
+        from: "CleaningPage <notifications@cleaningpage.com>",
+        to: ["contact@cleaningpage.com"],
+        replyTo: contactEmail,
+        subject: `🎨 Demande personnalisée - ${centerName}`,
+        html: customRequestHtml,
+      });
+
+      return new Response(
+        JSON.stringify({ success: true }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Handle support request separately
     if (data.type === 'support_request') {
       const { to, subject, centerName, userEmail, message } = data;
