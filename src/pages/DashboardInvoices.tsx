@@ -6,7 +6,6 @@ import { useMyCenter } from '@/hooks/useCenter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Plus, 
   FileText, 
@@ -21,6 +20,7 @@ import {
   Send
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 import { fr } from 'date-fns/locale';
 import { Input } from '@/components/ui/input';
 import {
@@ -63,7 +63,7 @@ export default function DashboardInvoices() {
   const { invoices, loading, deleteInvoice, convertQuoteToInvoice, updateInvoice } = useInvoices();
   const { toast } = useToast();
   
-  const [activeTab, setActiveTab] = useState<'all' | 'invoices' | 'quotes'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'invoices' | 'quotes' | 'pending'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [formOpen, setFormOpen] = useState(false);
   const [formType, setFormType] = useState<'invoice' | 'quote'>('invoice');
@@ -91,7 +91,8 @@ export default function DashboardInvoices() {
   const filteredInvoices = invoices.filter(invoice => {
     const matchesTab = activeTab === 'all' || 
       (activeTab === 'invoices' && invoice.type === 'invoice') ||
-      (activeTab === 'quotes' && invoice.type === 'quote');
+      (activeTab === 'quotes' && invoice.type === 'quote') ||
+      (activeTab === 'pending' && invoice.type === 'invoice' && invoice.status === 'sent');
     
     const matchesSearch = !searchQuery || 
       invoice.number.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -212,26 +213,32 @@ export default function DashboardInvoices() {
             </Button>
           </div>
 
-          {/* Stats - Apple style: clean, no heavy icons */}
+          {/* Stats — clickable filters */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="p-5 rounded-2xl">
-              <p className="text-sm font-medium text-muted-foreground mb-1">{t('invoices.invoices')}</p>
-              <p className="text-3xl font-bold tracking-tight">{stats.totalInvoices}</p>
-            </Card>
-            <Card className="p-5 rounded-2xl">
-              <p className="text-sm font-medium text-muted-foreground mb-1">{t('invoices.quotes')}</p>
-              <p className="text-3xl font-bold tracking-tight">{stats.totalQuotes}</p>
-            </Card>
-            <Card className="p-5 rounded-2xl">
-              <div className="flex items-center justify-between mb-1">
-                <p className="text-sm font-medium text-muted-foreground">{t('invoices.pending')}</p>
-                {stats.pendingAmount > 0 && (
-                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                )}
-              </div>
-              <p className="text-3xl font-bold tracking-tight">{stats.pendingAmount.toFixed(0)}€</p>
-            </Card>
-            <Card className="p-5 rounded-2xl">
+            <button onClick={() => setActiveTab('invoices')} className="text-left">
+              <Card className={cn("p-5 rounded-2xl transition-all", activeTab === 'invoices' ? "ring-2 ring-primary shadow-sm" : "hover:bg-secondary/50")}>
+                <p className="text-sm font-medium text-muted-foreground mb-1">{t('invoices.invoices')}</p>
+                <p className="text-3xl font-bold tracking-tight">{stats.totalInvoices}</p>
+              </Card>
+            </button>
+            <button onClick={() => setActiveTab('quotes')} className="text-left">
+              <Card className={cn("p-5 rounded-2xl transition-all", activeTab === 'quotes' ? "ring-2 ring-primary shadow-sm" : "hover:bg-secondary/50")}>
+                <p className="text-sm font-medium text-muted-foreground mb-1">{t('invoices.quotes')}</p>
+                <p className="text-3xl font-bold tracking-tight">{stats.totalQuotes}</p>
+              </Card>
+            </button>
+            <button onClick={() => setActiveTab('pending')} className="text-left">
+              <Card className={cn("p-5 rounded-2xl transition-all", activeTab === 'pending' ? "ring-2 ring-primary shadow-sm" : "hover:bg-secondary/50")}>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-sm font-medium text-muted-foreground">{t('invoices.pending')}</p>
+                  {stats.pendingAmount > 0 && (
+                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                  )}
+                </div>
+                <p className="text-3xl font-bold tracking-tight">{stats.pendingAmount.toFixed(0)}€</p>
+              </Card>
+            </button>
+            <Card className={cn("p-5 rounded-2xl", activeTab === 'all' && "ring-2 ring-primary shadow-sm")} onClick={() => setActiveTab('all')} role="button">
               <div className="flex items-center justify-between mb-1">
                 <p className="text-sm font-medium text-muted-foreground">{t('invoices.collected')}</p>
                 {stats.paidAmount > 0 && (
@@ -247,14 +254,11 @@ export default function DashboardInvoices() {
           {/* List */}
           <Card className="rounded-2xl overflow-hidden">
             <CardHeader className="pb-3">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-                  <TabsList className="rounded-xl">
-                    <TabsTrigger value="all" className="rounded-lg">{t('common.all')}</TabsTrigger>
-                    <TabsTrigger value="invoices" className="rounded-lg">{t('invoices.invoices')}</TabsTrigger>
-                    <TabsTrigger value="quotes" className="rounded-lg">{t('invoices.quotes')}</TabsTrigger>
-                  </TabsList>
-                </Tabs>
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-sm font-medium text-muted-foreground">
+                  {activeTab === 'invoices' ? 'Factures' : activeTab === 'quotes' ? 'Devis' : activeTab === 'pending' ? 'En attente' : 'Tout'} 
+                  <span className="ml-1 text-foreground">({filteredInvoices.length})</span>
+                </p>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
