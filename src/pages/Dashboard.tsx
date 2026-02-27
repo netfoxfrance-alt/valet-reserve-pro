@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { 
   Search, Check, X, Clock, CalendarDays, CalendarClock, 
   Phone, Mail, MoreHorizontal, CalendarPlus, CalendarCheck,
-  ArrowUpDown, ChevronDown
+  ArrowUpDown, ChevronDown, Plus
 } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter } from '@/hooks/useCenter';
@@ -203,6 +204,7 @@ type SortOrder = 'newest' | 'oldest';
 
 export default function Dashboard() {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
   
@@ -403,6 +405,14 @@ export default function Dashboard() {
     <>
       <DashboardLayout title={t('nav.reservations')} subtitle={center?.name}>
         <div className="space-y-4 sm:space-y-5">
+          {/* ─── Header with Add button ─── */}
+          <div className="flex items-center justify-end">
+            <Button onClick={() => navigate('/dashboard/calendar', { state: { openCreate: true } })} size="sm" className="rounded-xl gap-1.5">
+              <Plus className="w-4 h-4" />
+              Ajouter une réservation
+            </Button>
+          </div>
+
           {/* ─── Counter Cards ─── */}
           <div className="grid grid-cols-3 gap-2.5 sm:gap-4">
             <button 
