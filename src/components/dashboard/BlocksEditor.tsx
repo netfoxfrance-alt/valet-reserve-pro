@@ -617,21 +617,41 @@ export function BlocksEditor({
       case 'address':
         return (
           <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-3">
-            <p className="text-sm text-muted-foreground">
-              {centerAddress || 'Adresse non configurée (Paramètres → Informations)'}
-            </p>
+            {centerAddress ? (
+              <>
+                <div className="flex items-start gap-2 text-sm text-foreground">
+                  <MapPin className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
+                  <span>{centerAddress}</span>
+                </div>
+                {renderStyleSelector(block)}
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Adresse non configurée (Paramètres → Informations)
+              </p>
+            )}
           </div>
         );
 
       case 'phone':
         return (
           <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-3">
-            <p className="text-sm text-muted-foreground">
-              {centerPhone || 'Téléphone non configuré (Paramètres → Informations)'}
-            </p>
-            {headerStyle === 'minimal' ? (
-              <p className="text-xs text-primary font-medium">📍 Affiché dans la barre header</p>
-            ) : null}
+            {centerPhone ? (
+              <>
+                <div className="flex items-center gap-2 text-sm text-foreground">
+                  <Phone className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <span>{centerPhone}</span>
+                </div>
+                {renderStyleSelector(block)}
+                {headerStyle === 'minimal' && (
+                  <p className="text-xs text-primary font-medium">📍 Affiché dans la barre header</p>
+                )}
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Téléphone non configuré (Paramètres → Informations)
+              </p>
+            )}
           </div>
         );
 
