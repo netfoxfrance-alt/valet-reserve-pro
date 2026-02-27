@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { 
-  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight, LayoutGrid, CalendarDays, CalendarPlus, Users
+  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight, LayoutGrid, CalendarDays, CalendarPlus, Users, Search
 } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
@@ -49,6 +49,7 @@ const statusColors: Record<string, string> = {
 
 export default function DashboardCalendar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
   const [viewMode, setViewMode] = useState<'month' | 'week' | 'schedule'>('week');
@@ -79,6 +80,12 @@ export default function DashboardCalendar() {
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState('');
   const [serviceType, setServiceType] = useState<'pack' | 'custom'>('pack');
+  const [clientSearch, setClientSearch] = useState('');
+  const [clientDropdownOpen, setClientDropdownOpen] = useState(false);
+  const [serviceSearch, setServiceSearch] = useState('');
+  const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
+  const clientSearchRef = useRef<HTMLDivElement>(null);
+  const serviceSearchRef = useRef<HTMLDivElement>(null);
   const [createForm, setCreateForm] = useState({
     client_name: '',
     client_email: '',
@@ -92,6 +99,30 @@ export default function DashboardCalendar() {
     custom_price: '',
     notes: '',
   });
+
+  // Auto-open create dialog when navigated from Reservations page
+  useEffect(() => {
+    const state = location.state as { openCreate?: boolean } | null;
+    if (state?.openCreate) {
+      openCreateDialog();
+      // Clear the state so it doesn't reopen on re-render
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state]);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (clientSearchRef.current && !clientSearchRef.current.contains(e.target as Node)) {
+        setClientDropdownOpen(false);
+      }
+      if (serviceSearchRef.current && !serviceSearchRef.current.contains(e.target as Node)) {
+        setServiceDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
 
   // Calendar navigation
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
@@ -232,9 +263,11 @@ export default function DashboardCalendar() {
   // Client selection handler
   const handleClientSelect = (clientId: string) => {
     setSelectedClientId(clientId);
+    setClientDropdownOpen(false);
     if (clientId) {
       const client = clients.find(c => c.id === clientId);
       if (client) {
+        setClientSearch(client.name);
         setCreateForm(prev => ({
           ...prev,
           client_name: client.name,
@@ -247,6 +280,7 @@ export default function DashboardCalendar() {
         }));
       }
     } else {
+      setClientSearch('');
       setCreateForm(prev => ({
         ...prev,
         client_name: '',
@@ -260,6 +294,27 @@ export default function DashboardCalendar() {
       setServiceType('pack');
     }
   };
+
+  // Filtered clients for autocomplete
+  const filteredClients = useMemo(() => {
+    if (!clientSearch.trim()) return clients.slice(0, 8);
+    const q = clientSearch.toLowerCase();
+    return clients.filter(c =>
+      c.name.toLowerCase().includes(q) ||
+      (c.email && c.email.toLowerCase().includes(q)) ||
+      (c.phone && c.phone.includes(q))
+    ).slice(0, 8);
+  }, [clients, clientSearch]);
+
+  // Filtered services for autocomplete
+  const filteredServices = useMemo(() => {
+    const items = serviceType === 'pack'
+      ? packs.map(p => ({ id: p.id, name: p.name, price: p.price, duration: p.duration || '', type: 'pack' as const }))
+      : customServices.filter(s => s.active).map(s => ({ id: s.id, name: s.name, price: s.price, duration: formatDuration(s.duration_minutes), type: 'custom' as const }));
+    if (!serviceSearch.trim()) return items.slice(0, 8);
+    const q = serviceSearch.toLowerCase();
+    return items.filter(i => i.name.toLowerCase().includes(q)).slice(0, 8);
+  }, [packs, customServices, serviceSearch, serviceType]);
 
   const handleServiceTypeChange = (type: 'pack' | 'custom') => {
     setServiceType(type);
@@ -283,6 +338,10 @@ export default function DashboardCalendar() {
   const openCreateDialog = (date?: string, time?: string) => {
     setSelectedClientId('');
     setServiceType('pack');
+    setClientSearch('');
+    setServiceSearch('');
+    setClientDropdownOpen(false);
+    setServiceDropdownOpen(false);
     setCreateForm({
       client_name: '',
       client_email: '',
@@ -379,6 +438,8 @@ export default function DashboardCalendar() {
       setShowCreateDialog(false);
       setSelectedClientId('');
       setServiceType('pack');
+      setClientSearch('');
+      setServiceSearch('');
       await refetch();
       
       setTimeout(() => {
@@ -1050,129 +1111,187 @@ export default function DashboardCalendar() {
           </DialogHeader>
           
           <div className="space-y-5 mt-4">
-            {/* Client selector */}
-            {clients.length > 0 && (
-              <div className="space-y-2">
-                <Label>{t('dashboard.registeredClient')}</Label>
-                <Select value={selectedClientId || "new"} onValueChange={(v) => handleClientSelect(v === "new" ? "" : v)}>
-                  <SelectTrigger className="h-11 rounded-xl">
-                    <SelectValue placeholder={t('dashboard.selectOrNew')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="new">{t('dashboard.newClient')}</SelectItem>
-                    {clients.map((client) => (
-                      <SelectItem key={client.id} value={client.id}>
-                        <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-primary" />
-                          <span>{client.name}</span>
-                        </div>
-                      </SelectItem>
+            {/* Client autocomplete search */}
+            <div className="space-y-2">
+              <Label>Client</Label>
+              <div ref={clientSearchRef} className="relative">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    value={clientSearch}
+                    onChange={(e) => {
+                      setClientSearch(e.target.value);
+                      setClientDropdownOpen(true);
+                      if (selectedClientId) {
+                        // Clear selection if user edits
+                        setSelectedClientId('');
+                        setCreateForm(prev => ({
+                          ...prev,
+                          client_name: e.target.value,
+                          client_email: '',
+                          client_phone: '',
+                          client_address: '',
+                        }));
+                      } else {
+                        setCreateForm(prev => ({ ...prev, client_name: e.target.value }));
+                      }
+                    }}
+                    onFocus={() => setClientDropdownOpen(true)}
+                    placeholder="Rechercher ou créer un client..."
+                    className="pl-9 h-11 rounded-xl"
+                  />
+                  {selectedClientId && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleClientSelect('');
+                        setClientSearch('');
+                      }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+                {clientDropdownOpen && !selectedClientId && (
+                  <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                    {clientSearch.trim() && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCreateForm(prev => ({ ...prev, client_name: clientSearch.trim() }));
+                          setClientDropdownOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary/60 transition-colors flex items-center gap-2 text-primary font-medium"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Créer "{clientSearch.trim()}"
+                      </button>
+                    )}
+                    {filteredClients.map((client) => (
+                      <button
+                        key={client.id}
+                        type="button"
+                        onClick={() => handleClientSelect(client.id)}
+                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary/60 transition-colors"
+                      >
+                        <span className="font-medium text-foreground">{client.name}</span>
+                        {(client.phone || client.email) && (
+                          <span className="text-muted-foreground ml-2 text-xs">
+                            {client.phone || client.email}
+                          </span>
+                        )}
+                      </button>
                     ))}
-                  </SelectContent>
-                </Select>
+                    {filteredClients.length === 0 && !clientSearch.trim() && (
+                      <p className="px-4 py-3 text-sm text-muted-foreground">Aucun client</p>
+                    )}
+                  </div>
+                )}
               </div>
-            )}
+            </div>
 
-            {/* Service type toggle */}
+            {/* Service type toggle — no Devis */}
             <div className="space-y-3">
               <Label>{t('dashboard.serviceType')}</Label>
               <div className="flex bg-muted/60 rounded-xl p-1">
-                <button type="button" onClick={() => handleServiceTypeChange('pack')}
+                <button type="button" onClick={() => { handleServiceTypeChange('pack'); setServiceSearch(''); setServiceDropdownOpen(false); }}
                   className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                     serviceType === 'pack' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
                   }`}>
                   {t('dashboard.formulas')}
                 </button>
                 {customServices.filter(s => s.active).length > 0 && (
-                  <button type="button" onClick={() => handleServiceTypeChange('custom')}
+                  <button type="button" onClick={() => { handleServiceTypeChange('custom'); setServiceSearch(''); setServiceDropdownOpen(false); }}
                     className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                       serviceType === 'custom' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
                     }`}>
-                    Prestations perso
+                    Prestations pro
                   </button>
                 )}
-                <button type="button" onClick={() => {
-                  // Navigate to invoices page with prefill data to create a quote
-                  const prefill: any = {};
-                  if (selectedClientId) {
-                    const client = clients.find(c => c.id === selectedClientId);
-                    if (client) {
-                      prefill.clientId = client.id;
-                      prefill.clientName = client.name;
-                      prefill.clientEmail = client.email;
-                      prefill.clientPhone = client.phone;
-                      prefill.clientAddress = client.address;
-                    }
-                  } else if (createForm.client_name) {
-                    prefill.clientName = createForm.client_name;
-                    prefill.clientEmail = createForm.client_email;
-                    prefill.clientPhone = createForm.client_phone;
-                    prefill.clientAddress = createForm.client_address;
-                  }
-                  setShowCreateDialog(false);
-                  navigate('/dashboard/invoices', { state: { prefill, type: 'quote' } });
-                }}
-                  className="flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-muted-foreground hover:text-foreground">
-                  Devis
-                </button>
               </div>
 
-              {serviceType === 'pack' && (
-                <div className="space-y-2">
-                  <Select value={createForm.pack_id} onValueChange={(v) => setCreateForm(prev => ({ ...prev, pack_id: v }))}>
-                    <SelectTrigger className="h-11 rounded-xl">
-                      <SelectValue placeholder={t('dashboard.selectFormula')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {packs.map((pack) => (
-                        <SelectItem key={pack.id} value={pack.id}>
-                          {pack.name} - {pack.price}€
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {createForm.pack_id && packs.find(p => p.id === createForm.pack_id) && (
-                    <div className="bg-primary/5 rounded-lg p-3 text-sm">
-                      <p className="font-medium text-primary">{packs.find(p => p.id === createForm.pack_id)?.name}</p>
-                      <p className="text-muted-foreground">
-                        {packs.find(p => p.id === createForm.pack_id)?.duration || t('common.duration')} • {packs.find(p => p.id === createForm.pack_id)?.price}€
-                      </p>
-                    </div>
+              {/* Service autocomplete search */}
+              <div ref={serviceSearchRef} className="relative">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    value={serviceSearch}
+                    onChange={(e) => {
+                      setServiceSearch(e.target.value);
+                      setServiceDropdownOpen(true);
+                    }}
+                    onFocus={() => setServiceDropdownOpen(true)}
+                    placeholder={serviceType === 'pack' ? 'Rechercher une formule...' : 'Rechercher une prestation...'}
+                    className="pl-9 h-11 rounded-xl"
+                  />
+                  {(createForm.pack_id || createForm.custom_service_id) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setServiceSearch('');
+                        setCreateForm(prev => ({ ...prev, pack_id: '', custom_service_id: '', custom_price: '' }));
+                      }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
                   )}
                 </div>
-              )}
+                {serviceDropdownOpen && (
+                  <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                    {filteredServices.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => {
+                          if (item.type === 'pack') {
+                            setCreateForm(prev => ({ ...prev, pack_id: item.id, custom_service_id: '', custom_price: '' }));
+                          } else {
+                            handleCustomServiceChange(item.id);
+                          }
+                          setServiceSearch(item.name);
+                          setServiceDropdownOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary/60 transition-colors flex items-center justify-between"
+                      >
+                        <span className="font-medium text-foreground">{item.name}</span>
+                        <span className="text-muted-foreground text-xs">{item.duration} • {item.price}€</span>
+                      </button>
+                    ))}
+                    {filteredServices.length === 0 && (
+                      <p className="px-4 py-3 text-sm text-muted-foreground">Aucun résultat</p>
+                    )}
+                  </div>
+                )}
+              </div>
 
-              {serviceType === 'custom' && customServices.filter(s => s.active).length > 0 && (
-                <div className="space-y-2">
-                  <Select value={createForm.custom_service_id} onValueChange={handleCustomServiceChange}>
-                    <SelectTrigger className="h-11 rounded-xl">
-                      <SelectValue placeholder={t('dashboard.selectService')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {customServices.filter(s => s.active).map((service) => (
-                        <SelectItem key={service.id} value={service.id}>
-                          {service.name} - {service.price}€ ({formatDuration(service.duration_minutes)})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {createForm.custom_service_id && customServices.find(s => s.id === createForm.custom_service_id) && (
-                    <div className="bg-primary/5 rounded-lg p-3 text-sm">
-                      <p className="font-medium text-primary">{customServices.find(s => s.id === createForm.custom_service_id)?.name}</p>
-                      <p className="text-muted-foreground">
-                        {formatDuration(customServices.find(s => s.id === createForm.custom_service_id)?.duration_minutes || 0)} • {customServices.find(s => s.id === createForm.custom_service_id)?.price}€
-                      </p>
-                    </div>
-                  )}
+              {/* Selected service preview */}
+              {createForm.pack_id && packs.find(p => p.id === createForm.pack_id) && (
+                <div className="bg-primary/5 rounded-lg p-3 text-sm">
+                  <p className="font-medium text-primary">{packs.find(p => p.id === createForm.pack_id)?.name}</p>
+                  <p className="text-muted-foreground">
+                    {packs.find(p => p.id === createForm.pack_id)?.duration || t('common.duration')} • {packs.find(p => p.id === createForm.pack_id)?.price}€
+                  </p>
+                </div>
+              )}
+              {createForm.custom_service_id && customServices.find(s => s.id === createForm.custom_service_id) && (
+                <div className="bg-primary/5 rounded-lg p-3 text-sm">
+                  <p className="font-medium text-primary">{customServices.find(s => s.id === createForm.custom_service_id)?.name}</p>
+                  <p className="text-muted-foreground">
+                    {formatDuration(customServices.find(s => s.id === createForm.custom_service_id)?.duration_minutes || 0)} • {customServices.find(s => s.id === createForm.custom_service_id)?.price}€
+                  </p>
                 </div>
               )}
             </div>
 
-            {/* Client info */}
-            <div className="space-y-2">
-              <Label>{t('dashboard.clientName')}</Label>
-              <Input value={createForm.client_name} onChange={(e) => setCreateForm(prev => ({ ...prev, client_name: e.target.value }))} placeholder="Jean Dupont" className="h-11 rounded-xl" disabled={!!selectedClientId} />
-            </div>
+            {/* Client info — only shown for new clients */}
+            {!selectedClientId && (
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">Nom du client (auto-rempli)</Label>
+                <Input value={createForm.client_name} onChange={(e) => setCreateForm(prev => ({ ...prev, client_name: e.target.value }))} placeholder="Jean Dupont" className="h-11 rounded-xl" />
+              </div>
+            )}
             
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
