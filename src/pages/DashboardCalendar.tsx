@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { 
-  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight, LayoutGrid, CalendarDays, CalendarPlus, Users, Search
+  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight, LayoutGrid, CalendarDays, CalendarPlus, Users, Search, Eye
 } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
@@ -1102,7 +1102,7 @@ export default function DashboardCalendar() {
         </DialogContent>
       </Dialog>
 
-      {/* Create Appointment Dialog — same as Reservations */}
+      {/* Create Appointment Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="max-w-lg rounded-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -1113,7 +1113,7 @@ export default function DashboardCalendar() {
           <div className="space-y-5 mt-4">
             {/* Client autocomplete search */}
             <div className="space-y-2">
-              <Label>Client</Label>
+              <Label>Client *</Label>
               <div ref={clientSearchRef} className="relative">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -1123,7 +1123,6 @@ export default function DashboardCalendar() {
                       setClientSearch(e.target.value);
                       setClientDropdownOpen(true);
                       if (selectedClientId) {
-                        // Clear selection if user edits
                         setSelectedClientId('');
                         setCreateForm(prev => ({
                           ...prev,
@@ -1138,7 +1137,7 @@ export default function DashboardCalendar() {
                     }}
                     onFocus={() => setClientDropdownOpen(true)}
                     placeholder="Rechercher ou créer un client..."
-                    className="pl-9 h-11 rounded-xl"
+                    className="pl-9 pr-10 h-11 rounded-xl"
                   />
                   {selectedClientId && (
                     <button
@@ -1162,26 +1161,44 @@ export default function DashboardCalendar() {
                           setCreateForm(prev => ({ ...prev, client_name: clientSearch.trim() }));
                           setClientDropdownOpen(false);
                         }}
-                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary/60 transition-colors flex items-center gap-2 text-primary font-medium"
+                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary/60 transition-colors flex items-center gap-2 text-primary font-medium border-b border-border"
                       >
                         <Plus className="w-4 h-4" />
-                        Créer "{clientSearch.trim()}"
+                        Créer « {clientSearch.trim()} »
                       </button>
                     )}
                     {filteredClients.map((client) => (
-                      <button
+                      <div
                         key={client.id}
-                        type="button"
-                        onClick={() => handleClientSelect(client.id)}
-                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary/60 transition-colors"
+                        className="flex items-center justify-between hover:bg-secondary/60 transition-colors"
                       >
-                        <span className="font-medium text-foreground">{client.name}</span>
-                        {(client.phone || client.email) && (
-                          <span className="text-muted-foreground ml-2 text-xs">
-                            {client.phone || client.email}
-                          </span>
-                        )}
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() => handleClientSelect(client.id)}
+                          className="flex-1 text-left px-4 py-2.5 text-sm"
+                        >
+                          <span className="font-medium text-foreground">{client.name}</span>
+                          {(client.phone || client.email) && (
+                            <span className="text-muted-foreground ml-2 text-xs">
+                              {client.phone || client.email}
+                            </span>
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleClientSelect(client.id);
+                            setClientDropdownOpen(false);
+                            // Navigate to client detail - open in new context
+                            navigate('/dashboard/clients', { state: { openClientId: client.id } });
+                          }}
+                          className="px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors"
+                          title="Voir la fiche client"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     ))}
                     {filteredClients.length === 0 && !clientSearch.trim() && (
                       <p className="px-4 py-3 text-sm text-muted-foreground">Aucun client</p>
@@ -1189,11 +1206,29 @@ export default function DashboardCalendar() {
                   </div>
                 )}
               </div>
+              {/* Show phone/email fields only for NEW clients (not in DB) */}
+              {!selectedClientId && createForm.client_name && (
+                <div className="grid grid-cols-2 gap-3 mt-2">
+                  <Input
+                    value={createForm.client_phone}
+                    onChange={(e) => setCreateForm(prev => ({ ...prev, client_phone: e.target.value }))}
+                    placeholder="Téléphone *"
+                    className="h-10 rounded-xl text-sm"
+                  />
+                  <Input
+                    type="email"
+                    value={createForm.client_email}
+                    onChange={(e) => setCreateForm(prev => ({ ...prev, client_email: e.target.value }))}
+                    placeholder="Email"
+                    className="h-10 rounded-xl text-sm"
+                  />
+                </div>
+              )}
             </div>
 
-            {/* Service type toggle — no Devis */}
+            {/* Service type toggle */}
             <div className="space-y-3">
-              <Label>{t('dashboard.serviceType')}</Label>
+              <Label>Prestation</Label>
               <div className="flex bg-muted/60 rounded-xl p-1">
                 <button type="button" onClick={() => { handleServiceTypeChange('pack'); setServiceSearch(''); setServiceDropdownOpen(false); }}
                   className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
@@ -1206,7 +1241,7 @@ export default function DashboardCalendar() {
                     className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                       serviceType === 'custom' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
                     }`}>
-                    Prestations pro
+                    Prestations personnalisées
                   </button>
                 )}
               </div>
@@ -1285,25 +1320,7 @@ export default function DashboardCalendar() {
               )}
             </div>
 
-            {/* Client info — only shown for new clients */}
-            {!selectedClientId && (
-              <div className="space-y-2">
-                <Label className="text-xs text-muted-foreground">Nom du client (auto-rempli)</Label>
-                <Input value={createForm.client_name} onChange={(e) => setCreateForm(prev => ({ ...prev, client_name: e.target.value }))} placeholder="Jean Dupont" className="h-11 rounded-xl" />
-              </div>
-            )}
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>{t('dashboard.phoneStar')}</Label>
-                <Input value={createForm.client_phone} onChange={(e) => setCreateForm(prev => ({ ...prev, client_phone: e.target.value }))} placeholder="06 12 34 56 78" className="h-11 rounded-xl" disabled={!!selectedClientId} />
-              </div>
-              <div className="space-y-2">
-                <Label>{t('common.email')}</Label>
-                <Input type="email" value={createForm.client_email} onChange={(e) => setCreateForm(prev => ({ ...prev, client_email: e.target.value }))} placeholder="jean@email.com" className="h-11 rounded-xl" disabled={!!selectedClientId} />
-              </div>
-            </div>
-            
+            {/* Date & Time */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>{t('dashboard.dateStar')}</Label>
@@ -1315,6 +1332,7 @@ export default function DashboardCalendar() {
               </div>
             </div>
             
+            {/* Notes */}
             <div className="space-y-2">
               <Label>{t('common.notes')}</Label>
               <Textarea value={createForm.notes} onChange={(e) => setCreateForm(prev => ({ ...prev, notes: e.target.value }))} placeholder={t('dashboard.additionalInfo')} rows={2} className="rounded-xl resize-none" />
@@ -1327,7 +1345,7 @@ export default function DashboardCalendar() {
             </Button>
             <Button 
               onClick={handleCreateAppointment}
-              disabled={loadingCreate || !createForm.client_name || !createForm.client_phone}
+              disabled={loadingCreate || !createForm.client_name || (!selectedClientId && !createForm.client_phone)}
               className="rounded-xl min-w-[120px]"
             >
               {loadingCreate ? <Loader2 className="w-4 h-4 animate-spin" /> : t('common.add')}
