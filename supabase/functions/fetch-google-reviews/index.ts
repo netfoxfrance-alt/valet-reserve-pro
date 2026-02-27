@@ -5,6 +5,23 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Extract Place ID from various Google Maps URL formats
+function extractPlaceId(url: string): string | null {
+  // Direct place_id in URL: ?placeid=XXX or data=...!1sXXX
+  const placeIdMatch = url.match(/place_id[=:]([A-Za-z0-9_-]+)/i);
+  if (placeIdMatch) return placeIdMatch[1];
+
+  // From data parameter: !1sChIJ... pattern
+  const dataMatch = url.match(/!1s(ChIJ[A-Za-z0-9_-]+)/);
+  if (dataMatch) return dataMatch[1];
+
+  // From CID in hex: !1s0x...
+  const cidMatch = url.match(/!1s(0x[0-9a-f]+:[0-9a-fx]+)/i);
+  if (cidMatch) return null; // CID, not place ID
+
+  return null;
+}
+
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -40,71 +57,33 @@ serve(async (req: Request) => {
     }
 
     const html = await response.text();
-
-    // Try multiple patterns to extract rating and review count from Google pages
     let rating: number | null = null;
     let reviewCount: number | null = null;
 
-    // Pattern 1: Google Maps/Search structured data - rating
-    // Look for patterns like "4,7" or "4.7" near star/review indicators
-    const ratingPatterns = [
-      // Google Maps: "4,7 étoiles" or "4.7 stars"
-      /(\d[.,]\d)\s*(?:étoiles?|stars?|sur 5)/i,
-      // Google Search knowledge panel: aria-label with rating
-      /aria-label="[^"]*?(\d[.,]\d)\s*(?:sur|out of)\s*5/i,
-      // Schema.org ratingValue
-      /"ratingValue"\s*:\s*"?(\d[.,]\d)"?/i,
-      // Google Maps data attribute
-      /data-rating="(\d[.,]\d)"/i,
-      // Broad pattern: X,Y or X.Y followed by review count context
-      /class="[^"]*"[^>]*>(\d[.,]\d)<\/span>\s*<span[^>]*>\s*\(\s*\d/,
-      // aria-label patterns
-      /(\d[.,]\d)\s*(?:sur|\/)\s*5/i,
-      // Direct rating display
-      />(\d[.,]\d)<\/span>/,
+    // ── Strategy 1: Look for meta tags and og: data ──
+    // Google Maps pages often have meta content with rating info
+    const metaPatterns = [
+      // og:description or meta description often contains "Note : X,Y/5" or "Rating: X.Y"
+      /content="[^"]*?(\d[.,]\d)\s*(?:\/5|sur 5|stars?|étoiles?)[^"]*?(\d[\d\s.,]*)\s*(?:avis|reviews?)/i,
+      /content="[^"]*?(?:Note|Rating)[^"]*?(\d[.,]\d)[^"]*?(\d[\d\s.,]*)\s*(?:avis|reviews?)/i,
     ];
-
-    for (const pattern of ratingPatterns) {
+    
+    for (const pattern of metaPatterns) {
       const match = html.match(pattern);
       if (match) {
-        rating = parseFloat(match[1].replace(",", "."));
-        if (rating >= 1 && rating <= 5) {
-          console.log("Found rating:", rating, "with pattern:", pattern.source.substring(0, 40));
-          break;
-        }
-        rating = null;
-      }
-    }
-
-    // Pattern 2: Review count
-    const countPatterns = [
-      // "123 avis" or "1 234 avis" or "1,234 reviews"
-      /(\d[\d\s.,]*\d|\d)\s*(?:avis|reviews?|commentaires?|opinions?)/i,
-      // Schema.org reviewCount
-      /"reviewCount"\s*:\s*"?(\d+)"?/i,
-      // "(123)" near rating
-      /\((\d[\d\s.,]*\d|\d)\)/,
-      // Google Maps: "X avis Google"
-      /(\d[\d\s.,]*\d|\d)\s*avis\s*Google/i,
-      // userRatingCount
-      /"userRatingCount"\s*:\s*"?(\d+)"?/i,
-    ];
-
-    for (const pattern of countPatterns) {
-      const match = html.match(pattern);
-      if (match) {
-        // Remove spaces, dots, commas used as thousand separators
-        const raw = match[1].replace(/[\s.]/g, "").replace(",", "");
-        const parsed = parseInt(raw, 10);
-        if (parsed > 0 && parsed < 1000000) {
-          reviewCount = parsed;
-          console.log("Found review count:", reviewCount, "with pattern:", pattern.source.substring(0, 40));
+        const r = parseFloat(match[1].replace(",", "."));
+        if (r >= 1 && r <= 5) {
+          rating = Math.round(r * 10) / 10;
+          const raw = match[2].replace(/[\s.]/g, "").replace(",", "");
+          const c = parseInt(raw, 10);
+          if (c > 0) reviewCount = c;
+          console.log("Found from meta:", rating, reviewCount);
           break;
         }
       }
     }
 
-    // If we couldn't find structured data, try JSON-LD
+    // ── Strategy 2: Schema.org / JSON-LD ──
     if (rating === null || reviewCount === null) {
       const jsonLdMatches = html.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi);
       for (const m of jsonLdMatches) {
@@ -116,7 +95,10 @@ serve(async (req: Request) => {
             if (aggRating) {
               if (rating === null && aggRating.ratingValue) {
                 rating = parseFloat(String(aggRating.ratingValue).replace(",", "."));
-                console.log("Found rating from JSON-LD:", rating);
+                if (rating >= 1 && rating <= 5) {
+                  rating = Math.round(rating * 10) / 10;
+                  console.log("Found rating from JSON-LD:", rating);
+                }
               }
               if (reviewCount === null && (aggRating.reviewCount || aggRating.ratingCount)) {
                 reviewCount = parseInt(String(aggRating.reviewCount || aggRating.ratingCount), 10);
@@ -125,18 +107,118 @@ serve(async (req: Request) => {
             }
           }
         } catch {
-          // Invalid JSON-LD, skip
+          // skip
+        }
+      }
+    }
+
+    // ── Strategy 3: Standard regex patterns on HTML ──
+    if (rating === null) {
+      const ratingPatterns = [
+        /"ratingValue"\s*:\s*"?(\d[.,]\d)"?/i,
+        /data-rating="(\d[.,]\d)"/i,
+        /(\d[.,]\d)\s*(?:étoiles?|stars?|sur 5)/i,
+        /aria-label="[^"]*?(\d[.,]\d)\s*(?:sur|out of)\s*5/i,
+        /[Nn]ote\s*[:\s]+(\d[.,]\d)/,
+        /[Rr]ated?\s+(\d[.,]\d)/,
+        /(\d[.,]\d)\s*(?:sur|\/)\s*5/i,
+      ];
+
+      for (const pattern of ratingPatterns) {
+        const match = html.match(pattern);
+        if (match) {
+          const val = parseFloat(match[1].replace(",", "."));
+          if (val >= 1 && val <= 5) {
+            rating = Math.round(val * 10) / 10;
+            console.log("Found rating (regex):", rating);
+            break;
+          }
+        }
+      }
+    }
+
+    if (reviewCount === null) {
+      const countPatterns = [
+        /(\d[\d\s.,]*\d|\d)\s*(?:avis|reviews?|commentaires?)/i,
+        /"reviewCount"\s*:\s*"?(\d+)"?/i,
+        /"userRatingCount"\s*:\s*"?(\d+)"?/i,
+        /\((\d[\d\s.,]*\d|\d)\s*(?:avis|reviews?)?\)/i,
+      ];
+
+      for (const pattern of countPatterns) {
+        const match = html.match(pattern);
+        if (match) {
+          const raw = match[1].replace(/[\s.]/g, "").replace(",", "");
+          const parsed = parseInt(raw, 10);
+          if (parsed > 0 && parsed < 1000000) {
+            reviewCount = parsed;
+            console.log("Found count (regex):", reviewCount);
+            break;
+          }
+        }
+      }
+    }
+
+    // ── Strategy 4: Google Maps JS inline data - look for rating near count ──
+    if (rating === null && reviewCount !== null) {
+      // The pattern often is: X.Y followed by some markup then (COUNT)
+      const nearCountPattern = new RegExp(`(\\d[.,]\\d)\\s*[^\\d]{0,100}\\(?\\s*${reviewCount}`);
+      const nearMatch = html.match(nearCountPattern);
+      if (nearMatch) {
+        const val = parseFloat(nearMatch[1].replace(",", "."));
+        if (val >= 1 && val <= 5) {
+          rating = Math.round(val * 10) / 10;
+          console.log("Found rating near count:", rating);
+        }
+      }
+    }
+
+    // ── Strategy 5: Parse Google Maps window.__WIZ_DATA or AF_initDataCallback data ──
+    if (rating === null) {
+      // Google Maps embeds data in AF_initDataCallback calls
+      // Look for patterns like: ,[4.7,  or ,"4.7", near review-related data
+      const wizMatches = html.matchAll(/AF_initDataCallback\(\{[^}]*data:([\s\S]*?)\}\);/g);
+      for (const wm of wizMatches) {
+        const dataStr = wm[1];
+        // Look for a rating value (X.Y where 1<=X<=5)  
+        const rMatch = dataStr.match(/,(\d\.\d),\d+,/);
+        if (rMatch) {
+          const val = parseFloat(rMatch[1]);
+          if (val >= 1 && val <= 5) {
+            rating = Math.round(val * 10) / 10;
+            console.log("Found rating from AF_initDataCallback:", rating);
+            break;
+          }
+        }
+      }
+    }
+
+    // ── Strategy 6: Broad span/text matching ──
+    if (rating === null) {
+      const broadMatch = html.match(/>(\d[.,]\d)<\/span>/g);
+      if (broadMatch) {
+        for (const m of broadMatch) {
+          const numMatch = m.match(/>(\d[.,]\d)</);
+          if (numMatch) {
+            const val = parseFloat(numMatch[1].replace(",", "."));
+            if (val >= 1 && val <= 5) {
+              rating = Math.round(val * 10) / 10;
+              console.log("Found rating (broad span):", rating);
+              break;
+            }
+          }
         }
       }
     }
 
     if (rating === null && reviewCount === null) {
-      console.log("Could not extract review data from page. HTML length:", html.length);
-      // Log a snippet for debugging
-      console.log("HTML snippet:", html.substring(0, 500));
+      console.log("Could not extract review data. HTML length:", html.length);
+      // Log a larger snippet for debugging
+      const snippet = html.substring(0, 1500);
+      console.log("HTML snippet:", snippet);
       return new Response(
         JSON.stringify({ 
-          error: "Impossible d'extraire les données d'avis depuis cette URL. Vérifiez que c'est bien un lien Google Maps ou Google Business.",
+          error: "Impossible d'extraire les données d'avis. Vous pouvez saisir la note manuellement.",
           rating: null,
           reviewCount: null,
         }),
@@ -149,8 +231,8 @@ serve(async (req: Request) => {
     return new Response(
       JSON.stringify({ 
         success: true, 
-        rating: rating, 
-        reviewCount: reviewCount,
+        rating,
+        reviewCount,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
