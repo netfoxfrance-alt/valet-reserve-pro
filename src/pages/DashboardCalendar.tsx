@@ -46,7 +46,7 @@ const statusColors: Record<string, string> = {
 export default function DashboardCalendar() {
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
-  const [viewMode, setViewMode] = useState<'month' | 'week'>('month');
+  const [viewMode, setViewMode] = useState<'month' | 'week'>('week');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [currentWeekDate, setCurrentWeekDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -365,58 +365,51 @@ export default function DashboardCalendar() {
     <>
     <DashboardLayout title={t('calendar.title')} subtitle={center?.name}>
       <div className="max-w-7xl">
-          {/* Header with navigation */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <Button variant="outline" size="icon" onClick={handlePrev} className="h-9 w-9 rounded-xl">
+          {/* Header — Apple Calendar style */}
+          <div className="flex items-center justify-between gap-2 mb-3 sm:mb-5">
+            {/* Left: Navigation */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Button variant="ghost" size="icon" onClick={handlePrev} className="h-8 w-8 sm:h-9 sm:w-9 rounded-full">
                 <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
-              <h2 className="text-lg sm:text-xl font-bold text-foreground min-w-[140px] sm:min-w-[220px] text-center capitalize">
+              <button 
+                onClick={goToToday}
+                className="text-base sm:text-lg font-semibold text-foreground min-w-[120px] sm:min-w-[200px] text-center capitalize hover:text-primary transition-colors"
+              >
                 {headerLabel}
-              </h2>
-              <Button variant="outline" size="icon" onClick={handleNext} className="h-9 w-9 rounded-xl">
+              </button>
+              <Button variant="ghost" size="icon" onClick={handleNext} className="h-8 w-8 sm:h-9 sm:w-9 rounded-full">
                 <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </div>
-            
-            <div className="flex gap-2 flex-wrap">
-              {/* Add appointment button */}
-              <Button onClick={() => openCreateDialog()} className="rounded-xl h-9 text-sm">
-                <Plus className="w-4 h-4 mr-1.5" />
-                <span className="hidden sm:inline">Ajouter un RDV</span>
-                <span className="sm:hidden">RDV</span>
-              </Button>
 
-              {/* View toggle */}
-              <div className="flex rounded-xl border border-border overflow-hidden">
-                <button
-                  onClick={() => setViewMode('month')}
-                  className={cn(
-                    "flex items-center gap-1.5 px-3 h-9 text-sm font-medium transition-colors",
-                    viewMode === 'month' ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <LayoutGrid className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Mois</span>
-                </button>
+            {/* Right: Actions */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              {/* View toggle — pill style */}
+              <div className="hidden sm:flex bg-muted/60 rounded-full p-0.5">
                 <button
                   onClick={() => setViewMode('week')}
                   className={cn(
-                    "flex items-center gap-1.5 px-3 h-9 text-sm font-medium transition-colors border-l border-border",
-                    viewMode === 'week' ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground hover:text-foreground"
+                    "px-3 py-1.5 text-xs font-medium rounded-full transition-all",
+                    viewMode === 'week' ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  <CalendarDays className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Semaine</span>
+                  Semaine
+                </button>
+                <button
+                  onClick={() => setViewMode('month')}
+                  className={cn(
+                    "px-3 py-1.5 text-xs font-medium rounded-full transition-all",
+                    viewMode === 'month' ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  Mois
                 </button>
               </div>
-              
-              <Button variant="outline" onClick={goToToday} className="rounded-xl h-9 text-sm">
-                <CalendarIcon className="w-4 h-4 mr-1.5" />
-                {t('calendar.today')}
-              </Button>
+
               <Button 
-                variant="outline" 
+                variant="ghost" 
+                size="icon"
                 onClick={() => {
                   setBlockForm({ 
                     start_date: format(new Date(), 'yyyy-MM-dd'), 
@@ -425,17 +418,42 @@ export default function DashboardCalendar() {
                   });
                   setShowBlockDialog(true);
                 }}
-                className="rounded-xl h-9 text-sm"
+                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full text-muted-foreground"
               >
-                <Ban className="w-4 h-4 mr-1.5" />
-                <span className="hidden sm:inline">{t('calendar.block')}</span>
+                <Ban className="w-4 h-4" />
+              </Button>
+
+              <Button onClick={() => openCreateDialog()} size="icon" className="h-8 w-8 sm:h-9 sm:w-9 rounded-full">
+                <Plus className="w-4 h-4" />
               </Button>
             </div>
           </div>
 
+          {/* Mobile view toggle — below header */}
+          <div className="flex sm:hidden bg-muted/60 rounded-full p-0.5 mb-3">
+            <button
+              onClick={() => setViewMode('week')}
+              className={cn(
+                "flex-1 py-1.5 text-xs font-medium rounded-full transition-all text-center",
+                viewMode === 'week' ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
+              )}
+            >
+              Semaine
+            </button>
+            <button
+              onClick={() => setViewMode('month')}
+              className={cn(
+                "flex-1 py-1.5 text-xs font-medium rounded-full transition-all text-center",
+                viewMode === 'month' ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
+              )}
+            >
+              Mois
+            </button>
+          </div>
+
           {/* WEEK VIEW */}
           {viewMode === 'week' && (
-            <div className="h-[calc(100vh-180px)] sm:h-[calc(100vh-220px)] min-h-[400px] -mx-3 sm:mx-0">
+            <div className="h-[calc(100vh-160px)] sm:h-[calc(100vh-180px)] min-h-[400px] -mx-3 sm:mx-0">
               <WeeklyCalendarView
                 currentDate={currentWeekDate}
                 appointments={appointments}
