@@ -29,7 +29,7 @@ export default function DashboardMyPage() {
   const [previewMode, setPreviewMode] = useState<'mobile' | 'desktop'>('mobile');
   const [previewKey, setPreviewKey] = useState(0);
   const [requestDialogOpen, setRequestDialogOpen] = useState(false);
-  const [requestType, setRequestType] = useState<'design' | 'functionality' | 'both'>('design');
+  const [requestType, setRequestType] = useState<'design' | 'functionality' | 'both'>('functionality');
   const [requestMessage, setRequestMessage] = useState('');
   const [submittingRequest, setSubmittingRequest] = useState(false);
 
@@ -51,8 +51,20 @@ export default function DashboardMyPage() {
     try {
       const { error } = await supabase.from('custom_requests').insert({ center_id: center.id, center_name: center.name, contact_email: user.email || '', request_type: requestType, message: requestMessage.trim() });
       if (error) throw error;
+
+      // Send email notification
+      await supabase.functions.invoke('send-booking-emails', {
+        body: {
+          type: 'custom_request',
+          centerName: center.name,
+          contactEmail: user.email || '',
+          requestType,
+          message: requestMessage.trim(),
+        },
+      });
+
       toast({ title: t('myPage.requestSent'), description: t('myPage.requestSentDesc') });
-      setRequestDialogOpen(false); setRequestMessage(''); setRequestType('design');
+      setRequestDialogOpen(false); setRequestMessage(''); setRequestType('functionality');
     } catch (error) {
       console.error('Error submitting request:', error);
       toast({ title: t('common.error'), description: t('myPage.requestError'), variant: 'destructive' });
@@ -187,10 +199,6 @@ export default function DashboardMyPage() {
             <div className="space-y-3">
               <Label>{t('myPage.iWant')}</Label>
               <RadioGroup value={requestType} onValueChange={(v) => setRequestType(v as any)}>
-                <div className="flex items-start space-x-3 p-3 rounded-lg border hover:bg-secondary/50 transition-colors cursor-pointer">
-                  <RadioGroupItem value="page_creation" id="page_creation" className="mt-0.5" />
-                  <div><Label htmlFor="page_creation" className="font-medium cursor-pointer">{t('myPage.pageCreation')}</Label><p className="text-xs text-muted-foreground mt-0.5">{t('myPage.pageCreationDesc')}</p></div>
-                </div>
                 <div className="flex items-start space-x-3 p-3 rounded-lg border hover:bg-secondary/50 transition-colors cursor-pointer">
                   <RadioGroupItem value="functionality" id="functionality" className="mt-0.5" />
                   <div><Label htmlFor="functionality" className="font-medium cursor-pointer">{t('myPage.moreFunctionality')}</Label><p className="text-xs text-muted-foreground mt-0.5">{t('myPage.moreFunctionalityDesc')}</p></div>
