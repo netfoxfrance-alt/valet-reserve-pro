@@ -33,6 +33,7 @@ import TermsOfSale from "./pages/TermsOfSale";
 import LegalNotices from "./pages/LegalNotices";
 import Presentation from "./pages/Presentation";
 import ProtectedRoute from "./components/ProtectedRoute";
+import SitemapRedirect from "./pages/SitemapRedirect";
 
 const queryClient = new QueryClient();
 
@@ -128,6 +129,9 @@ const App = () => (
             <Route path="/deposit-payment" element={<DepositPayment />} />
             <Route path="/deposit-success" element={<DepositSuccess />} />
             <Route path="/deposit-cancel" element={<DepositCancel />} />
+            
+            {/* Sitemap redirect to backend function */}
+            <Route path="/sitemap.xml" element={<SitemapRedirect />} />
             
             {/* Public center page - must be last before catch-all to avoid conflicts */}
             <Route path="/:slug" element={<CenterBooking />} />
