@@ -1,20 +1,22 @@
 import { useMemo, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import {
-  format, addDays, isSameDay, isToday, startOfDay, parseISO,
+  format, addDays, isSameDay, isToday, startOfDay,
 } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
 import { Appointment } from '@/hooks/useAppointments';
 
-/* ── status config ── */
-const STATUS_STYLE: Record<string, { bg: string; text: string; label: string }> = {
-  pending:            { bg: 'bg-purple-500',   text: 'text-white', label: 'À valider' },
-  pending_validation: { bg: 'bg-orange-500',   text: 'text-white', label: 'À valider' },
-  confirmed:          { bg: 'bg-sky-500',      text: 'text-white', label: 'Confirmé' },
-  completed:          { bg: 'bg-emerald-500',  text: 'text-white', label: 'Terminé' },
-  cancelled:          { bg: 'bg-red-400',      text: 'text-white', label: 'Annulé' },
-  refused:            { bg: 'bg-red-400',      text: 'text-white', label: 'Refusé' },
+/* ── Apple-vivid colors ── */
+const APPOINTMENT_COLOR = '#049be6';
+
+const STATUS_BADGE: Record<string, { bg: string; label: string }> = {
+  pending:            { bg: '#AF52DE', label: 'À valider' },
+  pending_validation: { bg: '#FF9500', label: 'À valider' },
+  confirmed:          { bg: APPOINTMENT_COLOR, label: 'Confirmé' },
+  completed:          { bg: '#36c857', label: 'Terminé' },
+  cancelled:          { bg: '#ff392b', label: 'Annulé' },
+  refused:            { bg: '#ff392b', label: 'Refusé' },
 };
 
 interface MobileScheduleViewProps {
@@ -51,7 +53,6 @@ export function MobileScheduleView({
         if (!map.has(key)) map.set(key, []);
         map.get(key)!.push(apt);
       });
-    // Sort within each day
     map.forEach((apts) => apts.sort((a, b) => a.appointment_time.localeCompare(b.appointment_time)));
     return map;
   }, [appointments]);
@@ -65,7 +66,7 @@ export function MobileScheduleView({
     }
   }, []);
 
-  // Days that have appointments
+  // Days that have appointments or are today
   const daysWithContent = useMemo(() => {
     return scheduleDays.filter(day => {
       const key = format(day, 'yyyy-MM-dd');
@@ -76,7 +77,7 @@ export function MobileScheduleView({
 
   return (
     <div ref={scrollRef} className="flex-1 overflow-y-auto h-full">
-      {daysWithContent.map((day, dayIdx) => {
+      {daysWithContent.map((day) => {
         const key = format(day, 'yyyy-MM-dd');
         const dayApts = aptsByDate.get(key) || [];
         const today = isToday(day);
@@ -85,31 +86,31 @@ export function MobileScheduleView({
           <div
             key={key}
             ref={today ? todayRef : undefined}
-            className="border-b border-border/15 last:border-b-0"
+            className="border-b border-border/10 last:border-b-0"
           >
-            {/* Day header — Google Calendar / Apple style */}
-            <div className="flex items-start gap-3 px-1 pt-4 pb-2">
+            {/* Day header — Google Calendar style */}
+            <div className="flex items-start gap-3 px-1 pt-5 pb-2">
               {/* Left: day info */}
               <div className="w-14 shrink-0 text-center">
                 <p className={cn(
                   "text-[11px] font-bold uppercase tracking-wider leading-none mb-1",
-                  today ? "text-primary" : "text-muted-foreground/60"
+                  today ? "text-[#ff392b]" : "text-muted-foreground/60"
                 )}>
                   {format(day, 'EEE', { locale: dateLocale }).replace('.', '')}
                 </p>
                 <span className={cn(
                   "inline-flex items-center justify-center w-10 h-10 rounded-full text-[22px] font-bold leading-none",
-                  today ? "bg-primary text-primary-foreground" : "text-foreground"
+                  today ? "bg-[#ff392b] text-white" : "text-foreground"
                 )}>
                   {format(day, 'd')}
                 </span>
               </div>
 
               {/* Right: appointments */}
-              <div className="flex-1 min-w-0 space-y-1.5 pt-0.5">
+              <div className="flex-1 min-w-0 space-y-2 pt-0.5">
                 {dayApts.length > 0 ? (
                   dayApts.map(apt => {
-                    const status = STATUS_STYLE[apt.status] || STATUS_STYLE.confirmed;
+                    const badge = STATUS_BADGE[apt.status] || STATUS_BADGE.confirmed;
                     const serviceName = apt.custom_service?.name || apt.pack?.name;
                     const endTime = getEndTime(apt.appointment_time, apt.duration_minutes || 60);
 
@@ -117,29 +118,30 @@ export function MobileScheduleView({
                       <button
                         key={apt.id}
                         onClick={() => onAppointmentClick(apt)}
-                        className="w-full text-left bg-sky-500 rounded-xl p-3 active:scale-[0.98] transition-all"
+                        className="w-full text-left rounded-xl p-3.5 active:scale-[0.98] transition-all"
+                        style={{ backgroundColor: APPOINTMENT_COLOR }}
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
-                            <p className="text-white font-bold text-[14px] truncate leading-tight">
+                            <p className="text-white font-bold text-[15px] truncate leading-tight">
                               {apt.client_name}
                             </p>
-                            <p className="text-white/80 text-[12px] mt-0.5 font-medium">
+                            <p className="text-white/80 text-[13px] mt-0.5 font-medium">
                               {apt.appointment_time.slice(0, 5)} – {endTime}
                               {apt.client_address ? ` à ${apt.client_address}` : ''}
                             </p>
                             {serviceName && (
-                              <p className="text-white/60 text-[11px] mt-0.5 font-medium uppercase tracking-wide truncate">
+                              <p className="text-white/60 text-[11px] mt-1 font-semibold uppercase tracking-wide truncate">
                                 {serviceName}
                               </p>
                             )}
                           </div>
                           {(apt.status === 'pending' || apt.status === 'pending_validation') && (
-                            <span className={cn(
-                              "text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0 mt-0.5",
-                              status.bg, status.text
-                            )}>
-                              {status.label}
+                            <span
+                              className="text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0 mt-0.5 text-white"
+                              style={{ backgroundColor: badge.bg }}
+                            >
+                              {badge.label}
                             </span>
                           )}
                         </div>

@@ -2,27 +2,26 @@ import { useMemo, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import {
   format, startOfMonth, endOfMonth, startOfWeek, endOfWeek,
-  addDays, addMonths, subMonths, isSameMonth, isSameDay, isToday, parseISO,
+  addDays, addMonths, subMonths, isSameMonth, isSameDay, isToday,
 } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Appointment } from '@/hooks/useAppointments';
 
-/* ── status config ── */
-const STATUS_STYLE: Record<string, { dot: string; badge: string; badgeBg: string; label: string }> = {
-  pending:            { dot: 'bg-purple-500',  badge: 'text-white',           badgeBg: 'bg-purple-500',          label: 'À valider' },
-  pending_validation: { dot: 'bg-orange-500',  badge: 'text-white',           badgeBg: 'bg-orange-500',          label: 'À valider' },
-  confirmed:          { dot: 'bg-sky-500',     badge: 'text-white',           badgeBg: 'bg-sky-500',             label: 'Confirmé' },
-  completed:          { dot: 'bg-emerald-500', badge: 'text-white',           badgeBg: 'bg-emerald-500',         label: 'Terminé' },
-  cancelled:          { dot: 'bg-red-400',     badge: 'text-white',           badgeBg: 'bg-red-400',             label: 'Annulé' },
-  refused:            { dot: 'bg-red-400',     badge: 'text-white',           badgeBg: 'bg-red-400',             label: 'Refusé' },
-};
+/* ── Apple-vivid colors ── */
+const APPOINTMENT_COLOR = '#049be6';
+const TODAY_RED = '#ff392b';
+const GREEN_VIVID = '#36c857';
 
-const EVENT_COLORS = [
-  'bg-emerald-500', 'bg-sky-500', 'bg-indigo-500', 'bg-rose-500',
-  'bg-amber-500', 'bg-teal-500', 'bg-violet-500', 'bg-pink-500',
-];
+const STATUS_STYLE: Record<string, { color: string; label: string }> = {
+  pending:            { color: '#AF52DE', label: 'À valider' },
+  pending_validation: { color: '#FF9500', label: 'À valider' },
+  confirmed:          { color: APPOINTMENT_COLOR, label: 'Confirmé' },
+  completed:          { color: GREEN_VIVID, label: 'Terminé' },
+  cancelled:          { color: TODAY_RED, label: 'Annulé' },
+  refused:            { color: TODAY_RED, label: 'Refusé' },
+};
 
 interface MobileCalendarViewProps {
   currentDate: Date;
@@ -61,18 +60,6 @@ export function MobileCalendarView({
     return result;
   }, [calStart.getTime(), calEnd.getTime()]);
 
-  const clientColorMap = useMemo(() => {
-    const map = new Map<string, string>();
-    let idx = 0;
-    appointments.forEach(apt => {
-      if (!map.has(apt.client_name)) {
-        map.set(apt.client_name, EVENT_COLORS[idx % EVENT_COLORS.length]);
-        idx++;
-      }
-    });
-    return map;
-  }, [appointments]);
-
   const aptsByDate = useMemo(() => {
     const map = new Map<string, Appointment[]>();
     appointments
@@ -109,16 +96,16 @@ export function MobileCalendarView({
 
   return (
     <div className="flex flex-col h-full">
-      {/* ── Month header — Apple style ── */}
+      {/* ── Month header ── */}
       <div className="flex items-center justify-between px-1 mb-2">
         <button onClick={prev} className="p-2 -ml-2 rounded-full active:bg-muted/60 transition-colors">
-          <ChevronLeft className="w-5 h-5 text-primary" />
+          <ChevronLeft className="w-5 h-5" style={{ color: APPOINTMENT_COLOR }} />
         </button>
         <h2 className="text-[17px] font-bold text-foreground capitalize tracking-tight">
           {format(currentDate, 'MMMM yyyy', { locale: dateLocale })}
         </h2>
         <button onClick={next} className="p-2 -mr-2 rounded-full active:bg-muted/60 transition-colors">
-          <ChevronRight className="w-5 h-5 text-primary" />
+          <ChevronRight className="w-5 h-5" style={{ color: APPOINTMENT_COLOR }} />
         </button>
       </div>
 
@@ -131,14 +118,13 @@ export function MobileCalendarView({
         ))}
       </div>
 
-      {/* ── Calendar grid — clean Apple look ── */}
+      {/* ── Calendar grid ── */}
       <div className="grid grid-cols-7 border-t border-border/20">
         {days.map((day, idx) => {
           const inMonth = isSameMonth(day, currentDate);
           const selected = isSameDay(day, selectedDate);
           const today = isToday(day);
           const dayApts = getAptsForDay(day);
-          const isWeekStart = idx % 7 === 0;
 
           return (
             <button
@@ -147,35 +133,34 @@ export function MobileCalendarView({
               className={cn(
                 "flex flex-col items-center pt-1.5 pb-1 min-h-[60px] border-b border-border/10 transition-colors relative",
                 !inMonth && "opacity-25",
-                selected && "bg-primary/[0.04]",
+                selected && "bg-[#049be6]/[0.06]",
               )}
             >
               {/* Day number */}
-              <span className={cn(
-                "text-[15px] w-8 h-8 flex items-center justify-center rounded-full transition-all leading-none",
-                today && "bg-red-500 text-white font-bold",
-                selected && !today && "bg-foreground text-background font-bold",
-                !today && !selected && "text-foreground font-medium",
-              )}>
+              <span
+                className={cn(
+                  "text-[15px] w-8 h-8 flex items-center justify-center rounded-full transition-all leading-none",
+                  !today && !selected && "text-foreground font-medium",
+                )}
+                style={{
+                  ...(today ? { backgroundColor: TODAY_RED, color: 'white', fontWeight: 700 } : {}),
+                  ...(selected && !today ? { backgroundColor: 'hsl(var(--foreground))', color: 'hsl(var(--background))', fontWeight: 700 } : {}),
+                }}
+              >
                 {format(day, 'd')}
               </span>
 
-              {/* Event labels — colored pills */}
+              {/* Event indicators */}
               <div className="w-full px-px mt-0.5 space-y-[1px] overflow-hidden flex-1 flex flex-col">
-                {dayApts.slice(0, 2).map((apt, i) => {
-                  const color = clientColorMap.get(apt.client_name) || 'bg-primary';
-                  return (
-                    <div
-                      key={i}
-                      className={cn(
-                        "text-[7px] leading-[12px] font-bold text-white rounded-[2px] px-[3px] truncate",
-                        color
-                      )}
-                    >
-                      {apt.client_name.split(' ')[0]}
-                    </div>
-                  );
-                })}
+                {dayApts.slice(0, 2).map((apt, i) => (
+                  <div
+                    key={i}
+                    className="text-[7px] leading-[12px] font-bold text-white rounded-[2px] px-[3px] truncate"
+                    style={{ backgroundColor: APPOINTMENT_COLOR }}
+                  >
+                    {apt.client_name.split(' ')[0]}
+                  </div>
+                ))}
                 {dayApts.length > 2 && (
                   <div className="text-[7px] text-muted-foreground/60 font-bold text-center leading-[12px]">
                     +{dayApts.length - 2}
@@ -189,7 +174,6 @@ export function MobileCalendarView({
 
       {/* ── Selected day detail ── */}
       <div className="mt-3 flex-1 overflow-y-auto px-0.5">
-        {/* Day title — bold like Apple */}
         <div className="flex items-baseline justify-between mb-2.5 px-0.5">
           <h3 className="text-[22px] font-black text-foreground capitalize tracking-tight">
             {format(selectedDate, 'EEEE d MMMM', { locale: dateLocale })}
@@ -201,7 +185,6 @@ export function MobileCalendarView({
           )}
         </div>
 
-        {/* Appointment cards — Apple style */}
         {selectedDayApts.length > 0 ? (
           <div className="space-y-2">
             {selectedDayApts.map(apt => {
@@ -216,7 +199,10 @@ export function MobileCalendarView({
                 >
                   <div className="flex items-center gap-3">
                     {/* Color bar */}
-                    <div className={cn("w-1 self-stretch rounded-full shrink-0", status.dot)} style={{ minHeight: 36 }} />
+                    <div
+                      className="w-1 self-stretch rounded-full shrink-0"
+                      style={{ minHeight: 36, backgroundColor: status.color }}
+                    />
 
                     {/* Time */}
                     <div className="shrink-0">
@@ -237,11 +223,11 @@ export function MobileCalendarView({
                       )}
                     </div>
 
-                    {/* Status badge — solid colored pill */}
-                    <span className={cn(
-                      "text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 whitespace-nowrap",
-                      status.badgeBg, status.badge
-                    )}>
+                    {/* Status badge */}
+                    <span
+                      className="text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 whitespace-nowrap text-white"
+                      style={{ backgroundColor: status.color }}
+                    >
                       {status.label}
                     </span>
                   </div>

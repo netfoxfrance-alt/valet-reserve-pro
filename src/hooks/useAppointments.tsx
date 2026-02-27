@@ -246,6 +246,11 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
   };
 }
 
+function timeToMin(time: string): number {
+  const [h, m] = time.split(':').map(Number);
+  return h * 60 + (m || 0);
+}
+
 // Hook pour créer un rendez-vous (côté client)
 export function useCreateAppointment() {
   const [loading, setLoading] = useState(false);
@@ -284,6 +289,31 @@ export function useCreateAppointment() {
     
     const duration_minutes = parseDurationToMinutes(data.duration);
     
+    // Anti-overlap check: verify no existing appointment conflicts with this time slot
+    const { data: existingApts } = await supabase
+      .from('appointments')
+      .select('appointment_time, duration_minutes, client_name')
+      .eq('center_id', data.center_id)
+      .eq('appointment_date', data.appointment_date)
+      .neq('status', 'cancelled')
+      .neq('status', 'refused');
+
+    if (existingApts && existingApts.length > 0) {
+      const newStartMin = timeToMin(data.appointment_time);
+      const newEndMin = newStartMin + duration_minutes;
+
+      const overlap = existingApts.find(apt => {
+        const aptStartMin = timeToMin(apt.appointment_time.slice(0, 5));
+        const aptEndMin = aptStartMin + (apt.duration_minutes || 60);
+        return newStartMin < aptEndMin && newEndMin > aptStartMin;
+      });
+
+      if (overlap) {
+        setLoading(false);
+        return { error: 'Ce créneau est déjà occupé. Veuillez choisir un autre horaire.', appointmentId: null };
+      }
+    }
+
     // Note: On réservation publique (non authentifié), on ne peut pas créer de client
     // car la table clients est protégée par RLS (propriétaire seulement)
     // Le client_id sera null et pourra être associé plus tard par le pro
