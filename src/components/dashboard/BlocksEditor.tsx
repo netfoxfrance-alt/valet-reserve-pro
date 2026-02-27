@@ -38,6 +38,7 @@ interface BlocksEditorProps {
   userId: string;
   centerAddress?: string;
   centerPhone?: string;
+  headerStyle?: 'banner' | 'minimal';
 }
 
 const BLOCK_ICONS: Record<BlockType, React.ElementType> = {
@@ -172,6 +173,7 @@ export function BlocksEditor({
   userId,
   centerAddress,
   centerPhone,
+  headerStyle,
 }: BlocksEditorProps) {
   const { toast } = useToast();
   const [uploadingFor, setUploadingFor] = useState<string | null>(null);
@@ -614,7 +616,6 @@ export function BlocksEditor({
             <p className="text-sm text-muted-foreground">
               {centerAddress || 'Adresse non configurée (Paramètres → Informations)'}
             </p>
-            {renderStyleSelector(block)}
           </div>
         );
 
@@ -624,7 +625,9 @@ export function BlocksEditor({
             <p className="text-sm text-muted-foreground">
               {centerPhone || 'Téléphone non configuré (Paramètres → Informations)'}
             </p>
-            {renderStyleSelector(block)}
+            {headerStyle === 'minimal' ? (
+              <p className="text-xs text-primary font-medium">📍 Affiché dans la barre header</p>
+            ) : null}
           </div>
         );
 
