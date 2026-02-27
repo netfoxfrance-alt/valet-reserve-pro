@@ -86,19 +86,19 @@ function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted
 
         <div className="flex flex-wrap gap-2">
           {request.client_phone && (
-            <Button variant="outline" size="sm" asChild className="h-9 rounded-xl">
-              <a href={`tel:${request.client_phone}`}><Phone className="w-4 h-4 mr-1.5" />{t('requests.call')}</a>
-            </Button>
+            <a href={`tel:${request.client_phone}`} className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors text-sm font-medium">
+              <Phone className="w-4 h-4" />{t('requests.call')}
+            </a>
           )}
           {request.client_email && (
-            <Button variant="outline" size="sm" asChild className="h-9 rounded-xl">
-              <a href={`mailto:${request.client_email}`}><Mail className="w-4 h-4 mr-1.5" />{t('common.email')}</a>
-            </Button>
+            <a href={`mailto:${request.client_email}`} className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 transition-colors text-sm font-medium">
+              <Mail className="w-4 h-4" />{t('common.email')}
+            </a>
           )}
           {images.length > 0 && (
-            <Button variant="outline" size="sm" className="h-9 rounded-xl" onClick={() => setShowImages(!showImages)}>
-              <Image className="w-4 h-4 mr-1.5" />{images.length} photo{images.length > 1 ? 's' : ''}
-            </Button>
+            <button onClick={() => setShowImages(!showImages)} className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-muted hover:bg-muted/80 transition-colors text-sm font-medium text-foreground">
+              <Image className="w-4 h-4" />{images.length} photo{images.length > 1 ? 's' : ''}
+            </button>
           )}
         </div>
 
@@ -139,30 +139,25 @@ function RequestCard({ request, dateLocale, t, isExistingClient, onMarkContacted
             )}
           </div>
 
-          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
-            {request.status === 'new' && (
-              <Button variant="outline" size="sm" onClick={() => onMarkContacted(request.id)} className="h-9 rounded-xl text-xs sm:text-sm">
-                <Phone className="w-4 h-4 mr-1 sm:mr-1.5 shrink-0" /><span className="truncate">{t('requests.markContacted')}</span>
-              </Button>
-            )}
+          <div className="flex flex-wrap gap-2">
             {request.request_type === 'quote' && request.status !== 'closed' && isExistingClient && (
-              <Button variant="default" size="sm" onClick={() => onCreateQuote(request)} className="h-9 rounded-xl bg-primary text-xs sm:text-sm">
-                <FileCheck className="w-4 h-4 mr-1 sm:mr-1.5 shrink-0" /><span className="truncate">Créer un devis</span>
+              <Button variant="default" size="sm" onClick={() => onCreateQuote(request)} className="h-9 rounded-full text-xs sm:text-sm font-medium shadow-sm">
+                <FileCheck className="w-4 h-4 mr-1.5 shrink-0" /><span className="truncate">Créer un devis</span>
               </Button>
             )}
             {request.request_type === 'quote' && request.status !== 'closed' && !isExistingClient && (
-              <Button variant="default" size="sm" onClick={() => onCreateClient(request)} className="h-9 rounded-xl bg-primary text-xs sm:text-sm">
-                <UserPlus className="w-4 h-4 mr-1 sm:mr-1.5 shrink-0" /><span className="truncate">Créer fiche client</span>
+              <Button variant="default" size="sm" onClick={() => onCreateClient(request)} className="h-9 rounded-full text-xs sm:text-sm font-medium shadow-sm">
+                <UserPlus className="w-4 h-4 mr-1.5 shrink-0" /><span className="truncate">Créer fiche client</span>
               </Button>
             )}
             {(request.status === 'new' || request.status === 'contacted') && (
               <>
-                <Button variant="outline" size="sm" onClick={() => onMarkConverted(request.id)} className="h-9 rounded-xl text-xs sm:text-sm">
-                  <CheckCircle className="w-4 h-4 mr-1 sm:mr-1.5 shrink-0" /><span className="truncate">{t('requests.markAnswered')}</span>
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => onMarkClosed(request.id)} className="h-9 rounded-xl">
+                <button onClick={() => onMarkConverted(request.id)} className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-emerald-500 text-white hover:bg-emerald-600 transition-colors text-xs sm:text-sm font-medium shadow-sm">
+                  <CheckCircle className="w-4 h-4 shrink-0" /><span className="truncate">{t('requests.markAnswered')}</span>
+                </button>
+                <button onClick={() => onMarkClosed(request.id)} className="inline-flex items-center justify-center h-9 w-9 rounded-full hover:bg-muted transition-colors text-muted-foreground">
                   <XCircle className="w-4 h-4" />
-                </Button>
+                </button>
               </>
             )}
           </div>
