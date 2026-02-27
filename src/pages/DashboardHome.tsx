@@ -119,7 +119,7 @@ export default function DashboardHome() {
               <img
                 src={item.icon}
                 alt={item.label}
-                className="w-20 h-20 sm:w-20 sm:h-20 lg:w-24 lg:h-24 object-contain group-hover:scale-[1.06] transition-transform duration-300 ease-out"
+                className="w-16 h-16 sm:w-16 sm:h-16 lg:w-20 lg:h-20 object-contain group-hover:scale-[1.06] transition-transform duration-300 ease-out"
               />
               <span className="text-xs sm:text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">{item.label}</span>
             </Link>
