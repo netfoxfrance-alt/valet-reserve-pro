@@ -501,15 +501,6 @@ export default function DashboardCalendar() {
               Planning
             </button>
             <button
-              onClick={() => setViewMode('month')}
-              className={cn(
-                "flex-1 py-1.5 text-[11px] font-semibold rounded-full transition-all text-center",
-                viewMode === 'month' ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
-              )}
-            >
-              Mois
-            </button>
-            <button
               onClick={() => setViewMode('week')}
               className={cn(
                 "flex-1 py-1.5 text-[11px] font-semibold rounded-full transition-all text-center",
@@ -517,6 +508,15 @@ export default function DashboardCalendar() {
               )}
             >
               Semaine
+            </button>
+            <button
+              onClick={() => setViewMode('month')}
+              className={cn(
+                "flex-1 py-1.5 text-[11px] font-semibold rounded-full transition-all text-center",
+                viewMode === 'month' ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
+              )}
+            >
+              Mois
             </button>
           </div>
 

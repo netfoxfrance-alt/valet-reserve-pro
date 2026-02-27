@@ -11,14 +11,9 @@ const START_HOUR = 7;
 const END_HOUR = 21;
 const TOTAL_HOURS = END_HOUR - START_HOUR;
 
-const statusColors: Record<string, { bg: string; border: string; text: string }> = {
-  pending: { bg: 'bg-amber-50 dark:bg-amber-900/30', border: 'border-l-amber-400', text: 'text-amber-800 dark:text-amber-200' },
-  pending_validation: { bg: 'bg-orange-50 dark:bg-orange-900/30', border: 'border-l-orange-400', text: 'text-orange-800 dark:text-orange-200' },
-  confirmed: { bg: 'bg-sky-50 dark:bg-sky-900/30', border: 'border-l-sky-500', text: 'text-sky-800 dark:text-sky-200' },
-  completed: { bg: 'bg-emerald-50 dark:bg-emerald-900/30', border: 'border-l-emerald-500', text: 'text-emerald-800 dark:text-emerald-200' },
-  cancelled: { bg: 'bg-red-50 dark:bg-red-900/30', border: 'border-l-red-400', text: 'text-red-800 dark:text-red-200' },
-  refused: { bg: 'bg-red-50 dark:bg-red-900/30', border: 'border-l-red-400', text: 'text-red-800 dark:text-red-200' },
-};
+/* ── Apple-vivid colors ── */
+const APPOINTMENT_COLOR = '#049be6';
+const TODAY_RED = '#ff392b';
 
 interface WeeklyCalendarViewProps {
   currentDate: Date;
@@ -80,7 +75,6 @@ export function WeeklyCalendarView({ currentDate, appointments, onAppointmentCli
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
   const nowTop = ((nowMinutes - START_HOUR * 60) / 60) * hourHeight;
   const showNowLine = nowMinutes >= START_HOUR * 60 && nowMinutes <= END_HOUR * 60;
-  const todayIdx = weekDays.findIndex(d => isToday(d));
 
   const hours = Array.from({ length: TOTAL_HOURS }, (_, i) => START_HOUR + i);
 
@@ -88,10 +82,7 @@ export function WeeklyCalendarView({ currentDate, appointments, onAppointmentCli
     <div className="flex flex-col h-full bg-card rounded-2xl overflow-hidden">
       {/* Day headers — fixed */}
       <div className="flex border-b border-border/50 bg-card z-20">
-        {/* Time column spacer */}
         <div className="w-10 sm:w-14 shrink-0" />
-        
-        {/* Day columns */}
         {weekDays.map((day, idx) => (
           <div
             key={idx}
@@ -102,7 +93,7 @@ export function WeeklyCalendarView({ currentDate, appointments, onAppointmentCli
           >
             <p className={cn(
               "text-[10px] sm:text-[11px] font-medium uppercase tracking-wide leading-none",
-              isToday(day) ? "text-primary" : "text-muted-foreground"
+              isToday(day) ? "text-[#ff392b]" : "text-muted-foreground"
             )}>
               {isMobile 
                 ? format(day, 'EEEEE', { locale: dateLocale }).toUpperCase()
@@ -110,12 +101,15 @@ export function WeeklyCalendarView({ currentDate, appointments, onAppointmentCli
               }
             </p>
             <div className="flex justify-center mt-1">
-              <span className={cn(
-                "font-semibold leading-none transition-colors",
-                isToday(day)
-                  ? "text-primary-foreground bg-primary rounded-full flex items-center justify-center w-7 h-7 text-xs sm:w-8 sm:h-8 sm:text-sm"
-                  : "text-foreground text-sm sm:text-lg"
-              )}>
+              <span
+                className={cn(
+                  "font-semibold leading-none transition-colors",
+                  isToday(day)
+                    ? "text-white rounded-full flex items-center justify-center w-7 h-7 text-xs sm:w-8 sm:h-8 sm:text-sm"
+                    : "text-foreground text-sm sm:text-lg"
+                )}
+                style={isToday(day) ? { backgroundColor: TODAY_RED } : undefined}
+              >
                 {format(day, 'd')}
               </span>
             </div>
@@ -123,14 +117,19 @@ export function WeeklyCalendarView({ currentDate, appointments, onAppointmentCli
         ))}
       </div>
 
-      {/* Scrollable time grid */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto overflow-x-hidden relative">
-        {/* Now indicator — full width red line */}
+      {/* Scrollable time grid — no visible scrollbar */}
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto overflow-x-hidden relative [&::-webkit-scrollbar]:hidden"
+        style={{ scrollbarWidth: 'none' }}
+      >
+        <style>{`div[data-week-scroll]::-webkit-scrollbar { display: none; }`}</style>
+        {/* Now indicator */}
         {showNowLine && (
           <div className="absolute left-10 sm:left-14 right-0 z-30 pointer-events-none" style={{ top: nowTop }}>
             <div className="relative">
-              <div className="absolute -left-[5px] -top-[5px] w-[10px] h-[10px] rounded-full bg-red-500" />
-              <div className="h-[2px] bg-red-500 w-full" />
+              <div className="absolute -left-[5px] -top-[5px] w-[10px] h-[10px] rounded-full" style={{ backgroundColor: TODAY_RED }} />
+              <div className="h-[2px] w-full" style={{ backgroundColor: TODAY_RED }} />
             </div>
           </div>
         )}
@@ -138,14 +137,12 @@ export function WeeklyCalendarView({ currentDate, appointments, onAppointmentCli
         {/* Hour rows */}
         {hours.map((hour, hourIdx) => (
           <div key={hour} className="flex" style={{ height: hourHeight }}>
-            {/* Time label */}
             <div className="w-10 sm:w-14 shrink-0 relative select-none">
               <span className="absolute right-2 sm:right-3 -top-[7px] text-[10px] sm:text-[11px] text-muted-foreground/70 tabular-nums font-light">
                 {`${hour}:00`}
               </span>
             </div>
 
-            {/* Day cells */}
             {weekDays.map((day, dayIdx) => {
               const key = format(day, 'yyyy-MM-dd');
               const blocked = isDayBlocked(day);
@@ -159,7 +156,7 @@ export function WeeklyCalendarView({ currentDate, appointments, onAppointmentCli
                     dayIdx > 0 && "border-l border-border/20",
                     "border-t border-border/30",
                     blocked && "bg-destructive/[0.03]",
-                    isToday(day) && "bg-primary/[0.02]"
+                    isToday(day) && "bg-[#049be6]/[0.02]"
                   )}
                   onClick={(e) => {
                     if (!onSlotClick) return;
@@ -174,16 +171,13 @@ export function WeeklyCalendarView({ currentDate, appointments, onAppointmentCli
                     onSlotClick(format(day, 'yyyy-MM-dd'), time);
                   }}
                 >
-                  {/* Half-hour line */}
                   <div className="absolute left-0 right-0 border-t border-border/15" style={{ top: hourHeight / 2 }} />
 
-                  {/* Appointments */}
                   {dayApts.map(apt => {
                     const startMin = timeToMinutes(apt.appointment_time);
                     const duration = apt.duration_minutes || 60;
                     const top = ((startMin - START_HOUR * 60) / 60) * hourHeight;
                     const height = Math.max((duration / 60) * hourHeight - 2, 22);
-                    const colors = statusColors[apt.status] || statusColors.confirmed;
 
                     return (
                       <button
@@ -192,17 +186,19 @@ export function WeeklyCalendarView({ currentDate, appointments, onAppointmentCli
                           e.stopPropagation();
                           onAppointmentClick(apt);
                         }}
-                        className={cn(
-                          "absolute left-0.5 right-0.5 sm:left-1 sm:right-1 rounded-md sm:rounded-lg border-l-[3px] px-1 sm:px-2 py-0.5 overflow-hidden text-left transition-all active:scale-[0.97] hover:shadow-md z-10",
-                          colors.bg, colors.border, colors.text
-                        )}
-                        style={{ top, height }}
+                        className="absolute left-0.5 right-0.5 sm:left-1 sm:right-1 rounded-md sm:rounded-lg px-1 sm:px-2 py-0.5 overflow-hidden text-left transition-all active:scale-[0.97] hover:shadow-md z-10 text-white"
+                        style={{
+                          top,
+                          height,
+                          backgroundColor: APPOINTMENT_COLOR,
+                          opacity: 0.9,
+                        }}
                       >
                         <p className="text-[9px] sm:text-[11px] font-semibold truncate leading-tight">
                           {apt.client_name}
                         </p>
                         {height > 26 && (
-                          <p className="text-[8px] sm:text-[10px] opacity-60 truncate leading-tight">
+                          <p className="text-[8px] sm:text-[10px] opacity-70 truncate leading-tight">
                             {apt.appointment_time.slice(0, 5)}
                             {apt.custom_service?.name || apt.pack?.name ? ` · ${apt.custom_service?.name || apt.pack?.name}` : ''}
                           </p>
