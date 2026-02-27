@@ -53,7 +53,7 @@ serve(async (req) => {
     const supabaseClient = supabaseAuth;
 
     // Pro bypass - always return subscribed for whitelisted emails
-    const proBypassEmails = ["contact@netfox-agency.com", "sf.autodetail@hotmail.com", "contact@vitclean.net", "anakin.accoh9@gmail.com"];
+    const proBypassEmails = ["contact@netfox-agency.com", "sf.autodetail@hotmail.com", "contact@vitclean.net", "anakin.accoh9@gmail.com", "topservices.finances@gmail.com"];
     if (proBypassEmails.includes(userEmail.toLowerCase())) {
       logStep("Admin user detected, bypassing Stripe check");
       
