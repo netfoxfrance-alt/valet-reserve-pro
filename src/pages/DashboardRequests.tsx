@@ -290,9 +290,6 @@ export default function DashboardRequests() {
           clientAddress: request.client_address || '',
           serviceName: request.service_name || '',
           message: request.message || '',
-          images: request.images || [],
-          clientType: request.client_type || 'particulier',
-          companyName: request.company_name || '',
         },
       },
     });

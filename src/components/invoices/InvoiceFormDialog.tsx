@@ -8,8 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useInvoices, Invoice, useVatRates } from '@/hooks/useInvoices';
 import { useMyClients, Client } from '@/hooks/useClients';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Trash2, FileText, FileCheck, Users, ChevronDown, ChevronUp, MessageSquare, Image as ImageIcon } from 'lucide-react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Plus, Trash2, FileText, FileCheck, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface InvoicePrefillData {
@@ -20,58 +19,6 @@ export interface InvoicePrefillData {
   clientAddress?: string;
   serviceName?: string;
   message?: string;
-  images?: string[];
-  clientType?: string;
-  companyName?: string;
-}
-
-function RequestContextPanel({ prefillData }: { prefillData: InvoicePrefillData }) {
-  const [open, setOpen] = useState(true);
-  const images = prefillData.images || [];
-
-  return (
-    <Collapsible open={open} onOpenChange={setOpen}>
-      <CollapsibleTrigger asChild>
-        <button
-          type="button"
-          className="w-full flex items-center justify-between p-3 rounded-xl bg-primary/5 border border-primary/20 hover:bg-primary/10 transition-colors"
-        >
-          <div className="flex items-center gap-2 text-sm font-medium text-primary">
-            <MessageSquare className="w-4 h-4" />
-            Demande associée
-            {images.length > 0 && (
-              <span className="text-xs bg-primary/10 px-1.5 py-0.5 rounded-full">
-                {images.length} photo{images.length > 1 ? 's' : ''}
-              </span>
-            )}
-          </div>
-          {open ? <ChevronUp className="w-4 h-4 text-primary" /> : <ChevronDown className="w-4 h-4 text-primary" />}
-        </button>
-      </CollapsibleTrigger>
-      <CollapsibleContent className="mt-2 space-y-3">
-        {prefillData.serviceName && (
-          <div className="text-sm">
-            <span className="text-muted-foreground">Service : </span>
-            <span className="font-medium">{prefillData.serviceName}</span>
-          </div>
-        )}
-        {prefillData.message && (
-          <div className="bg-muted/50 rounded-xl p-3">
-            <p className="text-sm whitespace-pre-wrap break-words">{prefillData.message}</p>
-          </div>
-        )}
-        {images.length > 0 && (
-          <div className="grid grid-cols-4 gap-2">
-            {images.map((url, i) => (
-              <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="aspect-square rounded-lg overflow-hidden bg-muted block">
-                <img src={url} alt="" className="w-full h-full object-cover hover:scale-105 transition-transform" />
-              </a>
-            ))}
-          </div>
-        )}
-      </CollapsibleContent>
-    </Collapsible>
-  );
 }
 
 interface InvoiceFormDialogProps {
@@ -378,11 +325,6 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
             {invoice ? 'Modifier' : 'Créer'} {selectedType === 'invoice' ? 'une facture' : 'un devis'}
           </DialogTitle>
         </DialogHeader>
-
-        {/* Request context panel - shown when creating quote from a request */}
-        {prefillData && (prefillData.message || (prefillData.images && prefillData.images.length > 0)) && (
-          <RequestContextPanel prefillData={prefillData} />
-        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Type Selection - Only for new documents */}
