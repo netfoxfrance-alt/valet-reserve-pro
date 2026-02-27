@@ -25,6 +25,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
 import { WeeklyCalendarView } from '@/components/dashboard/WeeklyCalendarView';
 import { MobileCalendarView } from '@/components/dashboard/MobileCalendarView';
+import { MobileScheduleView } from '@/components/dashboard/MobileScheduleView';
 import { ConfirmationCalendarDialog } from '@/components/dashboard/ConfirmationCalendarDialog';
 import { useCalendarSync } from '@/hooks/useCalendarSync';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -50,7 +51,7 @@ export default function DashboardCalendar() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
-  const [viewMode, setViewMode] = useState<'month' | 'week'>('week');
+  const [viewMode, setViewMode] = useState<'month' | 'week' | 'schedule'>('week');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [currentWeekDate, setCurrentWeekDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -422,7 +423,7 @@ export default function DashboardCalendar() {
           {/* Header — Apple Calendar style (hidden on mobile month view since MobileCalendarView has its own) */}
           <div className={cn(
             "flex items-center justify-between gap-2 mb-3 sm:mb-5",
-            viewMode === 'month' && isMobile && "hidden"
+            (viewMode === 'month' || viewMode === 'schedule') && isMobile && "hidden"
           )}>
             {/* Left: Navigation */}
             <div className="flex items-center gap-1.5 sm:gap-2">
@@ -486,27 +487,36 @@ export default function DashboardCalendar() {
             </div>
           </div>
 
-          {/* Mobile view toggle — below header */}
+          {/* Mobile view toggle — 3 tabs */}
           <div className={cn(
             "flex sm:hidden bg-muted/60 rounded-full p-0.5 mb-3",
           )}>
             <button
-              onClick={() => setViewMode('week')}
+              onClick={() => setViewMode('schedule')}
               className={cn(
-                "flex-1 py-1.5 text-xs font-medium rounded-full transition-all text-center",
-                viewMode === 'week' ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
+                "flex-1 py-1.5 text-[11px] font-semibold rounded-full transition-all text-center",
+                viewMode === 'schedule' ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
               )}
             >
-              Semaine
+              Planning
             </button>
             <button
               onClick={() => setViewMode('month')}
               className={cn(
-                "flex-1 py-1.5 text-xs font-medium rounded-full transition-all text-center",
+                "flex-1 py-1.5 text-[11px] font-semibold rounded-full transition-all text-center",
                 viewMode === 'month' ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
               )}
             >
               Mois
+            </button>
+            <button
+              onClick={() => setViewMode('week')}
+              className={cn(
+                "flex-1 py-1.5 text-[11px] font-semibold rounded-full transition-all text-center",
+                viewMode === 'week' ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
+              )}
+            >
+              Semaine
             </button>
           </div>
 
@@ -526,6 +536,31 @@ export default function DashboardCalendar() {
                 onSlotClick={(date, time) => openCreateDialog(date, time)}
                 blockedPeriods={blockedPeriods}
               />
+            </div>
+          )}
+
+          {/* SCHEDULE VIEW (mobile only) */}
+          {viewMode === 'schedule' && (
+            <div className="h-[calc(100vh-180px)] min-h-[400px] -mx-1 relative">
+              <MobileScheduleView
+                currentDate={currentWeekDate}
+                appointments={appointments}
+                onAppointmentClick={(apt) => {
+                  setSelectedAppointment(apt);
+                  setRescheduleForm({ 
+                    date: apt.appointment_date, 
+                    time: apt.appointment_time.slice(0, 5) 
+                  });
+                }}
+                blockedPeriods={blockedPeriods}
+              />
+              {/* Floating action button */}
+              <button
+                onClick={() => openCreateDialog()}
+                className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 flex items-center justify-center active:scale-95 transition-transform"
+              >
+                <Plus className="w-6 h-6" />
+              </button>
             </div>
           )}
 
