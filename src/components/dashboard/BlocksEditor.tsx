@@ -290,9 +290,13 @@ export function BlocksEditor({
       if (data?.reviewCount != null) updates.reviewCount = data.reviewCount;
       if (Object.keys(updates).length > 0) {
         updateReviewBlock(blockId, updates);
-        toast({ title: 'Avis récupérés !', description: `Note: ${updates.reviewRating ?? '?'}/5 — ${updates.reviewCount ?? '?'} avis` });
+        if (updates.reviewRating) {
+          toast({ title: 'Avis récupérés !', description: `Note: ${updates.reviewRating}/5 — ${updates.reviewCount ?? '?'} avis` });
+        } else {
+          toast({ title: `${updates.reviewCount} avis trouvés`, description: 'Saisissez votre note manuellement ci-dessous.' });
+        }
       } else {
-        toast({ title: 'Aucune donnée trouvée', description: 'Vérifiez que le lien pointe bien vers votre fiche Google.', variant: 'destructive' });
+        toast({ title: 'Aucune donnée trouvée', description: 'Vérifiez le lien ou saisissez les données manuellement.', variant: 'destructive' });
       }
     } catch (err: any) {
       console.error('Error fetching reviews:', err);
