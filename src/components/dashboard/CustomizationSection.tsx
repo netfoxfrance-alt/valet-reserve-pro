@@ -460,6 +460,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               userId={userId}
               centerAddress={centerAddress}
               centerPhone={centerPhone}
+              headerStyle={local.layout?.header_style || 'banner'}
             />
           </TabsContent>
 
