@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -44,6 +45,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function DashboardCalendar() {
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
   const [viewMode, setViewMode] = useState<'month' | 'week'>('week');
@@ -143,6 +145,23 @@ export default function DashboardCalendar() {
   // Handle reschedule
   const handleReschedule = async () => {
     if (!appointmentToReschedule || !rescheduleForm.date || !rescheduleForm.time) return;
+    
+    // Check overlap (exclude current appointment)
+    const duration = appointmentToReschedule.duration_minutes || 60;
+    const overlap = appointments.find(apt => {
+      if (apt.id === appointmentToReschedule.id) return false;
+      if (apt.appointment_date !== rescheduleForm.date) return false;
+      if (apt.status === 'cancelled' || apt.status === 'refused') return false;
+      const newStart = timeToMinutes(rescheduleForm.time);
+      const newEnd = newStart + duration;
+      const aptStart = timeToMinutes(apt.appointment_time.slice(0, 5));
+      const aptEnd = aptStart + (apt.duration_minutes || 60);
+      return newStart < aptEnd && newEnd > aptStart;
+    });
+    if (overlap) {
+      toast.error(`Créneau déjà occupé par ${overlap.client_name} à ${overlap.appointment_time.slice(0, 5)}`);
+      return;
+    }
     
     setLoadingReschedule(true);
     const { error } = await supabase
@@ -277,16 +296,44 @@ export default function DashboardCalendar() {
     setShowCreateDialog(true);
   };
 
+  // Check for overlapping appointments
+  const checkOverlap = (date: string, time: string, durationMinutes: number): Appointment | null => {
+    const newStart = timeToMinutes(time);
+    const newEnd = newStart + durationMinutes;
+    
+    return appointments.find(apt => {
+      if (apt.appointment_date !== date) return false;
+      if (apt.status === 'cancelled' || apt.status === 'refused') return false;
+      const aptStart = timeToMinutes(apt.appointment_time.slice(0, 5));
+      const aptEnd = aptStart + (apt.duration_minutes || 60);
+      return newStart < aptEnd && newEnd > aptStart;
+    }) || null;
+  };
+
+  const timeToMinutes = (time: string): number => {
+    const [h, m] = time.split(':').map(Number);
+    return h * 60 + (m || 0);
+  };
+
   // Handle create appointment
   const handleCreateAppointment = async () => {
     if (!createForm.client_name || !createForm.client_phone || !createForm.appointment_date || !createForm.appointment_time) {
       toast.error('Veuillez remplir les champs obligatoires');
       return;
     }
-    setLoadingCreate(true);
-    
+
+    // Check overlapping
     const selectedService = customServices.find(s => s.id === createForm.custom_service_id);
     const selectedPack = packs.find(p => p.id === createForm.pack_id);
+    const duration = selectedService?.duration_minutes || 60;
+    
+    const overlap = checkOverlap(createForm.appointment_date, createForm.appointment_time, duration);
+    if (overlap) {
+      toast.error(`Créneau déjà occupé par ${overlap.client_name} à ${overlap.appointment_time.slice(0, 5)}`);
+      return;
+    }
+
+    setLoadingCreate(true);
     
     const payload: any = {
       client_name: createForm.client_name,
@@ -320,7 +367,12 @@ export default function DashboardCalendar() {
     if (error) {
       toast.error('Erreur lors de la création');
     } else {
-      toast.success('Rendez-vous créé !');
+      // Show client creation feedback for new clients
+      if (!selectedClientId) {
+        toast.success('Rendez-vous créé et client ajouté à votre base !', { icon: '👤' });
+      } else {
+        toast.success('Rendez-vous créé !');
+      }
       setShowCreateDialog(false);
       setSelectedClientId('');
       setServiceType('pack');
@@ -969,9 +1021,33 @@ export default function DashboardCalendar() {
                     className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                       serviceType === 'custom' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
                     }`}>
-                    {t('dashboard.customServiceShort')}
+                    Prestations perso
                   </button>
                 )}
+                <button type="button" onClick={() => {
+                  // Navigate to invoices page with prefill data to create a quote
+                  const prefill: any = {};
+                  if (selectedClientId) {
+                    const client = clients.find(c => c.id === selectedClientId);
+                    if (client) {
+                      prefill.clientId = client.id;
+                      prefill.clientName = client.name;
+                      prefill.clientEmail = client.email;
+                      prefill.clientPhone = client.phone;
+                      prefill.clientAddress = client.address;
+                    }
+                  } else if (createForm.client_name) {
+                    prefill.clientName = createForm.client_name;
+                    prefill.clientEmail = createForm.client_email;
+                    prefill.clientPhone = createForm.client_phone;
+                    prefill.clientAddress = createForm.client_address;
+                  }
+                  setShowCreateDialog(false);
+                  navigate('/dashboard/invoices', { state: { prefill, type: 'quote' } });
+                }}
+                  className="flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-muted-foreground hover:text-foreground">
+                  Devis
+                </button>
               </div>
 
               {serviceType === 'pack' && (
