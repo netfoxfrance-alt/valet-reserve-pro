@@ -24,8 +24,10 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
 import { WeeklyCalendarView } from '@/components/dashboard/WeeklyCalendarView';
+import { MobileCalendarView } from '@/components/dashboard/MobileCalendarView';
 import { ConfirmationCalendarDialog } from '@/components/dashboard/ConfirmationCalendarDialog';
 import { useCalendarSync } from '@/hooks/useCalendarSync';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
 
 interface BlockedPeriod {
@@ -68,7 +70,7 @@ export default function DashboardCalendar() {
   const { services: customServices } = useMyCustomServices();
   const { clients } = useMyClients();
   const { markAsSynced, isSynced } = useCalendarSync();
-  
+  const isMobile = useIsMobile();
   // Create appointment state
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showCalendarSyncDialog, setShowCalendarSyncDialog] = useState(false);
@@ -417,8 +419,11 @@ export default function DashboardCalendar() {
     <>
     <DashboardLayout title={t('calendar.title')} subtitle={center?.name}>
       <div className="max-w-7xl">
-          {/* Header — Apple Calendar style */}
-          <div className="flex items-center justify-between gap-2 mb-3 sm:mb-5">
+          {/* Header — Apple Calendar style (hidden on mobile month view since MobileCalendarView has its own) */}
+          <div className={cn(
+            "flex items-center justify-between gap-2 mb-3 sm:mb-5",
+            viewMode === 'month' && isMobile && "hidden"
+          )}>
             {/* Left: Navigation */}
             <div className="flex items-center gap-1.5 sm:gap-2">
               <Button variant="ghost" size="icon" onClick={handlePrev} className="h-8 w-8 sm:h-9 sm:w-9 rounded-full">
@@ -482,7 +487,9 @@ export default function DashboardCalendar() {
           </div>
 
           {/* Mobile view toggle — below header */}
-          <div className="flex sm:hidden bg-muted/60 rounded-full p-0.5 mb-3">
+          <div className={cn(
+            "flex sm:hidden bg-muted/60 rounded-full p-0.5 mb-3",
+          )}>
             <button
               onClick={() => setViewMode('week')}
               className={cn(
@@ -523,7 +530,32 @@ export default function DashboardCalendar() {
           )}
 
           {/* MONTH VIEW */}
-          {viewMode === 'month' && (
+          {viewMode === 'month' && isMobile && (
+            <div className="h-[calc(100vh-180px)] min-h-[400px] -mx-1 relative">
+              <MobileCalendarView
+                currentDate={currentMonth}
+                onDateChange={setCurrentMonth}
+                appointments={appointments}
+                onAppointmentClick={(apt) => {
+                  setSelectedAppointment(apt);
+                  setRescheduleForm({ 
+                    date: apt.appointment_date, 
+                    time: apt.appointment_time.slice(0, 5) 
+                  });
+                }}
+                blockedPeriods={blockedPeriods}
+              />
+              {/* Floating action button */}
+              <button
+                onClick={() => openCreateDialog()}
+                className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 flex items-center justify-center active:scale-95 transition-transform"
+              >
+                <Plus className="w-6 h-6" />
+              </button>
+            </div>
+          )}
+
+          {viewMode === 'month' && !isMobile && (
           <div className="grid lg:grid-cols-[1fr_320px] gap-4 sm:gap-6">
             {/* Calendar Grid */}
             <Card className="p-3 sm:p-6 rounded-2xl">
