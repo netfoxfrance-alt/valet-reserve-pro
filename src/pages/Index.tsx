@@ -240,7 +240,7 @@ export default function Index() {
                             <img
                               src={item.icon}
                               alt={item.label}
-                              className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 object-contain"
+                              className="w-10 h-10 sm:w-11 sm:h-11 lg:w-14 lg:h-14 object-contain"
                             />
                             <span className="text-[8px] sm:text-[9px] lg:text-[10px] font-medium text-muted-foreground text-center leading-tight truncate max-w-[70px]">
                               {item.label}
