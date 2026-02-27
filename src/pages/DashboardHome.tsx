@@ -5,7 +5,7 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useAuth } from '@/hooks/useAuth';
 import { useMyCenter } from '@/hooks/useCenter';
 import { useTranslation } from 'react-i18next';
-import { Settings, LogOut, Crown, AlertCircle, Share2, Copy, Check, Headphones } from 'lucide-react';
+import { Settings, LogOut, Crown, AlertCircle, Share2, Copy, Check, Headphones, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { SubscriptionBanner } from '@/components/dashboard/SubscriptionBanner';
@@ -104,6 +104,11 @@ export default function DashboardHome() {
               <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg" onClick={handleCopyLink}>
                 {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5" />}
               </Button>
+              <a href={bookingUrl} target="_blank" rel="noopener noreferrer">
+                <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg">
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </Button>
+              </a>
             </div>
           </div>
         )}
