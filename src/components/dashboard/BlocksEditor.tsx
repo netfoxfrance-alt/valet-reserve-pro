@@ -83,7 +83,7 @@ const updateImageCaption = (blocks: PageBlock[], blockId: string, imageUrl: stri
 
 const LINK_ICONS = [
   { value: 'link', label: 'Lien', icon: Link2 },
-  { value: 'shop', label: 'Boutique', icon: ShoppingBag },
+  
   { value: 'book', label: 'Ebook', icon: BookOpen },
   { value: 'video', label: 'Vidéo', icon: Video },
   { value: 'calendar', label: 'Calendrier', icon: Calendar },
@@ -96,7 +96,7 @@ const INDIVIDUAL_LINK_OPTIONS = [
   { id: 'tiktok', label: 'TikTok', placeholder: 'Votre @username', icon: Video, socialKey: 'tiktok' as const },
   { id: 'facebook', label: 'Facebook', placeholder: 'URL de votre page', icon: Link2, socialKey: 'facebook' as const },
   { id: 'email', label: 'Email', placeholder: 'votre@email.com', icon: Mail, socialKey: 'email' as const },
-  { id: 'shop', label: 'Boutique', placeholder: 'Lien vers votre shop', icon: ShoppingBag, customLink: true },
+  
   { id: 'book', label: 'Ebook / Document', placeholder: 'Lien vers votre ressource', icon: BookOpen, customLink: true },
   { id: 'video', label: 'Vidéo', placeholder: 'YouTube, Vimeo...', icon: Video, customLink: true },
   { id: 'calendar', label: 'Calendrier', placeholder: 'Lien de réservation externe', icon: Calendar, customLink: true },
