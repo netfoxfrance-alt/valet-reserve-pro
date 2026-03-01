@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
@@ -27,6 +28,7 @@ type ClientFilter = 'all' | 'particulier' | 'professionnel';
 export default function DashboardClients() {
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
+  const location = useLocation();
   const { center } = useMyCenter();
   const { clients, loading, createClient, updateClient, deleteClient } = useMyClients();
   const { services } = useMyCustomServices();
@@ -45,6 +47,17 @@ export default function DashboardClients() {
   });
   const [newServiceIds, setNewServiceIds] = useState<string[]>([]);
   const [newServicesOpen, setNewServicesOpen] = useState(false);
+
+  // Auto-open create dialog when navigated from calendar with prefill
+  useEffect(() => {
+    const state = location.state as { openNewClient?: boolean; prefillName?: string } | null;
+    if (state?.openNewClient) {
+      setNewClient(prev => ({ ...prev, name: state.prefillName || '' }));
+      setIsCreateOpen(true);
+      // Clear the state so it doesn't re-trigger on re-renders
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   // Edit states
   const [editingClient, setEditingClient] = useState<Client | null>(null);

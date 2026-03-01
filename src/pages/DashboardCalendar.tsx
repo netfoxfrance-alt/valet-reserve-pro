@@ -1158,8 +1158,8 @@ export default function DashboardCalendar() {
                       <button
                         type="button"
                         onClick={() => {
-                          setCreateForm(prev => ({ ...prev, client_name: clientSearch.trim() }));
                           setClientDropdownOpen(false);
+                          navigate('/dashboard/clients', { state: { openNewClient: true, prefillName: clientSearch.trim() } });
                         }}
                         className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary/60 transition-colors flex items-center gap-2 text-primary font-medium border-b border-border"
                       >
