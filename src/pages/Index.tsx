@@ -779,12 +779,7 @@ export default function Index() {
           </p>
 
           {/* Dashboard Tabs Preview - Interactive Icons */}
-          <div className="text-center mb-6 opacity-0 animate-fade-in-up stagger-3">
-             <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-               👆 {t('mockup.clickIconDiscover', { defaultValue: 'Cliquez sur les icônes pour voir les aperçus' })}
-            </p>
-          </div>
-          <div className="opacity-0 animate-fade-in-up stagger-3 flex items-center justify-center gap-3 sm:gap-4 mb-10">
+          <div className="opacity-0 animate-fade-in-up stagger-3 flex items-center justify-center gap-3 sm:gap-4 mb-2">
             {[
                { img: iconStatistiques, label: t('mockup.statistics'), tab: 'stats' as const },
                { img: iconReservations, label: t('mockup.reservations'), tab: 'reservations' as const },
@@ -813,6 +808,11 @@ export default function Index() {
                 </div>
               </button>
             ))}
+          </div>
+          <div className="text-center mb-8 mt-3">
+             <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+               👆 {t('mockup.clickIconDiscover', { defaultValue: 'Cliquez sur les icônes pour voir les aperçus' })}
+            </p>
           </div>
 
           {/* Dashboard Browser Mockup */}
