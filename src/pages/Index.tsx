@@ -779,12 +779,7 @@ export default function Index() {
           </p>
 
           {/* Dashboard Tabs Preview - Interactive Icons */}
-          <div className="text-center mb-6 opacity-0 animate-fade-in-up stagger-3">
-             <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-               👆 {t('mockup.clickIconDiscover', { defaultValue: 'Cliquez sur les icônes pour voir les aperçus' })}
-            </p>
-          </div>
-          <div className="opacity-0 animate-fade-in-up stagger-3 flex items-center justify-center gap-3 sm:gap-4 mb-10">
+          <div className="opacity-0 animate-fade-in-up stagger-3 flex items-center justify-center gap-2 sm:gap-4 mb-8 sm:mb-10 flex-wrap">
             {[
                { img: iconStatistiques, label: t('mockup.statistics'), tab: 'stats' as const },
                { img: iconReservations, label: t('mockup.reservations'), tab: 'reservations' as const },
@@ -798,7 +793,6 @@ export default function Index() {
                 key={item.label}
                 onClick={() => { setDashboardTab(item.tab); setShowClientDetail(false); }}
                 className="group flex flex-col items-center gap-1 cursor-pointer transition-all duration-300"
-                title={item.label}
               >
                 <div className={`relative rounded-[22%] transition-all duration-300 ${
                   dashboardTab === item.tab 
@@ -808,9 +802,14 @@ export default function Index() {
                   <img 
                     src={item.img} 
                     alt={item.label} 
-                    className="w-12 h-12 sm:w-14 sm:h-14 object-contain"
+                    className="w-10 h-10 sm:w-14 sm:h-14 object-contain"
                   />
                 </div>
+                <span className={`text-[9px] sm:text-[10px] font-medium transition-colors duration-200 max-w-[60px] sm:max-w-[70px] truncate ${
+                  dashboardTab === item.tab ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'
+                }`}>
+                  {item.label}
+                </span>
               </button>
             ))}
           </div>
@@ -819,68 +818,68 @@ export default function Index() {
           <div className="opacity-0 animate-fade-in-up stagger-4">
             <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60 max-w-5xl mx-auto">
               {/* Browser Bar */}
-              <div className="bg-secondary/50 px-4 py-3 flex items-center gap-3 border-b border-border/40">
+              <div className="bg-secondary/50 px-3 sm:px-4 py-2.5 sm:py-3 flex items-center gap-2 sm:gap-3 border-b border-border/40">
                 <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-400" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                  <div className="w-3 h-3 rounded-full bg-green-400" />
+                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-400" />
+                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-400" />
+                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400" />
                 </div>
                 <div className="flex-1 flex justify-center">
-                  <div className="flex items-center gap-2 bg-background rounded-full px-4 py-1.5 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1.5 sm:gap-2 bg-background rounded-full px-3 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-xs text-muted-foreground">
                     <Shield className="w-3 h-3" />
-                    cleaningpage.com/<span className="text-foreground font-medium">dashboard</span>
+                    <span className="truncate">cleaningpage.com/<span className="text-foreground font-medium">dashboard</span></span>
                   </div>
                 </div>
               </div>
 
               {/* Dashboard Content */}
-              <div className="flex min-h-[480px]">
+              <div className="flex min-h-[360px] sm:min-h-[480px]">
                 {/* Main Content Area */}
-                <div className="flex-1 p-5 sm:p-6 overflow-y-auto" style={{ background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary)/0.3) 100%)' }}>
+                <div className="flex-1 p-3 sm:p-5 md:p-6 overflow-x-hidden overflow-y-auto" style={{ background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary)/0.3) 100%)' }}>
                   
                   {/* === RÉSERVATIONS === */}
                   {dashboardTab === 'reservations' && (
                     <>
-                      <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center justify-between mb-4 sm:mb-6">
                         <div>
-                           <h3 className="text-lg font-semibold text-foreground tracking-tight">{t('mockup.reservations')}</h3>
-                           <p className="text-xs text-muted-foreground mt-0.5">{t('mockup.wednesday')} 11 {t('mockup.february2026').toLowerCase()}</p>
+                           <h3 className="text-sm sm:text-lg font-semibold text-foreground tracking-tight">{t('mockup.reservations')}</h3>
+                           <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{t('mockup.wednesday')} 11 {t('mockup.february2026').toLowerCase()}</p>
                          </div>
-                         <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
+                         <button className="bg-blue-500 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
                            {t('mockup.newBooking')}
                          </button>
                       </div>
 
-                      {/* KPI row — clean widget style */}
-                      <div className="grid grid-cols-3 gap-3 mb-6">
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                           <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.today')}</p>
-                           <p className="text-3xl font-bold tracking-tight leading-none text-foreground">5</p>
-                           <div className="flex items-center gap-1.5 mt-2">
+                      {/* KPI row */}
+                      <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                           <p className="text-[10px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.today')}</p>
+                           <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">5</p>
+                           <div className="flex items-center gap-1 sm:gap-1.5 mt-1.5 sm:mt-2">
                              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                              <p className="text-[10px] text-muted-foreground font-medium">2 {t('mockup.pendingCount')}</p>
                            </div>
                          </div>
-                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                           <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.thisWeek')}</p>
-                           <p className="text-3xl font-bold tracking-tight leading-none text-foreground">23</p>
-                           <p className="text-[10px] text-muted-foreground mt-2">{t('mockup.includingRequests', { count: 4 })}</p>
+                         <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                           <p className="text-[10px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.thisWeek')}</p>
+                           <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">23</p>
+                           <p className="text-[9px] sm:text-[10px] text-muted-foreground mt-1.5 sm:mt-2 hidden sm:block">{t('mockup.includingRequests', { count: 4 })}</p>
                          </div>
-                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                           <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.dailyRevenue')}</p>
-                           <p className="text-3xl font-bold tracking-tight leading-none text-foreground">340€</p>
-                           <p className="text-[10px] text-emerald-600 font-semibold mt-2">↑ 15%</p>
+                         <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                           <p className="text-[10px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.dailyRevenue')}</p>
+                           <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">340€</p>
+                           <p className="text-[9px] sm:text-[10px] text-emerald-600 font-semibold mt-1.5 sm:mt-2">↑ 15%</p>
                          </div>
                       </div>
 
                       {/* Segmented control */}
-                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
-                         <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">{t('mockup.upcoming')}</span>
-                         <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.requestsTab')}</span>
-                         <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.past')}</span>
+                      <div className="flex gap-0 bg-secondary/50 rounded-full p-0.5 sm:p-1 mb-4 sm:mb-5 w-fit">
+                         <span className="text-[10px] sm:text-[11px] font-semibold bg-card shadow-sm px-3 sm:px-4 py-1 sm:py-1.5 rounded-full">{t('mockup.upcoming')}</span>
+                         <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground px-3 sm:px-4 py-1 sm:py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.requestsTab')}</span>
+                         <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground px-3 sm:px-4 py-1 sm:py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors hidden sm:block">{t('mockup.past')}</span>
                       </div>
 
-                      <div className="space-y-2">
+                      <div className="space-y-1.5 sm:space-y-2">
                         {[
                            { name: 'Jean Martin', service: 'Nettoyage Complet', time: '10:00', duration: '1h30', price: '89€', status: t('mockup.confirmed'), statusBg: 'bg-emerald-500', initials: 'JM', avatarBg: 'bg-blue-500' },
                            { name: 'Marie Dupont', service: 'Express', time: '11:30', duration: '45min', price: '35€', status: t('mockup.pending'), statusBg: 'bg-orange-500', initials: 'MD', avatarBg: 'bg-pink-500' },
@@ -888,16 +887,16 @@ export default function Index() {
                            { name: t('mockup.incomingRequest'), service: t('mockup.couchCleaning'), time: '—', duration: '—', price: t('mockup.onQuote'), status: t('mockup.request'), statusBg: 'bg-blue-500', initials: '?', avatarBg: 'bg-indigo-500' },
                            { name: 'Sophie Leroy', service: 'Pack Intérieur', time: '16:30', duration: '1h', price: '65€', status: t('mockup.confirmed'), statusBg: 'bg-emerald-500', initials: 'SL', avatarBg: 'bg-violet-500' },
                         ].map((booking, i) => (
-                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 hover:shadow-md transition-all cursor-pointer">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 ${booking.avatarBg}`}>
+                          <div key={i} className="flex items-center gap-2 sm:gap-3.5 bg-card rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 border border-border/20 hover:shadow-md transition-all cursor-pointer">
+                            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-[9px] sm:text-[11px] font-bold text-white shrink-0 ${booking.avatarBg}`}>
                               {booking.initials}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[13px] font-semibold text-foreground truncate">{booking.name}</p>
-                              <p className="text-[11px] text-muted-foreground mt-0.5">{booking.service} · {booking.time} · {booking.duration}</p>
+                              <p className="text-[11px] sm:text-[13px] font-semibold text-foreground truncate">{booking.name}</p>
+                              <p className="text-[9px] sm:text-[11px] text-muted-foreground mt-0.5 truncate">{booking.service} · {booking.time}</p>
                             </div>
-                            <span className="text-[13px] font-bold text-foreground hidden sm:block tabular-nums">{booking.price}</span>
-                            <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold text-white ${booking.statusBg}`}>
+                            <span className="text-[11px] sm:text-[13px] font-bold text-foreground hidden sm:block tabular-nums">{booking.price}</span>
+                            <span className={`text-[8px] sm:text-[10px] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full font-semibold text-white ${booking.statusBg} shrink-0`}>
                               {booking.status}
                             </span>
                           </div>
@@ -908,25 +907,25 @@ export default function Index() {
 
                   {/* === CALENDRIER === */}
                   {dashboardTab === 'calendar' && (
-                    <div className="flex flex-col gap-4 h-full">
+                    <div className="flex flex-col gap-3 sm:gap-4 h-full">
                       {/* Google Agenda connection banner */}
-                      <div className="flex items-center justify-between bg-card rounded-2xl p-3.5 border border-border/20 shadow-sm">
-                        <div className="flex items-center gap-3">
-                          <svg className="w-6 h-6 shrink-0" viewBox="0 0 24 24">
+                      <div className="flex items-center justify-between bg-card rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 border border-border/20 shadow-sm gap-2">
+                        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                          <svg className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                           </svg>
-                          <div>
-                            <p className="text-[12px] font-semibold text-foreground">{t('mockup.connectGoogle')}</p>
-                            <p className="text-[10px] text-muted-foreground">{t('mockup.syncAuto')}</p>
+                          <div className="min-w-0">
+                            <p className="text-[11px] sm:text-[12px] font-semibold text-foreground truncate">{t('mockup.connectGoogle')}</p>
+                            <p className="text-[9px] sm:text-[10px] text-muted-foreground truncate">{t('mockup.syncAuto')}</p>
                           </div>
                         </div>
-                        <button className="text-[11px] text-white font-semibold bg-blue-500 px-3.5 py-1.5 rounded-full shadow-sm shadow-blue-500/25 hover:bg-blue-600 transition-colors shrink-0">{t('mockup.connect')}</button>
+                        <button className="text-[10px] sm:text-[11px] text-white font-semibold bg-blue-500 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full shadow-sm shadow-blue-500/25 hover:bg-blue-600 transition-colors shrink-0">{t('mockup.connect')}</button>
                       </div>
 
-                      <div className="flex gap-6 flex-1">
+                      <div className="flex gap-4 sm:gap-6 flex-1">
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-5">
                           <div className="flex items-center gap-3">
@@ -1025,26 +1024,26 @@ export default function Index() {
                     <>
                       {!showClientDetail ? (
                         <>
-                          <div className="flex items-center justify-between mb-6">
+                          <div className="flex items-center justify-between mb-4 sm:mb-6">
                             <div>
-                              <h3 className="text-lg font-semibold text-foreground tracking-tight">{t('mockup.clients')}</h3>
-                              <p className="text-xs text-muted-foreground mt-0.5">142 {t('mockup.registeredClients')}</p>
+                              <h3 className="text-sm sm:text-lg font-semibold text-foreground tracking-tight">{t('mockup.clients')}</h3>
+                              <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">142 {t('mockup.registeredClients')}</p>
                             </div>
-                            <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
+                            <button className="bg-blue-500 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
                               {t('mockup.add')}
                             </button>
                           </div>
 
                           {/* Stats overview at top */}
-                          <div className="grid grid-cols-3 gap-3 mb-5">
+                          <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-5">
                             {[
                               { value: '142', label: t('mockup.clients') },
                               { value: '8 640€', label: t('mockup.totalRevenue') },
                               { value: '61€', label: t('mockup.avgBasket') },
                             ].map((s, i) => (
-                              <div key={i} className="rounded-2xl p-3 sm:p-4 bg-card border border-border/30 shadow-sm text-center">
-                                <p className="text-lg sm:text-xl font-bold text-foreground tracking-tight">{s.value}</p>
-                                <p className="text-[10px] text-muted-foreground mt-0.5">{s.label}</p>
+                              <div key={i} className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm text-center">
+                                <p className="text-base sm:text-xl font-bold text-foreground tracking-tight">{s.value}</p>
+                                <p className="text-[8px] sm:text-[10px] text-muted-foreground mt-0.5">{s.label}</p>
                               </div>
                             ))}
                           </div>
@@ -1183,60 +1182,60 @@ export default function Index() {
                   {/* === FACTURES & DEVIS === */}
                   {dashboardTab === 'invoices' && (
                     <>
-                      <div className="flex items-center justify-between mb-6">
-                        <div>
-                          <h3 className="text-lg font-semibold text-foreground tracking-tight">{t('mockup.invoicesQuotes')}</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">{t('mockup.manageDocuments')}</p>
+                      <div className="flex items-center justify-between mb-4 sm:mb-6 gap-2">
+                        <div className="min-w-0">
+                          <h3 className="text-sm sm:text-lg font-semibold text-foreground tracking-tight truncate">{t('mockup.invoicesQuotes')}</h3>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{t('mockup.manageDocuments')}</p>
                         </div>
-                        <div className="flex gap-2">
-                          <button className="bg-secondary/60 text-foreground px-3.5 py-2 rounded-full text-xs font-semibold hover:bg-secondary transition-colors">{t('mockup.quotes')}</button>
-                          <button className="bg-blue-500 text-white px-3.5 py-2 rounded-full text-xs font-semibold shadow-sm shadow-blue-500/25">{t('mockup.newInvoice')}</button>
+                        <div className="flex gap-1.5 sm:gap-2 shrink-0">
+                          <button className="bg-secondary/60 text-foreground px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-xs font-semibold hover:bg-secondary transition-colors hidden sm:block">{t('mockup.quotes')}</button>
+                          <button className="bg-blue-500 text-white px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-xs font-semibold shadow-sm shadow-blue-500/25">{t('mockup.newInvoice')}</button>
                         </div>
                       </div>
 
-                      {/* KPIs — clean */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.invoices')}</p>
-                          <p className="text-2xl font-bold tracking-tight leading-none text-foreground">24</p>
+                      {/* KPIs */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[10px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.invoices')}</p>
+                          <p className="text-xl sm:text-2xl font-bold tracking-tight leading-none text-foreground">24</p>
                         </div>
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.quotes')}</p>
-                          <p className="text-2xl font-bold tracking-tight leading-none text-foreground">8</p>
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[10px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.quotes')}</p>
+                          <p className="text-xl sm:text-2xl font-bold tracking-tight leading-none text-foreground">8</p>
                         </div>
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.pending')}</p>
-                          <p className="text-2xl font-bold tracking-tight leading-none text-foreground">680€</p>
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[10px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.pending')}</p>
+                          <p className="text-xl sm:text-2xl font-bold tracking-tight leading-none text-foreground">680€</p>
                         </div>
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.collected')}</p>
-                          <p className="text-2xl font-bold tracking-tight leading-none text-foreground">3 240€</p>
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[10px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.collected')}</p>
+                          <p className="text-xl sm:text-2xl font-bold tracking-tight leading-none text-foreground">3 240€</p>
                         </div>
                       </div>
 
                       {/* Segmented control */}
-                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
-                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">{t('mockup.all')}</span>
-                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">{t('mockup.invoices')}</span>
-                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer">{t('mockup.quotes')}</span>
+                      <div className="flex gap-0 bg-secondary/50 rounded-full p-0.5 sm:p-1 mb-4 sm:mb-5 w-fit">
+                        <span className="text-[10px] sm:text-[11px] font-semibold bg-card shadow-sm px-3 sm:px-4 py-1 sm:py-1.5 rounded-full">{t('mockup.all')}</span>
+                        <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground px-3 sm:px-4 py-1 sm:py-1.5 rounded-full cursor-pointer">{t('mockup.invoices')}</span>
+                        <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground px-3 sm:px-4 py-1 sm:py-1.5 rounded-full cursor-pointer">{t('mockup.quotes')}</span>
                       </div>
 
                       {/* Invoice list */}
-                      <div className="space-y-2">
+                      <div className="space-y-1.5 sm:space-y-2">
                         {[
                           { number: 'FAC-2026-012', client: 'Jean Martin', date: '10 fév', total: '89,00 €', status: t('mockup.paid'), statusBg: 'bg-emerald-500' },
                           { number: 'FAC-2026-011', client: 'Marie Dupont', date: '8 fév', total: '159,00 €', status: t('mockup.sent'), statusBg: 'bg-blue-500' },
                           { number: 'DEV-2026-005', client: 'Pierre Bernard', date: '5 fév', total: '320,00 €', status: t('mockup.pending'), statusBg: 'bg-orange-500' },
                           { number: 'FAC-2026-010', client: 'Sophie Leroy', date: '3 fév', total: '65,00 €', status: t('mockup.paid'), statusBg: 'bg-emerald-500' },
                         ].map((inv, i) => (
-                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl px-4 py-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer">
-                            <div className={`w-2 h-8 rounded-full ${inv.statusBg}`} />
+                          <div key={i} className="flex items-center gap-2 sm:gap-3.5 bg-card rounded-xl sm:rounded-2xl px-2.5 sm:px-4 py-2.5 sm:py-3.5 border border-border/15 hover:shadow-md transition-all cursor-pointer">
+                            <div className={`w-1.5 sm:w-2 h-6 sm:h-8 rounded-full ${inv.statusBg} shrink-0`} />
                             <div className="flex-1 min-w-0">
-                              <p className="text-[13px] font-semibold text-foreground">{inv.number}</p>
-                              <p className="text-[11px] text-muted-foreground mt-0.5">{inv.client} · {inv.date}</p>
+                              <p className="text-[11px] sm:text-[13px] font-semibold text-foreground truncate">{inv.number}</p>
+                              <p className="text-[9px] sm:text-[11px] text-muted-foreground mt-0.5 truncate">{inv.client} · {inv.date}</p>
                             </div>
-                            <span className="text-[13px] font-bold text-foreground tabular-nums">{inv.total}</span>
-                            <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold text-white ${inv.statusBg}`}>{inv.status}</span>
+                            <span className="text-[11px] sm:text-[13px] font-bold text-foreground tabular-nums hidden sm:block">{inv.total}</span>
+                            <span className={`text-[8px] sm:text-[10px] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full font-semibold text-white ${inv.statusBg} shrink-0`}>{inv.status}</span>
                           </div>
                         ))}
                       </div>
@@ -1247,48 +1246,48 @@ export default function Index() {
                   {dashboardTab === 'stats' && (
                     <>
                       {/* Month navigation */}
-                      <div className="flex items-center justify-between mb-6">
-                        <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
-                          <ChevronLeft className="w-4 h-4" />
+                      <div className="flex items-center justify-between mb-4 sm:mb-6">
+                        <button className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                          <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </button>
-                        <h3 className="text-lg font-semibold text-foreground tracking-tight">{t('mockup.january2025')}</h3>
-                        <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
-                          <ChevronRight className="w-4 h-4" />
+                        <h3 className="text-sm sm:text-lg font-semibold text-foreground tracking-tight">{t('mockup.january2025')}</h3>
+                        <button className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                          <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </button>
                       </div>
 
-                      {/* KPIs — clean white cards with borders */}
-                      <div className="grid grid-cols-2 gap-3 mb-3">
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.reservations')}</p>
-                          <div className="flex items-center gap-2">
-                            <p className="text-3xl font-bold tracking-tight leading-none text-foreground">24</p>
-                            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">↑12%</span>
+                      {/* KPIs */}
+                      <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3">
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[10px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.reservations')}</p>
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">24</p>
+                            <span className="text-[8px] sm:text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 sm:px-2 py-0.5 rounded-full">↑12%</span>
                           </div>
                         </div>
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.revenue')}</p>
-                          <div className="flex items-center gap-2">
-                            <p className="text-3xl font-bold tracking-tight leading-none text-foreground">8 450€</p>
-                            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">↑18%</span>
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[10px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.revenue')}</p>
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">8 450€</p>
+                            <span className="text-[8px] sm:text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 sm:px-2 py-0.5 rounded-full">↑18%</span>
                           </div>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-3 mb-6">
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.clients')}</p>
-                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">18</p>
+                      <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-6">
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[10px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.clients')}</p>
+                          <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">18</p>
                         </div>
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.avgBasketStat')}</p>
-                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">352€</p>
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[10px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.avgBasketStat')}</p>
+                          <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">352€</p>
                         </div>
                       </div>
 
                       {/* Segmented control */}
-                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
-                        <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">{t('mockup.evolution')}</span>
-                        <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.servicesTab')}</span>
+                      <div className="flex gap-0 bg-secondary/50 rounded-full p-0.5 sm:p-1 mb-4 sm:mb-5 w-fit">
+                        <span className="text-[10px] sm:text-[11px] font-semibold bg-card shadow-sm px-3 sm:px-4 py-1 sm:py-1.5 rounded-full">{t('mockup.evolution')}</span>
+                        <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground px-3 sm:px-4 py-1 sm:py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.servicesTab')}</span>
                       </div>
 
                       {/* Charts row */}
@@ -1372,9 +1371,9 @@ export default function Index() {
                   {/* === MA PAGE === */}
                   {dashboardTab === 'mypage' && (
                     <div className="h-full flex flex-col">
-                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        {/* Left: iPhone-style Preview */}
-                        <div className="flex flex-col order-2 lg:order-1">
+                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
+                        {/* Left: iPhone-style Preview - hidden on mobile */}
+                        <div className="hidden sm:flex flex-col order-2 lg:order-1">
                           <div className="flex items-center justify-between mb-4">
                             <span className="text-base font-semibold text-foreground tracking-tight">{t('mockup.preview')}</span>
                             <div className="flex gap-2">
