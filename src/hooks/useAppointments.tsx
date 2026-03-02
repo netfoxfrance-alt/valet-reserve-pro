@@ -255,6 +255,21 @@ function timeToMin(time: string): number {
 export function useCreateAppointment() {
   const [loading, setLoading] = useState(false);
 
+  const formatAppointmentError = (error: unknown): string => {
+    const raw = error instanceof Error ? error.message : String(error ?? '');
+    if (!raw) return 'Impossible de créer le rendez-vous. Veuillez réessayer.';
+
+    if (raw.includes('violates row-level security')) {
+      return 'Impossible de créer le rendez-vous (droits d\'accès).';
+    }
+
+    if (raw.includes('duplicate key')) {
+      return 'Ce rendez-vous semble déjà exister. Veuillez réessayer.';
+    }
+
+    return raw;
+  };
+
   const createAppointment = async (data: {
     center_id: string;
     pack_id: string;
@@ -276,110 +291,119 @@ export function useCreateAppointment() {
     custom_price?: number | null;
   }) => {
     setLoading(true);
-    
-    // Convert duration string to minutes (e.g., "1h30" → 90, "2h" → 120)
-    const parseDurationToMinutes = (duration?: string): number => {
-      if (!duration) return 60; // default 1h
-      const hoursMatch = duration.match(/(\d+)h/);
-      const minutesMatch = duration.match(/(\d+)(?:min|m(?!h))/);
-      const hours = hoursMatch ? parseInt(hoursMatch[1], 10) : 0;
-      const minutes = minutesMatch ? parseInt(minutesMatch[1], 10) : 0;
-      return hours * 60 + minutes || 60; // fallback to 60 if parsing fails
-    };
-    
-    const duration_minutes = parseDurationToMinutes(data.duration);
-    
-    // Anti-overlap check: verify no existing appointment conflicts with this time slot
-    const { data: existingApts } = await supabase
-      .from('appointments')
-      .select('appointment_time, duration_minutes, client_name')
-      .eq('center_id', data.center_id)
-      .eq('appointment_date', data.appointment_date)
-      .neq('status', 'cancelled')
-      .neq('status', 'refused');
 
-    if (existingApts && existingApts.length > 0) {
-      const newStartMin = timeToMin(data.appointment_time);
-      const newEndMin = newStartMin + duration_minutes;
+    try {
+      // Convert duration string to minutes (e.g., "1h30" → 90, "2h" → 120)
+      const parseDurationToMinutes = (duration?: string): number => {
+        if (!duration) return 60; // default 1h
+        const hoursMatch = duration.match(/(\d+)h/);
+        const minutesMatch = duration.match(/(\d+)(?:min|m(?!h))/);
+        const hours = hoursMatch ? parseInt(hoursMatch[1], 10) : 0;
+        const minutes = minutesMatch ? parseInt(minutesMatch[1], 10) : 0;
+        return hours * 60 + minutes || 60; // fallback to 60 if parsing fails
+      };
 
-      const overlap = existingApts.find(apt => {
-        const aptStartMin = timeToMin(apt.appointment_time.slice(0, 5));
-        const aptEndMin = aptStartMin + (apt.duration_minutes || 60);
-        return newStartMin < aptEndMin && newEndMin > aptStartMin;
-      });
+      const duration_minutes = parseDurationToMinutes(data.duration);
 
-      if (overlap) {
-        setLoading(false);
-        return { error: 'Ce créneau est déjà occupé. Veuillez choisir un autre horaire.', appointmentId: null };
+      // Anti-overlap check: verify no existing appointment conflicts with this time slot
+      const { data: existingApts, error: overlapQueryError } = await supabase
+        .from('appointments')
+        .select('appointment_time, duration_minutes, client_name')
+        .eq('center_id', data.center_id)
+        .eq('appointment_date', data.appointment_date)
+        .neq('status', 'cancelled')
+        .neq('status', 'refused');
+
+      if (overlapQueryError) {
+        return { error: formatAppointmentError(overlapQueryError), appointmentId: null };
       }
-    }
 
-    // Note: On réservation publique (non authentifié), on ne peut pas créer de client
-    // car la table clients est protégée par RLS (propriétaire seulement)
-    // Le client_id sera null et pourra être associé plus tard par le pro
-    
-    // Store the final price (variant or base pack price) in custom_price for accurate stats
-    const finalPrice = data.price !== undefined ? data.price : null;
-    
-    const { data: insertedData, error } = await supabase
-      .from('appointments')
-      .insert({
-        center_id: data.center_id,
-        pack_id: data.pack_id || null,
-        client_id: data.client_id || null,
-        custom_service_id: data.custom_service_id || null,
-        client_name: data.client_name,
-        client_email: data.client_email,
-        client_phone: data.client_phone,
-        client_address: data.client_address,
-        vehicle_type: data.vehicle_type,
-        appointment_date: data.appointment_date,
-        appointment_time: data.appointment_time,
-        notes: data.notes,
-        duration_minutes,
-        custom_price: data.custom_price !== undefined && data.custom_price !== null ? data.custom_price : finalPrice,
-        status: 'pending_validation',
-      })
-      .select('id')
-      .single();
+      if (existingApts && existingApts.length > 0) {
+        const newStartMin = timeToMin(data.appointment_time);
+        const newEndMin = newStartMin + duration_minutes;
 
-    // Send "request received" email (not confirmation - waiting for pro validation)
-    if (!error && insertedData && data.pack_name && data.price !== undefined) {
-      (async () => {
-        try {
-          const response = await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            },
-            body: JSON.stringify({
-              center_id: data.center_id,
-              client_name: data.client_name,
-              client_email: data.client_email,
-              client_phone: data.client_phone,
-              pack_name: data.pack_name,
-              variant_name: data.variant_name,
-              price: data.price,
-              appointment_date: data.appointment_date,
-              appointment_time: data.appointment_time,
-              notes: data.notes,
-              email_type: 'request_received', // New: demande en attente
-            }),
-          });
-          
-          if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.warn('[Booking Email] Failed to send:', response.status, errorData);
-          }
-        } catch (emailError) {
-          console.warn('[Booking Email] Network error:', emailError);
+        const overlap = existingApts.find(apt => {
+          const aptStartMin = timeToMin(apt.appointment_time.slice(0, 5));
+          const aptEndMin = aptStartMin + (apt.duration_minutes || 60);
+          return newStartMin < aptEndMin && newEndMin > aptStartMin;
+        });
+
+        if (overlap) {
+          return { error: 'Ce créneau est déjà occupé. Veuillez choisir un autre horaire.', appointmentId: null };
         }
-      })();
-    }
+      }
 
-    setLoading(false);
-    return { error: error?.message || null, appointmentId: insertedData?.id || null };
+      // Note: On réservation publique (non authentifié), on ne peut pas créer de client
+      // car la table clients est protégée par RLS (propriétaire seulement)
+      // Le client_id sera null et pourra être associé plus tard par le pro
+
+      // Store the final price (variant or base pack price) in custom_price for accurate stats
+      const finalPrice = data.price !== undefined ? data.price : null;
+
+      const { data: insertedData, error } = await supabase
+        .from('appointments')
+        .insert({
+          center_id: data.center_id,
+          pack_id: data.pack_id || null,
+          client_id: data.client_id || null,
+          custom_service_id: data.custom_service_id || null,
+          client_name: data.client_name,
+          client_email: data.client_email,
+          client_phone: data.client_phone,
+          client_address: data.client_address,
+          vehicle_type: data.vehicle_type,
+          appointment_date: data.appointment_date,
+          appointment_time: data.appointment_time,
+          notes: data.notes,
+          duration_minutes,
+          custom_price: data.custom_price !== undefined && data.custom_price !== null ? data.custom_price : finalPrice,
+          status: 'pending_validation',
+        })
+        .select('id')
+        .single();
+
+      // Send "request received" email (not confirmation - waiting for pro validation)
+      if (!error && insertedData && data.pack_name && data.price !== undefined) {
+        (async () => {
+          try {
+            const response = await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              },
+              body: JSON.stringify({
+                center_id: data.center_id,
+                client_name: data.client_name,
+                client_email: data.client_email,
+                client_phone: data.client_phone,
+                pack_name: data.pack_name,
+                variant_name: data.variant_name,
+                price: data.price,
+                appointment_date: data.appointment_date,
+                appointment_time: data.appointment_time,
+                notes: data.notes,
+                email_type: 'request_received', // New: demande en attente
+              }),
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              console.warn('[Booking Email] Failed to send:', response.status, errorData);
+            }
+          } catch (emailError) {
+            console.warn('[Booking Email] Network error:', emailError);
+          }
+        })();
+      }
+
+      return { error: error ? formatAppointmentError(error) : null, appointmentId: insertedData?.id || null };
+    } catch (err) {
+      console.error('[CreateAppointment] Unexpected error:', err);
+      return { error: formatAppointmentError(err), appointmentId: null };
+    } finally {
+      setLoading(false);
+    }
   };
 
   return { createAppointment, loading };

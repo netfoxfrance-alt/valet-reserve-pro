@@ -258,7 +258,7 @@ export default function CenterBooking() {
       });
       
       if (error) {
-        toast({ title: 'Erreur', description: 'Impossible de créer le rendez-vous.', variant: 'destructive' });
+        toast({ title: 'Erreur', description: error, variant: 'destructive' });
         return;
       }
       if (appointmentId) setLastAppointmentId(appointmentId);
@@ -289,7 +289,7 @@ export default function CenterBooking() {
     });
     
     if (error) {
-      toast({ title: 'Erreur', description: 'Impossible de créer le rendez-vous.', variant: 'destructive' });
+      toast({ title: 'Erreur', description: error, variant: 'destructive' });
       return;
     }
     
