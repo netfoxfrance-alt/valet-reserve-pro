@@ -55,7 +55,7 @@ import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export default function Index() {
-  const [dashboardTab, setDashboardTab] = useState<'reservations' | 'calendar' | 'clients' | 'invoices' | 'stats' | 'mypage' | 'formules'>('reservations');
+  const [dashboardTab, setDashboardTab] = useState<'reservations' | 'calendar' | 'clients' | 'invoices' | 'stats' | 'mypage' | 'formules'>('stats');
   const [showClientDetail, setShowClientDetail] = useState(false);
   const [mobileTab, setMobileTab] = useState<'reservations' | 'mypage' | 'formules' | 'stats' | 'settings' | 'dispo'>('mypage');
   const [mockupTab, setMockupTab] = useState<'design' | 'formules' | 'elements' | 'seo'>('design');
@@ -778,39 +778,39 @@ export default function Index() {
             {t('landing.section2Desc')}
           </p>
 
-          {/* Dashboard Tabs Preview - Interactive */}
-          <div className="text-center mb-4 opacity-0 animate-fade-in-up stagger-3">
+          {/* Dashboard Tabs Preview - Interactive Icons */}
+          <div className="text-center mb-6 opacity-0 animate-fade-in-up stagger-3">
              <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-               <MousePointer2 className="w-4 h-4" />
-               {t('mockup.clickTab')}
+               👆 {t('mockup.clickIconDiscover', { defaultValue: 'Cliquez sur les icônes pour voir les aperçus' })}
             </p>
           </div>
-          <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-wrap gap-2 sm:gap-3 mb-10 justify-center">
+          <div className="opacity-0 animate-fade-in-up stagger-3 flex items-center justify-center gap-3 sm:gap-4 mb-10">
             {[
-               { img: iconReservations, label: t('mockup.reservations'), tab: 'reservations' as const, badge: '3' },
-               { img: iconAgenda, label: t('mockup.calendar'), tab: 'calendar' as const, badge: null },
-               { img: iconClients, label: t('mockup.clients'), tab: 'clients' as const, badge: null },
-               { img: iconFactures, label: t('mockup.invoices'), tab: 'invoices' as const, badge: null },
-               { img: iconStatistiques, label: t('mockup.statistics'), tab: 'stats' as const, badge: null },
-               { img: iconMaPage, label: t('mockup.myPage'), tab: 'mypage' as const, badge: null },
-               { img: iconFormules, label: t('mockup.formulas'), tab: 'formules' as const, badge: null },
+               { img: iconStatistiques, label: t('mockup.statistics'), tab: 'stats' as const },
+               { img: iconReservations, label: t('mockup.reservations'), tab: 'reservations' as const },
+               { img: iconAgenda, label: t('mockup.calendar'), tab: 'calendar' as const },
+               { img: iconClients, label: t('mockup.clients'), tab: 'clients' as const },
+               { img: iconFactures, label: t('mockup.invoices'), tab: 'invoices' as const },
+               { img: iconMaPage, label: t('mockup.myPage'), tab: 'mypage' as const },
+               { img: iconFormules, label: t('mockup.formulas'), tab: 'formules' as const },
             ].map((item) => (
               <button 
                 key={item.label}
                 onClick={() => { setDashboardTab(item.tab); setShowClientDetail(false); }}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer ${
-                  dashboardTab === item.tab 
-                    ? 'bg-foreground text-background shadow-lg' 
-                    : 'bg-card border border-border/60 text-foreground hover:bg-secondary/50'
-                }`}
+                className="group flex flex-col items-center gap-1 cursor-pointer transition-all duration-300"
+                title={item.label}
               >
-                <img src={item.img} alt={item.label} className={`w-5 h-5 object-contain ${dashboardTab === item.tab ? 'brightness-0 invert' : ''}`} />
-                <span className="hidden sm:inline">{item.label}</span>
-                {item.badge && (
-                  <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
-                    {item.badge}
-                  </span>
-                )}
+                <div className={`relative rounded-[22%] transition-all duration-300 ${
+                  dashboardTab === item.tab 
+                    ? 'scale-110 shadow-lg ring-2 ring-foreground/20 ring-offset-2 ring-offset-background' 
+                    : 'hover:scale-105 hover:shadow-md'
+                }`}>
+                  <img 
+                    src={item.img} 
+                    alt={item.label} 
+                    className="w-12 h-12 sm:w-14 sm:h-14 object-contain"
+                  />
+                </div>
               </button>
             ))}
           </div>
@@ -1387,87 +1387,42 @@ export default function Index() {
                             </div>
                           </div>
                           
-                          {/* iPhone frame */}
-                          <div className="flex-1 flex justify-center">
-                            <div className="w-full max-w-[280px] sm:max-w-[300px] bg-foreground/5 rounded-[2.5rem] shadow-2xl border border-border/15 p-2.5 relative" style={{ boxShadow: '0 25px 60px -12px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04)' }}>
-                              {/* Dynamic Island */}
-                              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-20 h-[18px] bg-foreground rounded-full z-10" />
-                              
-                              <div className="rounded-[2rem] overflow-hidden bg-card h-[440px] sm:h-[500px] overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
-                                {mockupPageStyle === 'banner' ? (
-                                  <>
-                                    <div className="h-32 relative">
-                                      <img src={mockupBanner} alt="" className="w-full h-full object-cover" />
-                                      <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-transparent" />
-                                      <div className="absolute top-4 left-4">
-                                        <div className="w-10 h-10 rounded-xl shadow-lg overflow-hidden bg-card ring-2 ring-white/30">
-                                          <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
-                                        </div>
-                                      </div>
-                                      <div className="absolute top-4 right-4">
-                                        <div className="w-8 h-8 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center shadow-sm">
-                                          <Phone className="w-3.5 h-3.5 text-foreground" />
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="px-5 pt-4 pb-5">
-                                      <h3 className="text-[15px] font-bold text-foreground text-center mb-0.5 tracking-tight">GOCLEANING</h3>
-                                      <p className="text-[9px] text-muted-foreground text-center mb-2">{t('mockup.premiumAutoParis')}</p>
-                                      <div className="flex items-center justify-center gap-2 mb-1.5">
-                                        <span className="inline-flex items-center gap-1 text-[9px] text-emerald-600 font-semibold"><span className="w-1 h-1 bg-emerald-500 rounded-full" />{t('mockup.open')}</span>
-                                        <span className="text-[9px] text-muted-foreground">· {t('mockup.closesAt')}</span>
-                                      </div>
-                                      <div className="flex items-center justify-center gap-0.5 mb-4">
-                                        {[...Array(5)].map((_, i) => <Star key={i} className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />)}
-                                        <span className="text-[9px] text-muted-foreground ml-1 font-medium">4.9</span>
-                                      </div>
-                                      <div className="flex justify-center gap-3 mb-5">
-                                        {[Instagram, Facebook, Globe].map((Icon, i) => (
-                                          <div key={i} className="w-7 h-7 rounded-full bg-secondary/40 flex items-center justify-center"><Icon className="w-3 h-3 text-muted-foreground" /></div>
-                                        ))}
-                                      </div>
-                                      <p className="text-[10px] font-semibold text-foreground mb-2 tracking-tight">{t('mockup.ourPackages')}</p>
-                                      <div className="grid grid-cols-2 gap-2 mb-4">
-                                        {[{ name: 'Express', price: '35€' }, { name: 'Complet', price: '89€' }].map((f, i) => (
-                                          <div key={i} className="rounded-2xl overflow-hidden relative h-[85px] shadow-sm">
-                                            <img src={mockupCarCleaning} alt="" className="w-full h-full object-cover" />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                                            <div className="absolute bottom-2.5 left-3">
-                                              <p className="text-[9px] text-white/80 font-medium">{f.name}</p>
-                                              <p className="text-[13px] text-white font-bold leading-tight">{f.price}</p>
-                                            </div>
-                                          </div>
-                                        ))}
-                                      </div>
-                                      <button className="w-full bg-foreground text-background py-3 rounded-2xl text-[11px] font-semibold shadow-sm">{t('mockup.book')}</button>
-                                    </div>
-                                  </>
-                                ) : (
-                                  <>
-                                    {/* Minimal: clean navbar */}
-                                    <div className="flex items-center justify-between px-4 pt-8 pb-3">
+                          {/* iPhone frame - perfectly proportioned */}
+                          <div className="flex-1 flex justify-center items-center">
+                            <div className="relative w-[260px] sm:w-[280px]">
+                              {/* Phone outer shell */}
+                              <div className="bg-foreground/5 rounded-[2.8rem] p-[10px] shadow-[0_25px_60px_-12px_rgba(0,0,0,0.18),0_0_0_1px_rgba(0,0,0,0.05)] ring-[6px] ring-foreground/[0.03]">
+                                {/* Dynamic Island */}
+                                <div className="absolute top-[10px] left-1/2 -translate-x-1/2 w-[90px] h-[22px] bg-foreground rounded-full z-10" />
+                                
+                                {/* Screen */}
+                                <div className="rounded-[2.2rem] overflow-hidden bg-card" style={{ aspectRatio: '9/19.5', scrollbarWidth: 'none' }}>
+                                  <div className="h-full overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+                                    {/* Navbar */}
+                                    <div className="flex items-center justify-between px-4 pt-10 pb-3">
                                       <div className="flex items-center gap-2">
-                                        <div className="w-7 h-7 rounded-lg overflow-hidden shadow-sm">
+                                        <div className="w-8 h-8 rounded-xl overflow-hidden shadow-sm ring-1 ring-border/20">
                                           <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
                                         </div>
                                         <span className="text-[11px] font-bold text-foreground tracking-tight">GOCLEANING</span>
                                       </div>
-                                      <div className="w-7 h-7 rounded-full bg-foreground flex items-center justify-center">
-                                        <Phone className="w-3 h-3 text-background" />
+                                      <div className="w-8 h-8 rounded-full bg-foreground flex items-center justify-center">
+                                        <Phone className="w-3.5 h-3.5 text-background" />
                                       </div>
                                     </div>
-                                    <div className="w-full h-px bg-border/10" />
+                                    <div className="w-full h-px bg-border/15" />
                                     
-                                    <div className="px-5 pt-5 pb-5">
+                                    <div className="px-5 pt-5 pb-6">
                                       {/* Brand info */}
                                       <h3 className="text-[17px] font-bold text-foreground mb-0.5 tracking-tight leading-tight">GOCLEANING</h3>
                                       <p className="text-[10px] text-muted-foreground mb-2.5 leading-relaxed">{t('mockup.premiumAutoFull')}</p>
                                       
-                                      <div className="flex items-center gap-3 mb-2">
-                                        <div className="flex items-center gap-1">
-                                          <span className="inline-flex items-center gap-1 text-[9px] text-emerald-600 font-semibold"><span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />{t('mockup.open')}</span>
-                                          <span className="text-[9px] text-muted-foreground">· {t('mockup.closesAt')}</span>
-                                        </div>
+                                      <div className="flex items-center gap-3 mb-1.5">
+                                        <span className="inline-flex items-center gap-1 text-[9px] text-emerald-600 font-semibold">
+                                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                                          {t('mockup.open')}
+                                        </span>
+                                        <span className="text-[9px] text-muted-foreground">· {t('mockup.closesAt')}</span>
                                       </div>
                                       
                                       <div className="flex items-center gap-1 mb-4">
@@ -1476,25 +1431,25 @@ export default function Index() {
                                       </div>
 
                                       {/* Social icons */}
-                                      <div className="flex gap-2 mb-5">
+                                      <div className="flex gap-2.5 mb-5">
                                         {[Instagram, Facebook, Globe].map((Icon, i) => (
-                                          <div key={i} className="w-8 h-8 rounded-xl bg-secondary/30 flex items-center justify-center border border-border/10 hover:bg-secondary/50 transition-colors cursor-pointer">
+                                          <div key={i} className="w-8 h-8 rounded-xl bg-secondary/30 flex items-center justify-center border border-border/10">
                                             <Icon className="w-3.5 h-3.5 text-muted-foreground" />
                                           </div>
                                         ))}
                                       </div>
                                       
                                       {/* Formules */}
-                                      <p className="text-[10px] font-semibold text-foreground mb-2.5 tracking-tight">{t('mockup.ourPackages')}</p>
+                                      <p className="text-[11px] font-semibold text-foreground mb-2.5 tracking-tight">{t('mockup.ourPackages')}</p>
                                       <div className="grid grid-cols-2 gap-2 mb-3">
                                         {[
-                                          { name: 'Express', desc: 'Extérieur', price: '35€' },
-                                          { name: 'Complet', desc: 'Int. + Ext.', price: '89€' },
-                                          { name: 'Premium', desc: 'Rénovation', price: '159€' },
-                                          { name: 'Canapé', desc: 'Textile', price: '79€' },
+                                          { name: 'Express', desc: 'Extérieur', price: '35€', img: mockupExterior },
+                                          { name: 'Complet', desc: 'Int. + Ext.', price: '89€', img: mockupCarCleaning },
+                                          { name: 'Premium', desc: 'Rénovation', price: '159€', img: mockupInterior },
+                                          { name: 'Canapé', desc: 'Textile', price: '79€', img: sofaBanner },
                                         ].map((f, i) => (
                                           <div key={i} className="rounded-2xl overflow-hidden relative h-[80px] shadow-sm group cursor-pointer">
-                                            <img src={i < 2 ? mockupCarCleaning : sofaBanner} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                            <img src={f.img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
                                             <div className="absolute bottom-2 left-2.5 right-2.5">
                                               <p className="text-[8px] text-white/70 font-medium">{f.desc}</p>
@@ -1509,13 +1464,13 @@ export default function Index() {
                                       
                                       <button className="w-full bg-foreground text-background py-3 rounded-2xl text-[11px] font-semibold shadow-sm mt-2">{t('mockup.book')}</button>
                                     </div>
-                                  </>
-                                )}
-                              </div>
-                              
-                              {/* Home indicator */}
-                              <div className="flex justify-center pt-1.5 pb-0.5">
-                                <div className="w-24 h-1 bg-muted-foreground/15 rounded-full" />
+                                  </div>
+                                </div>
+                                
+                                {/* Home indicator */}
+                                <div className="flex justify-center pt-1.5 pb-0.5">
+                                  <div className="w-24 h-1 bg-muted-foreground/15 rounded-full" />
+                                </div>
                               </div>
                             </div>
                           </div>
