@@ -122,6 +122,51 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
 
   const defaultVatRate = vatRates.find(r => r.is_default)?.rate || 20;
 
+  // Click outside handler for client dropdown
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (clientSearchRef.current && !clientSearchRef.current.contains(e.target as Node)) {
+        setClientDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  // Filtered clients for autocomplete
+  const filteredClients = useMemo(() => {
+    if (!clientSearch.trim()) return clients.slice(0, 8);
+    const q = clientSearch.toLowerCase();
+    return clients.filter(c =>
+      c.name.toLowerCase().includes(q) ||
+      (c.email && c.email.toLowerCase().includes(q)) ||
+      (c.phone && c.phone.includes(q))
+    ).slice(0, 8);
+  }, [clients, clientSearch]);
+
+  // Handle client selection from autocomplete
+  const handleClientSelect = (clientId: string) => {
+    if (clientId) {
+      const client = clients.find(c => c.id === clientId);
+      if (client) {
+        setSelectedClientId(clientId);
+        setClientSearch(client.name);
+        setClientName(client.name);
+        setClientEmail(client.email || '');
+        setClientPhone(client.phone || '');
+        setClientAddress(client.address || '');
+      }
+    } else {
+      setSelectedClientId('');
+      setClientSearch('');
+      setClientName('');
+      setClientEmail('');
+      setClientPhone('');
+      setClientAddress('');
+    }
+    setClientDropdownOpen(false);
+  };
+
   // Update selectedType when initialType changes
   useEffect(() => {
     if (initialType) {
