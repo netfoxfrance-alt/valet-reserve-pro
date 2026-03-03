@@ -574,135 +574,198 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
               Client
             </h3>
             
-            {/* Client autocomplete search */}
-            <div className="space-y-2">
-              <Label>Client *</Label>
-              <div ref={clientSearchRef} className="relative">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    value={clientSearch}
-                    onChange={(e) => {
-                      setClientSearch(e.target.value);
-                      setClientDropdownOpen(true);
-                      if (selectedClientId) {
-                        setSelectedClientId('');
-                        setClientName(e.target.value);
-                        setClientEmail('');
-                        setClientPhone('');
-                        setClientAddress('');
-                      } else {
-                        setClientName(e.target.value);
-                      }
-                    }}
-                    onFocus={() => setClientDropdownOpen(true)}
-                    placeholder="Rechercher ou créer un client..."
-                    className="pl-9 pr-10 h-11 rounded-xl"
-                  />
-                  {selectedClientId && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        handleClientSelect('');
-                      }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
+            {/* Inline client creation panel */}
+            {showInlineClientCreate ? (
+              <div className="border border-primary/30 bg-primary/5 rounded-xl p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-sm flex items-center gap-2">
+                    <Plus className="w-4 h-4 text-primary" />
+                    Nouveau client
+                  </h4>
+                  <button
+                    type="button"
+                    onClick={() => setShowInlineClientCreate(false)}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
-                {clientDropdownOpen && !selectedClientId && (
-                  <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-xl shadow-lg max-h-60 overflow-y-auto">
-                    {clientSearch.trim() && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setClientDropdownOpen(false);
-                          onOpenChange(false);
-                          navigate('/dashboard/clients', { state: { openNewClient: true, prefillName: clientSearch.trim() } });
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">Nom *</Label>
+                    <Input
+                      value={newClientForm.name}
+                      onChange={(e) => setNewClientForm(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Nom complet"
+                      className="h-9"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">Téléphone</Label>
+                    <Input
+                      value={newClientForm.phone}
+                      onChange={(e) => setNewClientForm(prev => ({ ...prev, phone: e.target.value }))}
+                      placeholder="06 00 00 00 00"
+                      className="h-9"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">Email</Label>
+                    <Input
+                      type="email"
+                      value={newClientForm.email}
+                      onChange={(e) => setNewClientForm(prev => ({ ...prev, email: e.target.value }))}
+                      placeholder="email@exemple.com"
+                      className="h-9"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">Adresse</Label>
+                    <Input
+                      value={newClientForm.address}
+                      onChange={(e) => setNewClientForm(prev => ({ ...prev, address: e.target.value }))}
+                      placeholder="Adresse complète"
+                      className="h-9"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowInlineClientCreate(false)}
+                  >
+                    Annuler
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={handleInlineClientCreate}
+                    disabled={inlineCreating || !newClientForm.name.trim()}
+                  >
+                    {inlineCreating ? 'Création...' : 'Créer le client'}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Client autocomplete search */}
+                <div className="space-y-2">
+                  <Label>Client *</Label>
+                  <div ref={clientSearchRef} className="relative">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        value={clientSearch}
+                        onChange={(e) => {
+                          setClientSearch(e.target.value);
+                          setClientDropdownOpen(true);
+                          if (selectedClientId) {
+                            setSelectedClientId('');
+                            setClientName(e.target.value);
+                            setClientEmail('');
+                            setClientPhone('');
+                            setClientAddress('');
+                          } else {
+                            setClientName(e.target.value);
+                          }
                         }}
-                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary/60 transition-colors flex items-center gap-2 text-primary font-medium border-b border-border"
-                      >
-                        <Plus className="w-4 h-4" />
-                        Créer « {clientSearch.trim()} »
-                      </button>
-                    )}
-                    {filteredClients.map((client) => (
-                      <div
-                        key={client.id}
-                        className="flex items-center justify-between hover:bg-secondary/60 transition-colors"
-                      >
+                        onFocus={() => setClientDropdownOpen(true)}
+                        placeholder="Rechercher ou créer un client..."
+                        className="pl-9 pr-10 h-11 rounded-xl"
+                      />
+                      {selectedClientId && (
                         <button
                           type="button"
-                          onClick={() => handleClientSelect(client.id)}
-                          className="flex-1 text-left px-4 py-2.5 text-sm"
-                        >
-                          <span className="font-medium text-foreground">{client.name}</span>
-                          {(client.phone || client.email) && (
-                            <span className="text-muted-foreground ml-2 text-xs">
-                              {client.phone || client.email}
-                            </span>
-                          )}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleClientSelect(client.id);
-                            setClientDropdownOpen(false);
-                            onOpenChange(false);
-                            navigate('/dashboard/clients', { state: { openClientId: client.id } });
+                          onClick={() => {
+                            handleClientSelect('');
                           }}
-                          className="px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors"
-                          title="Voir la fiche client"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                         >
-                          <Eye className="w-3.5 h-3.5" />
+                          <X className="w-4 h-4" />
                         </button>
+                      )}
+                    </div>
+                    {clientDropdownOpen && !selectedClientId && (
+                      <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                        {clientSearch.trim() && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setClientDropdownOpen(false);
+                              setNewClientForm(prev => ({ ...prev, name: clientSearch.trim() }));
+                              setShowInlineClientCreate(true);
+                            }}
+                            className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary/60 transition-colors flex items-center gap-2 text-primary font-medium border-b border-border"
+                          >
+                            <Plus className="w-4 h-4" />
+                            Créer « {clientSearch.trim()} »
+                          </button>
+                        )}
+                        {filteredClients.map((client) => (
+                          <div
+                            key={client.id}
+                            className="flex items-center justify-between hover:bg-secondary/60 transition-colors"
+                          >
+                            <button
+                              type="button"
+                              onClick={() => handleClientSelect(client.id)}
+                              className="flex-1 text-left px-4 py-2.5 text-sm"
+                            >
+                              <span className="font-medium text-foreground">{client.name}</span>
+                              {(client.phone || client.email) && (
+                                <span className="text-muted-foreground ml-2 text-xs">
+                                  {client.phone || client.email}
+                                </span>
+                              )}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleClientSelect(client.id);
+                                setClientDropdownOpen(false);
+                              }}
+                              className="px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors"
+                              title="Voir la fiche client"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                        {filteredClients.length === 0 && !clientSearch.trim() && (
+                          <p className="px-4 py-3 text-sm text-muted-foreground">Aucun client</p>
+                        )}
                       </div>
-                    ))}
-                    {filteredClients.length === 0 && !clientSearch.trim() && (
-                      <p className="px-4 py-3 text-sm text-muted-foreground">Aucun client</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Show detail fields when a client is selected (read-only) */}
+                {selectedClientId && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-secondary/20 rounded-xl p-3">
+                    {clientPhone && (
+                      <div className="text-sm">
+                        <span className="text-muted-foreground">Tél : </span>
+                        <span className="font-medium">{clientPhone}</span>
+                      </div>
+                    )}
+                    {clientEmail && (
+                      <div className="text-sm">
+                        <span className="text-muted-foreground">Email : </span>
+                        <span className="font-medium">{clientEmail}</span>
+                      </div>
+                    )}
+                    {clientAddress && (
+                      <div className="md:col-span-2 text-sm">
+                        <span className="text-muted-foreground">Adresse : </span>
+                        <span className="font-medium">{clientAddress}</span>
+                      </div>
                     )}
                   </div>
                 )}
-              </div>
-            </div>
-
-            {/* Show detail fields when a client is selected (read-only) or for manual entry */}
-            {(selectedClientId || clientName) && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="clientEmail">Email</Label>
-                  <Input
-                    id="clientEmail"
-                    type="email"
-                    value={clientEmail}
-                    onChange={(e) => setClientEmail(e.target.value)}
-                    placeholder="email@exemple.com"
-                    disabled={!!selectedClientId}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="clientPhone">Téléphone</Label>
-                  <Input
-                    id="clientPhone"
-                    value={clientPhone}
-                    onChange={(e) => setClientPhone(e.target.value)}
-                    placeholder="06 00 00 00 00"
-                    disabled={!!selectedClientId}
-                  />
-                </div>
-                <div className="md:col-span-2 space-y-2">
-                  <Label htmlFor="clientAddress">Adresse</Label>
-                  <Input
-                    id="clientAddress"
-                    value={clientAddress}
-                    onChange={(e) => setClientAddress(e.target.value)}
-                    placeholder="Adresse complète"
-                    disabled={!!selectedClientId}
-                  />
-                </div>
-              </div>
+              </>
             )}
           </div>
 
