@@ -92,6 +92,8 @@ export default function DashboardInvoices() {
     const matchesTab = activeTab === 'all' || 
       (activeTab === 'invoices' && invoice.type === 'invoice') ||
       (activeTab === 'quotes' && invoice.type === 'quote') ||
+      (activeTab === 'quotes-accepted' && invoice.type === 'quote' && invoice.status === 'accepted') ||
+      (activeTab === 'quotes-pending' && invoice.type === 'quote' && invoice.status !== 'accepted') ||
       (activeTab === 'pending' && invoice.type === 'invoice' && invoice.status === 'sent');
     
     const matchesSearch = !searchQuery || 
