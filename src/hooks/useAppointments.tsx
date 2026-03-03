@@ -289,6 +289,7 @@ export function useCreateAppointment() {
     custom_service_id?: string | null;
     client_id?: string | null;
     custom_price?: number | null;
+    skip_email?: boolean; // When deposit is enabled, skip email here (webhook handles it)
   }) => {
     setLoading(true);
 
@@ -362,8 +363,8 @@ export function useCreateAppointment() {
         .select('id')
         .single();
 
-      // Send "request received" email (not confirmation - waiting for pro validation)
-      if (!error && insertedData && data.pack_name && data.price !== undefined) {
+      // Send "request received" email only when no deposit (deposit flow sends confirmation via webhook)
+      if (!error && insertedData && data.pack_name && data.price !== undefined && !data.skip_email) {
         (async () => {
           try {
             const response = await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {

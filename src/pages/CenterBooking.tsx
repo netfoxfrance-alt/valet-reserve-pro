@@ -238,6 +238,7 @@ export default function CenterBooking() {
     
     // Recognized client with custom service
     if (recognizedClient?.service_id) {
+      const isDepositActive = center.deposit_enabled && center.stripe_connect_status === 'active';
       const { error, appointmentId } = await createAppointment({
         center_id: center.id,
         pack_id: '', // no pack
@@ -255,6 +256,7 @@ export default function CenterBooking() {
         custom_service_id: recognizedClient.service_id,
         client_id: recognizedClient.client_id,
         custom_price: recognizedClient.service_price,
+        skip_email: isDepositActive, // Deposit flow: webhook sends confirmation after payment
       });
       
       if (error) {
@@ -271,6 +273,8 @@ export default function CenterBooking() {
     
     const finalPrice = selectedVariant?.price || selectedPack.price;
     
+    const isDepositActive = center.deposit_enabled && center.stripe_connect_status === 'active';
+    
     const { error, appointmentId } = await createAppointment({
       center_id: center.id,
       pack_id: selectedPack.id,
@@ -286,6 +290,7 @@ export default function CenterBooking() {
       pack_name: selectedPack.name,
       variant_name: selectedVariant?.name,
       price: finalPrice,
+      skip_email: isDepositActive, // Deposit flow: webhook sends confirmation after payment
     });
     
     if (error) {
