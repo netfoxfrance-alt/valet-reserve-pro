@@ -271,6 +271,7 @@ export default function CenterBooking() {
             email: row.client_email || recognizedClient.client_email || '',
             phone: row.client_phone || recognizedClient.client_phone || '',
             address: row.client_address || recognizedClient.client_address || '',
+            notes: '',
           });
 
           // Send booking email to BOTH client and pro (non-blocking)
