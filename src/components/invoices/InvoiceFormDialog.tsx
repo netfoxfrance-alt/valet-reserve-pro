@@ -96,8 +96,12 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
   const { vatRates } = useVatRates();
   const { clients } = useMyClients();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  
+  const [clientSearch, setClientSearch] = useState('');
+  const [clientDropdownOpen, setClientDropdownOpen] = useState(false);
+  const clientSearchRef = useRef<HTMLDivElement>(null);
+
   // Form state
   const [selectedType, setSelectedType] = useState<'invoice' | 'quote'>(initialType || 'invoice');
   const [documentNumber, setDocumentNumber] = useState('');
