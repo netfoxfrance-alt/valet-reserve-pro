@@ -183,6 +183,22 @@ export default function DashboardInvoices() {
     }
   };
 
+  const handleMarkAsAccepted = async (invoice: Invoice) => {
+    const { error } = await updateInvoice(invoice.id, { status: 'accepted' });
+    if (error) {
+      toast({
+        title: 'Erreur',
+        description: error,
+        variant: 'destructive',
+      });
+    } else {
+      toast({
+        title: 'Devis validé',
+        description: `Devis ${invoice.number} marqué comme accepté.`,
+      });
+    }
+  };
+
   if (centerLoading || !center) {
     return (
       <DashboardLayout title="Factures & Devis">
