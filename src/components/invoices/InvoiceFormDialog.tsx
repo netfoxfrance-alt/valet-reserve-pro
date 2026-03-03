@@ -8,10 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useInvoices, Invoice, useVatRates } from '@/hooks/useInvoices';
 import { useMyClients, Client } from '@/hooks/useClients';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Trash2, FileText, FileCheck, Users, ChevronDown, ChevronUp, MessageSquare, Image as ImageIcon, Search, X, Eye } from 'lucide-react';
+import { Plus, Trash2, FileText, FileCheck, Users, ChevronDown, ChevronUp, ChevronRight, MessageSquare, Image as ImageIcon, Search, X, Eye, Loader2, Building2, User } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
-import { useNavigate } from 'react-router-dom';
+import { useMyCustomServices, formatDuration } from '@/hooks/useCustomServices';
+import { ClientType } from '@/hooks/useClients';
 
 export interface InvoicePrefillData {
   clientId?: string;
