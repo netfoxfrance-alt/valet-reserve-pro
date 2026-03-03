@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { useParams, Link } from 'react-router-dom';
 import { BookingHeader } from '@/components/booking/BookingHeader';
 import { CalendarPicker } from '@/components/booking/CalendarPicker';
