@@ -189,8 +189,8 @@ export function InvoicePreviewDialog({ open, onOpenChange, invoice, center }: In
                 Envoyer par email
               </Button>
               <Button variant="outline" size="sm" onClick={handlePrint}>
-                <Download className="w-4 h-4 mr-2" />
-                Télécharger / Imprimer
+                <Printer className="w-4 h-4 mr-2" />
+                Imprimer
               </Button>
             </div>
           </div>
