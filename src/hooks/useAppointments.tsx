@@ -169,6 +169,7 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
         custom_service_id: data.custom_service_id || null,
         custom_price: data.custom_price || null,
         duration_minutes: data.duration_minutes || 60,
+        status: 'confirmed', // Pro-created appointments are auto-confirmed
       })
       .select(`
         *,
