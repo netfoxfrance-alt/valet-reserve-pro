@@ -225,9 +225,56 @@ export default function CenterBooking() {
     setSelectedVariant(variant);
   };
   
-  const handleDateSelect = (date: Date, time: string) => {
+  const [autoSubmitting, setAutoSubmitting] = useState(false);
+
+  const handleDateSelect = async (date: Date, time: string) => {
     setSelectedDate(date);
     setSelectedTime(time);
+
+    // Recognized client → skip client-info form, book directly
+    if (recognizedClient?.client_id) {
+      setAutoSubmitting(true);
+      const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      const isDepositActive = center?.deposit_enabled && center?.stripe_connect_status === 'active';
+
+      const { error, appointmentId } = await createAppointment({
+        center_id: center!.id,
+        pack_id: recognizedClient.service_id ? '' : (selectedPack?.id || ''),
+        client_name: recognizedClient.client_name,
+        client_email: recognizedClient.client_email,
+        client_phone: recognizedClient.client_phone,
+        client_address: recognizedClient.client_address || '',
+        vehicle_type: recognizedClient.service_id ? 'custom' : (selectedVariant?.name || 'berline'),
+        appointment_date: formattedDate,
+        appointment_time: time,
+        notes: '',
+        duration: recognizedClient.service_id
+          ? `${recognizedClient.service_duration_minutes}min`
+          : (selectedPack?.duration || '1h'),
+        pack_name: recognizedClient.service_id
+          ? (recognizedClient.service_name || 'Prestation personnalisée')
+          : (selectedPack?.name || ''),
+        price: recognizedClient.service_id
+          ? (recognizedClient.service_price || 0)
+          : (selectedVariant?.price || selectedPack?.price || 0),
+        custom_service_id: recognizedClient.service_id || undefined,
+        client_id: recognizedClient.client_id,
+        custom_price: recognizedClient.service_id ? recognizedClient.service_price : undefined,
+        variant_name: selectedVariant?.name,
+        skip_email: isDepositActive || false,
+      });
+
+      setAutoSubmitting(false);
+
+      if (error) {
+        toast({ title: 'Erreur', description: error, variant: 'destructive' });
+        return;
+      }
+      if (appointmentId) setLastAppointmentId(appointmentId);
+      setCurrentStep('confirmation');
+      return;
+    }
+
     setCurrentStep('client-info');
   };
   
