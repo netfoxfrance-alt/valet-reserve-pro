@@ -430,56 +430,123 @@ const handler = async (req: Request): Promise<Response> => {
       `;
     }
 
-    // Email body with logo
-    const logoHtml = center?.logo_url ? `
-      <div style="margin-bottom: 16px;">
-        <img src="${center.logo_url}" alt="${center.name || ''}" style="max-height: 50px; max-width: 180px; object-fit: contain;" />
-      </div>
-    ` : '';
+    // Build items rows HTML
+    const itemsRowsHtml = (items || []).map((item: any, idx: number) => {
+      const bgColor = idx % 2 === 0 ? '#ffffff' : '#f9fafb';
+      return `
+        <tr style="background: ${bgColor};">
+          <td style="padding: 10px 12px; font-size: 13px; color: #111827; border-bottom: 1px solid #e5e7eb;">${item.description || ''}</td>
+          <td style="padding: 10px 12px; font-size: 13px; color: #111827; text-align: center; border-bottom: 1px solid #e5e7eb;">${item.quantity || 1}</td>
+          <td style="padding: 10px 12px; font-size: 13px; color: #111827; text-align: right; border-bottom: 1px solid #e5e7eb;">${(item.unit_price || 0).toFixed(2)}&#8364;</td>
+          <td style="padding: 10px 12px; font-size: 13px; color: #111827; text-align: right; border-bottom: 1px solid #e5e7eb;">${item.vat_rate || 0}%</td>
+          <td style="padding: 10px 12px; font-size: 13px; color: #111827; text-align: right; font-weight: 600; border-bottom: 1px solid #e5e7eb;">${(item.subtotal || 0).toFixed(2)}&#8364;</td>
+        </tr>
+      `;
+    }).join('');
 
+    // Build email HTML matching the preview layout exactly
     const emailHtml = `
       <!DOCTYPE html>
       <html>
       <head><meta charset="utf-8"></head>
-      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1f2937; padding: 40px 20px; background: #f9fafb;">
-        <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-          ${logoHtml}
-          <h2 style="margin: 0 0 8px; font-size: 20px;">${docType} ${invoice.number}</h2>
-          <p style="color: #6b7280; margin: 0 0 24px; font-size: 14px;">De ${center?.name || ''}</p>
+      <body style="margin: 0; padding: 40px 20px; background: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #111827;">
+        <div style="max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08);">
           
-          <p style="margin: 0 0 16px; font-size: 15px;">
-            Bonjour ${invoice.client_name},
-          </p>
-          <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.6;">
-            Veuillez trouver ci-joint ${isInvoice ? 'votre facture' : 'votre devis'} <strong>${invoice.number}</strong> d'un montant de <strong>${invoice.total.toFixed(2)}&#8364; TTC</strong>.
-          </p>
+          <!-- Header: Logo + Company Info | Doc Type -->
+          <div style="padding: 32px 32px 0 32px;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="vertical-align: top; width: 60%;">
+                  ${center?.logo_url ? `<img src="${center.logo_url}" alt="${center?.name || ''}" style="max-height: 56px; max-width: 160px; object-fit: contain; border-radius: 10px; margin-bottom: 12px; display: block;" />` : ''}
+                  <p style="margin: 0 0 4px; font-size: 18px; font-weight: 700; color: #111827;">${center?.name || ''}</p>
+                  ${center?.address ? `<p style="margin: 0 0 2px; font-size: 12px; color: #6b7280; line-height: 1.5;">${center.address}</p>` : ''}
+                  ${center?.phone ? `<p style="margin: 0 0 2px; font-size: 12px; color: #6b7280;">T&eacute;l: ${center.phone}</p>` : ''}
+                  ${center?.email ? `<p style="margin: 0; font-size: 12px; color: #6b7280;">${center.email}</p>` : ''}
+                </td>
+                <td style="vertical-align: top; text-align: right;">
+                  <p style="margin: 0 0 6px; font-size: 28px; font-weight: 800; color: #111827; letter-spacing: -0.5px;">${docType.toUpperCase()}</p>
+                  <p style="margin: 0 0 4px; font-size: 15px; font-weight: 600; color: #111827;">${invoice.number}</p>
+                  <p style="margin: 0; font-size: 12px; color: #6b7280;">Date: ${new Date(invoice.issue_date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                  ${isInvoice && invoice.due_date ? `<p style="margin: 2px 0 0; font-size: 12px; color: #6b7280;">&Eacute;ch&eacute;ance: ${new Date(invoice.due_date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>` : ''}
+                  ${!isInvoice && invoice.valid_until ? `<p style="margin: 2px 0 0; font-size: 12px; color: #6b7280;">Valable jusqu'au: ${new Date(invoice.valid_until).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>` : ''}
+                </td>
+              </tr>
+            </table>
+          </div>
 
-          <div style="background: #f3f4f6; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
-            <table style="width: 100%; font-size: 14px;">
+          <!-- Client Box -->
+          <div style="padding: 24px 32px;">
+            <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px 20px;">
+              <p style="margin: 0 0 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #9ca3af; font-weight: 600;">${isInvoice ? 'FACTUR&Eacute; &Agrave;' : 'DEVIS POUR'}</p>
+              <p style="margin: 0 0 4px; font-size: 16px; font-weight: 700; color: #111827;">${invoice.client_name}</p>
+              ${invoice.client_address ? `<p style="margin: 0 0 2px; font-size: 12px; color: #6b7280;">${invoice.client_address}</p>` : ''}
+              ${invoice.client_phone ? `<p style="margin: 0 0 2px; font-size: 12px; color: #6b7280;">T&eacute;l: ${invoice.client_phone}</p>` : ''}
+              ${invoice.client_email ? `<p style="margin: 0; font-size: 12px; color: #6b7280;">${invoice.client_email}</p>` : ''}
+            </div>
+          </div>
+
+          <!-- Items Table -->
+          <div style="padding: 0 32px;">
+            <table style="width: 100%; border-collapse: collapse; border-radius: 10px; overflow: hidden; border: 1px solid #e5e7eb;">
+              <thead>
+                <tr style="background: #f3f4f6;">
+                  <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #111827; text-align: left;">Description</th>
+                  <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #111827; text-align: center; width: 50px;">Qt&eacute;</th>
+                  <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #111827; text-align: right; width: 90px;">Prix HT</th>
+                  <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #111827; text-align: right; width: 60px;">TVA</th>
+                  <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #111827; text-align: right; width: 100px;">Total HT</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsRowsHtml}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Totals -->
+          <div style="padding: 20px 32px 0;">
+            <table style="width: 260px; margin-left: auto; border-collapse: collapse;">
               <tr>
-                <td style="color: #6b7280; padding: 4px 0;">Montant HT</td>
-                <td style="text-align: right; font-weight: 500;">${invoice.subtotal.toFixed(2)}&#8364;</td>
+                <td style="padding: 4px 0; font-size: 13px; color: #6b7280;">Sous-total HT</td>
+                <td style="padding: 4px 0; font-size: 13px; color: #111827; text-align: right; font-weight: 500;">${invoice.subtotal.toFixed(2)}&#8364;</td>
               </tr>
               <tr>
-                <td style="color: #6b7280; padding: 4px 0;">TVA</td>
-                <td style="text-align: right; font-weight: 500;">${invoice.total_vat.toFixed(2)}&#8364;</td>
+                <td style="padding: 4px 0; font-size: 13px; color: #6b7280;">TVA</td>
+                <td style="padding: 4px 0; font-size: 13px; color: #111827; text-align: right; font-weight: 500;">${invoice.total_vat.toFixed(2)}&#8364;</td>
               </tr>
-              <tr style="border-top: 1px solid #d1d5db;">
-                <td style="color: #111827; padding: 8px 0 0; font-weight: 600;">Total TTC</td>
-                <td style="text-align: right; font-weight: 700; color: #3b82f6; padding-top: 8px;">${invoice.total.toFixed(2)}&#8364;</td>
+              <tr>
+                <td colspan="2" style="padding: 0;"><div style="border-top: 2px solid #e5e7eb; margin: 8px 0;"></div></td>
+              </tr>
+              <tr>
+                <td style="padding: 4px 0; font-size: 16px; font-weight: 700; color: #111827;">Total TTC</td>
+                <td style="padding: 4px 0; font-size: 16px; font-weight: 800; color: #111827; text-align: right;">${invoice.total.toFixed(2)}&#8364;</td>
               </tr>
             </table>
           </div>
 
           ${acceptButtonHtml}
 
-          <p style="font-size: 13px; color: #9ca3af; margin: 0;">
-            Le document complet est en piece jointe au format PDF.
-          </p>
+          ${invoice.notes ? `
+          <div style="padding: 16px 32px 0;">
+            <p style="margin: 0 0 4px; font-size: 10px; text-transform: uppercase; color: #9ca3af; font-weight: 600;">Notes</p>
+            <p style="margin: 0; font-size: 12px; color: #6b7280; line-height: 1.5; white-space: pre-wrap;">${invoice.notes}</p>
+          </div>
+          ` : ''}
+
+          ${invoice.terms ? `
+          <div style="padding: 12px 32px 0;">
+            <p style="margin: 0 0 4px; font-size: 10px; text-transform: uppercase; color: #9ca3af; font-weight: 600;">Conditions de paiement</p>
+            <p style="margin: 0; font-size: 12px; color: #6b7280; line-height: 1.5; white-space: pre-wrap;">${invoice.terms}</p>
+          </div>
+          ` : ''}
+
+          <!-- Footer -->
+          <div style="padding: 24px 32px; margin-top: 24px; border-top: 1px solid #e5e7eb; text-align: center;">
+            <p style="margin: 0 0 4px; font-size: 11px; color: #9ca3af;">${center?.name || ''} ${center?.address ? `&bull; ${center.address}` : ''}</p>
+            <p style="margin: 0; font-size: 11px; color: #9ca3af;">${isInvoice ? "En cas de retard de paiement, une p&eacute;nalit&eacute; de 3 fois le taux d'int&eacute;r&ecirc;t l&eacute;gal sera appliqu&eacute;e." : "Ce devis est valable 30 jours &agrave; compter de sa date d'&eacute;mission."}</p>
+          </div>
+
         </div>
-        <p style="text-align: center; font-size: 11px; color: #9ca3af; margin-top: 24px;">
-          ${center?.name || ''} ${center?.address ? `&middot; ${center.address}` : ''}
-        </p>
       </body>
       </html>
     `;
