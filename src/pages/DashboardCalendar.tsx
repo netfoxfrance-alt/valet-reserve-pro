@@ -1430,6 +1430,80 @@ export default function DashboardCalendar() {
           setShowCalendarSyncDialog(false);
         }}
       />
+
+      {/* Client creation dialog */}
+      <Dialog open={showClientCreateDialog} onOpenChange={(v) => { setShowClientCreateDialog(v); if (!v) resetNewClientForm(); }}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Nouveau client</DialogTitle>
+            <DialogDescription className="sr-only">Formulaire pour créer un nouveau client</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <div className="flex gap-2">
+              <Button type="button" variant={newClientForm.client_type === 'particulier' ? 'default' : 'outline'} size="sm" className="flex-1 gap-2 rounded-xl h-10" onClick={() => setNewClientForm(prev => ({ ...prev, client_type: 'particulier' }))}>
+                <User className="w-4 h-4" /> Particulier
+              </Button>
+              <Button type="button" variant={newClientForm.client_type === 'professionnel' ? 'default' : 'outline'} size="sm" className="flex-1 gap-2 rounded-xl h-10" onClick={() => setNewClientForm(prev => ({ ...prev, client_type: 'professionnel' }))}>
+                <Building2 className="w-4 h-4" /> Professionnel
+              </Button>
+            </div>
+            {newClientForm.client_type === 'professionnel' && (
+              <div className="space-y-2 animate-fade-in">
+                <Label>Nom de la société</Label>
+                <Input placeholder="SARL Dupont" value={newClientForm.company_name} onChange={(e) => setNewClientForm(prev => ({ ...prev, company_name: e.target.value }))} className="h-11 rounded-xl" />
+              </div>
+            )}
+            <div className="space-y-2">
+              <Label>Nom *</Label>
+              <Input placeholder="Jean Dupont" value={newClientForm.name} onChange={(e) => setNewClientForm(prev => ({ ...prev, name: e.target.value }))} className="h-11 rounded-xl" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label>Téléphone</Label>
+                <Input placeholder="06 12 34 56 78" value={newClientForm.phone} onChange={(e) => setNewClientForm(prev => ({ ...prev, phone: e.target.value }))} className="h-11 rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input type="email" placeholder="jean@email.com" value={newClientForm.email} onChange={(e) => setNewClientForm(prev => ({ ...prev, email: e.target.value }))} className="h-11 rounded-xl" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Adresse</Label>
+              <Input placeholder="123 rue Example, 75000 Paris" value={newClientForm.address} onChange={(e) => setNewClientForm(prev => ({ ...prev, address: e.target.value }))} className="h-11 rounded-xl" />
+            </div>
+
+            {customServices.length > 0 && (
+              <Collapsible open={newClientServicesOpen} onOpenChange={setNewClientServicesOpen}>
+                <CollapsibleTrigger asChild>
+                  <button type="button" className="flex items-center justify-between w-full text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2">
+                    <span>Prestations personnalisées {newClientServiceIds.length > 0 && `(${newClientServiceIds.length})`}</span>
+                    {newClientServicesOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRightIcon className="w-4 h-4" />}
+                  </button>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="space-y-1.5 max-h-40 overflow-y-auto border rounded-xl p-3 mt-1">
+                    {customServices.map((s) => (
+                      <label key={s.id} className="flex items-center gap-3 cursor-pointer hover:bg-secondary/30 rounded-lg p-2 transition-colors">
+                        <Checkbox checked={newClientServiceIds.includes(s.id)} onCheckedChange={(checked) => setNewClientServiceIds(prev => checked ? [...prev, s.id] : prev.filter(id => id !== s.id))} />
+                        <span className="text-sm text-foreground">{s.name} · {formatDuration(s.duration_minutes)} · {s.price}€</span>
+                      </label>
+                    ))}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            )}
+
+            <div className="space-y-2">
+              <Label>Notes</Label>
+              <Textarea placeholder="Informations supplémentaires..." value={newClientForm.notes} onChange={(e) => setNewClientForm(prev => ({ ...prev, notes: e.target.value }))} className="rounded-xl resize-none" rows={2} />
+            </div>
+            <Button type="button" onClick={handleNewClientCreate} className="w-full h-11 rounded-xl" disabled={newClientCreating || !newClientForm.name.trim()}>
+              {newClientCreating && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Ajouter le client
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
