@@ -102,6 +102,65 @@ export default function DashboardCalendar() {
     notes: '',
   });
 
+  // Client creation dialog state (inline in calendar page)
+  const [showClientCreateDialog, setShowClientCreateDialog] = useState(false);
+  const [newClientCreating, setNewClientCreating] = useState(false);
+  const [newClientForm, setNewClientForm] = useState({
+    name: '', email: '', phone: '', address: '', notes: '',
+    client_type: 'particulier' as ClientType,
+    company_name: '',
+  });
+  const [newClientServiceIds, setNewClientServiceIds] = useState<string[]>([]);
+  const [newClientServicesOpen, setNewClientServicesOpen] = useState(false);
+
+  const resetNewClientForm = () => {
+    setNewClientForm({ name: '', email: '', phone: '', address: '', notes: '', client_type: 'particulier', company_name: '' });
+    setNewClientServiceIds([]);
+    setNewClientServicesOpen(false);
+  };
+
+  const handleNewClientCreate = async () => {
+    if (!newClientForm.name.trim()) {
+      toast.error('Le nom est requis');
+      return;
+    }
+    setNewClientCreating(true);
+    const { error, data: createdClient } = await createClient({
+      name: newClientForm.name.trim(),
+      email: newClientForm.email.trim() || undefined,
+      phone: newClientForm.phone.trim() || undefined,
+      address: newClientForm.address.trim() || undefined,
+      notes: newClientForm.notes.trim() || undefined,
+      client_type: newClientForm.client_type,
+      company_name: newClientForm.client_type === 'professionnel' ? newClientForm.company_name.trim() || undefined : undefined,
+    } as any);
+
+    if (!error && createdClient) {
+      const c = createdClient as any;
+      if (newClientServiceIds.length > 0 && c.id) {
+        await supabase
+          .from('client_services')
+          .insert(newClientServiceIds.map(sid => ({ client_id: c.id, service_id: sid })));
+      }
+      setSelectedClientId(c.id);
+      setClientSearch(c.name);
+      setCreateForm(prev => ({
+        ...prev,
+        client_name: c.name,
+        client_email: c.email || '',
+        client_phone: c.phone || '',
+        client_address: c.address || '',
+      }));
+      toast.success(`${c.name} a été ajouté`);
+      setShowClientCreateDialog(false);
+      resetNewClientForm();
+      refetchClients();
+    } else if (error) {
+      toast.error(error);
+    }
+    setNewClientCreating(false);
+  };
+
   // Auto-open create dialog when navigated from Reservations page
   useEffect(() => {
     const state = location.state as { openCreate?: boolean } | null;
