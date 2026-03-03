@@ -308,34 +308,32 @@ export default function CenterBooking() {
     
     setClientData(data);
     
-    // Recognized client with custom service
-    if (recognizedClient?.service_id) {
-      const isDepositActive = center.deposit_enabled && center.stripe_connect_status === 'active';
-      const { error, appointmentId } = await createAppointment({
-        center_id: center.id,
-        pack_id: '', // no pack
-        client_name: data.name,
-        client_email: data.email,
-        client_phone: data.phone,
-        client_address: data.address,
-        vehicle_type: 'custom',
-        appointment_date: `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`,
-        appointment_time: selectedTime,
-        notes: data.notes,
-        duration: `${recognizedClient.service_duration_minutes}min`,
-        pack_name: recognizedClient.service_name || 'Prestation personnalisée',
-        price: recognizedClient.service_price || 0,
-        custom_service_id: recognizedClient.service_id,
-        client_id: recognizedClient.client_id,
-        custom_price: recognizedClient.service_price,
-        skip_email: isDepositActive, // Deposit flow: webhook sends confirmation after payment
-      });
+    // Recognized client with custom service → use server-side RPC
+    if (recognizedClient?.service_id && recognizedClient?.client_id) {
+      const formattedDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
       
-      if (error) {
-        toast({ title: 'Erreur', description: error, variant: 'destructive' });
+      const { data: rpcResult, error: rpcError } = await supabase.rpc('create_recognized_appointment', {
+        p_center_id: center.id,
+        p_client_id: recognizedClient.client_id,
+        p_service_id: recognizedClient.service_id,
+        p_appointment_date: formattedDate,
+        p_appointment_time: selectedTime,
+        p_vehicle_type: 'custom',
+        p_notes: data.notes || null,
+      });
+
+      if (rpcError) {
+        let msg = 'Impossible de créer le rendez-vous.';
+        const errMsg = rpcError.message || '';
+        if (errMsg.includes('TIME_SLOT_OCCUPIED')) msg = 'Ce créneau est déjà occupé.';
+        else if (errMsg.includes('CLIENT_PROFILE_INCOMPLETE')) msg = 'Votre profil est incomplet.';
+        toast({ title: 'Erreur', description: msg, variant: 'destructive' });
         return;
       }
-      if (appointmentId) setLastAppointmentId(appointmentId);
+
+      if (rpcResult && rpcResult.length > 0) {
+        setLastAppointmentId(rpcResult[0].appointment_id);
+      }
       setCurrentStep('confirmation');
       return;
     }
