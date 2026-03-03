@@ -8,10 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useInvoices, Invoice, useVatRates } from '@/hooks/useInvoices';
 import { useMyClients, Client } from '@/hooks/useClients';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Trash2, FileText, FileCheck, Users, ChevronDown, ChevronUp, MessageSquare, Image as ImageIcon, Search, X, Eye } from 'lucide-react';
+import { Plus, Trash2, FileText, FileCheck, Users, ChevronDown, ChevronUp, ChevronRight, MessageSquare, Image as ImageIcon, Search, X, Eye, Loader2, Building2, User } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
-import { useNavigate } from 'react-router-dom';
+import { useMyCustomServices, formatDuration } from '@/hooks/useCustomServices';
+import { ClientType } from '@/hooks/useClients';
 
 export interface InvoicePrefillData {
   clientId?: string;
@@ -95,21 +97,29 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
   const { createInvoice, updateInvoice, getInvoiceWithItems, generateNextNumber } = useInvoices();
   const { vatRates } = useVatRates();
   const { clients, createClient, refetch: refetchClients } = useMyClients();
+  const { services: allServices } = useMyCustomServices();
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [clientSearch, setClientSearch] = useState('');
   const [clientDropdownOpen, setClientDropdownOpen] = useState(false);
   const clientSearchRef = useRef<HTMLDivElement>(null);
   
-  // Inline client creation state
-  const [showInlineClientCreate, setShowInlineClientCreate] = useState(false);
+  // Client creation dialog state
+  const [showClientCreateDialog, setShowClientCreateDialog] = useState(false);
   const [inlineCreating, setInlineCreating] = useState(false);
   const [newClientForm, setNewClientForm] = useState({
     name: '', email: '', phone: '', address: '', notes: '',
-    client_type: 'particulier' as 'particulier' | 'professionnel',
+    client_type: 'particulier' as ClientType,
     company_name: '',
   });
+  const [newServiceIds, setNewServiceIds] = useState<string[]>([]);
+  const [newServicesOpen, setNewServicesOpen] = useState(false);
+
+  const resetNewClientForm = () => {
+    setNewClientForm({ name: '', email: '', phone: '', address: '', notes: '', client_type: 'particulier', company_name: '' });
+    setNewServiceIds([]);
+    setNewServicesOpen(false);
+  };
 
   const handleInlineClientCreate = async () => {
     if (!newClientForm.name.trim()) {
@@ -123,10 +133,19 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
       phone: newClientForm.phone.trim() || undefined,
       address: newClientForm.address.trim() || undefined,
       notes: newClientForm.notes.trim() || undefined,
+      client_type: newClientForm.client_type,
+      company_name: newClientForm.client_type === 'professionnel' ? newClientForm.company_name.trim() || undefined : undefined,
     } as any);
 
     if (!error && createdClient) {
       const c = createdClient as any;
+      // Save services if selected
+      if (newServiceIds.length > 0 && c.id) {
+        const { supabase } = await import('@/integrations/supabase/client');
+        await supabase
+          .from('client_services')
+          .insert(newServiceIds.map(sid => ({ client_id: c.id, service_id: sid })));
+      }
       setSelectedClientId(c.id);
       setClientSearch(c.name);
       setClientName(c.name);
@@ -134,8 +153,8 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
       setClientPhone(c.phone || '');
       setClientAddress(c.address || '');
       toast({ title: 'Client créé', description: `${c.name} a été ajouté.` });
-      setShowInlineClientCreate(false);
-      setNewClientForm({ name: '', email: '', phone: '', address: '', notes: '', client_type: 'particulier', company_name: '' });
+      setShowClientCreateDialog(false);
+      resetNewClientForm();
       refetchClients();
     } else if (error) {
       toast({ title: 'Erreur', description: error, variant: 'destructive' });
@@ -466,6 +485,82 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
   };
 
   return (
+    <>
+    {/* Client creation dialog - mirrors the real "Nouveau client" dialog */}
+    <Dialog open={showClientCreateDialog} onOpenChange={(v) => { setShowClientCreateDialog(v); if (!v) resetNewClientForm(); }}>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Nouveau client</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 pt-4">
+          {/* Type */}
+          <div className="flex gap-2">
+            <Button type="button" variant={newClientForm.client_type === 'particulier' ? 'default' : 'outline'} size="sm" className="flex-1 gap-2 rounded-xl h-10" onClick={() => setNewClientForm(prev => ({ ...prev, client_type: 'particulier' }))}>
+              <User className="w-4 h-4" /> Particulier
+            </Button>
+            <Button type="button" variant={newClientForm.client_type === 'professionnel' ? 'default' : 'outline'} size="sm" className="flex-1 gap-2 rounded-xl h-10" onClick={() => setNewClientForm(prev => ({ ...prev, client_type: 'professionnel' }))}>
+              <Building2 className="w-4 h-4" /> Professionnel
+            </Button>
+          </div>
+          {newClientForm.client_type === 'professionnel' && (
+            <div className="space-y-2 animate-fade-in">
+              <Label>Nom de la société</Label>
+              <Input placeholder="SARL Dupont" value={newClientForm.company_name} onChange={(e) => setNewClientForm(prev => ({ ...prev, company_name: e.target.value }))} className="h-11 rounded-xl" />
+            </div>
+          )}
+          <div className="space-y-2">
+            <Label>Nom *</Label>
+            <Input placeholder="Jean Dupont" value={newClientForm.name} onChange={(e) => setNewClientForm(prev => ({ ...prev, name: e.target.value }))} className="h-11 rounded-xl" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label>Téléphone</Label>
+              <Input placeholder="06 12 34 56 78" value={newClientForm.phone} onChange={(e) => setNewClientForm(prev => ({ ...prev, phone: e.target.value }))} className="h-11 rounded-xl" />
+            </div>
+            <div className="space-y-2">
+              <Label>Email</Label>
+              <Input type="email" placeholder="jean@email.com" value={newClientForm.email} onChange={(e) => setNewClientForm(prev => ({ ...prev, email: e.target.value }))} className="h-11 rounded-xl" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Adresse</Label>
+            <Input placeholder="123 rue Example, 75000 Paris" value={newClientForm.address} onChange={(e) => setNewClientForm(prev => ({ ...prev, address: e.target.value }))} className="h-11 rounded-xl" />
+          </div>
+
+          {/* Collapsible Services */}
+          {allServices.length > 0 && (
+            <Collapsible open={newServicesOpen} onOpenChange={setNewServicesOpen}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="flex items-center justify-between w-full text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2">
+                  <span>Prestations personnalisées {newServiceIds.length > 0 && `(${newServiceIds.length})`}</span>
+                  {newServicesOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="space-y-1.5 max-h-40 overflow-y-auto border rounded-xl p-3 mt-1">
+                  {allServices.map((s) => (
+                    <label key={s.id} className="flex items-center gap-3 cursor-pointer hover:bg-secondary/30 rounded-lg p-2 transition-colors">
+                      <Checkbox checked={newServiceIds.includes(s.id)} onCheckedChange={(checked) => setNewServiceIds(prev => checked ? [...prev, s.id] : prev.filter(id => id !== s.id))} />
+                      <span className="text-sm text-foreground">{s.name} · {formatDuration(s.duration_minutes)} · {s.price}€</span>
+                    </label>
+                  ))}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
+
+          <div className="space-y-2">
+            <Label>Notes</Label>
+            <Textarea placeholder="Informations supplémentaires..." value={newClientForm.notes} onChange={(e) => setNewClientForm(prev => ({ ...prev, notes: e.target.value }))} className="rounded-xl resize-none" rows={2} />
+          </div>
+          <Button type="button" onClick={handleInlineClientCreate} className="w-full h-11 rounded-xl" disabled={inlineCreating || !newClientForm.name.trim()}>
+            {inlineCreating && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            Ajouter le client
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -574,198 +669,118 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
               Client
             </h3>
             
-            {/* Inline client creation panel */}
-            {showInlineClientCreate ? (
-              <div className="border border-primary/30 bg-primary/5 rounded-xl p-4 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-sm flex items-center gap-2">
-                    <Plus className="w-4 h-4 text-primary" />
-                    Nouveau client
-                  </h4>
-                  <button
-                    type="button"
-                    onClick={() => setShowInlineClientCreate(false)}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
+            {/* Client autocomplete search */}
+            <div className="space-y-2">
+              <Label>Client *</Label>
+              <div ref={clientSearchRef} className="relative">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    value={clientSearch}
+                    onChange={(e) => {
+                      setClientSearch(e.target.value);
+                      setClientDropdownOpen(true);
+                      if (selectedClientId) {
+                        setSelectedClientId('');
+                        setClientName(e.target.value);
+                        setClientEmail('');
+                        setClientPhone('');
+                        setClientAddress('');
+                      } else {
+                        setClientName(e.target.value);
+                      }
+                    }}
+                    onFocus={() => setClientDropdownOpen(true)}
+                    placeholder="Rechercher ou créer un client..."
+                    className="pl-9 pr-10 h-11 rounded-xl"
+                  />
+                  {selectedClientId && (
+                    <button
+                      type="button"
+                      onClick={() => handleClientSelect('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">Nom *</Label>
-                    <Input
-                      value={newClientForm.name}
-                      onChange={(e) => setNewClientForm(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder="Nom complet"
-                      className="h-9"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">Téléphone</Label>
-                    <Input
-                      value={newClientForm.phone}
-                      onChange={(e) => setNewClientForm(prev => ({ ...prev, phone: e.target.value }))}
-                      placeholder="06 00 00 00 00"
-                      className="h-9"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">Email</Label>
-                    <Input
-                      type="email"
-                      value={newClientForm.email}
-                      onChange={(e) => setNewClientForm(prev => ({ ...prev, email: e.target.value }))}
-                      placeholder="email@exemple.com"
-                      className="h-9"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">Adresse</Label>
-                    <Input
-                      value={newClientForm.address}
-                      onChange={(e) => setNewClientForm(prev => ({ ...prev, address: e.target.value }))}
-                      placeholder="Adresse complète"
-                      className="h-9"
-                    />
-                  </div>
-                </div>
-                <div className="flex gap-2 justify-end">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowInlineClientCreate(false)}
-                  >
-                    Annuler
-                  </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={handleInlineClientCreate}
-                    disabled={inlineCreating || !newClientForm.name.trim()}
-                  >
-                    {inlineCreating ? 'Création...' : 'Créer le client'}
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <>
-                {/* Client autocomplete search */}
-                <div className="space-y-2">
-                  <Label>Client *</Label>
-                  <div ref={clientSearchRef} className="relative">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        value={clientSearch}
-                        onChange={(e) => {
-                          setClientSearch(e.target.value);
-                          setClientDropdownOpen(true);
-                          if (selectedClientId) {
-                            setSelectedClientId('');
-                            setClientName(e.target.value);
-                            setClientEmail('');
-                            setClientPhone('');
-                            setClientAddress('');
-                          } else {
-                            setClientName(e.target.value);
-                          }
+                {clientDropdownOpen && !selectedClientId && (
+                  <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                    {clientSearch.trim() && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setClientDropdownOpen(false);
+                          setNewClientForm(prev => ({ ...prev, name: clientSearch.trim() }));
+                          setShowClientCreateDialog(true);
                         }}
-                        onFocus={() => setClientDropdownOpen(true)}
-                        placeholder="Rechercher ou créer un client..."
-                        className="pl-9 pr-10 h-11 rounded-xl"
-                      />
-                      {selectedClientId && (
+                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary/60 transition-colors flex items-center gap-2 text-primary font-medium border-b border-border"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Créer « {clientSearch.trim()} »
+                      </button>
+                    )}
+                    {filteredClients.map((client) => (
+                      <div
+                        key={client.id}
+                        className="flex items-center justify-between hover:bg-secondary/60 transition-colors"
+                      >
                         <button
                           type="button"
-                          onClick={() => {
-                            handleClientSelect('');
-                          }}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          onClick={() => handleClientSelect(client.id)}
+                          className="flex-1 text-left px-4 py-2.5 text-sm"
                         >
-                          <X className="w-4 h-4" />
+                          <span className="font-medium text-foreground">{client.name}</span>
+                          {(client.phone || client.email) && (
+                            <span className="text-muted-foreground ml-2 text-xs">
+                              {client.phone || client.email}
+                            </span>
+                          )}
                         </button>
-                      )}
-                    </div>
-                    {clientDropdownOpen && !selectedClientId && (
-                      <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-xl shadow-lg max-h-60 overflow-y-auto">
-                        {clientSearch.trim() && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setClientDropdownOpen(false);
-                              setNewClientForm(prev => ({ ...prev, name: clientSearch.trim() }));
-                              setShowInlineClientCreate(true);
-                            }}
-                            className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary/60 transition-colors flex items-center gap-2 text-primary font-medium border-b border-border"
-                          >
-                            <Plus className="w-4 h-4" />
-                            Créer « {clientSearch.trim()} »
-                          </button>
-                        )}
-                        {filteredClients.map((client) => (
-                          <div
-                            key={client.id}
-                            className="flex items-center justify-between hover:bg-secondary/60 transition-colors"
-                          >
-                            <button
-                              type="button"
-                              onClick={() => handleClientSelect(client.id)}
-                              className="flex-1 text-left px-4 py-2.5 text-sm"
-                            >
-                              <span className="font-medium text-foreground">{client.name}</span>
-                              {(client.phone || client.email) && (
-                                <span className="text-muted-foreground ml-2 text-xs">
-                                  {client.phone || client.email}
-                                </span>
-                              )}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleClientSelect(client.id);
-                                setClientDropdownOpen(false);
-                              }}
-                              className="px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors"
-                              title="Voir la fiche client"
-                            >
-                              <Eye className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        ))}
-                        {filteredClients.length === 0 && !clientSearch.trim() && (
-                          <p className="px-4 py-3 text-sm text-muted-foreground">Aucun client</p>
-                        )}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleClientSelect(client.id);
+                            setClientDropdownOpen(false);
+                          }}
+                          className="px-3 py-2.5 text-muted-foreground hover:text-primary transition-colors"
+                          title="Voir la fiche client"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
                       </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Show detail fields when a client is selected (read-only) */}
-                {selectedClientId && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-secondary/20 rounded-xl p-3">
-                    {clientPhone && (
-                      <div className="text-sm">
-                        <span className="text-muted-foreground">Tél : </span>
-                        <span className="font-medium">{clientPhone}</span>
-                      </div>
-                    )}
-                    {clientEmail && (
-                      <div className="text-sm">
-                        <span className="text-muted-foreground">Email : </span>
-                        <span className="font-medium">{clientEmail}</span>
-                      </div>
-                    )}
-                    {clientAddress && (
-                      <div className="md:col-span-2 text-sm">
-                        <span className="text-muted-foreground">Adresse : </span>
-                        <span className="font-medium">{clientAddress}</span>
-                      </div>
+                    ))}
+                    {filteredClients.length === 0 && !clientSearch.trim() && (
+                      <p className="px-4 py-3 text-sm text-muted-foreground">Aucun client</p>
                     )}
                   </div>
                 )}
-              </>
+              </div>
+            </div>
+
+            {/* Show detail fields when a client is selected (read-only) */}
+            {selectedClientId && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-secondary/20 rounded-xl p-3">
+                {clientPhone && (
+                  <div className="text-sm">
+                    <span className="text-muted-foreground">Tél : </span>
+                    <span className="font-medium">{clientPhone}</span>
+                  </div>
+                )}
+                {clientEmail && (
+                  <div className="text-sm">
+                    <span className="text-muted-foreground">Email : </span>
+                    <span className="font-medium">{clientEmail}</span>
+                  </div>
+                )}
+                {clientAddress && (
+                  <div className="md:col-span-2 text-sm">
+                    <span className="text-muted-foreground">Adresse : </span>
+                    <span className="font-medium">{clientAddress}</span>
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
@@ -970,5 +985,6 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
         </form>
       </DialogContent>
     </Dialog>
+    </>
   );
 }
