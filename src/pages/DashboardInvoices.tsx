@@ -270,12 +270,43 @@ export default function DashboardInvoices() {
             </Card>
           </div>
 
+          {/* Quote sub-tabs */}
+          {(activeTab === 'quotes' || activeTab === 'quotes-accepted' || activeTab === 'quotes-pending') && (
+            <div className="flex gap-2">
+              <Button 
+                variant={activeTab === 'quotes' ? 'default' : 'outline'} 
+                size="sm" 
+                onClick={() => setActiveTab('quotes')}
+                className="rounded-xl"
+              >
+                Tous ({invoices.filter(i => i.type === 'quote').length})
+              </Button>
+              <Button 
+                variant={activeTab === 'quotes-pending' ? 'default' : 'outline'} 
+                size="sm" 
+                onClick={() => setActiveTab('quotes-pending')}
+                className="rounded-xl"
+              >
+                En attente ({invoices.filter(i => i.type === 'quote' && i.status !== 'accepted').length})
+              </Button>
+              <Button 
+                variant={activeTab === 'quotes-accepted' ? 'default' : 'outline'} 
+                size="sm" 
+                onClick={() => setActiveTab('quotes-accepted')}
+                className="rounded-xl"
+              >
+                <Check className="w-3.5 h-3.5 mr-1" />
+                Validés ({invoices.filter(i => i.type === 'quote' && i.status === 'accepted').length})
+              </Button>
+            </div>
+          )}
+
           {/* List */}
           <Card className="rounded-2xl overflow-hidden">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between gap-4">
                 <p className="text-sm font-medium text-muted-foreground">
-                  {activeTab === 'invoices' ? 'Factures' : activeTab === 'quotes' ? 'Devis' : activeTab === 'pending' ? 'En attente' : 'Tout'} 
+                  {activeTab === 'invoices' ? 'Factures' : activeTab === 'quotes' ? 'Devis' : activeTab === 'quotes-accepted' ? 'Devis validés' : activeTab === 'quotes-pending' ? 'Devis en attente' : activeTab === 'pending' ? 'En attente' : 'Tout'} 
                   <span className="ml-1 text-foreground">({filteredInvoices.length})</span>
                 </p>
                 <div className="relative">
