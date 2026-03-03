@@ -391,12 +391,18 @@ export default function DashboardInvoices() {
                               Modifier
                             </DropdownMenuItem>
                             {invoice.type === 'quote' && invoice.status !== 'accepted' && (
+                              <DropdownMenuItem onClick={() => handleMarkAsAccepted(invoice)}>
+                                <Check className="w-4 h-4 mr-2" />
+                                Valider
+                              </DropdownMenuItem>
+                            )}
+                            {invoice.type === 'quote' && invoice.status !== 'accepted' && (
                               <DropdownMenuItem onClick={() => {
                                 setQuoteToConvert(invoice);
                                 setConvertDialogOpen(true);
                               }}>
                                 <ArrowRight className="w-4 h-4 mr-2" />
-                                Convertir
+                                Convertir en facture
                               </DropdownMenuItem>
                             )}
                             {invoice.type === 'invoice' && invoice.status === 'sent' && (
