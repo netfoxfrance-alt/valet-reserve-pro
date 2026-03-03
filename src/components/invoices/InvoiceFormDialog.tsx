@@ -250,6 +250,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
         setNotes(prefillData.message || '');
       } else {
         setClientName('');
+        setClientSearch('');
         setClientEmail('');
         setClientPhone('');
         setClientAddress('');
