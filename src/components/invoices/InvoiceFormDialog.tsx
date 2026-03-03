@@ -94,13 +94,54 @@ interface FormItem {
 export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoice, prefillData }: InvoiceFormDialogProps) {
   const { createInvoice, updateInvoice, getInvoiceWithItems, generateNextNumber } = useInvoices();
   const { vatRates } = useVatRates();
-  const { clients } = useMyClients();
+  const { clients, createClient, refetch: refetchClients } = useMyClients();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [clientSearch, setClientSearch] = useState('');
   const [clientDropdownOpen, setClientDropdownOpen] = useState(false);
   const clientSearchRef = useRef<HTMLDivElement>(null);
+  
+  // Inline client creation state
+  const [showInlineClientCreate, setShowInlineClientCreate] = useState(false);
+  const [inlineCreating, setInlineCreating] = useState(false);
+  const [newClientForm, setNewClientForm] = useState({
+    name: '', email: '', phone: '', address: '', notes: '',
+    client_type: 'particulier' as 'particulier' | 'professionnel',
+    company_name: '',
+  });
+
+  const handleInlineClientCreate = async () => {
+    if (!newClientForm.name.trim()) {
+      toast({ title: 'Erreur', description: 'Le nom est requis', variant: 'destructive' });
+      return;
+    }
+    setInlineCreating(true);
+    const { error, data: createdClient } = await createClient({
+      name: newClientForm.name.trim(),
+      email: newClientForm.email.trim() || undefined,
+      phone: newClientForm.phone.trim() || undefined,
+      address: newClientForm.address.trim() || undefined,
+      notes: newClientForm.notes.trim() || undefined,
+    } as any);
+
+    if (!error && createdClient) {
+      const c = createdClient as any;
+      setSelectedClientId(c.id);
+      setClientSearch(c.name);
+      setClientName(c.name);
+      setClientEmail(c.email || '');
+      setClientPhone(c.phone || '');
+      setClientAddress(c.address || '');
+      toast({ title: 'Client créé', description: `${c.name} a été ajouté.` });
+      setShowInlineClientCreate(false);
+      setNewClientForm({ name: '', email: '', phone: '', address: '', notes: '', client_type: 'particulier', company_name: '' });
+      refetchClients();
+    } else if (error) {
+      toast({ title: 'Erreur', description: error, variant: 'destructive' });
+    }
+    setInlineCreating(false);
+  };
 
   // Form state
   const [selectedType, setSelectedType] = useState<'invoice' | 'quote'>(initialType || 'invoice');
