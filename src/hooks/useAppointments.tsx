@@ -257,7 +257,14 @@ export function useCreateAppointment() {
   const [loading, setLoading] = useState(false);
 
   const formatAppointmentError = (error: unknown): string => {
-    const raw = error instanceof Error ? error.message : String(error ?? '');
+    let raw = '';
+    if (error instanceof Error) {
+      raw = error.message;
+    } else if (error && typeof error === 'object' && 'message' in error) {
+      raw = String((error as { message: string }).message);
+    } else if (typeof error === 'string') {
+      raw = error;
+    }
     if (!raw) return 'Impossible de créer le rendez-vous. Veuillez réessayer.';
 
     if (raw.includes('violates row-level security')) {
