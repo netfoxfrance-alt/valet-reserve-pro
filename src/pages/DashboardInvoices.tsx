@@ -17,7 +17,8 @@ import {
   Trash2,
   ArrowRight,
   Download,
-  Send
+  Send,
+  Check
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -63,7 +64,7 @@ export default function DashboardInvoices() {
   const { invoices, loading, deleteInvoice, convertQuoteToInvoice, updateInvoice } = useInvoices();
   const { toast } = useToast();
   
-  const [activeTab, setActiveTab] = useState<'all' | 'invoices' | 'quotes' | 'pending'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'invoices' | 'quotes' | 'quotes-accepted' | 'quotes-pending' | 'pending'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [formOpen, setFormOpen] = useState(false);
   const [formType, setFormType] = useState<'invoice' | 'quote'>('invoice');
@@ -92,6 +93,8 @@ export default function DashboardInvoices() {
     const matchesTab = activeTab === 'all' || 
       (activeTab === 'invoices' && invoice.type === 'invoice') ||
       (activeTab === 'quotes' && invoice.type === 'quote') ||
+      (activeTab === 'quotes-accepted' && invoice.type === 'quote' && invoice.status === 'accepted') ||
+      (activeTab === 'quotes-pending' && invoice.type === 'quote' && invoice.status !== 'accepted') ||
       (activeTab === 'pending' && invoice.type === 'invoice' && invoice.status === 'sent');
     
     const matchesSearch = !searchQuery || 
@@ -180,6 +183,22 @@ export default function DashboardInvoices() {
     }
   };
 
+  const handleMarkAsAccepted = async (invoice: Invoice) => {
+    const { error } = await updateInvoice(invoice.id, { status: 'accepted' });
+    if (error) {
+      toast({
+        title: 'Erreur',
+        description: error,
+        variant: 'destructive',
+      });
+    } else {
+      toast({
+        title: 'Devis validé',
+        description: `Devis ${invoice.number} marqué comme accepté.`,
+      });
+    }
+  };
+
   if (centerLoading || !center) {
     return (
       <DashboardLayout title="Factures & Devis">
@@ -222,7 +241,7 @@ export default function DashboardInvoices() {
               </Card>
             </button>
             <button onClick={() => setActiveTab('quotes')} className="text-left">
-              <Card className={cn("p-5 rounded-2xl transition-all", activeTab === 'quotes' ? "ring-2 ring-primary shadow-sm" : "hover:bg-secondary/50")}>
+              <Card className={cn("p-5 rounded-2xl transition-all", (activeTab === 'quotes' || activeTab === 'quotes-accepted' || activeTab === 'quotes-pending') ? "ring-2 ring-primary shadow-sm" : "hover:bg-secondary/50")}>
                 <p className="text-sm font-medium text-muted-foreground mb-1">{t('invoices.quotes')}</p>
                 <p className="text-3xl font-bold tracking-tight">{stats.totalQuotes}</p>
               </Card>
@@ -251,12 +270,43 @@ export default function DashboardInvoices() {
             </Card>
           </div>
 
+          {/* Quote sub-tabs */}
+          {(activeTab === 'quotes' || activeTab === 'quotes-accepted' || activeTab === 'quotes-pending') && (
+            <div className="flex gap-2">
+              <Button 
+                variant={activeTab === 'quotes' ? 'default' : 'outline'} 
+                size="sm" 
+                onClick={() => setActiveTab('quotes')}
+                className="rounded-xl"
+              >
+                Tous ({invoices.filter(i => i.type === 'quote').length})
+              </Button>
+              <Button 
+                variant={activeTab === 'quotes-pending' ? 'default' : 'outline'} 
+                size="sm" 
+                onClick={() => setActiveTab('quotes-pending')}
+                className="rounded-xl"
+              >
+                En attente ({invoices.filter(i => i.type === 'quote' && i.status !== 'accepted').length})
+              </Button>
+              <Button 
+                variant={activeTab === 'quotes-accepted' ? 'default' : 'outline'} 
+                size="sm" 
+                onClick={() => setActiveTab('quotes-accepted')}
+                className="rounded-xl"
+              >
+                <Check className="w-3.5 h-3.5 mr-1" />
+                Validés ({invoices.filter(i => i.type === 'quote' && i.status === 'accepted').length})
+              </Button>
+            </div>
+          )}
+
           {/* List */}
           <Card className="rounded-2xl overflow-hidden">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between gap-4">
                 <p className="text-sm font-medium text-muted-foreground">
-                  {activeTab === 'invoices' ? 'Factures' : activeTab === 'quotes' ? 'Devis' : activeTab === 'pending' ? 'En attente' : 'Tout'} 
+                  {activeTab === 'invoices' ? 'Factures' : activeTab === 'quotes' ? 'Devis' : activeTab === 'quotes-accepted' ? 'Devis validés' : activeTab === 'quotes-pending' ? 'Devis en attente' : activeTab === 'pending' ? 'En attente' : 'Tout'} 
                   <span className="ml-1 text-foreground">({filteredInvoices.length})</span>
                 </p>
                 <div className="relative">
@@ -341,12 +391,18 @@ export default function DashboardInvoices() {
                               Modifier
                             </DropdownMenuItem>
                             {invoice.type === 'quote' && invoice.status !== 'accepted' && (
+                              <DropdownMenuItem onClick={() => handleMarkAsAccepted(invoice)}>
+                                <Check className="w-4 h-4 mr-2" />
+                                Valider
+                              </DropdownMenuItem>
+                            )}
+                            {invoice.type === 'quote' && invoice.status !== 'accepted' && (
                               <DropdownMenuItem onClick={() => {
                                 setQuoteToConvert(invoice);
                                 setConvertDialogOpen(true);
                               }}>
                                 <ArrowRight className="w-4 h-4 mr-2" />
-                                Convertir
+                                Convertir en facture
                               </DropdownMenuItem>
                             )}
                             {invoice.type === 'invoice' && invoice.status === 'sent' && (

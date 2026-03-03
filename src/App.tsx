@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import CenterBooking from "./pages/CenterBooking";
+import AcceptQuote from "./pages/AcceptQuote";
 import DepositPayment from "./pages/DepositPayment";
 import DepositSuccess from "./pages/DepositSuccess";
 import DepositCancel from "./pages/DepositCancel";
@@ -130,6 +131,7 @@ const App = () => (
             <Route path="/deposit-payment" element={<DepositPayment />} />
             <Route path="/deposit-success" element={<DepositSuccess />} />
             <Route path="/deposit-cancel" element={<DepositCancel />} />
+            <Route path="/accept-quote" element={<AcceptQuote />} />
             {/* Sitemap redirect (reliable fallback without Cloudflare Worker) */}
             <Route path="/sitemap.xml" element={<SitemapRedirect />} />
 

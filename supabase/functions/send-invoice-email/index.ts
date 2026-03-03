@@ -357,6 +357,7 @@ const handler = async (req: Request): Promise<Response> => {
       .order("sort_order");
 
     const isInvoice = invoice.type === "invoice";
+    const isQuote = invoice.type === "quote";
     const docType = isInvoice ? "Facture" : "Devis";
 
     console.log(`[SEND-INVOICE-EMAIL] Generating PDF for ${docType} ${invoice.number}`);
@@ -368,6 +369,26 @@ const handler = async (req: Request): Promise<Response> => {
     const pdfBase64 = btoa(String.fromCharCode(...pdfBytes));
 
     console.log(`[SEND-INVOICE-EMAIL] PDF generated, size: ${pdfBytes.length} bytes`);
+
+    // Build acceptance button HTML for quotes
+    let acceptButtonHtml = '';
+    if (isQuote && invoice.acceptance_token) {
+      // Build the accept URL - use the app's published URL
+      const appUrl = "https://valet-reserve-pro.lovable.app";
+      const acceptUrl = `${appUrl}/accept-quote?token=${invoice.acceptance_token}`;
+      
+      acceptButtonHtml = `
+        <div style="text-align: center; margin: 24px 0;">
+          <a href="${acceptUrl}" 
+             style="display: inline-block; background-color: #10b981; color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 15px;">
+            ✓ Accepter ce devis
+          </a>
+          <p style="font-size: 12px; color: #9ca3af; margin-top: 12px;">
+            En cliquant sur ce bouton, vous acceptez le devis ${invoice.number}
+          </p>
+        </div>
+      `;
+    }
 
     // Simple email body
     const emailHtml = `
@@ -403,8 +424,10 @@ const handler = async (req: Request): Promise<Response> => {
             </table>
           </div>
 
+          ${acceptButtonHtml}
+
           <p style="font-size: 13px; color: #9ca3af; margin: 0;">
-            Le document complet est en pièce jointe au format PDF.
+            Le document complet est en piece jointe au format PDF.
           </p>
         </div>
         <p style="text-align: center; font-size: 11px; color: #9ca3af; margin-top: 24px;">

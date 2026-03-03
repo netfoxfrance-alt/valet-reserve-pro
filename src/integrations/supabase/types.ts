@@ -689,6 +689,7 @@ export type Database = {
       }
       invoices: {
         Row: {
+          acceptance_token: string | null
           center_id: string
           client_address: string | null
           client_email: string | null
@@ -713,6 +714,7 @@ export type Database = {
           valid_until: string | null
         }
         Insert: {
+          acceptance_token?: string | null
           center_id: string
           client_address?: string | null
           client_email?: string | null
@@ -737,6 +739,7 @@ export type Database = {
           valid_until?: string | null
         }
         Update: {
+          acceptance_token?: string | null
           center_id?: string
           client_address?: string | null
           client_email?: string | null
