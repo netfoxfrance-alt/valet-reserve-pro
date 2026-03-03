@@ -985,5 +985,6 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
         </form>
       </DialogContent>
     </Dialog>
+    </>
   );
 }
