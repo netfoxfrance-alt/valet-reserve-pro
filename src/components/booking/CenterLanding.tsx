@@ -976,7 +976,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
       
       if (data && data.length > 0) {
         const client = data[0] as RecognizedClient;
-        setRecognizedClient(client);
+        // RPC masks PII for security — inject the email the user typed
+        setRecognizedClient({ ...client, client_email: lookupEmail.trim().toLowerCase() });
       } else {
         setLookupNotFound(true);
       }

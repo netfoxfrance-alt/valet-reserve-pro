@@ -231,8 +231,16 @@ export default function CenterBooking() {
     setSelectedDate(date);
     setSelectedTime(time);
 
-    // Recognized client → skip client-info form, book directly
+    // Recognized client → if we have full contact info, book directly; otherwise go to client-info
     if (recognizedClient?.client_id) {
+      const hasFullInfo = recognizedClient.client_name && recognizedClient.client_email && recognizedClient.client_phone;
+      
+      if (!hasFullInfo) {
+        // Missing contact info (PII masked by RPC) → go to client-info form
+        setCurrentStep('client-info');
+        return;
+      }
+      
       setAutoSubmitting(true);
       const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
       const isDepositActive = center?.deposit_enabled && center?.stripe_connect_status === 'active';
@@ -241,8 +249,8 @@ export default function CenterBooking() {
         center_id: center!.id,
         pack_id: recognizedClient.service_id ? '' : (selectedPack?.id || ''),
         client_name: recognizedClient.client_name,
-        client_email: recognizedClient.client_email,
-        client_phone: recognizedClient.client_phone,
+        client_email: recognizedClient.client_email!,
+        client_phone: recognizedClient.client_phone!,
         client_address: recognizedClient.client_address || '',
         vehicle_type: recognizedClient.service_id ? 'custom' : (selectedVariant?.name || 'berline'),
         appointment_date: formattedDate,
