@@ -143,15 +143,7 @@ const handler = async (req: Request): Promise<Response> => {
     const isQuote = invoice.type === "quote";
     const docType = isInvoice ? "Facture" : "Devis";
 
-    console.log(`[SEND-INVOICE-EMAIL] Generating PDF for ${docType} ${invoice.number}`);
-
-    // Generate PDF
-    const pdfBytes = await generateInvoicePdf(invoice, items || [], center);
-    
-    // Convert to base64 for Resend attachment
-    const pdfBase64 = btoa(String.fromCharCode(...pdfBytes));
-
-    console.log(`[SEND-INVOICE-EMAIL] PDF generated, size: ${pdfBytes.length} bytes`);
+    console.log(`[SEND-INVOICE-EMAIL] Sending ${docType} ${invoice.number} by email`);
 
     // Build acceptance button HTML for quotes
     let acceptButtonHtml = '';
