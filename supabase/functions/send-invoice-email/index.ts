@@ -16,12 +16,10 @@ interface SendInvoiceRequest {
 
 // Helper to draw text with proper encoding
 const drawText = (page: any, text: string, x: number, y: number, options: any) => {
-  // Replace special characters that might cause encoding issues
   const safeText = (text || '').replace(/[^\x20-\x7E\u00C0-\u00FF]/g, '');
   try {
     page.drawText(safeText, { x, y, ...options });
   } catch {
-    // Fallback: strip to ASCII only
     const asciiText = (text || '').replace(/[^\x20-\x7E]/g, '');
     page.drawText(asciiText, { x, y, ...options });
   }
@@ -50,6 +48,49 @@ const textWidth = (text: string, font: any, fontSize: number): number => {
   }
 };
 
+const stripAccents = (str: string): string => {
+  return (str || '').replace(/[^\x20-\x7E]/g, (c: string) => {
+    const map: Record<string, string> = {
+      'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e',
+      'à': 'a', 'â': 'a', 'ä': 'a',
+      'ô': 'o', 'ö': 'o',
+      'û': 'u', 'ù': 'u', 'ü': 'u',
+      'î': 'i', 'ï': 'i',
+      'ç': 'c',
+      'É': 'E', 'È': 'E', 'Ê': 'E',
+      'À': 'A', 'Â': 'A',
+      'Ô': 'O', 'Û': 'U', 'Î': 'I',
+      'Ç': 'C',
+    };
+    return map[c] || c;
+  });
+};
+
+// Fetch and embed logo into PDF
+const embedLogo = async (pdfDoc: any, logoUrl: string | null): Promise<any | null> => {
+  if (!logoUrl) return null;
+  try {
+    const response = await fetch(logoUrl);
+    if (!response.ok) return null;
+    const arrayBuffer = await response.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    const contentType = response.headers.get('content-type') || '';
+    
+    if (contentType.includes('png') || logoUrl.toLowerCase().endsWith('.png')) {
+      return await pdfDoc.embedPng(bytes);
+    } else if (contentType.includes('jpeg') || contentType.includes('jpg') || logoUrl.toLowerCase().endsWith('.jpg') || logoUrl.toLowerCase().endsWith('.jpeg')) {
+      return await pdfDoc.embedJpg(bytes);
+    }
+    // Try png first, then jpg
+    try { return await pdfDoc.embedPng(bytes); } catch { /* ignore */ }
+    try { return await pdfDoc.embedJpg(bytes); } catch { /* ignore */ }
+    return null;
+  } catch (e) {
+    console.log('[PDF] Could not embed logo:', e);
+    return null;
+  }
+};
+
 const generateInvoicePdf = async (invoice: any, items: any[], center: any): Promise<Uint8Array> => {
   const pdfDoc = await PDFDocument.create();
   const page = pdfDoc.addPage([595, 842]); // A4
@@ -71,20 +112,40 @@ const generateInvoicePdf = async (invoice: any, items: any[], center: any): Prom
   const isInvoice = invoice.type === 'invoice';
   const docType = isInvoice ? 'FACTURE' : 'DEVIS';
 
+  // === LOGO ===
+  const logoImage = await embedLogo(pdfDoc, center?.logo_url);
+  if (logoImage) {
+    const logoDims = logoImage.scale(1);
+    const maxLogoH = 45;
+    const maxLogoW = 160;
+    const scale = Math.min(maxLogoH / logoDims.height, maxLogoW / logoDims.width, 1);
+    const logoW = logoDims.width * scale;
+    const logoH = logoDims.height * scale;
+    page.drawImage(logoImage, {
+      x: margin,
+      y: y - logoH,
+      width: logoW,
+      height: logoH,
+    });
+    y -= logoH + 10;
+  }
+
   // === HEADER: Company info (left) + Doc info (right) ===
+  const headerStartY = y;
   
   // Company name
   drawText(page, center?.name || '', margin, y, { font: fontBold, size: 14, color: darkText });
   
   // Doc type (right-aligned)
   const docTypeWidth = textWidth(docType, fontBold, 22);
-  drawText(page, docType, 595 - margin - docTypeWidth, y, { font: fontBold, size: 22, color: primary });
+  drawText(page, docType, 595 - margin - docTypeWidth, headerStartY, { font: fontBold, size: 22, color: primary });
   
   y -= 18;
 
   // Company details
   if (center?.address) {
-    drawText(page, center.address, margin, y, { font: fontRegular, size: 9, color: gray });
+    const safeAddr = truncateText(stripAccents(center.address), fontRegular, 9, pageWidth * 0.55);
+    drawText(page, safeAddr, margin, y, { font: fontRegular, size: 9, color: gray });
     y -= 13;
   }
   if (center?.phone) {
@@ -97,35 +158,25 @@ const generateInvoicePdf = async (invoice: any, items: any[], center: any): Prom
   }
 
   // Doc number + date (right side)
-  const numY = height - margin - 28;
+  const numY = headerStartY - 28;
   const numText = invoice.number || '';
   const numWidth = textWidth(numText, fontBold, 12);
   drawText(page, numText, 595 - margin - numWidth, numY, { font: fontBold, size: 12, color: darkText });
 
   const issueDate = new Date(invoice.issue_date);
-  const dateStr = `Date: ${issueDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`;
-  const safeDateStr = dateStr.replace(/[^\x20-\x7E]/g, (c: string) => {
-    const map: Record<string, string> = { 'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e', 'à': 'a', 'â': 'a', 'ô': 'o', 'û': 'u', 'ù': 'u', 'î': 'i', 'ï': 'i', 'ç': 'c' };
-    return map[c] || c;
-  });
-  const dateWidth = textWidth(safeDateStr, fontRegular, 9);
-  drawText(page, safeDateStr, 595 - margin - dateWidth, numY - 16, { font: fontRegular, size: 9, color: gray });
+  const dateStr = stripAccents(`Date: ${issueDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`);
+  const dateWidth = textWidth(dateStr, fontRegular, 9);
+  drawText(page, dateStr, 595 - margin - dateWidth, numY - 16, { font: fontRegular, size: 9, color: gray });
 
   // Due date / Valid until
   if (isInvoice && invoice.due_date) {
     const dueDate = new Date(invoice.due_date);
-    const dueStr = `Echeance: ${dueDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`.replace(/[^\x20-\x7E]/g, (c: string) => {
-      const map: Record<string, string> = { 'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e', 'à': 'a', 'â': 'a', 'ô': 'o', 'û': 'u', 'ù': 'u', 'î': 'i', 'ï': 'i', 'ç': 'c' };
-      return map[c] || c;
-    });
+    const dueStr = stripAccents(`Echeance: ${dueDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`);
     const dueWidth = textWidth(dueStr, fontRegular, 9);
     drawText(page, dueStr, 595 - margin - dueWidth, numY - 30, { font: fontRegular, size: 9, color: gray });
   } else if (!isInvoice && invoice.valid_until) {
     const validDate = new Date(invoice.valid_until);
-    const validStr = `Valable jusqu'au: ${validDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`.replace(/[^\x20-\x7E]/g, (c: string) => {
-      const map: Record<string, string> = { 'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e', 'à': 'a', 'â': 'a', 'ô': 'o', 'û': 'u', 'ù': 'u', 'î': 'i', 'ï': 'i', 'ç': 'c' };
-      return map[c] || c;
-    });
+    const validStr = stripAccents(`Valable jusqu'au: ${validDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`);
     const validWidth = textWidth(validStr, fontRegular, 9);
     drawText(page, validStr, 595 - margin - validWidth, numY - 30, { font: fontRegular, size: 9, color: gray });
   }
@@ -136,7 +187,6 @@ const generateInvoicePdf = async (invoice: any, items: any[], center: any): Prom
   const clientBoxY = y;
   const clientBoxHeight = 60 + (invoice.client_address ? 13 : 0) + (invoice.client_phone ? 13 : 0) + (invoice.client_email ? 13 : 0);
   
-  // Background box
   page.drawRectangle({
     x: margin,
     y: clientBoxY - clientBoxHeight,
@@ -148,13 +198,13 @@ const generateInvoicePdf = async (invoice: any, items: any[], center: any): Prom
   });
 
   let clientY = clientBoxY - 16;
-  drawText(page, 'FACTURE A', margin + 12, clientY, { font: fontRegular, size: 8, color: gray });
+  drawText(page, isInvoice ? 'FACTURE A' : 'DEVIS POUR', margin + 12, clientY, { font: fontRegular, size: 8, color: gray });
   clientY -= 18;
   drawText(page, invoice.client_name || '', margin + 12, clientY, { font: fontBold, size: 12, color: darkText });
   clientY -= 15;
 
   if (invoice.client_address) {
-    drawText(page, invoice.client_address, margin + 12, clientY, { font: fontRegular, size: 9, color: gray });
+    drawText(page, stripAccents(invoice.client_address), margin + 12, clientY, { font: fontRegular, size: 9, color: gray });
     clientY -= 13;
   }
   if (invoice.client_phone) {
@@ -174,7 +224,6 @@ const generateInvoicePdf = async (invoice: any, items: any[], center: any): Prom
   const headerHeight = 28;
   const rowHeight = 24;
 
-  // Table header background
   page.drawRectangle({
     x: margin,
     y: y - headerHeight,
@@ -183,7 +232,6 @@ const generateInvoicePdf = async (invoice: any, items: any[], center: any): Prom
     color: rgb(0.95, 0.95, 0.96),
   });
 
-  // Header text
   let colX = margin;
   for (let i = 0; i < headers.length; i++) {
     const isRight = i > 0;
@@ -194,11 +242,9 @@ const generateInvoicePdf = async (invoice: any, items: any[], center: any): Prom
 
   y -= headerHeight;
 
-  // Table rows
   for (let r = 0; r < items.length; r++) {
     const item = items[r];
     
-    // Alternate row background
     if (r % 2 === 1) {
       page.drawRectangle({
         x: margin,
@@ -211,11 +257,11 @@ const generateInvoicePdf = async (invoice: any, items: any[], center: any): Prom
 
     colX = margin;
     const values = [
-      truncateText(item.description || '', fontRegular, 9, colWidths[0] - 16),
+      truncateText(stripAccents(item.description || ''), fontRegular, 9, colWidths[0] - 16),
       String(item.quantity || 1),
-      `${(item.unit_price || 0).toFixed(2)}€`,
+      `${(item.unit_price || 0).toFixed(2)}`,
       `${item.vat_rate || 0}%`,
-      `${(item.subtotal || 0).toFixed(2)}€`,
+      `${(item.subtotal || 0).toFixed(2)}`,
     ];
 
     for (let i = 0; i < values.length; i++) {
@@ -225,7 +271,6 @@ const generateInvoicePdf = async (invoice: any, items: any[], center: any): Prom
       colX += colWidths[i];
     }
 
-    // Row border
     page.drawLine({
       start: { x: margin, y: y - rowHeight },
       end: { x: margin + pageWidth, y: y - rowHeight },
@@ -242,19 +287,16 @@ const generateInvoicePdf = async (invoice: any, items: any[], center: any): Prom
   const totalsX = 595 - margin - 180;
   const totalsWidth = 180;
 
-  // Sous-total HT
   drawText(page, 'Sous-total HT', totalsX, y, { font: fontRegular, size: 10, color: gray });
-  const stVal = `${(invoice.subtotal || 0).toFixed(2)}€`;
+  const stVal = `${(invoice.subtotal || 0).toFixed(2)}`;
   drawText(page, stVal, totalsX + totalsWidth - textWidth(stVal, fontRegular, 10), y, { font: fontRegular, size: 10, color: darkText });
   y -= 18;
 
-  // TVA
   drawText(page, 'TVA', totalsX, y, { font: fontRegular, size: 10, color: gray });
-  const vatVal = `${(invoice.total_vat || 0).toFixed(2)}€`;
+  const vatVal = `${(invoice.total_vat || 0).toFixed(2)}`;
   drawText(page, vatVal, totalsX + totalsWidth - textWidth(vatVal, fontRegular, 10), y, { font: fontRegular, size: 10, color: darkText });
   y -= 6;
 
-  // Separator
   page.drawLine({
     start: { x: totalsX, y },
     end: { x: totalsX + totalsWidth, y },
@@ -263,9 +305,8 @@ const generateInvoicePdf = async (invoice: any, items: any[], center: any): Prom
   });
   y -= 18;
 
-  // Total TTC
   drawText(page, 'Total TTC', totalsX, y, { font: fontBold, size: 13, color: darkText });
-  const totalVal = `${(invoice.total || 0).toFixed(2)}€`;
+  const totalVal = `${(invoice.total || 0).toFixed(2)}`;
   drawText(page, totalVal, totalsX + totalsWidth - textWidth(totalVal, fontBold, 13), y, { font: fontBold, size: 13, color: primary });
   y -= 30;
 
@@ -275,7 +316,7 @@ const generateInvoicePdf = async (invoice: any, items: any[], center: any): Prom
     y -= 14;
     const noteLines = (invoice.notes || '').split('\n');
     for (const line of noteLines) {
-      const safeLine = truncateText(line, fontRegular, 8, pageWidth);
+      const safeLine = truncateText(stripAccents(line), fontRegular, 8, pageWidth);
       drawText(page, safeLine, margin, y, { font: fontRegular, size: 8, color: gray });
       y -= 12;
     }
@@ -287,7 +328,7 @@ const generateInvoicePdf = async (invoice: any, items: any[], center: any): Prom
     y -= 14;
     const termLines = (invoice.terms || '').split('\n');
     for (const line of termLines) {
-      const safeLine = truncateText(line, fontRegular, 8, pageWidth);
+      const safeLine = truncateText(stripAccents(line), fontRegular, 8, pageWidth);
       drawText(page, safeLine, margin, y, { font: fontRegular, size: 8, color: gray });
       y -= 12;
     }
@@ -296,7 +337,7 @@ const generateInvoicePdf = async (invoice: any, items: any[], center: any): Prom
 
   // === FOOTER ===
   const footerY = 40;
-  const footerParts = [center?.name, center?.address].filter(Boolean).join(' - ');
+  const footerParts = stripAccents([center?.name, center?.address].filter(Boolean).join(' - '));
   const footerWidth = textWidth(footerParts, fontRegular, 7);
   drawText(page, footerParts, (595 - footerWidth) / 2, footerY, { font: fontRegular, size: 7, color: gray });
 
@@ -373,7 +414,6 @@ const handler = async (req: Request): Promise<Response> => {
     // Build acceptance button HTML for quotes
     let acceptButtonHtml = '';
     if (isQuote && invoice.acceptance_token) {
-      // Build the accept URL - use the app's published URL
       const appUrl = "https://valet-reserve-pro.lovable.app";
       const acceptUrl = `${appUrl}/accept-quote?token=${invoice.acceptance_token}`;
       
@@ -381,7 +421,7 @@ const handler = async (req: Request): Promise<Response> => {
         <div style="text-align: center; margin: 24px 0;">
           <a href="${acceptUrl}" 
              style="display: inline-block; background-color: #10b981; color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 15px;">
-            ✓ Accepter ce devis
+            &#10003; Accepter ce devis
           </a>
           <p style="font-size: 12px; color: #9ca3af; margin-top: 12px;">
             En cliquant sur ce bouton, vous acceptez le devis ${invoice.number}
@@ -390,13 +430,20 @@ const handler = async (req: Request): Promise<Response> => {
       `;
     }
 
-    // Simple email body
+    // Email body with logo
+    const logoHtml = center?.logo_url ? `
+      <div style="margin-bottom: 16px;">
+        <img src="${center.logo_url}" alt="${center.name || ''}" style="max-height: 50px; max-width: 180px; object-fit: contain;" />
+      </div>
+    ` : '';
+
     const emailHtml = `
       <!DOCTYPE html>
       <html>
       <head><meta charset="utf-8"></head>
       <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1f2937; padding: 40px 20px; background: #f9fafb;">
         <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          ${logoHtml}
           <h2 style="margin: 0 0 8px; font-size: 20px;">${docType} ${invoice.number}</h2>
           <p style="color: #6b7280; margin: 0 0 24px; font-size: 14px;">De ${center?.name || ''}</p>
           
@@ -404,22 +451,22 @@ const handler = async (req: Request): Promise<Response> => {
             Bonjour ${invoice.client_name},
           </p>
           <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.6;">
-            Veuillez trouver ci-joint ${isInvoice ? 'votre facture' : 'votre devis'} <strong>${invoice.number}</strong> d'un montant de <strong>${invoice.total.toFixed(2)}€ TTC</strong>.
+            Veuillez trouver ci-joint ${isInvoice ? 'votre facture' : 'votre devis'} <strong>${invoice.number}</strong> d'un montant de <strong>${invoice.total.toFixed(2)}&#8364; TTC</strong>.
           </p>
 
           <div style="background: #f3f4f6; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
             <table style="width: 100%; font-size: 14px;">
               <tr>
                 <td style="color: #6b7280; padding: 4px 0;">Montant HT</td>
-                <td style="text-align: right; font-weight: 500;">${invoice.subtotal.toFixed(2)}€</td>
+                <td style="text-align: right; font-weight: 500;">${invoice.subtotal.toFixed(2)}&#8364;</td>
               </tr>
               <tr>
                 <td style="color: #6b7280; padding: 4px 0;">TVA</td>
-                <td style="text-align: right; font-weight: 500;">${invoice.total_vat.toFixed(2)}€</td>
+                <td style="text-align: right; font-weight: 500;">${invoice.total_vat.toFixed(2)}&#8364;</td>
               </tr>
               <tr style="border-top: 1px solid #d1d5db;">
                 <td style="color: #111827; padding: 8px 0 0; font-weight: 600;">Total TTC</td>
-                <td style="text-align: right; font-weight: 700; color: #3b82f6; padding-top: 8px;">${invoice.total.toFixed(2)}€</td>
+                <td style="text-align: right; font-weight: 700; color: #3b82f6; padding-top: 8px;">${invoice.total.toFixed(2)}&#8364;</td>
               </tr>
             </table>
           </div>
@@ -431,7 +478,7 @@ const handler = async (req: Request): Promise<Response> => {
           </p>
         </div>
         <p style="text-align: center; font-size: 11px; color: #9ca3af; margin-top: 24px;">
-          ${center?.name || ''} ${center?.address ? `· ${center.address}` : ''}
+          ${center?.name || ''} ${center?.address ? `&middot; ${center.address}` : ''}
         </p>
       </body>
       </html>
