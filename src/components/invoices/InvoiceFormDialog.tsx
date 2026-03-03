@@ -183,6 +183,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
           setSelectedType(data.type);
           setDocumentNumber(data.number);
           setClientName(data.client_name);
+          setClientSearch(data.client_name);
           setClientEmail(data.client_email || '');
           setClientPhone(data.client_phone || '');
           setClientAddress(data.client_address || '');
