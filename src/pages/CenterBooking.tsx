@@ -262,9 +262,19 @@ export default function CenterBooking() {
         }
 
         if (rpcResult && rpcResult.length > 0) {
-          setLastAppointmentId(rpcResult[0].appointment_id);
+          const row = rpcResult[0];
+          setLastAppointmentId(row.appointment_id);
 
-          // Send booking email (non-blocking)
+          // Set clientData so the confirmation view can render
+          setClientData({
+            name: row.client_name || recognizedClient.client_name || '',
+            email: row.client_email || recognizedClient.client_email || '',
+            phone: row.client_phone || recognizedClient.client_phone || '',
+            address: row.client_address || recognizedClient.client_address || '',
+            notes: '',
+          });
+
+          // Send booking email to BOTH client and pro (non-blocking)
           const isDepositActive = center?.deposit_enabled && center?.stripe_connect_status === 'active';
           if (!isDepositActive) {
             const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -277,11 +287,11 @@ export default function CenterBooking() {
               },
               body: JSON.stringify({
                 center_id: center!.id,
-                client_name: rpcResult[0].client_name,
-                client_email: rpcResult[0].client_email,
-                client_phone: rpcResult[0].client_phone,
-                pack_name: rpcResult[0].service_name || recognizedClient.service_name || 'Prestation personnalisée',
-                price: rpcResult[0].service_price || recognizedClient.service_price || 0,
+                client_name: row.client_name,
+                client_email: row.client_email,
+                client_phone: row.client_phone,
+                pack_name: row.service_name || recognizedClient.service_name || 'Prestation personnalisée',
+                price: row.service_price || recognizedClient.service_price || 0,
                 appointment_date: formattedDate,
                 appointment_time: time,
                 email_type: 'request_received',
