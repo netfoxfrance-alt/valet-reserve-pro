@@ -289,6 +289,7 @@ export function useCreateAppointment() {
     custom_service_id?: string | null;
     client_id?: string | null;
     custom_price?: number | null;
+    skip_email?: boolean; // When deposit is enabled, skip email here (webhook handles it)
   }) => {
     setLoading(true);
 
