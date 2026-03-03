@@ -7,7 +7,7 @@ import { Invoice, InvoiceItem, useInvoices } from '@/hooks/useInvoices';
 import { Center } from '@/hooks/useCenter';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Printer, Send, Mail, Loader2, Download } from 'lucide-react';
+import { Printer, Send, Mail, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
