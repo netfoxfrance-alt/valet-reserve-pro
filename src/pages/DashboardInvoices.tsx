@@ -63,7 +63,7 @@ export default function DashboardInvoices() {
   const { invoices, loading, deleteInvoice, convertQuoteToInvoice, updateInvoice } = useInvoices();
   const { toast } = useToast();
   
-  const [activeTab, setActiveTab] = useState<'all' | 'invoices' | 'quotes' | 'pending'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'invoices' | 'quotes' | 'quotes-accepted' | 'quotes-pending' | 'pending'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [formOpen, setFormOpen] = useState(false);
   const [formType, setFormType] = useState<'invoice' | 'quote'>('invoice');
