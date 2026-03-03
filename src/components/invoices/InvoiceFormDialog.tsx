@@ -115,6 +115,12 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
   const [newServiceIds, setNewServiceIds] = useState<string[]>([]);
   const [newServicesOpen, setNewServicesOpen] = useState(false);
 
+  const resetNewClientForm = () => {
+    setNewClientForm({ name: '', email: '', phone: '', address: '', notes: '', client_type: 'particulier', company_name: '' });
+    setNewServiceIds([]);
+    setNewServicesOpen(false);
+  };
+
   const handleInlineClientCreate = async () => {
     if (!newClientForm.name.trim()) {
       toast({ title: 'Erreur', description: 'Le nom est requis', variant: 'destructive' });
@@ -127,10 +133,19 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
       phone: newClientForm.phone.trim() || undefined,
       address: newClientForm.address.trim() || undefined,
       notes: newClientForm.notes.trim() || undefined,
+      client_type: newClientForm.client_type,
+      company_name: newClientForm.client_type === 'professionnel' ? newClientForm.company_name.trim() || undefined : undefined,
     } as any);
 
     if (!error && createdClient) {
       const c = createdClient as any;
+      // Save services if selected
+      if (newServiceIds.length > 0 && c.id) {
+        const { supabase } = await import('@/integrations/supabase/client');
+        await supabase
+          .from('client_services')
+          .insert(newServiceIds.map(sid => ({ client_id: c.id, service_id: sid })));
+      }
       setSelectedClientId(c.id);
       setClientSearch(c.name);
       setClientName(c.name);
@@ -138,8 +153,8 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
       setClientPhone(c.phone || '');
       setClientAddress(c.address || '');
       toast({ title: 'Client créé', description: `${c.name} a été ajouté.` });
-      setShowInlineClientCreate(false);
-      setNewClientForm({ name: '', email: '', phone: '', address: '', notes: '', client_type: 'particulier', company_name: '' });
+      setShowClientCreateDialog(false);
+      resetNewClientForm();
       refetchClients();
     } else if (error) {
       toast({ title: 'Erreur', description: error, variant: 'destructive' });
