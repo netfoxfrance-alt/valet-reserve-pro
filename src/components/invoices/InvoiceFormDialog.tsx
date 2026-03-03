@@ -291,6 +291,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
       
       if (matchedClient) {
         setSelectedClientId(matchedClient.id);
+        setClientSearch(matchedClient.name);
         setClientName(matchedClient.name);
         setClientEmail(matchedClient.email || '');
         setClientPhone(matchedClient.phone || '');
