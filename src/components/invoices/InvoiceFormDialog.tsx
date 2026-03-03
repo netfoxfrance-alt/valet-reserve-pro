@@ -97,21 +97,23 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
   const { createInvoice, updateInvoice, getInvoiceWithItems, generateNextNumber } = useInvoices();
   const { vatRates } = useVatRates();
   const { clients, createClient, refetch: refetchClients } = useMyClients();
+  const { services: allServices } = useMyCustomServices();
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [clientSearch, setClientSearch] = useState('');
   const [clientDropdownOpen, setClientDropdownOpen] = useState(false);
   const clientSearchRef = useRef<HTMLDivElement>(null);
   
-  // Inline client creation state
-  const [showInlineClientCreate, setShowInlineClientCreate] = useState(false);
+  // Client creation dialog state
+  const [showClientCreateDialog, setShowClientCreateDialog] = useState(false);
   const [inlineCreating, setInlineCreating] = useState(false);
   const [newClientForm, setNewClientForm] = useState({
     name: '', email: '', phone: '', address: '', notes: '',
-    client_type: 'particulier' as 'particulier' | 'professionnel',
+    client_type: 'particulier' as ClientType,
     company_name: '',
   });
+  const [newServiceIds, setNewServiceIds] = useState<string[]>([]);
+  const [newServicesOpen, setNewServicesOpen] = useState(false);
 
   const handleInlineClientCreate = async () => {
     if (!newClientForm.name.trim()) {
