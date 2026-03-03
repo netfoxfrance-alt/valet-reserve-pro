@@ -131,6 +131,7 @@ const App = () => (
             <Route path="/deposit-payment" element={<DepositPayment />} />
             <Route path="/deposit-success" element={<DepositSuccess />} />
             <Route path="/deposit-cancel" element={<DepositCancel />} />
+            <Route path="/accept-quote" element={<AcceptQuote />} />
             {/* Sitemap redirect (reliable fallback without Cloudflare Worker) */}
             <Route path="/sitemap.xml" element={<SitemapRedirect />} />
 
