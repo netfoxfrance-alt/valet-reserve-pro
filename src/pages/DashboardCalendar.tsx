@@ -70,7 +70,7 @@ export default function DashboardCalendar() {
   const { packs } = useMyPacks();
   const { blockedPeriods, addBlockedPeriod, removeBlockedPeriod: deleteBlockedPeriod } = useBlockedPeriods(center?.id);
   const { services: customServices } = useMyCustomServices();
-  const { clients } = useMyClients();
+  const { clients, createClient, refetch: refetchClients } = useMyClients();
   const { markAsSynced, isSynced } = useCalendarSync();
   const isMobile = useIsMobile();
   // Create appointment state
