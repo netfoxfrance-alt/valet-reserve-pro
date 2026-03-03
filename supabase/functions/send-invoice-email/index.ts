@@ -61,174 +61,221 @@ const embedLogo = async (pdfDoc: any, logoUrl: string | null): Promise<any | nul
   } catch { return null; }
 };
 
-// ─── PDF generator ─────────────────────────────────────────────────────────────
+// ─── PDF generator (matches print preview exactly) ────────────────────────────
 
 const generateInvoicePdf = async (invoice: any, items: any[], center: any): Promise<Uint8Array> => {
   const pdfDoc = await PDFDocument.create();
-  const page = pdfDoc.addPage([595, 842]);
+  const page = pdfDoc.addPage([595, 842]); // A4
   const { height } = page.getSize();
 
   const fontR = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontB = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  const m = 50;
-  const pw = 595 - m * 2;
-  const gray = rgb(0.42, 0.45, 0.49);
-  const lightBg = rgb(0.96, 0.96, 0.97);
-  const dark = rgb(0.07, 0.09, 0.13);
-  const border = rgb(0.9, 0.91, 0.92);
+  const ml = 50; // margin left
+  const mr = 50; // margin right
+  const pw = 595 - ml - mr; // page width
+  const dark = rgb(0.067, 0.094, 0.133);    // #111827
+  const gray = rgb(0.42, 0.45, 0.49);       // #6b7280
+  const lightGray = rgb(0.608, 0.639, 0.671); // #9ca3af
+  const bgGray = rgb(0.976, 0.98, 0.984);   // #f9fafb
+  const headerBg = rgb(0.953, 0.957, 0.961); // #f3f4f6
+  const borderC = rgb(0.898, 0.906, 0.918);  // #e5e7eb
 
-  let y = height - m;
+  let y = height - 50;
   const isInv = invoice.type === 'invoice';
   const docType = isInv ? 'FACTURE' : 'DEVIS';
 
-  // Logo
+  // ── Logo ──
   const logo = await embedLogo(pdfDoc, center?.logo_url);
   if (logo) {
     const d = logo.scale(1);
-    const s = Math.min(45 / d.height, 160 / d.width, 1);
-    page.drawImage(logo, { x: m, y: y - d.height * s, width: d.width * s, height: d.height * s });
-    y -= d.height * s + 10;
+    const maxH = 50, maxW = 150;
+    const s = Math.min(maxH / d.height, maxW / d.width, 1);
+    page.drawImage(logo, { x: ml, y: y - d.height * s, width: d.width * s, height: d.height * s });
+    y -= d.height * s + 12;
   }
 
-  // Header
-  const hy = y;
-  drawText(page, center?.name || '', m, y, { font: fontB, size: 14, color: dark });
-  const dtw = textWidth(docType, fontB, 22);
-  drawText(page, docType, 595 - m - dtw, hy, { font: fontB, size: 22, color: dark });
-  y -= 18;
+  // ── Header: Company left, Doc info right ──
+  const headerY = y;
 
+  // Company name
+  drawText(page, center?.name || '', ml, headerY, { font: fontB, size: 16, color: dark });
+
+  // Doc type (right aligned)
+  const dtw = textWidth(docType, fontB, 26);
+  drawText(page, docType, 595 - mr - dtw, headerY, { font: fontB, size: 26, color: dark });
+
+  // Company details
+  let leftY = headerY - 20;
   if (center?.address) {
-    drawText(page, truncateText(center.address, fontR, 9, pw * 0.55), m, y, { font: fontR, size: 9, color: gray });
-    y -= 13;
+    drawText(page, truncateText(center.address, fontR, 10, pw * 0.55), ml, leftY, { font: fontR, size: 10, color: gray });
+    leftY -= 14;
   }
-  if (center?.phone) { drawText(page, `Tel: ${center.phone}`, m, y, { font: fontR, size: 9, color: gray }); y -= 13; }
-  if (center?.email) { drawText(page, center.email, m, y, { font: fontR, size: 9, color: gray }); y -= 13; }
+  if (center?.phone) {
+    drawText(page, `Tel: ${center.phone}`, ml, leftY, { font: fontR, size: 10, color: gray });
+    leftY -= 14;
+  }
+  if (center?.email) {
+    drawText(page, center.email, ml, leftY, { font: fontR, size: 10, color: gray });
+    leftY -= 14;
+  }
 
-  // Doc number + date (right)
-  const ny = hy - 28;
-  const nw = textWidth(invoice.number || '', fontB, 12);
-  drawText(page, invoice.number || '', 595 - m - nw, ny, { font: fontB, size: 12, color: dark });
+  // Doc number & date (right aligned)
+  let rightY = headerY - 26;
+  const numStr = invoice.number || '';
+  const numW = textWidth(numStr, fontB, 14);
+  drawText(page, numStr, 595 - mr - numW, rightY, { font: fontB, size: 14, color: dark });
+  rightY -= 18;
 
   const dateStr = `Date: ${new Date(invoice.issue_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`;
-  const dw2 = textWidth(stripAccents(dateStr), fontR, 9);
-  drawText(page, dateStr, 595 - m - dw2, ny - 16, { font: fontR, size: 9, color: gray });
+  const dateW = textWidth(stripAccents(dateStr), fontR, 10);
+  drawText(page, dateStr, 595 - mr - dateW, rightY, { font: fontR, size: 10, color: gray });
+  rightY -= 15;
 
   if (isInv && invoice.due_date) {
     const ds = `Echeance: ${new Date(invoice.due_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`;
-    const dsw = textWidth(stripAccents(ds), fontR, 9);
-    drawText(page, ds, 595 - m - dsw, ny - 30, { font: fontR, size: 9, color: gray });
+    const dsw = textWidth(stripAccents(ds), fontR, 10);
+    drawText(page, ds, 595 - mr - dsw, rightY, { font: fontR, size: 10, color: gray });
   } else if (!isInv && invoice.valid_until) {
     const vs = `Valable jusqu'au: ${new Date(invoice.valid_until).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`;
-    const vsw = textWidth(stripAccents(vs), fontR, 9);
-    drawText(page, vs, 595 - m - vsw, ny - 30, { font: fontR, size: 9, color: gray });
+    const vsw = textWidth(stripAccents(vs), fontR, 10);
+    drawText(page, vs, 595 - mr - vsw, rightY, { font: fontR, size: 10, color: gray });
   }
 
-  y -= 20;
+  y = Math.min(leftY, rightY) - 20;
 
-  // Client box
-  const cbh = 60 + (invoice.client_address ? 13 : 0) + (invoice.client_phone ? 13 : 0) + (invoice.client_email ? 13 : 0);
-  page.drawRectangle({ x: m, y: y - cbh, width: pw, height: cbh, color: lightBg, borderColor: border, borderWidth: 0.5 });
+  // ── Client Box ──
+  const clientLines: string[] = [];
+  if (invoice.client_address) clientLines.push(stripAccents(invoice.client_address));
+  if (invoice.client_phone) clientLines.push(`Tel: ${invoice.client_phone}`);
+  if (invoice.client_email) clientLines.push(invoice.client_email);
 
-  let cy = y - 16;
-  drawText(page, isInv ? 'FACTURE A' : 'DEVIS POUR', m + 12, cy, { font: fontR, size: 8, color: gray });
-  cy -= 18;
-  drawText(page, invoice.client_name || '', m + 12, cy, { font: fontB, size: 12, color: dark });
-  cy -= 15;
-  if (invoice.client_address) { drawText(page, stripAccents(invoice.client_address), m + 12, cy, { font: fontR, size: 9, color: gray }); cy -= 13; }
-  if (invoice.client_phone) { drawText(page, `Tel: ${invoice.client_phone}`, m + 12, cy, { font: fontR, size: 9, color: gray }); cy -= 13; }
-  if (invoice.client_email) { drawText(page, invoice.client_email, m + 12, cy, { font: fontR, size: 9, color: gray }); }
+  const cbPad = 14;
+  const cbLineH = 14;
+  const cbHeaderH = 16;
+  const cbNameH = 20;
+  const cbH = cbPad * 2 + cbHeaderH + cbNameH + clientLines.length * cbLineH;
 
-  y = y - cbh - 25;
+  // Background
+  page.drawRectangle({ x: ml, y: y - cbH, width: pw, height: cbH, color: bgGray, borderColor: borderC, borderWidth: 0.5 });
 
-  // Items table
-  const cw = [pw * 0.40, pw * 0.10, pw * 0.18, pw * 0.12, pw * 0.20];
-  const heads = ['Description', 'Qte', 'Prix HT', 'TVA', 'Total HT'];
-  const hh = 28, rh = 24;
+  let cly = y - cbPad - 10;
+  drawText(page, isInv ? 'FACTURE A' : 'DEVIS POUR', ml + cbPad, cly, { font: fontR, size: 8, color: lightGray });
+  cly -= cbHeaderH;
+  drawText(page, stripAccents(invoice.client_name || ''), ml + cbPad, cly, { font: fontB, size: 14, color: dark });
+  cly -= cbNameH;
 
-  page.drawRectangle({ x: m, y: y - hh, width: pw, height: hh, color: rgb(0.95, 0.95, 0.96) });
+  for (const line of clientLines) {
+    drawText(page, line, ml + cbPad, cly, { font: fontR, size: 10, color: gray });
+    cly -= cbLineH;
+  }
 
-  let cx = m;
-  for (let i = 0; i < heads.length; i++) {
-    const ir = i > 0;
-    const tx = ir ? cx + cw[i] - textWidth(heads[i], fontB, 9) - 8 : cx + 8;
-    drawText(page, heads[i], tx, y - 18, { font: fontB, size: 9, color: dark });
-    cx += cw[i];
+  y = y - cbH - 24;
+
+  // ── Items Table ──
+  const colWidths = [pw * 0.42, pw * 0.10, pw * 0.17, pw * 0.11, pw * 0.20];
+  const colStarts = [ml];
+  for (let i = 1; i < colWidths.length; i++) colStarts.push(colStarts[i - 1] + colWidths[i - 1]);
+
+  const headers = ['Description', 'Qte', 'Prix HT', 'TVA', 'Total HT'];
+  const hh = 30;
+  const rh = 26;
+
+  // Header row
+  page.drawRectangle({ x: ml, y: y - hh, width: pw, height: hh, color: headerBg });
+  page.drawLine({ start: { x: ml, y: y - hh }, end: { x: ml + pw, y: y - hh }, thickness: 0.5, color: borderC });
+
+  for (let i = 0; i < headers.length; i++) {
+    const isRight = i > 0;
+    const tx = isRight ? colStarts[i] + colWidths[i] - textWidth(headers[i], fontB, 10) - 10 : colStarts[i] + 10;
+    drawText(page, headers[i], tx, y - 19, { font: fontB, size: 10, color: dark });
   }
   y -= hh;
 
+  // Data rows
   for (let r = 0; r < items.length; r++) {
     const it = items[r];
-    if (r % 2 === 1) page.drawRectangle({ x: m, y: y - rh, width: pw, height: rh, color: lightBg });
+    if (r % 2 === 1) {
+      page.drawRectangle({ x: ml, y: y - rh, width: pw, height: rh, color: bgGray });
+    }
 
-    cx = m;
     const vals = [
-      truncateText(it.description || '', fontR, 9, cw[0] - 16),
+      truncateText(it.description || '', fontR, 10, colWidths[0] - 20),
       String(it.quantity || 1),
       `${(it.unit_price || 0).toFixed(2)}EUR`,
       `${it.vat_rate || 0}%`,
       `${(it.subtotal || 0).toFixed(2)}EUR`,
     ];
+
     for (let i = 0; i < vals.length; i++) {
-      const ir = i > 0;
-      const tx = ir ? cx + cw[i] - textWidth(vals[i], fontR, 9) - 8 : cx + 8;
-      drawText(page, vals[i], tx, y - 16, { font: i === 4 ? fontB : fontR, size: 9, color: dark });
-      cx += cw[i];
+      const isRight = i > 0;
+      const font = i === 4 ? fontB : fontR;
+      const tx = isRight ? colStarts[i] + colWidths[i] - textWidth(vals[i], font, 10) - 10 : colStarts[i] + 10;
+      drawText(page, vals[i], tx, y - 17, { font, size: 10, color: dark });
     }
-    page.drawLine({ start: { x: m, y: y - rh }, end: { x: m + pw, y: y - rh }, thickness: 0.3, color: border });
+
+    page.drawLine({ start: { x: ml, y: y - rh }, end: { x: ml + pw, y: y - rh }, thickness: 0.3, color: borderC });
     y -= rh;
   }
 
+  y -= 24;
+
+  // ── Totals ──
+  const totW = 200;
+  const totX = 595 - mr - totW;
+
+  drawText(page, 'Sous-total HT', totX, y, { font: fontR, size: 11, color: gray });
+  const sv = `${(invoice.subtotal || 0).toFixed(2)}EUR`;
+  drawText(page, sv, totX + totW - textWidth(sv, fontR, 11), y, { font: fontR, size: 11, color: dark });
   y -= 20;
 
-  // Totals
-  const tx2 = 595 - m - 180;
-  const tw2 = 180;
-
-  drawText(page, 'Sous-total HT', tx2, y, { font: fontR, size: 10, color: gray });
-  const sv = `${(invoice.subtotal || 0).toFixed(2)}EUR`;
-  drawText(page, sv, tx2 + tw2 - textWidth(sv, fontR, 10), y, { font: fontR, size: 10, color: dark });
-  y -= 18;
-
-  drawText(page, 'TVA', tx2, y, { font: fontR, size: 10, color: gray });
+  drawText(page, 'TVA', totX, y, { font: fontR, size: 11, color: gray });
   const vv = `${(invoice.total_vat || 0).toFixed(2)}EUR`;
-  drawText(page, vv, tx2 + tw2 - textWidth(vv, fontR, 10), y, { font: fontR, size: 10, color: dark });
-  y -= 6;
+  drawText(page, vv, totX + totW - textWidth(vv, fontR, 11), y, { font: fontR, size: 11, color: dark });
+  y -= 8;
 
-  page.drawLine({ start: { x: tx2, y }, end: { x: tx2 + tw2, y }, thickness: 1, color: border });
-  y -= 18;
+  page.drawLine({ start: { x: totX, y }, end: { x: totX + totW, y }, thickness: 1.5, color: borderC });
+  y -= 20;
 
-  drawText(page, 'Total TTC', tx2, y, { font: fontB, size: 13, color: dark });
+  drawText(page, 'Total TTC', totX, y, { font: fontB, size: 15, color: dark });
   const tv = `${(invoice.total || 0).toFixed(2)}EUR`;
-  drawText(page, tv, tx2 + tw2 - textWidth(tv, fontB, 13), y, { font: fontB, size: 13, color: dark });
-  y -= 30;
+  drawText(page, tv, totX + totW - textWidth(tv, fontB, 15), y, { font: fontB, size: 15, color: dark });
+  y -= 32;
 
-  // Notes
+  // ── Notes & Terms ──
   if (invoice.notes) {
-    drawText(page, 'Notes', m, y, { font: fontB, size: 9, color: gray }); y -= 14;
+    drawText(page, 'Notes', ml, y, { font: fontB, size: 9, color: lightGray });
+    y -= 14;
     for (const line of (invoice.notes || '').split('\n')) {
-      drawText(page, truncateText(line, fontR, 8, pw), m, y, { font: fontR, size: 8, color: gray }); y -= 12;
+      if (y < 60) break;
+      drawText(page, truncateText(line, fontR, 9, pw), ml, y, { font: fontR, size: 9, color: gray });
+      y -= 13;
     }
-    y -= 8;
+    y -= 10;
   }
   if (invoice.terms) {
-    drawText(page, 'Conditions de paiement', m, y, { font: fontB, size: 9, color: gray }); y -= 14;
+    drawText(page, 'Conditions de paiement', ml, y, { font: fontB, size: 9, color: lightGray });
+    y -= 14;
     for (const line of (invoice.terms || '').split('\n')) {
-      drawText(page, truncateText(line, fontR, 8, pw), m, y, { font: fontR, size: 8, color: gray }); y -= 12;
+      if (y < 60) break;
+      drawText(page, truncateText(line, fontR, 9, pw), ml, y, { font: fontR, size: 9, color: gray });
+      y -= 13;
     }
   }
 
-  // Footer
-  const fy = 40;
+  // ── Footer ──
+  const fy = 42;
+  page.drawLine({ start: { x: ml, y: fy + 14 }, end: { x: 595 - mr, y: fy + 14 }, thickness: 0.5, color: borderC });
+
   const fp = stripAccents([center?.name, center?.address].filter(Boolean).join(' - '));
-  const fpw = textWidth(fp, fontR, 7);
-  drawText(page, fp, (595 - fpw) / 2, fy, { font: fontR, size: 7, color: gray });
+  const fpw = textWidth(fp, fontR, 8);
+  drawText(page, fp, (595 - fpw) / 2, fy, { font: fontR, size: 8, color: lightGray });
 
   const lt = isInv
     ? "En cas de retard de paiement, une penalite de 3 fois le taux d'interet legal sera appliquee."
     : "Ce devis est valable 30 jours a compter de sa date d'emission.";
-  const ltw = textWidth(lt, fontR, 7);
-  drawText(page, lt, (595 - ltw) / 2, fy - 12, { font: fontR, size: 7, color: gray });
+  const ltw = textWidth(lt, fontR, 8);
+  drawText(page, lt, (595 - ltw) / 2, fy - 13, { font: fontR, size: 8, color: lightGray });
 
   return await pdfDoc.save();
 };
