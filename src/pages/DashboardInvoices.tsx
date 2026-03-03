@@ -224,7 +224,7 @@ export default function DashboardInvoices() {
               </Card>
             </button>
             <button onClick={() => setActiveTab('quotes')} className="text-left">
-              <Card className={cn("p-5 rounded-2xl transition-all", activeTab === 'quotes' ? "ring-2 ring-primary shadow-sm" : "hover:bg-secondary/50")}>
+              <Card className={cn("p-5 rounded-2xl transition-all", (activeTab === 'quotes' || activeTab === 'quotes-accepted' || activeTab === 'quotes-pending') ? "ring-2 ring-primary shadow-sm" : "hover:bg-secondary/50")}>
                 <p className="text-sm font-medium text-muted-foreground mb-1">{t('invoices.quotes')}</p>
                 <p className="text-3xl font-bold tracking-tight">{stats.totalQuotes}</p>
               </Card>
