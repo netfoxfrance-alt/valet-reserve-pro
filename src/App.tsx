@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import CenterBooking from "./pages/CenterBooking";
+import AcceptQuote from "./pages/AcceptQuote";
 import DepositPayment from "./pages/DepositPayment";
 import DepositSuccess from "./pages/DepositSuccess";
 import DepositCancel from "./pages/DepositCancel";
