@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,9 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useInvoices, Invoice, useVatRates } from '@/hooks/useInvoices';
 import { useMyClients, Client } from '@/hooks/useClients';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Trash2, FileText, FileCheck, Users, ChevronDown, ChevronUp, MessageSquare, Image as ImageIcon } from 'lucide-react';
+import { Plus, Trash2, FileText, FileCheck, Users, ChevronDown, ChevronUp, MessageSquare, Image as ImageIcon, Search, X, Eye } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 export interface InvoicePrefillData {
   clientId?: string;
