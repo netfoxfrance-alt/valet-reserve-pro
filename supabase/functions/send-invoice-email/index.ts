@@ -551,8 +551,6 @@ const handler = async (req: Request): Promise<Response> => {
       </html>
     `;
 
-    const fileName = `${docType}-${invoice.number.replace(/[^a-zA-Z0-9-]/g, '_')}.pdf`;
-
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -564,12 +562,6 @@ const handler = async (req: Request): Promise<Response> => {
         to: [recipientEmail],
         subject: `${docType} ${invoice.number} - ${center?.name || ""}`,
         html: emailHtml,
-        attachments: [
-          {
-            filename: fileName,
-            content: pdfBase64,
-          },
-        ],
       }),
     });
 
