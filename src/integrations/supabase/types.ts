@@ -1065,6 +1065,27 @@ export type Database = {
       }
     }
     Functions: {
+      create_recognized_appointment: {
+        Args: {
+          p_appointment_date: string
+          p_appointment_time: string
+          p_center_id: string
+          p_client_id: string
+          p_notes?: string
+          p_service_id: string
+          p_vehicle_type?: string
+        }
+        Returns: {
+          appointment_id: string
+          client_address: string
+          client_email: string
+          client_name: string
+          client_phone: string
+          duration_minutes: number
+          service_name: string
+          service_price: number
+        }[]
+      }
       get_admin_centers_data: {
         Args: never
         Returns: {
