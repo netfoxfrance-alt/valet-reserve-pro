@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useInvoices, Invoice } from '@/hooks/useInvoices';
+import { supabase } from '@/integrations/supabase/client';
 import { useMyCenter } from '@/hooks/useCenter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,7 +20,8 @@ import {
   Download,
   Send,
   Check,
-  XCircle
+  XCircle,
+  Wrench
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -214,6 +216,58 @@ export default function DashboardInvoices() {
         description: `Devis ${invoice.number} repassé en attente.`,
       });
     }
+  };
+
+  const handleCreateServiceFromQuote = async (invoice: Invoice) => {
+    if (!center) return;
+    
+    // Fetch invoice items
+    const { data: items, error: itemsError } = await supabase
+      .from('invoice_items')
+      .select('*')
+      .eq('invoice_id', invoice.id)
+      .order('sort_order');
+    
+    if (itemsError || !items || items.length === 0) {
+      toast({ title: 'Erreur', description: 'Impossible de récupérer les lignes du devis.', variant: 'destructive' });
+      return;
+    }
+
+    // Build service name from item descriptions
+    const serviceName = items.map((item: any) => item.description).join(' + ');
+    
+    // Create custom service
+    const { data: newService, error: serviceError } = await supabase
+      .from('custom_services')
+      .insert({
+        center_id: center.id,
+        name: serviceName.substring(0, 200),
+        price: invoice.total,
+        duration_minutes: 60,
+        description: `Créé depuis le devis ${invoice.number}`,
+      })
+      .select()
+      .single();
+
+    if (serviceError || !newService) {
+      toast({ title: 'Erreur', description: 'Impossible de créer la prestation.', variant: 'destructive' });
+      return;
+    }
+
+    // Link to client if exists
+    if (invoice.client_id) {
+      await supabase
+        .from('client_services')
+        .insert({
+          client_id: invoice.client_id,
+          service_id: (newService as any).id,
+        });
+    }
+
+    toast({
+      title: 'Prestation créée',
+      description: `"${serviceName.substring(0, 50)}" a été créée${invoice.client_id ? ' et rattachée au client' : ''}.`,
+    });
   };
 
   if (centerLoading || !center) {
@@ -417,6 +471,12 @@ export default function DashboardInvoices() {
                               <DropdownMenuItem onClick={() => handleMarkAsPending(invoice)}>
                                 <XCircle className="w-4 h-4 mr-2" />
                                 Repasser en attente
+                              </DropdownMenuItem>
+                            )}
+                            {invoice.type === 'quote' && invoice.status === 'accepted' && (
+                              <DropdownMenuItem onClick={() => handleCreateServiceFromQuote(invoice)}>
+                                <Wrench className="w-4 h-4 mr-2" />
+                                Créer une prestation
                               </DropdownMenuItem>
                             )}
                             {invoice.type === 'quote' && invoice.status !== 'accepted' && (
