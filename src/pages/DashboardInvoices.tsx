@@ -396,6 +396,12 @@ export default function DashboardInvoices() {
                                 Valider
                               </DropdownMenuItem>
                             )}
+                            {invoice.type === 'quote' && invoice.status === 'accepted' && (
+                              <DropdownMenuItem onClick={() => handleMarkAsPending(invoice)}>
+                                <XCircle className="w-4 h-4 mr-2" />
+                                Repasser en attente
+                              </DropdownMenuItem>
+                            )}
                             {invoice.type === 'quote' && invoice.status !== 'accepted' && (
                               <DropdownMenuItem onClick={() => {
                                 setQuoteToConvert(invoice);
