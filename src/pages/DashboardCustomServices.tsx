@@ -46,7 +46,26 @@ export default function DashboardCustomServices() {
   const [editClientIds, setEditClientIds] = useState<string[]>([]);
   const [editClientsOpen, setEditClientsOpen] = useState(false);
 
-  const resetCreateForm = () => {
+  // Handle prefill from quote conversion
+  useEffect(() => {
+    const state = location.state as { prefillService?: { name: string; price: number; description: string; client_id: string | null; client_name: string } } | null;
+    if (state?.prefillService) {
+      const { name, price, description, client_id } = state.prefillService;
+      setNewName(name);
+      setNewPrice(price.toString());
+      setNewDescription(description);
+      setNewHours(1);
+      setNewMinutes(0);
+      if (client_id) {
+        setNewClientIds([client_id]);
+        setNewClientsOpen(true);
+      }
+      setIsCreateOpen(true);
+      // Clear navigation state
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
     setNewName('');
     setNewHours(1);
     setNewMinutes(0);
