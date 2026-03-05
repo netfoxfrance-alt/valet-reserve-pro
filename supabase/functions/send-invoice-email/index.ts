@@ -328,7 +328,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Acceptance button for quotes
     let acceptButtonHtml = '';
     if (isQuote && invoice.acceptance_token) {
-      const appUrl = "https://valet-reserve-pro.lovable.app";
+      const appUrl = "https://www.cleaningpage.com";
       const acceptUrl = `${appUrl}/accept-quote?token=${invoice.acceptance_token}`;
       acceptButtonHtml = `
         <div style="text-align: center; margin: 24px 0;">
