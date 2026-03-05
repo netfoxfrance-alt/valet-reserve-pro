@@ -461,12 +461,6 @@ export default function DashboardInvoices() {
                                 Repasser en attente
                               </DropdownMenuItem>
                             )}
-                            {invoice.type === 'quote' && invoice.status === 'accepted' && (
-                              <DropdownMenuItem onClick={() => handleCreateServiceFromQuote(invoice)}>
-                                <Wrench className="w-4 h-4 mr-2" />
-                                Créer une prestation
-                              </DropdownMenuItem>
-                            )}
                             {invoice.type === 'quote' && invoice.status !== 'accepted' && (
                               <DropdownMenuItem onClick={() => {
                                 setQuoteToConvert(invoice);
