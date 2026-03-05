@@ -419,7 +419,18 @@ export default function DashboardInvoices() {
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4">
+                      <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
+                        {invoice.type === 'quote' && invoice.status === 'accepted' && (
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="rounded-xl h-9 text-xs font-medium border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-950/50"
+                            onClick={(e) => { e.stopPropagation(); handleCreateServiceFromQuote(invoice); }}
+                          >
+                            <Wrench className="w-3.5 h-3.5 mr-1.5" />
+                            Créer prestation
+                          </Button>
+                        )}
                         <span className="font-semibold text-lg">
                           {invoice.total.toFixed(0)}€
                         </span>
