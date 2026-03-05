@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useInvoices, Invoice } from '@/hooks/useInvoices';
+import { supabase } from '@/integrations/supabase/client';
 import { useMyCenter } from '@/hooks/useCenter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
