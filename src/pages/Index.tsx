@@ -1793,6 +1793,95 @@ export default function Index() {
       </section>
 
 
+      {/* Section: Avantages Business */}
+      <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 bg-secondary/30">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6">
+            Plus de demandes. Moins d'appels.
+          </h2>
+          <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base lg:text-lg max-w-xl mx-auto mb-10 sm:mb-14 leading-relaxed">
+            Les clients trouvent toutes les informations directement sur votre page et peuvent vous contacter facilement.
+          </p>
+          <div className="opacity-0 animate-fade-in-up stagger-2 grid sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl mx-auto">
+            {[
+              { text: 'Demandes structurées' },
+              { text: 'Planning toujours à jour' },
+              { text: 'Moins d\'appels et de messages' },
+            ].map((item, i) => (
+              <div key={i} className="flex flex-col items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                  <Check className="w-5 h-5 text-emerald-500" />
+                </div>
+                <p className="text-sm sm:text-base font-medium text-foreground">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Section: Adaptation Activité */}
+      <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+              Adapté à votre façon de travailler.
+            </h2>
+          </div>
+
+          <div className="opacity-0 animate-fade-in-up stagger-1 grid md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
+            {/* Prestations à prix fixe */}
+            <div className="bg-card rounded-2xl sm:rounded-3xl p-6 sm:p-8 ring-1 ring-border/20 shadow-lg">
+              <div className="mb-6">
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">Prestations à prix fixe</h3>
+                <p className="text-sm text-muted-foreground">
+                  Les clients peuvent réserver directement un créneau.
+                </p>
+              </div>
+              <div className="mb-5">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Exemples</p>
+                <div className="space-y-2.5">
+                  {['Detailing automobile', 'Nettoyage canapé', 'Nettoyage tapis'].map((item, i) => (
+                    <div key={i} className="flex items-center gap-3 bg-secondary/30 rounded-xl px-4 py-3">
+                      <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                      <span className="text-sm text-foreground">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-emerald-600 font-medium">
+                <Calendar className="w-3.5 h-3.5" />
+                <span>Réservation directe en ligne</span>
+              </div>
+            </div>
+
+            {/* Prestations sur devis */}
+            <div className="bg-card rounded-2xl sm:rounded-3xl p-6 sm:p-8 ring-1 ring-border/20 shadow-lg">
+              <div className="mb-6">
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">Prestations sur devis</h3>
+                <p className="text-sm text-muted-foreground">
+                  Les clients peuvent envoyer une demande et réserver ensuite leur prestation.
+                </p>
+              </div>
+              <div className="mb-5">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Exemples</p>
+                <div className="space-y-2.5">
+                  {['Nettoyage vitres', 'Ménage à domicile', 'Nettoyage terrasse'].map((item, i) => (
+                    <div key={i} className="flex items-center gap-3 bg-secondary/30 rounded-xl px-4 py-3">
+                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                      <span className="text-sm text-foreground">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-blue-600 font-medium">
+                <Mail className="w-3.5 h-3.5" />
+                <span>Demande de devis en ligne</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Section */}
       <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
