@@ -363,8 +363,11 @@ export default function Index() {
             <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4">
               {t('landing.section1Title')}
             </h2>
-            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base lg:text-lg max-w-lg mx-auto">
+            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base lg:text-lg max-w-lg mx-auto mb-2">
               {t('landing.section1Desc')}
+            </p>
+            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base lg:text-lg max-w-lg mx-auto">
+              {t('landing.section1Desc2')}
             </p>
           </div>
 
@@ -700,8 +703,11 @@ export default function Index() {
              <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4">
                {t('mockup.shareTitle')}
              </h2>
-             <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-md mx-auto">
+             <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base max-w-md mx-auto mb-6">
                {t('mockup.shareDesc')}
+             </p>
+             <p className="opacity-0 animate-fade-in-up stagger-1 text-sm font-medium text-foreground">
+               {t('mockup.shareSubtitle')}
              </p>
           </div>
 
@@ -721,39 +727,57 @@ export default function Index() {
                   </div>
                 </div>
                 
-                {/* Minimal channel icons row */}
-                <div className="flex items-center justify-center gap-4">
+                {/* Channel icons with labels */}
+                <div className="grid grid-cols-5 gap-3">
                   {/* Google */}
-                  <div className="w-10 h-10 bg-secondary/60 rounded-xl flex items-center justify-center hover:bg-secondary transition-colors">
-                    <svg className="w-5 h-5" viewBox="0 0 24 24">
-                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="w-10 h-10 bg-secondary/60 rounded-xl flex items-center justify-center hover:bg-secondary transition-colors">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                      </svg>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground font-medium">Google</span>
                   </div>
                   {/* Instagram */}
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-xl flex items-center justify-center shadow-md">
-                    <Instagram className="w-5 h-5 text-white" />
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-xl flex items-center justify-center shadow-md">
+                      <Instagram className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="text-[10px] text-muted-foreground font-medium">Instagram</span>
                   </div>
                   {/* TikTok */}
-                  <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center shadow-md">
-                    <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                    </svg>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center shadow-md">
+                      <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                      </svg>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground font-medium">TikTok</span>
                   </div>
-                  {/* QR */}
-                  <div className="w-10 h-10 bg-foreground rounded-xl flex items-center justify-center shadow-md">
-                    <svg className="w-5 h-5 text-background" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="3" width="7" height="7" rx="1"/>
-                      <rect x="14" y="3" width="7" height="7" rx="1"/>
-                      <rect x="3" y="14" width="7" height="7" rx="1"/>
-                      <path d="M14 14h3v3h-3zM17 17h4v4h-4zM14 17v4"/>
-                    </svg>
+                  {/* Carte de visite */}
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="w-10 h-10 bg-foreground rounded-xl flex items-center justify-center shadow-md">
+                      <svg className="w-5 h-5 text-background" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="2" y="5" width="20" height="14" rx="2"/>
+                        <path d="M8 10h.01M8 14h4M16 10h.01M16 14h.01"/>
+                      </svg>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground font-medium leading-tight text-center">Carte de visite</span>
                   </div>
-                  {/* More */}
-                  <div className="w-10 h-10 bg-secondary/60 rounded-xl flex items-center justify-center text-muted-foreground">
-                    <span className="text-xs font-medium">+5</span>
+                  {/* Devis */}
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="w-10 h-10 bg-secondary/60 rounded-xl flex items-center justify-center">
+                      <svg className="w-5 h-5 text-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                      </svg>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground font-medium">Devis</span>
                   </div>
                 </div>
               </div>
@@ -1768,6 +1792,95 @@ export default function Index() {
         </div>
       </section>
 
+
+      {/* Section: Avantages Business */}
+      <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 bg-secondary/30">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6">
+            Plus de demandes. Moins d'appels.
+          </h2>
+          <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-sm sm:text-base lg:text-lg max-w-xl mx-auto mb-10 sm:mb-14 leading-relaxed">
+            Les clients trouvent toutes les informations directement sur votre page et peuvent vous contacter facilement.
+          </p>
+          <div className="opacity-0 animate-fade-in-up stagger-2 grid sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl mx-auto">
+            {[
+              { text: 'Demandes structurées' },
+              { text: 'Planning toujours à jour' },
+              { text: 'Moins d\'appels et de messages' },
+            ].map((item, i) => (
+              <div key={i} className="flex flex-col items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                  <Check className="w-5 h-5 text-emerald-500" />
+                </div>
+                <p className="text-sm sm:text-base font-medium text-foreground">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Section: Adaptation Activité */}
+      <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="opacity-0 animate-fade-in-up text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+              Adapté à votre façon de travailler.
+            </h2>
+          </div>
+
+          <div className="opacity-0 animate-fade-in-up stagger-1 grid md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
+            {/* Prestations à prix fixe */}
+            <div className="bg-card rounded-2xl sm:rounded-3xl p-6 sm:p-8 ring-1 ring-border/20 shadow-lg">
+              <div className="mb-6">
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">Prestations à prix fixe</h3>
+                <p className="text-sm text-muted-foreground">
+                  Les clients peuvent réserver directement un créneau.
+                </p>
+              </div>
+              <div className="mb-5">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Exemples</p>
+                <div className="space-y-2.5">
+                  {['Detailing automobile', 'Nettoyage canapé', 'Nettoyage tapis'].map((item, i) => (
+                    <div key={i} className="flex items-center gap-3 bg-secondary/30 rounded-xl px-4 py-3">
+                      <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                      <span className="text-sm text-foreground">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-emerald-600 font-medium">
+                <Calendar className="w-3.5 h-3.5" />
+                <span>Réservation directe en ligne</span>
+              </div>
+            </div>
+
+            {/* Prestations sur devis */}
+            <div className="bg-card rounded-2xl sm:rounded-3xl p-6 sm:p-8 ring-1 ring-border/20 shadow-lg">
+              <div className="mb-6">
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">Prestations sur devis</h3>
+                <p className="text-sm text-muted-foreground">
+                  Les clients peuvent envoyer une demande et réserver ensuite leur prestation.
+                </p>
+              </div>
+              <div className="mb-5">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Exemples</p>
+                <div className="space-y-2.5">
+                  {['Nettoyage vitres', 'Ménage à domicile', 'Nettoyage terrasse'].map((item, i) => (
+                    <div key={i} className="flex items-center gap-3 bg-secondary/30 rounded-xl px-4 py-3">
+                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                      <span className="text-sm text-foreground">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-blue-600 font-medium">
+                <Mail className="w-3.5 h-3.5" />
+                <span>Demande de devis en ligne</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Pricing Section */}
       <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6">
