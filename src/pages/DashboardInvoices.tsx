@@ -18,7 +18,8 @@ import {
   ArrowRight,
   Download,
   Send,
-  Check
+  Check,
+  XCircle
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -195,6 +196,22 @@ export default function DashboardInvoices() {
       toast({
         title: 'Devis validé',
         description: `Devis ${invoice.number} marqué comme accepté.`,
+      });
+    }
+  };
+
+  const handleMarkAsPending = async (invoice: Invoice) => {
+    const { error } = await updateInvoice(invoice.id, { status: 'draft' });
+    if (error) {
+      toast({
+        title: 'Erreur',
+        description: error,
+        variant: 'destructive',
+      });
+    } else {
+      toast({
+        title: 'Devis mis à jour',
+        description: `Devis ${invoice.number} repassé en attente.`,
       });
     }
   };
@@ -394,6 +411,12 @@ export default function DashboardInvoices() {
                               <DropdownMenuItem onClick={() => handleMarkAsAccepted(invoice)}>
                                 <Check className="w-4 h-4 mr-2" />
                                 Valider
+                              </DropdownMenuItem>
+                            )}
+                            {invoice.type === 'quote' && invoice.status === 'accepted' && (
+                              <DropdownMenuItem onClick={() => handleMarkAsPending(invoice)}>
+                                <XCircle className="w-4 h-4 mr-2" />
+                                Repasser en attente
                               </DropdownMenuItem>
                             )}
                             {invoice.type === 'quote' && invoice.status !== 'accepted' && (
