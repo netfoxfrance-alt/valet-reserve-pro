@@ -66,6 +66,7 @@ export default function DashboardCustomServices() {
     }
   }, [location.state]);
 
+  const resetCreateForm = () => {
     setNewName('');
     setNewHours(1);
     setNewMinutes(0);
