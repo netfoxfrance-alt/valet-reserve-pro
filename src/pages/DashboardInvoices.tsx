@@ -18,7 +18,8 @@ import {
   ArrowRight,
   Download,
   Send,
-  Check
+  Check,
+  XCircle
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
