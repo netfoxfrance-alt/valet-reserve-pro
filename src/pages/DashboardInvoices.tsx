@@ -200,6 +200,22 @@ export default function DashboardInvoices() {
     }
   };
 
+  const handleMarkAsPending = async (invoice: Invoice) => {
+    const { error } = await updateInvoice(invoice.id, { status: 'draft' });
+    if (error) {
+      toast({
+        title: 'Erreur',
+        description: error,
+        variant: 'destructive',
+      });
+    } else {
+      toast({
+        title: 'Devis mis à jour',
+        description: `Devis ${invoice.number} repassé en attente.`,
+      });
+    }
+  };
+
   if (centerLoading || !center) {
     return (
       <DashboardLayout title="Factures & Devis">
