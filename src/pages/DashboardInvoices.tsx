@@ -246,7 +246,6 @@ export default function DashboardInvoices() {
       }
     });
   };
-  };
 
   if (centerLoading || !center) {
     return (
