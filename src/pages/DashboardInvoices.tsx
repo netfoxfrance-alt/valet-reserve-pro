@@ -62,6 +62,7 @@ const statusColors: Record<string, string> = {
 export default function DashboardInvoices() {
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { center, loading: centerLoading } = useMyCenter();
   const { invoices, loading, deleteInvoice, convertQuoteToInvoice, updateInvoice } = useInvoices();
