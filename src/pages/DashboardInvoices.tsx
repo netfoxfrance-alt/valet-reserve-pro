@@ -62,6 +62,7 @@ const statusColors: Record<string, string> = {
 export default function DashboardInvoices() {
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { center, loading: centerLoading } = useMyCenter();
   const { invoices, loading, deleteInvoice, convertQuoteToInvoice, updateInvoice } = useInvoices();
@@ -221,52 +222,28 @@ export default function DashboardInvoices() {
   const handleCreateServiceFromQuote = async (invoice: Invoice) => {
     if (!center) return;
     
-    // Fetch invoice items
-    const { data: items, error: itemsError } = await supabase
+    // Fetch invoice items to build service name
+    const { data: items } = await supabase
       .from('invoice_items')
       .select('*')
       .eq('invoice_id', invoice.id)
       .order('sort_order');
     
-    if (itemsError || !items || items.length === 0) {
-      toast({ title: 'Erreur', description: 'Impossible de récupérer les lignes du devis.', variant: 'destructive' });
-      return;
-    }
-
-    // Build service name from item descriptions
-    const serviceName = items.map((item: any) => item.description).join(' + ');
+    const serviceName = items && items.length > 0
+      ? items.map((item: any) => item.description).join(' + ')
+      : `Devis ${invoice.number}`;
     
-    // Create custom service
-    const { data: newService, error: serviceError } = await supabase
-      .from('custom_services')
-      .insert({
-        center_id: center.id,
-        name: serviceName.substring(0, 200),
-        price: invoice.total,
-        duration_minutes: 60,
-        description: `Créé depuis le devis ${invoice.number}`,
-      })
-      .select()
-      .single();
-
-    if (serviceError || !newService) {
-      toast({ title: 'Erreur', description: 'Impossible de créer la prestation.', variant: 'destructive' });
-      return;
-    }
-
-    // Link to client if exists
-    if (invoice.client_id) {
-      await supabase
-        .from('client_services')
-        .insert({
+    // Navigate to custom services page with prefill data
+    navigate('/dashboard/custom-services', {
+      state: {
+        prefillService: {
+          name: serviceName.substring(0, 200),
+          price: invoice.total,
+          description: `Créé depuis le devis ${invoice.number}`,
           client_id: invoice.client_id,
-          service_id: (newService as any).id,
-        });
-    }
-
-    toast({
-      title: 'Prestation créée',
-      description: `"${serviceName.substring(0, 50)}" a été créée${invoice.client_id ? ' et rattachée au client' : ''}.`,
+          client_name: invoice.client_name,
+        }
+      }
     });
   };
 
@@ -442,7 +419,18 @@ export default function DashboardInvoices() {
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4">
+                      <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
+                        {invoice.type === 'quote' && invoice.status === 'accepted' && (
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="rounded-xl h-9 text-xs font-medium border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-950/50"
+                            onClick={(e) => { e.stopPropagation(); handleCreateServiceFromQuote(invoice); }}
+                          >
+                            <Wrench className="w-3.5 h-3.5 mr-1.5" />
+                            Créer prestation
+                          </Button>
+                        )}
                         <span className="font-semibold text-lg">
                           {invoice.total.toFixed(0)}€
                         </span>
@@ -471,12 +459,6 @@ export default function DashboardInvoices() {
                               <DropdownMenuItem onClick={() => handleMarkAsPending(invoice)}>
                                 <XCircle className="w-4 h-4 mr-2" />
                                 Repasser en attente
-                              </DropdownMenuItem>
-                            )}
-                            {invoice.type === 'quote' && invoice.status === 'accepted' && (
-                              <DropdownMenuItem onClick={() => handleCreateServiceFromQuote(invoice)}>
-                                <Wrench className="w-4 h-4 mr-2" />
-                                Créer une prestation
                               </DropdownMenuItem>
                             )}
                             {invoice.type === 'quote' && invoice.status !== 'accepted' && (

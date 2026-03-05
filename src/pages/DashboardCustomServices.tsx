@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function DashboardCustomServices() {
   const { t } = useTranslation();
+  const location = useLocation();
   const { services, loading, createService, updateService, deleteService } = useMyCustomServices();
   const { clients } = useMyClients();
   const { toast } = useToast();
@@ -43,6 +45,26 @@ export default function DashboardCustomServices() {
   const [saving, setSaving] = useState(false);
   const [editClientIds, setEditClientIds] = useState<string[]>([]);
   const [editClientsOpen, setEditClientsOpen] = useState(false);
+
+  // Handle prefill from quote conversion
+  useEffect(() => {
+    const state = location.state as { prefillService?: { name: string; price: number; description: string; client_id: string | null; client_name: string } } | null;
+    if (state?.prefillService) {
+      const { name, price, description, client_id } = state.prefillService;
+      setNewName(name);
+      setNewPrice(price.toString());
+      setNewDescription(description);
+      setNewHours(1);
+      setNewMinutes(0);
+      if (client_id) {
+        setNewClientIds([client_id]);
+        setNewClientsOpen(true);
+      }
+      setIsCreateOpen(true);
+      // Clear navigation state
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const resetCreateForm = () => {
     setNewName('');
