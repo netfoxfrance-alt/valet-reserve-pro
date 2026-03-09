@@ -53,7 +53,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-
+import { trackEvent } from '@/lib/analytics';
 export default function Index() {
   const [dashboardTab, setDashboardTab] = useState<'reservations' | 'calendar' | 'clients' | 'invoices' | 'stats' | 'mypage' | 'formules'>('stats');
   const [showClientDetail, setShowClientDetail] = useState(false);
