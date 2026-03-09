@@ -482,6 +482,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
         description: `${selectedType === 'invoice' ? 'Facture' : 'Devis'} ${invoice ? 'modifié' : 'créé'} avec succès.`,
       });
       onOpenChange(false);
+      onSuccess?.();
     }
   };
 
