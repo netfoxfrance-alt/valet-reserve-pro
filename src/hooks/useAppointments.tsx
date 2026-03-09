@@ -325,11 +325,14 @@ export function useCreateAppointment() {
       }
 
       if (existingApts && existingApts.length > 0) {
+        // Filter to only the target date
+        const dayApts = existingApts.filter((apt: any) => apt.appointment_date === data.appointment_date);
         const newStartMin = timeToMin(data.appointment_time);
         const newEndMin = newStartMin + duration_minutes;
 
-        const overlap = existingApts.find(apt => {
-          const aptStartMin = timeToMin(apt.appointment_time.slice(0, 5));
+        const overlap = dayApts.find((apt: any) => {
+          const aptTimeStr = typeof apt.appointment_time === 'string' ? apt.appointment_time.slice(0, 5) : String(apt.appointment_time).slice(0, 5);
+          const aptStartMin = timeToMin(aptTimeStr);
           const aptEndMin = aptStartMin + (apt.duration_minutes || 60);
           return newStartMin < aptEndMin && newEndMin > aptStartMin;
         });
