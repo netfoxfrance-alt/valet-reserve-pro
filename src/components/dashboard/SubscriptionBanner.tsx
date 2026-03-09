@@ -8,13 +8,16 @@ import { trackEvent } from '@/lib/analytics';
 export function SubscriptionBanner() {
   const { subscription, session } = useAuth();
   const [loading, setLoading] = useState(false);
+  const isCancelled = !subscription.subscribed && subscription.hadTrial;
 
-  // Only show if user had a trial/subscription before but is currently not subscribed
-  if (subscription.subscribed || !subscription.hadTrial) return null;
+  useEffect(() => {
+    if (isCancelled) {
+      trackEvent('subscription_cancelled');
+    }
+  }, [isCancelled]);
 
-  // Track that subscription is cancelled (banner is showing)
-  // This fires once per page load when the banner is visible
-  trackEvent('subscription_cancelled');
+  if (!isCancelled) return null;
+
   const handleReactivate = async () => {
     if (!session?.access_token) return;
     setLoading(true);
