@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { findOrCreateClient } from '@/lib/clientService';
+import { trackEvent } from '@/lib/analytics';
 
 export interface ContactRequest {
   id: string;
