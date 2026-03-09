@@ -61,12 +61,15 @@ function isDateInBlockedPeriod(date: Date, blockedPeriods: BlockedPeriod[]): boo
   });
 }
 
-export function useCenterAvailability(centerId: string | null | undefined) {
+export function useCenterAvailability(centerId: string | null | undefined, serviceDurationMinutes?: number) {
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
   const [blockedPeriods, setBlockedPeriods] = useState<BlockedPeriod[]>([]);
   const [appointments, setAppointments] = useState<ExistingAppointment[]>([]);
   const [bufferMinutes, setBufferMinutes] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+
+  // The duration of the service being booked (default 60 min)
+  const bookingDuration = serviceDurationMinutes || 60;
 
   useEffect(() => {
     if (!centerId) {
@@ -78,6 +81,7 @@ export function useCenterAvailability(centerId: string | null | undefined) {
       setLoading(true);
       
       // Fetch all data in parallel including center settings
+      // Use RPC for appointments to bypass RLS (anonymous users can't SELECT appointments)
       const [availabilityRes, blockedRes, appointmentsRes, centerRes] = await Promise.all([
         supabase
           .from('availability')
@@ -88,12 +92,10 @@ export function useCenterAvailability(centerId: string | null | undefined) {
           .from('blocked_periods')
           .select('*')
           .eq('center_id', centerId),
-        supabase
-          .from('appointments')
-          .select('appointment_date, appointment_time, duration_minutes')
-          .eq('center_id', centerId)
-          .neq('status', 'cancelled')
-          .gte('appointment_date', format(new Date(), 'yyyy-MM-dd')),
+        supabase.rpc('get_occupied_slots', {
+          p_center_id: centerId,
+          p_from_date: format(new Date(), 'yyyy-MM-dd'),
+        }),
         supabase
           .from('public_centers_view')
           .select('customization')
