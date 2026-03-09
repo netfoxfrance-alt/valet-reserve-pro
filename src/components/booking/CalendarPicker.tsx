@@ -27,14 +27,15 @@ interface CalendarPickerProps {
   onSelect: (date: Date, time: string) => void;
   duration: string;
   centerId?: string; // Optionnel - si absent, utilise les créneaux par défaut
+  serviceDurationMinutes?: number; // Durée en minutes pour filtrer les créneaux
 }
 
-export function CalendarPicker({ onSelect, duration, centerId }: CalendarPickerProps) {
+export function CalendarPicker({ onSelect, duration, centerId, serviceDurationMinutes }: CalendarPickerProps) {
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   
-  const { loading, getAvailableSlotsForDate, isDayAvailable } = useCenterAvailability(centerId);
+  const { loading, getAvailableSlotsForDate, isDayAvailable } = useCenterAvailability(centerId, serviceDurationMinutes);
   
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
   
