@@ -1036,23 +1036,7 @@ export default function CenterBooking() {
                   {` • ${packData.price}€`}
                 </p>
               </div>
-              <CalendarPicker 
-                duration={packData.duration} 
-                onSelect={handleDateSelect} 
-                centerId={center?.id}
-                serviceDurationMinutes={
-                  recognizedClient?.service_duration_minutes || 
-                  (() => {
-                    const d = packData.duration;
-                    if (!d) return 60;
-                    const hMatch = d.match(/(\d+)h/);
-                    const mMatch = d.match(/(\d+)(?:min|m(?!h))/);
-                    const h = hMatch ? parseInt(hMatch[1], 10) : 0;
-                    const m = mMatch ? parseInt(mMatch[1], 10) : 0;
-                    return (h * 60 + m) || 60;
-                  })()
-                }
-              />
+              <CalendarPicker duration={packData.duration} onSelect={handleDateSelect} centerId={center?.id} />
             </div>
           )}
           

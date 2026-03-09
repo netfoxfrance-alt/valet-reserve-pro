@@ -26,16 +26,15 @@ const isTimeSlotPast = (time: string, date: Date): boolean => {
 interface CalendarPickerProps {
   onSelect: (date: Date, time: string) => void;
   duration: string;
-  centerId?: string;
-  serviceDurationMinutes?: number;
+  centerId?: string; // Optionnel - si absent, utilise les créneaux par défaut
 }
 
-export function CalendarPicker({ onSelect, duration, centerId, serviceDurationMinutes }: CalendarPickerProps) {
+export function CalendarPicker({ onSelect, duration, centerId }: CalendarPickerProps) {
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   
-  const { loading, getAvailableSlotsForDate, isDayAvailable } = useCenterAvailability(centerId, serviceDurationMinutes);
+  const { loading, getAvailableSlotsForDate, isDayAvailable } = useCenterAvailability(centerId);
   
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
   

@@ -27,19 +27,14 @@ interface CenterSettings {
   appointment_buffer: number; // en minutes
 }
 
-// Génère les créneaux horaires toutes les 30 minutes entre start et end
+// Génère les créneaux horaires d'une heure entre start et end
 function generateTimeSlots(startTime: string, endTime: string): string[] {
   const slots: string[] = [];
-  const [startH, startM] = startTime.split(':').map(Number);
-  const [endH, endM] = endTime.split(':').map(Number);
+  const [startHour] = startTime.split(':').map(Number);
+  const [endHour] = endTime.split(':').map(Number);
   
-  const startMinutes = startH * 60 + (startM || 0);
-  const endMinutes = endH * 60 + (endM || 0);
-  
-  for (let m = startMinutes; m < endMinutes; m += 30) {
-    const h = Math.floor(m / 60);
-    const min = m % 60;
-    slots.push(`${h.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`);
+  for (let h = startHour; h < endHour; h++) {
+    slots.push(`${h.toString().padStart(2, '0')}:00`);
   }
   
   return slots;
@@ -66,7 +61,7 @@ function isDateInBlockedPeriod(date: Date, blockedPeriods: BlockedPeriod[]): boo
   });
 }
 
-export function useCenterAvailability(centerId: string | null | undefined, serviceDurationMinutes?: number) {
+export function useCenterAvailability(centerId: string | null | undefined) {
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
   const [blockedPeriods, setBlockedPeriods] = useState<BlockedPeriod[]>([]);
   const [appointments, setAppointments] = useState<ExistingAppointment[]>([]);
@@ -98,7 +93,6 @@ export function useCenterAvailability(centerId: string | null | undefined, servi
           .select('appointment_date, appointment_time, duration_minutes')
           .eq('center_id', centerId)
           .neq('status', 'cancelled')
-          .neq('status', 'refused')
           .gte('appointment_date', format(new Date(), 'yyyy-MM-dd')),
         supabase
           .from('public_centers_view')
@@ -123,9 +117,6 @@ export function useCenterAvailability(centerId: string | null | undefined, servi
     fetchData();
   }, [centerId]);
 
-  // Durée de la prestation sélectionnée (défaut 60 min)
-  const currentServiceDuration = serviceDurationMinutes || 60;
-
   // Retourne les créneaux disponibles pour une date donnée
   const getAvailableSlotsForDate = (date: Date): string[] => {
     // 1. Si la date est passée, aucun créneau
@@ -148,7 +139,7 @@ export function useCenterAvailability(centerId: string | null | undefined, servi
       return [];
     }
 
-    // 5. Générer tous les créneaux possibles (toutes les 30 min)
+    // 5. Générer tous les créneaux possibles
     let allSlots: string[] = [];
     daySlots.forEach(slot => {
       const generated = generateTimeSlots(slot.start_time, slot.end_time);
@@ -161,56 +152,38 @@ export function useCenterAvailability(centerId: string | null | undefined, servi
     // 6. Filtrer les créneaux passés pour aujourd'hui
     allSlots = allSlots.filter(time => !isTimeSlotPast(time, date));
 
-    // 7. Filtrer les créneaux dont la prestation déborderait au-delà de la plage horaire
-    allSlots = allSlots.filter(time => {
-      const [h, m] = time.split(':').map(Number);
-      const slotStartMin = h * 60 + m;
-      const slotEndMin = slotStartMin + currentServiceDuration;
-      
-      // Vérifier que la fin de la prestation tombe dans une plage d'ouverture
-      return daySlots.some(slot => {
-        const [sh, sm] = slot.start_time.split(':').map(Number);
-        const [eh, em] = slot.end_time.split(':').map(Number);
-        const openStart = sh * 60 + (sm || 0);
-        const openEnd = eh * 60 + (em || 0);
-        return slotStartMin >= openStart && slotEndMin <= openEnd;
-      });
-    });
-
-    // 8. Filtrer les créneaux bloqués par les RDV existants + temps de déplacement
+    // 7. Filtrer les créneaux bloqués par les RDV existants + temps de déplacement
     const dateStr = format(date, 'yyyy-MM-dd');
     const dayAppointments = appointments.filter(apt => apt.appointment_date === dateStr);
 
     // Créer un set de tous les créneaux bloqués
-    const blockedSlotSet = new Set<string>();
+    const blockedSlots = new Set<string>();
     
     dayAppointments.forEach(apt => {
       const aptTime = apt.appointment_time.slice(0, 5); // "09:00:00" -> "09:00"
       const [aptHours, aptMinutes] = aptTime.split(':').map(Number);
       const aptStartMinutes = aptHours * 60 + aptMinutes;
       
-      // Durée du RDV existant (défaut 60 min si pas renseigné)
-      const aptDuration = apt.duration_minutes || 60;
+      // Durée du RDV (défaut 60 min si pas renseigné)
+      const duration = apt.duration_minutes || 60;
       
       // Fin du RDV + temps de déplacement = moment où le pro est à nouveau disponible
-      const aptEndWithBuffer = aptStartMinutes + aptDuration + bufferMinutes;
+      const aptEndWithBuffer = aptStartMinutes + duration + bufferMinutes;
       
-      // Bloquer les créneaux qui chevauchent :
-      // - Le nouveau créneau [slotStart → slotStart + serviceDuration] ne doit pas chevaucher
-      //   la période occupée [aptStart → aptEnd + buffer]
+      // Bloquer tous les créneaux qui chevauchent la période [début RDV → fin + buffer]
       allSlots.forEach(slot => {
         const [slotH, slotM] = slot.split(':').map(Number);
         const slotStartMinutes = slotH * 60 + slotM;
-        const slotEndMinutes = slotStartMinutes + currentServiceDuration;
         
-        // Overlap check: deux intervalles se chevauchent si start1 < end2 ET start2 < end1
-        if (slotStartMinutes < aptEndWithBuffer && aptStartMinutes < slotEndMinutes) {
-          blockedSlotSet.add(slot);
+        // Un créneau est bloqué si son début tombe avant la fin du RDV + buffer
+        // ET si le RDV commence avant la fin de ce créneau (overlap)
+        if (slotStartMinutes < aptEndWithBuffer && slotStartMinutes + 60 > aptStartMinutes) {
+          blockedSlots.add(slot);
         }
       });
     });
 
-    allSlots = allSlots.filter(time => !blockedSlotSet.has(time));
+    allSlots = allSlots.filter(time => !blockedSlots.has(time));
 
     return allSlots;
   };
