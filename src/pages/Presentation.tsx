@@ -1159,7 +1159,8 @@ function SlideTrial() {
           </div>
 
           <Link to="/auth">
-            <Button size="lg" className="w-full rounded-xl text-base font-semibold bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_8px_24px_-4px_rgba(16,185,129,0.4)] hover:shadow-[0_12px_32px_-4px_rgba(16,185,129,0.5)] transition-all duration-300">
+            <Button size="lg" className="w-full rounded-xl text-base font-semibold bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_8px_24px_-4px_rgba(16,185,129,0.4)] hover:shadow-[0_12px_32px_-4px_rgba(16,185,129,0.5)] transition-all duration-300"
+              onClick={() => trackEvent('cta_pricing')}>
               {t('presentation.trialCTA', { defaultValue: 'Commencer gratuitement' })}
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
