@@ -41,7 +41,10 @@ export default function DashboardMyPage() {
     const { error } = await updateCenter({ customization });
     setSaving(false);
     if (error) { toast({ title: t('common.error'), description: error, variant: 'destructive' }); }
-    else { toast({ title: t('common.saved'), description: t('settings.changesSaved') }); }
+    else {
+      trackEvent('page_published');
+      toast({ title: t('common.saved'), description: t('settings.changesSaved') });
+    }
   };
 
   const handleRefreshPreview = () => setPreviewKey(prev => prev + 1);
