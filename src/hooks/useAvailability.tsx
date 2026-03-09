@@ -145,10 +145,16 @@ export function useCenterAvailability(centerId: string | null | undefined, servi
       return [];
     }
 
-    // 5. Générer tous les créneaux possibles
+    // 5. Générer tous les créneaux possibles en filtrant ceux qui dépassent la fin de plage
     let allSlots: string[] = [];
     daySlots.forEach(slot => {
-      const generated = generateTimeSlots(slot.start_time, slot.end_time);
+      const [endH, endM] = slot.end_time.split(':').map(Number);
+      const windowEndMinutes = endH * 60 + (endM || 0);
+      const generated = generateTimeSlots(slot.start_time, slot.end_time)
+        .filter(t => {
+          const [h, m] = t.split(':').map(Number);
+          return (h * 60 + m) + bookingDuration <= windowEndMinutes;
+        });
       allSlots = [...allSlots, ...generated];
     });
 
