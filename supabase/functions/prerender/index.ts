@@ -137,7 +137,7 @@ function renderHomePage(): Response {
       'url': BASE_URL,
       'offers': {
         '@type': 'Offer',
-        'price': '29',
+        'price': '39',
         'priceCurrency': 'EUR',
         'priceValidUntil': `${new Date().getFullYear() + 1}-12-31`,
       },
