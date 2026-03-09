@@ -27,14 +27,18 @@ interface CenterSettings {
   appointment_buffer: number; // en minutes
 }
 
-// Génère les créneaux horaires d'une heure entre start et end
+// Génère les créneaux toutes les 30 minutes entre start et end
 function generateTimeSlots(startTime: string, endTime: string): string[] {
   const slots: string[] = [];
-  const [startHour] = startTime.split(':').map(Number);
-  const [endHour] = endTime.split(':').map(Number);
+  const [startH, startM] = startTime.split(':').map(Number);
+  const [endH, endM] = endTime.split(':').map(Number);
+  const startTotal = startH * 60 + (startM || 0);
+  const endTotal = endH * 60 + (endM || 0);
   
-  for (let h = startHour; h < endHour; h++) {
-    slots.push(`${h.toString().padStart(2, '0')}:00`);
+  for (let m = startTotal; m < endTotal; m += 30) {
+    const h = Math.floor(m / 60);
+    const min = m % 60;
+    slots.push(`${h.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`);
   }
   
   return slots;
