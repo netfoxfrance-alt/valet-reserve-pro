@@ -1,15 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { trackEvent } from '@/lib/analytics';
 
 export function SubscriptionBanner() {
   const { subscription, session } = useAuth();
   const [loading, setLoading] = useState(false);
+  const isCancelled = !subscription.subscribed && subscription.hadTrial;
 
-  // Only show if user had a trial/subscription before but is currently not subscribed
-  if (subscription.subscribed || !subscription.hadTrial) return null;
+  useEffect(() => {
+    if (isCancelled) {
+      trackEvent('subscription_cancelled');
+    }
+  }, [isCancelled]);
+
+  if (!isCancelled) return null;
 
   const handleReactivate = async () => {
     if (!session?.access_token) return;

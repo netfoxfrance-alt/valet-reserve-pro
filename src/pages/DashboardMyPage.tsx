@@ -16,6 +16,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { ExternalLink, Smartphone, Monitor, RefreshCw, Sparkles, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
+import { trackEvent } from '@/lib/analytics';
 
 export default function DashboardMyPage() {
   const { t } = useTranslation();
@@ -40,7 +41,10 @@ export default function DashboardMyPage() {
     const { error } = await updateCenter({ customization });
     setSaving(false);
     if (error) { toast({ title: t('common.error'), description: error, variant: 'destructive' }); }
-    else { toast({ title: t('common.saved'), description: t('settings.changesSaved') }); }
+    else {
+      trackEvent('page_published');
+      toast({ title: t('common.saved'), description: t('settings.changesSaved') });
+    }
   };
 
   const handleRefreshPreview = () => setPreviewKey(prev => prev + 1);

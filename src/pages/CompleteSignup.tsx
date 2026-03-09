@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { trackEvent } from '@/lib/analytics';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -120,6 +121,10 @@ export default function CompleteSignup() {
       if (!data?.success) {
         throw new Error(data?.error || 'Erreur lors de la création du compte');
       }
+
+      // Track signup + trial events
+      trackEvent('signup_created');
+      trackEvent('trial_started');
 
       toast({
         title: 'Compte créé !',

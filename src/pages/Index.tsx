@@ -53,7 +53,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-
+import { trackEvent } from '@/lib/analytics';
 export default function Index() {
   const [dashboardTab, setDashboardTab] = useState<'reservations' | 'calendar' | 'clients' | 'invoices' | 'stats' | 'mypage' | 'formules'>('stats');
   const [showClientDetail, setShowClientDetail] = useState(false);
@@ -65,6 +65,7 @@ export default function Index() {
   const { t } = useTranslation();
 
   const handleStartTrial = async () => {
+    trackEvent('cta_start_trial');
     setIsCheckoutLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('create-guest-checkout');
