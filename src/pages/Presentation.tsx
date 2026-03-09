@@ -55,7 +55,8 @@ function SlideCover() {
       </p>
       <div className="animate-fade-in-up stagger-3 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
         <Link to="/auth">
-          <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_8px_24px_-4px_rgba(16,185,129,0.4)] hover:shadow-[0_12px_32px_-4px_rgba(16,185,129,0.5)] transition-all duration-300 text-sm sm:text-base font-semibold px-6 sm:px-8">
+          <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_8px_24px_-4px_rgba(16,185,129,0.4)] hover:shadow-[0_12px_32px_-4px_rgba(16,185,129,0.5)] transition-all duration-300 text-sm sm:text-base font-semibold px-6 sm:px-8"
+            onClick={() => trackEvent('cta_start_trial')}>
             {t('presentation.contactStartFree', { defaultValue: 'Commencer gratuitement' })}
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
