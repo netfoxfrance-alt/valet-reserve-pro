@@ -91,7 +91,7 @@ function renderHomePage(): Response {
 
         <section>
           <h2>Tarif</h2>
-          <p><strong>29€/mois</strong> — Tout inclus, sans engagement. Essai gratuit 30 jours.</p>
+          <p><strong>39€/mois</strong> — Tout inclus, sans engagement. Essai gratuit 30 jours.</p>
           <ul>
             <li>Page de réservation personnalisée</li>
             <li>Réservations illimitées</li>
@@ -137,7 +137,7 @@ function renderHomePage(): Response {
       'url': BASE_URL,
       'offers': {
         '@type': 'Offer',
-        'price': '29',
+        'price': '39',
         'priceCurrency': 'EUR',
         'priceValidUntil': `${new Date().getFullYear() + 1}-12-31`,
       },
