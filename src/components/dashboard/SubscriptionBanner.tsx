@@ -12,6 +12,9 @@ export function SubscriptionBanner() {
   // Only show if user had a trial/subscription before but is currently not subscribed
   if (subscription.subscribed || !subscription.hadTrial) return null;
 
+  // Track that subscription is cancelled (banner is showing)
+  // This fires once per page load when the banner is visible
+  trackEvent('subscription_cancelled');
   const handleReactivate = async () => {
     if (!session?.access_token) return;
     setLoading(true);
