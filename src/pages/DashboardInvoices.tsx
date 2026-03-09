@@ -509,6 +509,7 @@ export default function DashboardInvoices() {
         type={formType}
         invoice={editingInvoice}
         prefillData={prefillData}
+        onSuccess={refetch}
       />
 
       {/* Preview Dialog */}
