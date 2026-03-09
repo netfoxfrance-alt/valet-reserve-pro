@@ -65,7 +65,7 @@ export default function DashboardInvoices() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { center, loading: centerLoading } = useMyCenter();
-  const { invoices, loading, deleteInvoice, convertQuoteToInvoice, updateInvoice } = useInvoices();
+  const { invoices, loading, deleteInvoice, convertQuoteToInvoice, updateInvoice, refetch } = useInvoices();
   const { toast } = useToast();
   
   const [activeTab, setActiveTab] = useState<'all' | 'invoices' | 'quotes' | 'quotes-accepted' | 'quotes-pending' | 'pending'>('all');
@@ -509,6 +509,7 @@ export default function DashboardInvoices() {
         type={formType}
         invoice={editingInvoice}
         prefillData={prefillData}
+        onSuccess={refetch}
       />
 
       {/* Preview Dialog */}
