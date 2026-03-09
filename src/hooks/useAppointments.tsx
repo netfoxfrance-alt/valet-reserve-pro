@@ -314,14 +314,11 @@ export function useCreateAppointment() {
 
       const duration_minutes = parseDurationToMinutes(data.duration);
 
-      // Anti-overlap check: verify no existing appointment conflicts with this time slot
-      const { data: existingApts, error: overlapQueryError } = await supabase
-        .from('appointments')
-        .select('appointment_time, duration_minutes, client_name')
-        .eq('center_id', data.center_id)
-        .eq('appointment_date', data.appointment_date)
-        .neq('status', 'cancelled')
-        .neq('status', 'refused');
+      // Anti-overlap check: use RPC to bypass RLS (anon users can't SELECT appointments)
+      const { data: existingApts, error: overlapQueryError } = await supabase.rpc('get_occupied_slots', {
+        p_center_id: data.center_id,
+        p_from_date: data.appointment_date,
+      });
 
       if (overlapQueryError) {
         return { error: formatAppointmentError(overlapQueryError), appointmentId: null };
