@@ -71,7 +71,7 @@ export default function Auth() {
       });
 
       if (subData?.subscribed) {
-        // Already subscribed, go to dashboard
+        trackEvent('subscription_started');
         toast({
           title: 'Connexion réussie',
           description: 'Bienvenue dans votre espace.',

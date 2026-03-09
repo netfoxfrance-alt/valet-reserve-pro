@@ -122,6 +122,10 @@ export default function CompleteSignup() {
         throw new Error(data?.error || 'Erreur lors de la création du compte');
       }
 
+      // Track signup + trial events
+      trackEvent('signup_created');
+      trackEvent('trial_started');
+
       toast({
         title: 'Compte créé !',
         description: 'Votre essai gratuit de 30 jours est activé.',

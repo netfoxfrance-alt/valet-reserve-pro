@@ -64,6 +64,10 @@ export function useCreateContactRequest() {
           company_name: data.company_name || null,
         });
       
+      if (!error) {
+        trackEvent('lead_received', { request_type: data.request_type || 'contact' });
+      }
+
       return { error };
     } finally {
       setLoading(false);
