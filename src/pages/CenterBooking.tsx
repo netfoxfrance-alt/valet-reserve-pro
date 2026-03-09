@@ -1036,7 +1036,15 @@ export default function CenterBooking() {
                   {` • ${packData.price}€`}
                 </p>
               </div>
-              <CalendarPicker duration={packData.duration} onSelect={handleDateSelect} centerId={center?.id} />
+              <CalendarPicker 
+                duration={packData.duration} 
+                onSelect={handleDateSelect} 
+                centerId={center?.id}
+                serviceDurationMinutes={
+                  recognizedClient?.service_duration_minutes 
+                  || (selectedPack?.duration ? parseDurationString(selectedPack.duration) : undefined)
+                }
+              />
             </div>
           )}
           
