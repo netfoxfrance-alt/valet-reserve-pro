@@ -65,6 +65,7 @@ export default function Index() {
   const { t } = useTranslation();
 
   const handleStartTrial = async () => {
+    trackEvent('cta_start_trial');
     setIsCheckoutLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('create-guest-checkout');
