@@ -314,25 +314,25 @@ export function useCreateAppointment() {
 
       const duration_minutes = parseDurationToMinutes(data.duration);
 
-      // Anti-overlap check: verify no existing appointment conflicts with this time slot
-      const { data: existingApts, error: overlapQueryError } = await supabase
-        .from('appointments')
-        .select('appointment_time, duration_minutes, client_name')
-        .eq('center_id', data.center_id)
-        .eq('appointment_date', data.appointment_date)
-        .neq('status', 'cancelled')
-        .neq('status', 'refused');
+      // Anti-overlap check: use RPC to bypass RLS (anon users can't SELECT appointments)
+      const { data: existingApts, error: overlapQueryError } = await supabase.rpc('get_occupied_slots', {
+        p_center_id: data.center_id,
+        p_from_date: data.appointment_date,
+      });
 
       if (overlapQueryError) {
         return { error: formatAppointmentError(overlapQueryError), appointmentId: null };
       }
 
       if (existingApts && existingApts.length > 0) {
+        // Filter to only the target date
+        const dayApts = existingApts.filter((apt: any) => apt.appointment_date === data.appointment_date);
         const newStartMin = timeToMin(data.appointment_time);
         const newEndMin = newStartMin + duration_minutes;
 
-        const overlap = existingApts.find(apt => {
-          const aptStartMin = timeToMin(apt.appointment_time.slice(0, 5));
+        const overlap = dayApts.find((apt: any) => {
+          const aptTimeStr = typeof apt.appointment_time === 'string' ? apt.appointment_time.slice(0, 5) : String(apt.appointment_time).slice(0, 5);
+          const aptStartMin = timeToMin(aptTimeStr);
           const aptEndMin = aptStartMin + (apt.duration_minutes || 60);
           return newStartMin < aptEndMin && newEndMin > aptStartMin;
         });

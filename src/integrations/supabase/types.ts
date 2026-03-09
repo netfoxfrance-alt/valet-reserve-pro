@@ -1102,6 +1102,14 @@ export type Database = {
           Tel: string
         }[]
       }
+      get_occupied_slots: {
+        Args: { p_center_id: string; p_from_date: string }
+        Returns: {
+          appointment_date: string
+          appointment_time: string
+          duration_minutes: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

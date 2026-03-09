@@ -80,6 +80,15 @@ type BookingStep =
 
 export default function CenterBooking() {
   const { slug } = useParams<{ slug: string }>();
+
+  // Parse duration string like "1h30" → 90, "2h" → 120
+  const parseDurationString = (duration: string): number => {
+    const hoursMatch = duration.match(/(\d+)h/);
+    const minutesMatch = duration.match(/(\d+)(?:min|m(?!h))/);
+    const hours = hoursMatch ? parseInt(hoursMatch[1], 10) : 0;
+    const minutes = minutesMatch ? parseInt(minutesMatch[1], 10) : 0;
+    return hours * 60 + minutes || 60;
+  };
   const { center, packs, availability, loading, error } = useCenterBySlug(slug || '');
   const { createAppointment, loading: submitting } = useCreateAppointment();
   const { createContactRequest, loading: submittingContact } = useCreateContactRequest();
@@ -1036,7 +1045,15 @@ export default function CenterBooking() {
                   {` • ${packData.price}€`}
                 </p>
               </div>
-              <CalendarPicker duration={packData.duration} onSelect={handleDateSelect} centerId={center?.id} />
+              <CalendarPicker 
+                duration={packData.duration} 
+                onSelect={handleDateSelect} 
+                centerId={center?.id}
+                serviceDurationMinutes={
+                  recognizedClient?.service_duration_minutes 
+                  || (selectedPack?.duration ? parseDurationString(selectedPack.duration) : undefined)
+                }
+              />
             </div>
           )}
           
