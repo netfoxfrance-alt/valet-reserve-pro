@@ -217,22 +217,22 @@ export function DepositSettingsSection({ center, subscribed, onUpdate }: Deposit
                     ℹ️ Si vous annulez un rendez-vous, l'acompte est automatiquement remboursé au client.
                   </p>
                 </div>
-
-                <Button
-                  variant="premium"
-                  size="sm"
-                  onClick={handleSaveDeposit}
-                  disabled={savingDeposit}
-                  className="w-full sm:w-auto"
-                >
-                  {savingDeposit ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t('common.saving')}</>
-                  ) : (
-                    t('common.save')
-                  )}
-                </Button>
               </div>
             )}
+
+            <Button
+              variant="premium"
+              size="sm"
+              onClick={handleSaveDeposit}
+              disabled={savingDeposit}
+              className="w-full sm:w-auto"
+            >
+              {savingDeposit ? (
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t('common.saving')}</>
+              ) : (
+                t('common.save')
+              )}
+            </Button>
           </div>
         )}
 
