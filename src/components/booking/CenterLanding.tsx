@@ -1342,7 +1342,38 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
               <p className="text-lg font-semibold mb-1" style={{ color: textColors.primary }}>
                 Bonjour {recognizedClient.first_name} ! 👋
               </p>
-              {recognizedClient.service_name ? (
+              {clientServices.length > 1 ? (
+                <>
+                  <p className="text-sm mb-4" style={{ color: textColors.secondary }}>
+                    Choisissez votre prestation :
+                  </p>
+                  <div className="space-y-2 mb-2">
+                    {clientServices.map((svc) => (
+                      <button
+                        key={svc.service_id}
+                        onClick={() => {
+                          const selected = { ...recognizedClient!, ...svc };
+                          setRecognizedClient(selected);
+                          onRecognizedClient?.(selected);
+                        }}
+                        className="w-full flex items-center justify-between p-4 rounded-xl transition-colors text-left"
+                        style={{ backgroundColor: customization.colors.primary + '10' }}
+                      >
+                        <div>
+                          <p className="font-semibold" style={{ color: textColors.primary }}>{svc.service_name}</p>
+                          <p className="text-sm flex items-center gap-1 mt-1" style={{ color: textColors.secondary }}>
+                            <Clock className="w-3.5 h-3.5" />
+                            {svc.service_duration_minutes} min
+                          </p>
+                        </div>
+                        <p className="text-xl font-bold" style={{ color: customization.colors.primary }}>
+                          {svc.service_price}€
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : recognizedClient.service_name ? (
                 <>
                   <p className="text-sm mb-4" style={{ color: textColors.secondary }}>
                     Votre prestation personnalisée :
@@ -1392,7 +1423,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                 </>
               )}
               <button
-                onClick={() => { setRecognizedClient(null); setShowClientLookup(false); setLookupEmail(''); }}
+                onClick={() => { setRecognizedClient(null); setClientServices([]); setShowClientLookup(false); setLookupEmail(''); }}
                 className="w-full text-center text-xs mt-3 underline"
                 style={{ color: textColors.secondary }}
               >
