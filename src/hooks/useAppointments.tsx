@@ -349,25 +349,33 @@ export function useCreateAppointment() {
       // Store the final price (variant or base pack price) in custom_price for accurate stats
       const finalPrice = data.price !== undefined ? data.price : null;
 
+      // Ensure all required fields have values for RLS policy
+      const insertPayload = {
+        center_id: data.center_id,
+        pack_id: data.pack_id || null,
+        client_id: data.client_id || null,
+        custom_service_id: data.custom_service_id || null,
+        client_name: data.client_name || 'Client',
+        client_email: data.client_email || '',
+        client_phone: data.client_phone || '',
+        client_address: data.client_address || null,
+        vehicle_type: data.vehicle_type || 'berline',
+        appointment_date: data.appointment_date,
+        appointment_time: data.appointment_time,
+        notes: data.notes || null,
+        duration_minutes,
+        custom_price: data.custom_price !== undefined && data.custom_price !== null ? data.custom_price : finalPrice,
+        status: 'pending_validation' as const,
+      };
+
+      // Validate required fields before insert to give better error messages
+      if (!insertPayload.client_name || !insertPayload.client_email || !insertPayload.client_phone) {
+        return { error: 'Veuillez remplir tous les champs obligatoires (nom, email, téléphone).', appointmentId: null };
+      }
+
       const { data: insertedData, error } = await supabase
         .from('appointments')
-        .insert({
-          center_id: data.center_id,
-          pack_id: data.pack_id || null,
-          client_id: data.client_id || null,
-          custom_service_id: data.custom_service_id || null,
-          client_name: data.client_name,
-          client_email: data.client_email,
-          client_phone: data.client_phone,
-          client_address: data.client_address,
-          vehicle_type: data.vehicle_type,
-          appointment_date: data.appointment_date,
-          appointment_time: data.appointment_time,
-          notes: data.notes,
-          duration_minutes,
-          custom_price: data.custom_price !== undefined && data.custom_price !== null ? data.custom_price : finalPrice,
-          status: 'pending_validation',
-        })
+        .insert(insertPayload)
         .select('id')
         .single();
 
