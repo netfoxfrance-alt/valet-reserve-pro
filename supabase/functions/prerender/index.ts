@@ -91,7 +91,7 @@ function renderHomePage(): Response {
 
         <section>
           <h2>Tarif</h2>
-          <p><strong>29€/mois</strong> — Tout inclus, sans engagement. Essai gratuit 30 jours.</p>
+          <p><strong>39€/mois</strong> — Tout inclus, sans engagement. Essai gratuit 30 jours.</p>
           <ul>
             <li>Page de réservation personnalisée</li>
             <li>Réservations illimitées</li>
