@@ -70,6 +70,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
   const [lookupEmail, setLookupEmail] = useState('');
   const [lookupLoading, setLookupLoading] = useState(false);
   const [recognizedClient, setRecognizedClient] = useState<RecognizedClient | null>(null);
+  const [clientServices, setClientServices] = useState<Array<{ service_id: string; service_name: string; service_price: number; service_duration_minutes: number }>>([]);
   const [lookupNotFound, setLookupNotFound] = useState(false);
 
   // Check if client recognition is enabled
