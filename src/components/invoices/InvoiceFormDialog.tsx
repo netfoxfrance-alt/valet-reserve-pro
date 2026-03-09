@@ -94,7 +94,7 @@ interface FormItem {
   vat_rate: number;
 }
 
-export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoice, prefillData }: InvoiceFormDialogProps) {
+export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoice, prefillData, onSuccess }: InvoiceFormDialogProps) {
   const { createInvoice, updateInvoice, getInvoiceWithItems, generateNextNumber } = useInvoices();
   const { vatRates } = useVatRates();
   const { clients, createClient, refetch: refetchClients } = useMyClients();
