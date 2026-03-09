@@ -176,10 +176,11 @@ export function useCenterAvailability(centerId: string | null | undefined, servi
       allSlots.forEach(slot => {
         const [slotH, slotM] = slot.split(':').map(Number);
         const slotStartMinutes = slotH * 60 + slotM;
+        const slotEndMinutes = slotStartMinutes + bookingDuration;
         
-        // Un créneau est bloqué si son début tombe avant la fin du RDV + buffer
-        // ET si le RDV commence avant la fin de ce créneau (overlap)
-        if (slotStartMinutes < aptEndWithBuffer && slotStartMinutes + 60 > aptStartMinutes) {
+        // Un créneau est bloqué si la nouvelle prestation chevaucherait le RDV existant (+ buffer)
+        // Overlap: newStart < existingEnd+buffer AND existingStart < newEnd+buffer
+        if (slotStartMinutes < aptEndWithBuffer && aptStartMinutes < slotEndMinutes + bufferMinutes) {
           blockedSlots.add(slot);
         }
       });
