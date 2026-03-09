@@ -966,6 +966,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
     setLookupLoading(true);
     setLookupNotFound(false);
     setRecognizedClient(null);
+    setClientServices([]);
     
     try {
       const { data, error } = await supabase.rpc('lookup_client_by_email', {
@@ -977,8 +978,24 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
       
       if (data && data.length > 0) {
         const client = data[0] as RecognizedClient;
-        // RPC masks PII for security — inject the email the user typed
-        setRecognizedClient({ ...client, client_email: lookupEmail.trim().toLowerCase() });
+        // Collect all services
+        const svcs = data
+          .filter((row: any) => row.service_id)
+          .map((row: any) => ({
+            service_id: row.service_id,
+            service_name: row.service_name,
+            service_price: row.service_price,
+            service_duration_minutes: row.service_duration_minutes,
+          }));
+        setClientServices(svcs);
+        
+        if (svcs.length === 1) {
+          // Single service → pre-select it
+          setRecognizedClient({ ...client, client_email: lookupEmail.trim().toLowerCase(), ...svcs[0] });
+        } else {
+          // Multiple or no services → show base client
+          setRecognizedClient({ ...client, client_email: lookupEmail.trim().toLowerCase() });
+        }
       } else {
         setLookupNotFound(true);
       }
