@@ -83,6 +83,7 @@ interface InvoiceFormDialogProps {
   type?: 'invoice' | 'quote';
   invoice?: Invoice | null;
   prefillData?: InvoicePrefillData | null;
+  onSuccess?: () => void;
 }
 
 interface FormItem {
