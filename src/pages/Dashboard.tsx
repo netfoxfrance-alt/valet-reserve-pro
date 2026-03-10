@@ -48,10 +48,10 @@ const statusColorMap: Record<string, string> = {
 
 // ─── Compact Appointment Card ───
 function InboxCard({ 
-  appointment, centerAddress, isSynced,
+  appointment, centerAddress, isSynced, googleCalendarConnected,
   onConfirm, onRefuse, onCancel, onUpdateStatus, onSendEmail, onViewDetails, onAddToCalendar, onCompleteSale 
 }: { 
-  appointment: Appointment; centerAddress?: string; isSynced: boolean;
+  appointment: Appointment; centerAddress?: string; isSynced: boolean; googleCalendarConnected: boolean;
   onConfirm: (a: Appointment) => void;
   onRefuse: (a: Appointment) => void;
   onCancel: (a: Appointment) => void;
@@ -190,13 +190,15 @@ function InboxCard({
         )}
         {appointment.status === 'confirmed' && (
           <>
-            <Button 
-              variant="ghost" size="icon" 
-              className={cn("h-8 w-8 sm:h-9 sm:w-9 rounded-xl", isSynced ? "text-primary" : "text-muted-foreground hover:text-primary")}
-              onClick={handleAddToCalendar}
-            >
-              {isSynced ? <CalendarCheck className="w-4 h-4" /> : <CalendarPlus className="w-4 h-4" />}
-            </Button>
+            {!googleCalendarConnected && (
+              <Button 
+                variant="ghost" size="icon" 
+                className={cn("h-8 w-8 sm:h-9 sm:w-9 rounded-xl", isSynced ? "text-primary" : "text-muted-foreground hover:text-primary")}
+                onClick={handleAddToCalendar}
+              >
+                {isSynced ? <CalendarCheck className="w-4 h-4" /> : <CalendarPlus className="w-4 h-4" />}
+              </Button>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl">
@@ -720,6 +722,7 @@ export default function Dashboard() {
                           appointment={apt}
                           centerAddress={center?.address || undefined}
                           isSynced={checkIsSynced(apt.id)}
+                          googleCalendarConnected={!!center?.google_calendar_connected}
                           onConfirm={handleConfirm}
                           onRefuse={handleRefuse}
                           onCancel={handleCancel}
