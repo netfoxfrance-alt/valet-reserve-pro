@@ -388,7 +388,7 @@ export default function DashboardClients() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5 self-end sm:self-center shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1.5 self-end sm:self-center shrink-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-xl" onClick={(e) => { e.stopPropagation(); setViewingClient(client); }}>
                         <Eye className="w-4 h-4" />
                       </Button>
