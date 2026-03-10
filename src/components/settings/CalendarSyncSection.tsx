@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Calendar, Copy, Check, RefreshCw, ChevronDown, ExternalLink, Unplug, Loader2, Mail } from 'lucide-react';
+import { Calendar, Check, ExternalLink, Unplug, Loader2, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { generateIcalSubscriptionUrl, generateGoogleCalendarSubscribeUrl } from '@/lib/calendarUtils';
 import { cn } from '@/lib/utils';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useSearchParams } from 'react-router-dom';
 
 interface CalendarSyncSectionProps {
   centerId: string;
-  icalToken: string | null;
+  icalToken?: string | null;
   onRefreshToken?: () => Promise<void>;
   googleCalendarConnected?: boolean;
   googleCalendarEmail?: string | null;
@@ -28,13 +25,7 @@ export function CalendarSyncSection({
 }: CalendarSyncSectionProps) {
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [copied, setCopied] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
-
-  const icalUrl = icalToken ? generateIcalSubscriptionUrl(centerId, icalToken) : null;
-  const googleSubscribeUrl = icalUrl ? generateGoogleCalendarSubscribeUrl(icalUrl) : null;
 
   // Handle Google OAuth return
   useEffect(() => {
@@ -88,31 +79,6 @@ export function CalendarSyncSection({
       toast({ title: 'Erreur', description: 'Impossible de déconnecter.', variant: 'destructive' });
     } finally {
       setIsDisconnecting(false);
-    }
-  };
-
-  const handleCopy = async () => {
-    if (!icalUrl) return;
-    try {
-      await navigator.clipboard.writeText(icalUrl);
-      setCopied(true);
-      toast({ title: 'Lien copié !', description: 'Collez-le dans votre application calendrier.' });
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast({ title: 'Erreur', description: 'Impossible de copier le lien.', variant: 'destructive' });
-    }
-  };
-
-  const handleRefreshToken = async () => {
-    if (!onRefreshToken) return;
-    setIsRefreshing(true);
-    try {
-      await onRefreshToken();
-      toast({ title: 'Lien régénéré', description: 'Votre ancien lien ne fonctionnera plus.' });
-    } catch {
-      toast({ title: 'Erreur', description: 'Impossible de régénérer le lien.', variant: 'destructive' });
-    } finally {
-      setIsRefreshing(false);
     }
   };
 
@@ -210,79 +176,6 @@ export function CalendarSyncSection({
             </div>
           )}
 
-          {/* Advanced options (collapsible) - iCal fallback */}
-          <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen}>
-            <CollapsibleTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="w-full justify-between text-muted-foreground hover:text-foreground"
-              >
-                Options avancées (iCal)
-                <ChevronDown className={cn(
-                  "w-4 h-4 transition-transform duration-200",
-                  isAdvancedOpen && "rotate-180"
-                )} />
-              </Button>
-            </CollapsibleTrigger>
-            
-            <CollapsibleContent className="pt-3 space-y-4">
-              {/* iCal sync button */}
-              {googleSubscribeUrl && (
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
-                    Synchronisation iCal (mise à jour différée)
-                  </label>
-                  <p className="text-xs text-muted-foreground">
-                    Pour Apple Calendar, Outlook ou autre. Les mises à jour peuvent prendre jusqu'à 24h.
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      window.open(googleSubscribeUrl, '_blank');
-                      toast({ title: 'Google Agenda ouvert', description: 'Cliquez sur "Ajouter" pour finaliser.' });
-                    }}
-                    className="w-full sm:w-auto gap-2"
-                  >
-                    <Calendar className="w-4 h-4" />
-                    S'abonner via iCal
-                  </Button>
-                </div>
-              )}
-
-              {/* Manual copy */}
-              {icalUrl && (
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
-                    Copier le lien iCal
-                  </label>
-                  <div className="flex gap-2">
-                    <Input value={icalUrl} readOnly className="font-mono text-xs bg-muted/50" />
-                    <Button variant="outline" size="icon" onClick={handleCopy} className="shrink-0">
-                      {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {/* Regenerate token */}
-              {onRefreshToken && (
-                <div className="pt-2 border-t border-border">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleRefreshToken}
-                    disabled={isRefreshing}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <RefreshCw className={cn("w-4 h-4 mr-2", isRefreshing && "animate-spin")} />
-                    Régénérer le lien iCal
-                  </Button>
-                </div>
-              )}
-            </CollapsibleContent>
-          </Collapsible>
         </div>
       </Card>
     </section>
