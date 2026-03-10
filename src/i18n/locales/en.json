@@ -425,7 +425,9 @@
     "nameAndPriceRequired": "Name and price required",
     "createAction": "Create service",
     "descriptionOptional": "Description (optional)",
-    "priceLabel": "Price (€)"
+    "priceLabel": "Price (€)",
+    "scheduleNow": "Schedule an appointment for this client?",
+    "scheduleAction": "Schedule"
   },
   "stats": {
     "title": "Statistics",
