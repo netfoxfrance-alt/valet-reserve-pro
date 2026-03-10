@@ -1895,7 +1895,7 @@ export default function Index() {
           <div className="flex items-center gap-4 text-xs text-muted-foreground/60">
              <Link to="/confidentialite" className="hover:text-muted-foreground transition-colors">{t('landing.privacy')}</Link>
              <span>·</span>
-             <Link to="/cgv" className="hover:text-muted-foreground transition-colors">{t('landing.terms')}</Link>
+             <Link to="/cgu" className="hover:text-muted-foreground transition-colors">{t('landing.terms')}</Link>
              <span>·</span>
              <Link to="/mentions-legales" className="hover:text-muted-foreground transition-colors">{t('landing.legalNotices')}</Link>
            </div>

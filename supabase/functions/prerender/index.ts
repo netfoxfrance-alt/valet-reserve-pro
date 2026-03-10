@@ -21,8 +21,8 @@ Deno.serve(async (req) => {
       return renderHomePage();
     } else if (path === '/confidentialite') {
       return renderLegalPage('Politique de confidentialité', 'Politique de confidentialité de CleaningPage.');
-    } else if (path === '/cgv') {
-      return renderLegalPage('Conditions Générales de Vente', 'Conditions générales de vente de CleaningPage.');
+    } else if (path === '/cgu') {
+      return renderLegalPage("Conditions Générales d'Utilisation", "Conditions générales d'utilisation de CleaningPage.");
     } else if (path === '/mentions-legales') {
       return renderLegalPage('Mentions légales', 'Mentions légales de CleaningPage.');
     } else {
@@ -123,7 +123,7 @@ function renderHomePage(): Response {
         <nav>
           <a href="${BASE_URL}/mentions-legales">Mentions légales</a>
           <a href="${BASE_URL}/confidentialite">Politique de confidentialité</a>
-          <a href="${BASE_URL}/cgv">Conditions générales de vente</a>
+          <a href="${BASE_URL}/cgu">Conditions générales d'utilisation</a>
         </nav>
       </footer>
     `,

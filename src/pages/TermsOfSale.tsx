@@ -9,13 +9,13 @@ const TermsOfSale = () => {
           <ArrowLeft className="w-4 h-4" /> Retour
         </Link>
 
-        <h1 className="text-3xl font-bold mb-8">Conditions Générales de Vente</h1>
+        <h1 className="text-3xl font-bold mb-8">Conditions Générales d'Utilisation</h1>
 
         <div className="prose prose-sm max-w-none space-y-6 text-muted-foreground">
           <section>
             <h2 className="text-lg font-semibold text-foreground">1. Objet</h2>
-            <p>Les présentes Conditions Générales de Vente (ci-après « CGV ») régissent la relation contractuelle entre NETFOX et toute personne morale ou physique souscrivant aux services proposés via la plateforme CleaningPage (ci-après « le Client »).</p>
-            <p>La souscription aux services implique l'acceptation sans réserve des présentes CGV.</p>
+            <p>Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») régissent la relation contractuelle entre NETFOX et toute personne morale ou physique souscrivant aux services proposés via la plateforme CleaningPage (ci-après « le Client »).</p>
+            <p>La souscription aux services implique l'acceptation sans réserve des présentes CGU.</p>
           </section>
 
           <section>
@@ -50,7 +50,7 @@ const TermsOfSale = () => {
             <ul className="list-disc pl-5 space-y-1">
               <li>De non-paiement</li>
               <li>D'usage frauduleux</li>
-              <li>De violation des présentes CGV</li>
+              <li>De violation des présentes CGU</li>
             </ul>
           </section>
 
@@ -88,7 +88,7 @@ const TermsOfSale = () => {
 
           <section>
             <h2 className="text-lg font-semibold text-foreground">10. Cession du contrat</h2>
-            <p>L'Éditeur se réserve le droit de céder, transférer ou apporter tout ou partie de ses droits et obligations au titre des présentes CGV à toute entité affiliée, société successeur ou dans le cadre d'une opération de restructuration, fusion, acquisition ou changement de juridiction, sans que l'accord préalable du Client ne soit requis.</p>
+            <p>L'Éditeur se réserve le droit de céder, transférer ou apporter tout ou partie de ses droits et obligations au titre des présentes CGU à toute entité affiliée, société successeur ou dans le cadre d'une opération de restructuration, fusion, acquisition ou changement de juridiction, sans que l'accord préalable du Client ne soit requis.</p>
             <p>Le Client en sera informé par tout moyen approprié.</p>
           </section>
 
@@ -99,7 +99,7 @@ const TermsOfSale = () => {
 
           <section>
             <h2 className="text-lg font-semibold text-foreground">12. Droit applicable</h2>
-            <p>Les présentes CGV sont régies par le droit français. Tout litige sera soumis à la compétence exclusive des tribunaux du ressort du siège de l'Éditeur.</p>
+            <p>Les présentes CGU sont régies par le droit français. Tout litige sera soumis à la compétence exclusive des tribunaux du ressort du siège de l'Éditeur.</p>
           </section>
         </div>
       </div>
