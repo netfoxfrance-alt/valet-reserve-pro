@@ -28,6 +28,7 @@ import { sendBookingEmail, getClientEmail, buildEmailPayload, EmailType } from '
 import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
 import { AppointmentDetailDialog } from '@/components/dashboard/AppointmentDetailDialog';
 import { ConfirmationCalendarDialog } from '@/components/dashboard/ConfirmationCalendarDialog';
+import { CompleteSaleDialog } from '@/components/dashboard/CompleteSaleDialog';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
