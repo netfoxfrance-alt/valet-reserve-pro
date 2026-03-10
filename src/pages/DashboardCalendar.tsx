@@ -998,7 +998,8 @@ export default function DashboardCalendar() {
                     variant="outline"
                     className="rounded-xl"
                     onClick={() => {
-                      handleUpdateStatus(selectedAppointment.id, 'completed');
+                      setSaleAppointment(selectedAppointment);
+                      setSaleDialogOpen(true);
                       setSelectedAppointment(null);
                     }}
                   >
