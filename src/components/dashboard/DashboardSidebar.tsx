@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, CalendarDays, Settings, Package, Clock, LogOut, Share2, Copy, Check, MessageSquare, BarChart3, Globe, Crown, AlertCircle, Headphones, FileText, Users, ChevronDown, Wrench, ShoppingCart } from 'lucide-react';
+import { Calendar, CalendarDays, Settings, Package, Clock, LogOut, Share2, Copy, Check, MessageSquare, BarChart3, Globe, Crown, AlertCircle, Headphones, FileText, Users, ChevronDown, Wrench } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -23,7 +23,6 @@ const getNavigationGroups = (t: (key: string) => string) => [
     items: [
       { name: t('nav.requests'), href: '/dashboard/requests', icon: MessageSquare },
       { name: t('nav.clients'), href: '/dashboard/clients', icon: Users },
-      { name: t('nav.sales'), href: '/dashboard/sales', icon: ShoppingCart },
       { name: t('nav.quotes'), href: '/dashboard/invoices', icon: FileText },
     ]
   },
