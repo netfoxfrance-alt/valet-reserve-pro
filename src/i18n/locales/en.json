@@ -50,6 +50,8 @@
     "requests": "Requests",
     "clients": "Clients",
     "invoicesQuotes": "Invoices & Quotes",
+    "sales": "Sales",
+    "quotes": "Quotes",
     "configuration": "Configuration",
     "myPage": "My Page",
     "packs": "Packages",
