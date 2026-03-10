@@ -642,6 +642,15 @@ export default function Dashboard() {
           onAddToCalendar={() => markAsSynced(justConfirmedAppointment.id)}
         />
       )}
+
+      <CompleteSaleDialog
+        appointment={saleAppointment}
+        open={saleDialogOpen}
+        onOpenChange={setSaleDialogOpen}
+        onComplete={async (appointmentId) => {
+          await handleUpdateStatus(appointmentId, 'completed');
+        }}
+      />
     </>
   );
 }
