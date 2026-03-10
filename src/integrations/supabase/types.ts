@@ -33,6 +33,7 @@ export type Database = {
           deposit_refund_status: string
           deposit_status: string
           duration_minutes: number | null
+          google_calendar_event_id: string | null
           id: string
           notes: string | null
           pack_id: string | null
@@ -59,6 +60,7 @@ export type Database = {
           deposit_refund_status?: string
           deposit_status?: string
           duration_minutes?: number | null
+          google_calendar_event_id?: string | null
           id?: string
           notes?: string | null
           pack_id?: string | null
@@ -85,6 +87,7 @@ export type Database = {
           deposit_refund_status?: string
           deposit_status?: string
           duration_minutes?: number | null
+          google_calendar_event_id?: string | null
           id?: string
           notes?: string | null
           pack_id?: string | null
@@ -251,6 +254,9 @@ export type Database = {
           deposit_value: number
           email: string | null
           email_language: string
+          google_calendar_connected: boolean | null
+          google_calendar_email: string | null
+          google_calendar_refresh_token: string | null
           ical_token: string | null
           id: string
           intervention_radius_km: number | null
@@ -283,6 +289,9 @@ export type Database = {
           deposit_value?: number
           email?: string | null
           email_language?: string
+          google_calendar_connected?: boolean | null
+          google_calendar_email?: string | null
+          google_calendar_refresh_token?: string | null
           ical_token?: string | null
           id?: string
           intervention_radius_km?: number | null
@@ -315,6 +324,9 @@ export type Database = {
           deposit_value?: number
           email?: string | null
           email_language?: string
+          google_calendar_connected?: boolean | null
+          google_calendar_email?: string | null
+          google_calendar_refresh_token?: string | null
           ical_token?: string | null
           id?: string
           intervention_radius_km?: number | null
