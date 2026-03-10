@@ -25,8 +25,6 @@ export function CalendarSyncSection({
 }: CalendarSyncSectionProps) {
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [copied, setCopied] = useState(false);
-  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
 
   // Handle Google OAuth return
@@ -81,31 +79,6 @@ export function CalendarSyncSection({
       toast({ title: 'Erreur', description: 'Impossible de déconnecter.', variant: 'destructive' });
     } finally {
       setIsDisconnecting(false);
-    }
-  };
-
-  const handleCopy = async () => {
-    if (!icalUrl) return;
-    try {
-      await navigator.clipboard.writeText(icalUrl);
-      setCopied(true);
-      toast({ title: 'Lien copié !', description: 'Collez-le dans votre application calendrier.' });
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast({ title: 'Erreur', description: 'Impossible de copier le lien.', variant: 'destructive' });
-    }
-  };
-
-  const handleRefreshToken = async () => {
-    if (!onRefreshToken) return;
-    setIsRefreshing(true);
-    try {
-      await onRefreshToken();
-      toast({ title: 'Lien régénéré', description: 'Votre ancien lien ne fonctionnera plus.' });
-    } catch {
-      toast({ title: 'Erreur', description: 'Impossible de régénérer le lien.', variant: 'destructive' });
-    } finally {
-      setIsRefreshing(false);
     }
   };
 
