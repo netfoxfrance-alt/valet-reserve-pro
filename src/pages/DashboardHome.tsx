@@ -133,20 +133,30 @@ export default function DashboardHome() {
 
         {/* Icon Grid */}
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-4 gap-y-6 sm:gap-x-10 sm:gap-y-10 lg:gap-x-14 lg:gap-y-12 sm:max-w-2xl sm:mx-auto">
-          {menuItems.map((item) => (
-            <Link
-              key={item.href}
-              to={item.href}
-              className="group flex flex-col items-center gap-2.5 hover:opacity-90 transition-all duration-200"
-            >
-              <img
-                src={item.icon}
-                alt={item.label}
-                className="w-16 h-16 sm:w-16 sm:h-16 lg:w-20 lg:h-20 object-contain group-hover:scale-[1.06] transition-transform duration-300 ease-out"
-              />
-              <span className="text-xs sm:text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">{item.label}</span>
-            </Link>
-          ))}
+          {menuItems.map((item) => {
+            const badgeCount = item.badgeKey ? badges[item.badgeKey] || 0 : 0;
+            return (
+              <Link
+                key={item.href}
+                to={item.href}
+                className="group flex flex-col items-center gap-2.5 hover:opacity-90 transition-all duration-200"
+              >
+                <div className="relative">
+                  <img
+                    src={item.icon}
+                    alt={item.label}
+                    className="w-16 h-16 sm:w-16 sm:h-16 lg:w-20 lg:h-20 object-contain group-hover:scale-[1.06] transition-transform duration-300 ease-out"
+                  />
+                  {badgeCount > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold px-1.5 shadow-sm">
+                      {badgeCount > 99 ? '99+' : badgeCount}
+                    </span>
+                  )}
+                </div>
+                <span className="text-xs sm:text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">{item.label}</span>
+              </Link>
+            );
+          })}
         </div>
       </main>
     </div>
