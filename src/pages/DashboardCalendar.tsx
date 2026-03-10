@@ -29,6 +29,7 @@ import { WeeklyCalendarView } from '@/components/dashboard/WeeklyCalendarView';
 import { MobileCalendarView } from '@/components/dashboard/MobileCalendarView';
 import { MobileScheduleView } from '@/components/dashboard/MobileScheduleView';
 import { ConfirmationCalendarDialog } from '@/components/dashboard/ConfirmationCalendarDialog';
+import { AvailableSlotPicker } from '@/components/dashboard/AvailableSlotPicker';
 import { useCalendarSync } from '@/hooks/useCalendarSync';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
