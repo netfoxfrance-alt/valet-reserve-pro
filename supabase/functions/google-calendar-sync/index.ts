@@ -217,7 +217,7 @@ serve(async (req) => {
         // No existing event — create one instead
         const event = buildCalendarEvent(appointment, center.address);
         log('No existing event, creating new one for update', { summary: event.summary });
-        const res = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+        const res = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?sendUpdates=all', {
           method: 'POST',
           headers: calendarHeaders,
           body: JSON.stringify(event),
