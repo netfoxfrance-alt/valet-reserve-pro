@@ -6,15 +6,17 @@ import {
 import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
 import { Appointment } from '@/hooks/useAppointments';
+import { Check } from 'lucide-react';
 
 /* ── Apple-vivid colors ── */
 const APPOINTMENT_COLOR = '#049be6';
+const COMPLETED_COLOR = '#36c857';
 
 const STATUS_BADGE: Record<string, { bg: string; label: string }> = {
   pending:            { bg: '#AF52DE', label: 'À valider' },
   pending_validation: { bg: '#FF9500', label: 'À valider' },
   confirmed:          { bg: APPOINTMENT_COLOR, label: 'Confirmé' },
-  completed:          { bg: '#36c857', label: 'Terminé' },
+  completed:          { bg: COMPLETED_COLOR, label: 'Terminé' },
   cancelled:          { bg: '#ff392b', label: 'Annulé' },
   refused:            { bg: '#ff392b', label: 'Refusé' },
 };
@@ -23,6 +25,7 @@ interface MobileScheduleViewProps {
   currentDate: Date;
   appointments: Appointment[];
   onAppointmentClick: (apt: Appointment) => void;
+  onQuickComplete?: (apt: Appointment) => void;
   blockedPeriods?: { start_date: string; end_date: string; reason: string | null }[];
 }
 
@@ -30,6 +33,7 @@ export function MobileScheduleView({
   currentDate,
   appointments,
   onAppointmentClick,
+  onQuickComplete,
   blockedPeriods = [],
 }: MobileScheduleViewProps) {
   const { i18n } = useTranslation();
@@ -115,37 +119,56 @@ export function MobileScheduleView({
                     const endTime = getEndTime(apt.appointment_time, apt.duration_minutes || 60);
 
                     return (
-                      <button
-                        key={apt.id}
-                        onClick={() => onAppointmentClick(apt)}
-                        className="w-full text-left rounded-xl p-3.5 active:scale-[0.98] transition-all"
-                        style={{ backgroundColor: APPOINTMENT_COLOR }}
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-white font-bold text-[15px] truncate leading-tight">
-                              {apt.client_name}
-                            </p>
-                            <p className="text-white/80 text-[13px] mt-0.5 font-medium">
-                              {apt.appointment_time.slice(0, 5)} – {endTime}
-                              {apt.client_address ? ` à ${apt.client_address}` : ''}
-                            </p>
-                            {serviceName && (
-                              <p className="text-white/60 text-[11px] mt-1 font-semibold uppercase tracking-wide truncate">
-                                {serviceName}
+                      <div key={apt.id} className="flex items-stretch gap-2">
+                        <button
+                          onClick={() => onAppointmentClick(apt)}
+                          className="flex-1 text-left rounded-xl p-3.5 active:scale-[0.98] transition-all"
+                          style={{ backgroundColor: apt.status === 'completed' ? COMPLETED_COLOR : APPOINTMENT_COLOR }}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-white font-bold text-[15px] truncate leading-tight">
+                                {apt.client_name}
                               </p>
+                              <p className="text-white/80 text-[13px] mt-0.5 font-medium">
+                                {apt.appointment_time.slice(0, 5)} – {endTime}
+                                {apt.client_address ? ` à ${apt.client_address}` : ''}
+                              </p>
+                              {serviceName && (
+                                <p className="text-white/60 text-[11px] mt-1 font-semibold uppercase tracking-wide truncate">
+                                  {serviceName}
+                                </p>
+                              )}
+                            </div>
+                            {(apt.status === 'pending' || apt.status === 'pending_validation') && (
+                              <span
+                                className="text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0 mt-0.5 text-white"
+                                style={{ backgroundColor: badge.bg }}
+                              >
+                                {badge.label}
+                              </span>
+                            )}
+                            {apt.status === 'completed' && (
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0 mt-0.5 text-white bg-white/20">
+                                ✓ Terminé
+                              </span>
                             )}
                           </div>
-                          {(apt.status === 'pending' || apt.status === 'pending_validation') && (
-                            <span
-                              className="text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0 mt-0.5 text-white"
-                              style={{ backgroundColor: badge.bg }}
-                            >
-                              {badge.label}
-                            </span>
-                          )}
-                        </div>
-                      </button>
+                        </button>
+                        {/* Quick complete button for confirmed appointments */}
+                        {apt.status === 'confirmed' && onQuickComplete && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onQuickComplete(apt);
+                            }}
+                            className="w-14 rounded-xl flex items-center justify-center active:scale-95 transition-all"
+                            style={{ backgroundColor: COMPLETED_COLOR }}
+                          >
+                            <Check className="w-6 h-6 text-white" strokeWidth={3} />
+                          </button>
+                        )}
+                      </div>
                     );
                   })
                 ) : today ? (

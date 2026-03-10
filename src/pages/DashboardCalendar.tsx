@@ -12,8 +12,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Checkbox } from '@/components/ui/checkbox';
 import { 
-  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight, LayoutGrid, CalendarDays, CalendarPlus, Users, Search, Eye, Building2, ChevronDown, ChevronRight as ChevronRightIcon
+  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight, LayoutGrid, CalendarDays, CalendarPlus, Users, Search, Eye, Building2, ChevronDown, ChevronRight as ChevronRightIcon, CheckCheck
 } from 'lucide-react';
+import { CompleteSaleDialog } from '@/components/dashboard/CompleteSaleDialog';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
 import { useBlockedPeriods } from '@/hooks/useAvailability';
@@ -66,7 +67,8 @@ export default function DashboardCalendar() {
   const [rescheduleForm, setRescheduleForm] = useState({ date: '', time: '' });
   const [loadingReschedule, setLoadingReschedule] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
-  
+  const [saleDialogOpen, setSaleDialogOpen] = useState(false);
+  const [saleAppointment, setSaleAppointment] = useState<Appointment | null>(null);
   const { appointments, loading, updateStatus, createAppointment, deleteAppointment, refetch } = useMyAppointments();
   const { center } = useMyCenter();
   const { packs } = useMyPacks();
@@ -220,6 +222,12 @@ export default function DashboardCalendar() {
     days.push(day);
     day = addDays(day, 1);
   }
+
+  // Today's confirmed appointments for bulk complete
+  const todayConfirmed = useMemo(() => {
+    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    return appointments.filter(a => a.appointment_date === todayStr && a.status === 'confirmed');
+  }, [appointments]);
 
   // Get appointments for a specific day
   const getAppointmentsForDay = (date: Date) => {
@@ -674,15 +682,34 @@ export default function DashboardCalendar() {
                     time: apt.appointment_time.slice(0, 5) 
                   });
                 }}
+                onQuickComplete={(apt) => {
+                  setSaleAppointment(apt);
+                  setSaleDialogOpen(true);
+                }}
                 blockedPeriods={blockedPeriods}
               />
-              {/* Floating action button */}
-              <button
-                onClick={() => openCreateDialog()}
-                className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 flex items-center justify-center active:scale-95 transition-transform"
-              >
-                <Plus className="w-6 h-6" />
-              </button>
+              {/* Floating action buttons */}
+              <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-3 items-end">
+                {todayConfirmed.length > 0 && (
+                  <button
+                    onClick={() => {
+                      // Start sequential sale completion for today's confirmed
+                      setSaleAppointment(todayConfirmed[0]);
+                      setSaleDialogOpen(true);
+                    }}
+                    className="flex items-center gap-2 h-12 px-5 rounded-full bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 active:scale-95 transition-transform font-semibold text-sm"
+                  >
+                    <CheckCheck className="w-5 h-5" />
+                    {t('calendar.completeToday', { count: todayConfirmed.length })}
+                  </button>
+                )}
+                <button
+                  onClick={() => openCreateDialog()}
+                  className="w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 flex items-center justify-center active:scale-95 transition-transform"
+                >
+                  <Plus className="w-6 h-6" />
+                </button>
+              </div>
             </div>
           )}
 
@@ -996,7 +1023,8 @@ export default function DashboardCalendar() {
                     variant="outline"
                     className="rounded-xl"
                     onClick={() => {
-                      handleUpdateStatus(selectedAppointment.id, 'completed');
+                      setSaleAppointment(selectedAppointment);
+                      setSaleDialogOpen(true);
                       setSelectedAppointment(null);
                     }}
                   >
@@ -1504,6 +1532,30 @@ export default function DashboardCalendar() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Complete Sale Dialog */}
+      <CompleteSaleDialog
+        appointment={saleAppointment}
+        open={saleDialogOpen}
+        onOpenChange={setSaleDialogOpen}
+        onComplete={async (appointmentId) => {
+          await handleUpdateStatus(appointmentId, 'completed');
+          // Chain to next confirmed appointment for today (bulk flow)
+          const todayStr = format(new Date(), 'yyyy-MM-dd');
+          const remaining = appointments.filter(a => 
+            a.appointment_date === todayStr && 
+            a.status === 'confirmed' && 
+            a.id !== appointmentId
+          );
+          if (remaining.length > 0) {
+            // Small delay for smoother UX
+            setTimeout(() => {
+              setSaleAppointment(remaining[0]);
+              setSaleDialogOpen(true);
+            }, 300);
+          }
+        }}
+      />
     </>
   );
 }

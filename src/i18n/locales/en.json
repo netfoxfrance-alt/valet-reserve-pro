@@ -253,7 +253,8 @@
     "appointmentDetails": "Appointment details",
     "appointmentDetailsDesc": "View and manage this booking's details",
     "move": "Reschedule",
-    "cancelAppointment": "Cancel appointment"
+    "cancelAppointment": "Cancel appointment",
+    "completeToday": "Complete ({{count}})"
   },
   "availability": {
     "title": "Availability",
