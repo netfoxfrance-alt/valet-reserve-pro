@@ -457,7 +457,8 @@
     "servicePerformance": "Performance par service",
     "custom": "Perso",
     "noDataAvailable": "Aucune donnée disponible",
-    "statsDetailDesc": "Détail des données statistiques pour le mois sélectionné"
+    "statsDetailDesc": "Détail des données statistiques pour le mois sélectionné",
+    "salesTab": "Ventes"
   },
   "settings": {
     "title": "Paramètres",

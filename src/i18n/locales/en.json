@@ -457,7 +457,8 @@
     "servicePerformance": "Service performance",
     "custom": "Custom",
     "noDataAvailable": "No data available",
-    "statsDetailDesc": "Statistical data detail for the selected month"
+    "statsDetailDesc": "Statistical data detail for the selected month",
+    "salesTab": "Sales"
   },
   "settings": {
     "title": "Settings",
