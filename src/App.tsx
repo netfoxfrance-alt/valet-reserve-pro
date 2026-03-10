@@ -127,6 +127,11 @@ const App = () => (
                 <DashboardSupport />
               </ProtectedRoute>
             } />
+            <Route path="/dashboard/sales" element={
+              <ProtectedRoute>
+                <DashboardSales />
+              </ProtectedRoute>
+            } />
             
             {/* Deposit payment pages */}
             <Route path="/deposit-payment" element={<DepositPayment />} />

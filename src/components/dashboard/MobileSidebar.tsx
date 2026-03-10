@@ -24,7 +24,8 @@ const getNavigationGroups = (t: (key: string) => string) => [
     items: [
       { name: 'Demandes', href: '/dashboard/requests', icon: MessageSquare },
       { name: 'Clients', href: '/dashboard/clients', icon: Users },
-      { name: 'Factures & Devis', href: '/dashboard/invoices', icon: FileText },
+      { name: 'Ventes', href: '/dashboard/sales', icon: ShoppingCart },
+      { name: 'Devis', href: '/dashboard/invoices', icon: FileText },
     ]
   },
   {
