@@ -603,6 +603,7 @@ export default function Dashboard() {
                           onSendEmail={handleSendEmail}
                           onViewDetails={handleViewDetails}
                           onAddToCalendar={() => markAsSynced(apt.id)}
+                          onCompleteSale={(a) => { setSaleAppointment(a); setSaleDialogOpen(true); }}
                         />
                       ))}
                     </div>
