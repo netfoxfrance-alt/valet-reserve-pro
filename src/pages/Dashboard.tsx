@@ -114,9 +114,7 @@ function InboxCard({
         "group flex items-center gap-3 p-3.5 sm:p-4 bg-card border rounded-2xl transition-all duration-200 cursor-pointer",
         isPending 
           ? "border-amber-200/80 dark:border-amber-800/50 hover:border-amber-300 hover:shadow-md" 
-          : isNew
-            ? "border-blue-200/80 dark:border-blue-800/50 hover:border-blue-300 hover:shadow-md"
-            : "border-border/50 hover:border-border hover:shadow-md"
+          : "border-border/50 hover:border-border hover:shadow-md"
       )}
       onClick={() => onViewDetails(appointment)}
     >
