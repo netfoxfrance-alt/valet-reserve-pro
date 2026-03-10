@@ -476,20 +476,8 @@ export default function Dashboard() {
     <>
       <DashboardLayout title={t('nav.reservations')} subtitle={center?.name}>
         <div className="space-y-4 sm:space-y-5">
-          {/* ─── Header with Add button + Mark all seen ─── */}
-          <div className="flex items-center justify-between">
-            {newCount > 0 && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="rounded-xl gap-1.5 text-blue-600 border-blue-200 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-800 dark:hover:bg-blue-950/30"
-                onClick={handleMarkAllSeen}
-              >
-                <Eye className="w-4 h-4" />
-                {t('dashboard.markAllSeen')} ({newCount})
-              </Button>
-            )}
-            {newCount === 0 && <div />}
+          {/* ─── Header with Add button ─── */}
+          <div className="flex items-center justify-end">
             <Button onClick={() => navigate('/dashboard/calendar', { state: { openCreate: true } })} size="sm" className="rounded-xl gap-1.5">
               <Plus className="w-4 h-4" />
               {t('dashboard.addReservation')}
