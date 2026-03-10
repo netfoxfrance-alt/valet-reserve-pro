@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useAuth } from '@/hooks/useAuth';
 import { useMyCenter } from '@/hooks/useCenter';
+import { useMyAppointments } from '@/hooks/useAppointments';
+import { useMyContactRequests } from '@/hooks/useContactRequests';
 import { useTranslation } from 'react-i18next';
 import { Settings, LogOut, Crown, AlertCircle, Share2, Copy, Check, Headphones, ExternalLink } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { SubscriptionBanner } from '@/components/dashboard/SubscriptionBanner';
 
@@ -20,13 +22,13 @@ import iconReservations from '@/assets/icons/icon-reservations.png';
 import iconStatistiques from '@/assets/icons/icon-statistiques.png';
 
 const menuItems = [
-  { icon: iconReservations, label: 'Réservations', href: '/dashboard/reservations' },
+  { icon: iconReservations, label: 'Réservations', href: '/dashboard/reservations', badgeKey: 'reservations' },
   { icon: iconAgenda, label: 'Agenda', href: '/dashboard/calendar' },
   { icon: iconMaPage, label: 'Ma Page', href: '/dashboard/my-page' },
   { icon: iconFactures, label: 'Devis', href: '/dashboard/invoices' },
   { icon: iconClients, label: 'Clients', href: '/dashboard/clients' },
   { icon: iconFormules, label: 'Formules', href: '/dashboard/formules' },
-  { icon: iconDemandes, label: 'Demandes', href: '/dashboard/requests' },
+  { icon: iconDemandes, label: 'Demandes', href: '/dashboard/requests', badgeKey: 'requests' },
   { icon: iconStatistiques, label: 'Statistiques', href: '/dashboard/stats' },
 ];
 
