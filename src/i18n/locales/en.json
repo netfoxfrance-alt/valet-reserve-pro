@@ -334,8 +334,8 @@
     "manualShort": "Manual"
   },
   "invoices": {
-    "title": "Invoices & Quotes",
-    "manage": "Manage your invoices and quotes",
+    "title": "Quotes",
+    "manage": "Manage your quotes",
     "invoices": "Invoices",
     "quotes": "Quotes",
     "pending": "Pending",
