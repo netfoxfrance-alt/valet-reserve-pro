@@ -12,34 +12,34 @@ import { useTranslation } from 'react-i18next';
 
 const getNavigationGroups = (t: (key: string) => string) => [
   {
-    label: 'Activité',
+    label: t('nav.activity'),
     items: [
-      { name: 'Réservations', href: '/dashboard', icon: Calendar },
-      { name: 'Calendrier', href: '/dashboard/calendar', icon: CalendarDays },
-      { name: 'Disponibilités', href: '/dashboard/availability', icon: Clock },
+      { name: t('nav.reservations'), href: '/dashboard', icon: Calendar },
+      { name: t('nav.calendar'), href: '/dashboard/calendar', icon: CalendarDays },
+      { name: t('nav.availability'), href: '/dashboard/availability', icon: Clock },
     ]
   },
   {
-    label: 'Clients',
+    label: t('nav.clients_section'),
     items: [
-      { name: 'Demandes', href: '/dashboard/requests', icon: MessageSquare },
-      { name: 'Clients', href: '/dashboard/clients', icon: Users },
-      { name: 'Ventes', href: '/dashboard/sales', icon: ShoppingCart },
-      { name: 'Devis', href: '/dashboard/invoices', icon: FileText },
+      { name: t('nav.requests'), href: '/dashboard/requests', icon: MessageSquare },
+      { name: t('nav.clients'), href: '/dashboard/clients', icon: Users },
+      { name: t('nav.sales'), href: '/dashboard/sales', icon: ShoppingCart },
+      { name: t('nav.quotes'), href: '/dashboard/invoices', icon: FileText },
     ]
   },
   {
-    label: 'Configuration',
+    label: t('nav.configuration'),
     items: [
-      { name: 'Ma Page', href: '/dashboard/my-page', icon: Globe },
-      { name: 'Formules', href: '/dashboard/packs', icon: Package },
-      { name: 'Prestations', href: '/dashboard/custom-services', icon: Wrench },
+      { name: t('nav.myPage'), href: '/dashboard/my-page', icon: Globe },
+      { name: t('nav.packs'), href: '/dashboard/packs', icon: Package },
+      { name: t('nav.services'), href: '/dashboard/custom-services', icon: Wrench },
     ]
   },
   {
-    label: 'Insights',
+    label: t('nav.insights'),
     items: [
-      { name: 'Statistiques', href: '/dashboard/stats', icon: BarChart3 },
+      { name: t('nav.stats'), href: '/dashboard/stats', icon: BarChart3 },
     ]
   },
 ];
