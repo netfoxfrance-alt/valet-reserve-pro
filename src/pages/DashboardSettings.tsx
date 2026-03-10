@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { Sparkles, Upload, Trash2, Loader2, CreditCard, Crown, ExternalLink, Link2, Check, X, Clock } from 'lucide-react';
 import { AddressWithMap } from '@/components/settings/AddressWithMap';
+import { CalendarSyncSection } from '@/components/settings/CalendarSyncSection';
 import { DepositSettingsSection } from '@/components/settings/DepositSettingsSection';
 import { Link } from 'react-router-dom';
 import { CenterCustomization, defaultCustomization } from '@/types/customization';
