@@ -86,6 +86,7 @@ export default function DashboardCalendar() {
   const [clientDropdownOpen, setClientDropdownOpen] = useState(false);
   const [serviceSearch, setServiceSearch] = useState('');
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState<string>('');
   const clientSearchRef = useRef<HTMLDivElement>(null);
   const serviceSearchRef = useRef<HTMLDivElement>(null);
   const [createForm, setCreateForm] = useState({
