@@ -486,6 +486,27 @@ export default function DashboardSettings() {
             </Card>
           </section>
 
+          {/* Google Calendar Sync Section */}
+          {center && (
+            <CalendarSyncSection
+              centerId={center.id}
+              icalToken={center.ical_token || null}
+              googleCalendarConnected={center.google_calendar_connected}
+              googleCalendarEmail={center.google_calendar_email}
+              onRefreshToken={async () => {
+                const newToken = crypto.randomUUID();
+                await updateCenter({ ical_token: newToken } as any);
+              }}
+              onDisconnectGoogle={async () => {
+                await updateCenter({ 
+                  google_calendar_connected: false, 
+                  google_calendar_email: null,
+                  google_calendar_refresh_token: null,
+                } as any);
+              }}
+            />
+          )}
+
           {/* Deposit Section */}
           <DepositSettingsSection
             center={center}

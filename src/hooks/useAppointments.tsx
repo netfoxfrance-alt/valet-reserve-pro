@@ -99,6 +99,23 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
         a.id === id ? { ...a, status } : a
       ));
 
+      // Auto-sync to Google Calendar when confirmed
+      if (status === 'confirmed') {
+        (async () => {
+          try {
+            const { data: sessionData } = await supabase.auth.getSession();
+            const token = sessionData?.session?.access_token;
+            if (!token) return;
+            await supabase.functions.invoke('google-calendar-sync', {
+              headers: { Authorization: `Bearer ${token}` },
+              body: { action: 'create', appointment_id: id },
+            });
+          } catch (syncErr) {
+            console.warn('[Google Calendar Sync] Error (non-blocking):', syncErr);
+          }
+        })();
+      }
+
       // Auto-refund deposit when pro cancels an appointment with a paid deposit
       if (status === 'cancelled' && appointment?.deposit_status === 'paid' && appointment?.deposit_refund_status !== 'refunded') {
         try {
