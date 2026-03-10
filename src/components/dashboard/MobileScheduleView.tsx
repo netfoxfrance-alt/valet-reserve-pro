@@ -6,15 +6,17 @@ import {
 import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
 import { Appointment } from '@/hooks/useAppointments';
+import { Check } from 'lucide-react';
 
 /* ── Apple-vivid colors ── */
 const APPOINTMENT_COLOR = '#049be6';
+const COMPLETED_COLOR = '#36c857';
 
 const STATUS_BADGE: Record<string, { bg: string; label: string }> = {
   pending:            { bg: '#AF52DE', label: 'À valider' },
   pending_validation: { bg: '#FF9500', label: 'À valider' },
   confirmed:          { bg: APPOINTMENT_COLOR, label: 'Confirmé' },
-  completed:          { bg: '#36c857', label: 'Terminé' },
+  completed:          { bg: COMPLETED_COLOR, label: 'Terminé' },
   cancelled:          { bg: '#ff392b', label: 'Annulé' },
   refused:            { bg: '#ff392b', label: 'Refusé' },
 };
@@ -23,6 +25,7 @@ interface MobileScheduleViewProps {
   currentDate: Date;
   appointments: Appointment[];
   onAppointmentClick: (apt: Appointment) => void;
+  onQuickComplete?: (apt: Appointment) => void;
   blockedPeriods?: { start_date: string; end_date: string; reason: string | null }[];
 }
 
