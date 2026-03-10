@@ -49,12 +49,20 @@ export default function DashboardStats() {
   const { center } = useMyCenter();
 
   // Sales
-  const { sales, loading: salesLoading, filterByPeriod, getKPIs, exportCSV } = useSales();
-  const [salesPeriod, setSalesPeriod] = useState<PeriodFilter>('day');
+  const { sales, loading: salesLoading, filterByPeriod, filterByDateRange, getKPIs, exportCSV } = useSales();
+  const [salesMonth, setSalesMonth] = useState(new Date());
   const [salesSearch, setSalesSearch] = useState('');
+  const [customRange, setCustomRange] = useState(false);
+  const [rangeStart, setRangeStart] = useState<Date | undefined>();
+  const [rangeEnd, setRangeEnd] = useState<Date | undefined>();
 
   const filteredSales = useMemo(() => {
-    let result = filterByPeriod(salesPeriod);
+    let result: typeof sales;
+    if (customRange && rangeStart && rangeEnd) {
+      result = filterByDateRange(rangeStart, rangeEnd);
+    } else {
+      result = filterByPeriod('month', salesMonth);
+    }
     if (salesSearch.trim()) {
       const q = salesSearch.toLowerCase();
       result = result.filter(s =>
@@ -63,16 +71,16 @@ export default function DashboardStats() {
       );
     }
     return result;
-  }, [sales, salesPeriod, salesSearch]);
+  }, [sales, salesMonth, salesSearch, customRange, rangeStart, rangeEnd]);
 
   const salesKpis = useMemo(() => getKPIs(filteredSales), [filteredSales]);
 
-  const salesPeriods: { key: PeriodFilter; label: string }[] = [
-    { key: 'day', label: t('sales.today') },
-    { key: 'week', label: t('sales.week') },
-    { key: 'month', label: t('sales.month') },
-    { key: 'all', label: t('common.all') },
-  ];
+  const navigateSalesMonth = (direction: 'prev' | 'next') => {
+    setCustomRange(false);
+    setSalesMonth(prev => direction === 'prev' ? subMonths(prev, 1) : addMonths(prev, 1));
+  };
+
+  const isSalesCurrentMonth = format(salesMonth, 'yyyy-MM') === format(new Date(), 'yyyy-MM');
 
   // Appointment helpers
   const getAppointmentPrice = (a: any) => a.custom_price || a.pack?.price || 0;
