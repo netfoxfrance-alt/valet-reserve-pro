@@ -282,8 +282,8 @@ export default function Dashboard() {
     // Quick filter
     if (quickFilter === 'pending') {
       result = result.filter(a => a.status === 'pending' || a.status === 'pending_validation');
-    } else if (quickFilter === 'today') {
-      result = result.filter(a => isToday(parseISO(a.appointment_date)) && a.status !== 'cancelled' && a.status !== 'refused');
+    } else if (quickFilter === 'day') {
+      result = result.filter(a => isSameDay(parseISO(a.appointment_date), selectedDay) && a.status !== 'cancelled' && a.status !== 'refused');
     } else if (quickFilter === 'week') {
       result = result.filter(a => {
         const d = parseISO(a.appointment_date);
