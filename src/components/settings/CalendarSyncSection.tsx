@@ -173,9 +173,10 @@ export function CalendarSyncSection({
               <Button
                 size="lg"
                 onClick={handleConnectGoogle}
+                disabled={isConnecting}
                 className="w-full sm:w-auto gap-2"
               >
-                <ExternalLink className="w-4 h-4" />
+                {isConnecting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
                 Connecter Google Agenda
               </Button>
             )}
