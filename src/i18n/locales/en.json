@@ -918,7 +918,7 @@
     "contactViewSite": "View site",
     "headerStart": "Get started",
     "calendarDays": ["M", "T", "W", "T", "F", "S", "S"],
-    "sidebarItems": ["Bookings", "Calendar", "Requests", "Clients", "Invoices & Quotes", "Statistics"],
+    "sidebarItems": ["Bookings", "Calendar", "Requests", "Clients", "Sales", "Statistics"],
     "sidebarSlug": "clean-auto-pro"
   },
   "sales": {
