@@ -116,6 +116,23 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
         })();
       }
 
+      // Auto-delete from Google Calendar when cancelled or refused
+      if ((status === 'cancelled' || status === 'refused') && appointment?.google_calendar_event_id) {
+        (async () => {
+          try {
+            const { data: sessionData } = await supabase.auth.getSession();
+            const token = sessionData?.session?.access_token;
+            if (!token) return;
+            await supabase.functions.invoke('google-calendar-sync', {
+              headers: { Authorization: `Bearer ${token}` },
+              body: { action: 'delete', appointment_id: id },
+            });
+          } catch (syncErr) {
+            console.warn('[Google Calendar Delete] Error (non-blocking):', syncErr);
+          }
+        })();
+      }
+
       // Auto-refund deposit when pro cancels an appointment with a paid deposit
       if (status === 'cancelled' && appointment?.deposit_status === 'paid' && appointment?.deposit_refund_status !== 'refunded') {
         try {
