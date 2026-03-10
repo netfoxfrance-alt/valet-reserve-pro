@@ -20,6 +20,8 @@ import { useTranslation } from 'react-i18next';
 export default function DashboardCustomServices() {
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { services, loading, createService, updateService, deleteService } = useMyCustomServices();
   const { clients } = useMyClients();
   const { toast } = useToast();
