@@ -467,7 +467,6 @@ export default function Dashboard() {
     { key: 'all', label: t('dashboard.all', { defaultValue: 'Tous' }) },
     { key: 'pending', label: t('dashboard.pendingStat'), count: pendingCount },
     { key: 'confirmed', label: t('status.confirmed', { defaultValue: 'Confirmés' }) },
-    { key: 'toCollect', label: t('dashboard.toCollect'), count: toCollectCount },
     { key: 'completed', label: t('status.completed', { defaultValue: 'Terminés et payés' }) },
     { key: 'cancelled', label: t('status.cancelled', { defaultValue: 'Annulés' }) },
   ];
