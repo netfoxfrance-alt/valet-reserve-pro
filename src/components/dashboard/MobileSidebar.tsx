@@ -24,7 +24,6 @@ const getNavigationGroups = (t: (key: string) => string) => [
     items: [
       { name: t('nav.requests'), href: '/dashboard/requests', icon: MessageSquare },
       { name: t('nav.clients'), href: '/dashboard/clients', icon: Users },
-      { name: t('nav.sales'), href: '/dashboard/sales', icon: ShoppingCart },
       { name: t('nav.quotes'), href: '/dashboard/invoices', icon: FileText },
     ]
   },
