@@ -33,6 +33,7 @@ export function MobileScheduleView({
   currentDate,
   appointments,
   onAppointmentClick,
+  onQuickComplete,
   blockedPeriods = [],
 }: MobileScheduleViewProps) {
   const { i18n } = useTranslation();
