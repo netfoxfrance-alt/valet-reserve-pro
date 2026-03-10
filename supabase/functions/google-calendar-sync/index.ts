@@ -158,7 +158,8 @@ serve(async (req) => {
       .eq('id', appointment.center_id)
       .single();
 
-    if (!center || center.owner_id !== userId) {
+    // Verify ownership (skip for service_role - trusted internal calls)
+    if (!isServiceRole && (!center || center.owner_id !== userId)) {
       return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: corsHeaders });
     }
 
