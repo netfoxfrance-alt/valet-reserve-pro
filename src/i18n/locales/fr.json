@@ -918,7 +918,7 @@
     "contactViewSite": "Voir le site",
     "headerStart": "Commencer",
     "calendarDays": ["L", "M", "M", "J", "V", "S", "D"],
-    "sidebarItems": ["Réservations", "Calendrier", "Demandes", "Clients", "Factures & Devis", "Statistiques"],
+    "sidebarItems": ["Réservations", "Calendrier", "Demandes", "Clients", "Ventes", "Statistiques"],
     "sidebarSlug": "clean-auto-pro"
   },
   "sales": {
