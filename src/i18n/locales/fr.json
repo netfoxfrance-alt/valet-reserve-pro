@@ -430,7 +430,9 @@
   "stats": {
     "title": "Statistiques",
     "reservations": "Réservations",
-    "revenue": "CA",
+    "revenue": "CA estimé",
+    "estimatedRevenue": "CA estimé",
+    "basedOnBookings": "Basé sur les réservations",
     "clients": "Clients",
     "avgBasket": "Panier moyen",
     "backToToday": "Revenir à aujourd'hui",
