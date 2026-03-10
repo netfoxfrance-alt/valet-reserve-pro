@@ -188,15 +188,17 @@ function InboxCard({
             </Button>
           </>
         )}
-        {appointment.status === 'confirmed' && !googleCalendarConnected && (
+        {appointment.status === 'confirmed' && (
           <>
-            <Button 
-              variant="ghost" size="icon" 
-              className={cn("h-8 w-8 sm:h-9 sm:w-9 rounded-xl", isSynced ? "text-primary" : "text-muted-foreground hover:text-primary")}
-              onClick={handleAddToCalendar}
-            >
-              {isSynced ? <CalendarCheck className="w-4 h-4" /> : <CalendarPlus className="w-4 h-4" />}
-            </Button>
+            {!googleCalendarConnected && (
+              <Button 
+                variant="ghost" size="icon" 
+                className={cn("h-8 w-8 sm:h-9 sm:w-9 rounded-xl", isSynced ? "text-primary" : "text-muted-foreground hover:text-primary")}
+                onClick={handleAddToCalendar}
+              >
+                {isSynced ? <CalendarCheck className="w-4 h-4" /> : <CalendarPlus className="w-4 h-4" />}
+              </Button>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl">
