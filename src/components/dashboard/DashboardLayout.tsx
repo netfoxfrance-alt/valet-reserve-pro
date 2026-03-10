@@ -19,7 +19,7 @@ const navItems = [
   { icon: iconReservations, label: 'Réservations', href: '/dashboard/reservations' },
   { icon: iconAgenda, label: 'Agenda', href: '/dashboard/calendar' },
   { icon: iconMaPage, label: 'Ma Page', href: '/dashboard/my-page' },
-  { icon: iconFactures, label: 'Factures & Devis', href: '/dashboard/invoices' },
+  { icon: iconFactures, label: 'Ventes', href: '/dashboard/sales' },
   { icon: iconClients, label: 'Clients', href: '/dashboard/clients' },
   { icon: iconFormules, label: 'Formules', href: '/dashboard/formules' },
   { icon: iconDemandes, label: 'Demandes', href: '/dashboard/requests' },
