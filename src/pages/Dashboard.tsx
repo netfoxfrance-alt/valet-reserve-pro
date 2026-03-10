@@ -434,60 +434,89 @@ export default function Dashboard() {
             </Button>
           </div>
 
-          {/* ─── Counter Cards ─── */}
-          <div className="grid grid-cols-3 gap-2.5 sm:gap-4">
+          {/* ─── Day Navigator ─── */}
+          <div className="flex items-center justify-between bg-card border border-border/50 rounded-2xl p-2.5 sm:p-3">
+            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setSelectedDay(prev => subDays(prev, 1))}>
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
             <button 
-              onClick={() => handleQuickFilter('pending')}
+              onClick={() => { setSelectedDay(startOfDay(new Date())); setQuickFilter('day'); }}
+              className="text-center"
+            >
+              <p className="text-sm sm:text-base font-semibold text-foreground capitalize">
+                {isToday(selectedDay) 
+                  ? t('common.today') 
+                  : isTomorrow(selectedDay) 
+                    ? t('common.tomorrow')
+                    : format(selectedDay, "EEEE d MMMM", { locale: dateLocale })
+                }
+              </p>
+              {!isToday(selectedDay) && (
+                <p className="text-[10px] text-muted-foreground">{format(selectedDay, "dd/MM/yyyy")}</p>
+              )}
+            </button>
+            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setSelectedDay(prev => addDays(prev, 1))}>
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+
+          {/* ─── Quick Filter Chips ─── */}
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => { setQuickFilter(quickFilter === 'day' ? 'none' : 'day'); }}
               className={cn(
-                "text-left p-3.5 sm:p-5 rounded-2xl border transition-all duration-200",
-                quickFilter === 'pending' 
-                  ? "border-amber-300 bg-amber-50/80 dark:bg-amber-950/30 dark:border-amber-700 shadow-sm" 
-                  : "border-border/50 bg-card hover:border-border hover:shadow-sm"
+                "px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 whitespace-nowrap flex items-center gap-1.5",
+                quickFilter === 'day'
+                  ? "bg-foreground text-background shadow-sm" 
+                  : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
-              <div className="flex items-center justify-between mb-1.5">
-                <Clock className="w-4 h-4 text-amber-500" />
-                {pendingCount > 0 && (
-                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                )}
-              </div>
-              <p className="text-2xl sm:text-3xl font-bold text-foreground">{pendingCount}</p>
-              <p className="text-[11px] sm:text-xs text-muted-foreground font-medium mt-0.5">{t('dashboard.pendingStat')}</p>
+              <CalendarDays className="w-3.5 h-3.5" />
+              {isToday(selectedDay) ? t('dashboard.todayStat') : format(selectedDay, "d MMM", { locale: dateLocale })}
+              {todayCount > 0 && quickFilter !== 'day' && (
+                <span className="bg-primary/20 text-primary px-1.5 py-0.5 rounded-full text-[10px] font-bold">{todayCount}</span>
+              )}
             </button>
 
             <button 
-              onClick={() => handleQuickFilter('today')}
+              onClick={() => handleQuickFilter('pending')}
               className={cn(
-                "text-left p-3.5 sm:p-5 rounded-2xl border transition-all duration-200",
-                quickFilter === 'today' 
-                  ? "border-primary/50 bg-primary/5 shadow-sm" 
-                  : "border-border/50 bg-card hover:border-border hover:shadow-sm"
+                "px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 whitespace-nowrap flex items-center gap-1.5",
+                quickFilter === 'pending'
+                  ? "bg-amber-500 text-white shadow-sm" 
+                  : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
-              <div className="flex items-center justify-between mb-1.5">
-                <CalendarDays className="w-4 h-4 text-primary" />
-                {todayCount > 0 && (
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                )}
-              </div>
-              <p className="text-2xl sm:text-3xl font-bold text-foreground">{todayCount}</p>
-              <p className="text-[11px] sm:text-xs text-muted-foreground font-medium mt-0.5">{t('dashboard.todayStat')}</p>
+              <Clock className="w-3.5 h-3.5" />
+              {t('dashboard.pendingStat')}
+              {pendingCount > 0 && (
+                <span className="bg-amber-400/20 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full text-[10px] font-bold">{pendingCount}</span>
+              )}
             </button>
 
             <button 
               onClick={() => handleQuickFilter('week')}
               className={cn(
-                "text-left p-3.5 sm:p-5 rounded-2xl border transition-all duration-200",
-                quickFilter === 'week' 
-                  ? "border-primary/50 bg-primary/5 shadow-sm" 
-                  : "border-border/50 bg-card hover:border-border hover:shadow-sm"
+                "px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 whitespace-nowrap flex items-center gap-1.5",
+                quickFilter === 'week'
+                  ? "bg-foreground text-background shadow-sm" 
+                  : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
-              <div className="flex items-center mb-1.5">
-                <CalendarClock className="w-4 h-4 text-primary" />
-              </div>
-              <p className="text-2xl sm:text-3xl font-bold text-foreground">{weekCount}</p>
-              <p className="text-[11px] sm:text-xs text-muted-foreground font-medium mt-0.5">{t('dashboard.weekStat')}</p>
+              <CalendarClock className="w-3.5 h-3.5" />
+              {t('dashboard.weekStat')}
+            </button>
+
+            <button 
+              onClick={() => { setQuickFilter('none'); setStatusFilter('all'); }}
+              className={cn(
+                "px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 whitespace-nowrap",
+                quickFilter === 'none' && statusFilter === 'all'
+                  ? "bg-foreground text-background shadow-sm" 
+                  : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              {t('dashboard.all', { defaultValue: 'Tout' })}
             </button>
           </div>
 
