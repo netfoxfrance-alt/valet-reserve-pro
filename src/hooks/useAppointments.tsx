@@ -30,6 +30,7 @@ export interface Appointment {
   deposit_checkout_session_id: string | null;
   deposit_refund_status: string;
   deposit_payment_intent_id: string | null;
+  seen_at: string | null;
   pack?: {
     id: string;
     name: string;
@@ -235,6 +236,31 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
 
   const hasMore = totalCount > (page + 1) * pageSize;
 
+  const markSeen = async (id: string) => {
+    const { error } = await supabase
+      .from('appointments')
+      .update({ seen_at: new Date().toISOString() } as any)
+      .eq('id', id);
+    if (!error) {
+      setAppointments(prev => prev.map(a => a.id === id ? { ...a, seen_at: new Date().toISOString() } : a));
+    }
+  };
+
+  const markAllSeen = async () => {
+    if (!center) return;
+    const unseenIds = appointments.filter(a => !a.seen_at).map(a => a.id);
+    if (unseenIds.length === 0) return;
+    const now = new Date().toISOString();
+    const { error } = await supabase
+      .from('appointments')
+      .update({ seen_at: now } as any)
+      .eq('center_id', center.id)
+      .is('seen_at' as any, null);
+    if (!error) {
+      setAppointments(prev => prev.map(a => !a.seen_at ? { ...a, seen_at: now } : a));
+    }
+  };
+
   return { 
     appointments, 
     loading, 
@@ -243,6 +269,8 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
     updateStatus, 
     createAppointment, 
     deleteAppointment,
+    markSeen,
+    markAllSeen,
     refetch: fetchAppointments 
   };
 }

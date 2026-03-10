@@ -5,16 +5,18 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { 
   Search, Check, X, Clock, CalendarDays, CalendarClock, 
   Phone, Mail, MoreHorizontal, CalendarPlus, CalendarCheck,
-  ArrowUpDown, ChevronDown, Plus
+  ArrowUpDown, ChevronDown, Plus, Eye, CalendarRange
 } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter } from '@/hooks/useCenter';
 import { useMyClients } from '@/hooks/useClients';
 import { useCalendarSync } from '@/hooks/useCalendarSync';
-import { format, parseISO, startOfDay, isBefore, addDays, isToday, isTomorrow, startOfWeek, endOfWeek } from 'date-fns';
+import { format, parseISO, startOfDay, isBefore, addDays, isToday, isTomorrow, startOfWeek, endOfWeek, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
@@ -64,6 +66,7 @@ function InboxCard({
   const statusColor = statusColorMap[appointment.status] || statusColorMap.pending;
   const date = parseISO(appointment.appointment_date);
   const isPending = appointment.status === 'pending_validation' || appointment.status === 'pending';
+  const isNew = !appointment.seen_at;
   
   let dateLabel = format(date, "EEE d MMM", { locale: dateLocale });
   if (isToday(date)) dateLabel = t('common.today');
@@ -77,6 +80,12 @@ function InboxCard({
 
   // Deterministic color from name
   const hue = appointment.client_name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % 360;
+
+  // Deposit info
+  const hasDeposit = appointment.deposit_status === 'paid' && appointment.deposit_amount;
+  const depositAmount = appointment.deposit_amount || 0;
+  const totalPrice = price || 0;
+  const remainingAmount = totalPrice - depositAmount;
 
   const handleAddToCalendar = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -105,22 +114,32 @@ function InboxCard({
         "group flex items-center gap-3 p-3.5 sm:p-4 bg-card border rounded-2xl transition-all duration-200 cursor-pointer",
         isPending 
           ? "border-amber-200/80 dark:border-amber-800/50 hover:border-amber-300 hover:shadow-md" 
-          : "border-border/50 hover:border-border hover:shadow-md"
+          : isNew
+            ? "border-blue-200/80 dark:border-blue-800/50 hover:border-blue-300 hover:shadow-md"
+            : "border-border/50 hover:border-border hover:shadow-md"
       )}
       onClick={() => onViewDetails(appointment)}
     >
       {/* Avatar */}
       <div 
-        className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center flex-shrink-0 text-white font-bold text-sm"
+        className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center flex-shrink-0 text-white font-bold text-sm relative"
         style={{ backgroundColor: `hsl(${hue}, 55%, 50%)` }}
       >
         {initials}
+        {isNew && (
+          <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-card" />
+        )}
       </div>
 
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
           <p className="font-semibold text-foreground truncate text-sm sm:text-base">{appointment.client_name}</p>
+          {isNew && (
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
+              {t('dashboard.new')}
+            </span>
+          )}
           <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0", statusColor)}>
             {t(`status.${appointment.status}`)}
           </span>
@@ -136,6 +155,22 @@ function InboxCard({
             </>
           )}
         </div>
+        {/* Deposit info */}
+        {hasDeposit && price !== undefined && price !== null && (
+          <div className="flex items-center gap-2 text-[11px] mt-0.5">
+            <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+              {t('dashboard.depositPaid', { amount: depositAmount })}
+            </span>
+            {remainingAmount > 0 && (
+              <>
+                <span className="text-muted-foreground">·</span>
+                <span className="text-muted-foreground font-medium">
+                  {t('dashboard.remaining', { amount: remainingAmount })}
+                </span>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Price */}
@@ -200,8 +235,8 @@ function InboxCard({
 }
 
 // ─── Filter Types ───
-type StatusFilter = 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
-type QuickFilter = 'none' | 'pending' | 'today' | 'week';
+type StatusFilter = 'all' | 'pending' | 'confirmed' | 'toCollect' | 'completed' | 'cancelled';
+type QuickFilter = 'none' | 'pending' | 'today' | 'week' | 'month' | 'custom';
 type SortOrder = 'newest' | 'oldest';
 
 export default function Dashboard() {
@@ -221,8 +256,10 @@ export default function Dashboard() {
   const [justConfirmedAppointment, setJustConfirmedAppointment] = useState<Appointment | null>(null);
   const [saleDialogOpen, setSaleDialogOpen] = useState(false);
   const [saleAppointment, setSaleAppointment] = useState<Appointment | null>(null);
+  const [customDateFrom, setCustomDateFrom] = useState<Date | undefined>(undefined);
+  const [customDateTo, setCustomDateTo] = useState<Date | undefined>(undefined);
   
-  const { appointments, loading, updateStatus, refetch } = useMyAppointments();
+  const { appointments, loading, updateStatus, markSeen, markAllSeen, refetch } = useMyAppointments();
   const { center } = useMyCenter();
   const { clients } = useMyClients();
   const { markAsSynced, isSynced: checkIsSynced } = useCalendarSync();
@@ -230,6 +267,8 @@ export default function Dashboard() {
   const today = startOfDay(new Date());
   const weekStart = startOfWeek(today, { weekStartsOn: 1 });
   const weekEnd = endOfWeek(today, { weekStartsOn: 1 });
+  const monthStart = startOfMonth(today);
+  const monthEnd = endOfMonth(today);
 
   // ─── Counters ───
   const pendingCount = useMemo(() => 
@@ -246,6 +285,17 @@ export default function Dashboard() {
       return d >= weekStart && d <= weekEnd && a.status !== 'cancelled' && a.status !== 'refused';
     }).length;
   }, [appointments, weekStart, weekEnd]);
+
+  const newCount = useMemo(() => 
+    appointments.filter(a => !a.seen_at && a.status !== 'cancelled' && a.status !== 'refused').length
+  , [appointments]);
+
+  const toCollectCount = useMemo(() => 
+    appointments.filter(a => {
+      const d = parseISO(a.appointment_date);
+      return a.status === 'confirmed' && d <= today;
+    }).length
+  , [appointments, today]);
 
   // ─── Unique services list ───
   const availableServices = useMemo(() => {
@@ -272,6 +322,18 @@ export default function Dashboard() {
         const d = parseISO(a.appointment_date);
         return d >= weekStart && d <= weekEnd && a.status !== 'cancelled' && a.status !== 'refused';
       });
+    } else if (quickFilter === 'month') {
+      result = result.filter(a => {
+        const d = parseISO(a.appointment_date);
+        return d >= monthStart && d <= monthEnd && a.status !== 'cancelled' && a.status !== 'refused';
+      });
+    } else if (quickFilter === 'custom' && customDateFrom) {
+      const from = startOfDay(customDateFrom);
+      const to = customDateTo ? startOfDay(customDateTo) : from;
+      result = result.filter(a => {
+        const d = parseISO(a.appointment_date);
+        return d >= from && d <= to && a.status !== 'cancelled' && a.status !== 'refused';
+      });
     }
 
     // Status filter
@@ -280,6 +342,11 @@ export default function Dashboard() {
         result = result.filter(a => a.status === 'pending' || a.status === 'pending_validation');
       } else if (statusFilter === 'cancelled') {
         result = result.filter(a => a.status === 'cancelled' || a.status === 'refused');
+      } else if (statusFilter === 'toCollect') {
+        result = result.filter(a => {
+          const d = parseISO(a.appointment_date);
+          return a.status === 'confirmed' && d <= today;
+        });
       } else {
         result = result.filter(a => a.status === statusFilter);
       }
@@ -309,7 +376,7 @@ export default function Dashboard() {
     });
 
     return result;
-  }, [appointments, quickFilter, statusFilter, serviceFilter, searchQuery, sortOrder, weekStart, weekEnd]);
+  }, [appointments, quickFilter, statusFilter, serviceFilter, searchQuery, sortOrder, weekStart, weekEnd, monthStart, monthEnd, customDateFrom, customDateTo, today]);
 
   // ─── Group by date ───
   const groupedAppointments = useMemo(() => {
@@ -323,7 +390,7 @@ export default function Dashboard() {
     return { groups, dates };
   }, [filteredAppointments, sortOrder]);
 
-  // ─── Handlers (kept from original) ───
+  // ─── Handlers ───
   const handleUpdateStatus = async (id: string, status: Appointment['status']) => {
     const { error } = await updateStatus(id, status);
     if (error) toast.error(t('dashboard.statusUpdateError'));
@@ -333,6 +400,10 @@ export default function Dashboard() {
   const handleViewDetails = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setDetailDialogOpen(true);
+    // Mark as seen when opening details
+    if (!appointment.seen_at) {
+      markSeen(appointment.id);
+    }
   };
 
   const selectedClient = selectedAppointment 
@@ -396,12 +467,18 @@ export default function Dashboard() {
     setStatusFilter('all');
   };
 
+  const handleMarkAllSeen = async () => {
+    await markAllSeen();
+    toast.success(t('dashboard.allMarkedSeen'));
+  };
+
   // ─── Status chips ───
-  const statusChips: { key: StatusFilter; label: string }[] = [
+  const statusChips: { key: StatusFilter; label: string; count?: number }[] = [
     { key: 'all', label: t('dashboard.all', { defaultValue: 'Tous' }) },
-    { key: 'pending', label: t('dashboard.pendingStat') },
+    { key: 'pending', label: t('dashboard.pendingStat'), count: pendingCount },
     { key: 'confirmed', label: t('status.confirmed', { defaultValue: 'Confirmés' }) },
-    { key: 'completed', label: t('status.completed', { defaultValue: 'Terminés' }) },
+    { key: 'toCollect', label: t('dashboard.toCollect'), count: toCollectCount },
+    { key: 'completed', label: t('status.completed', { defaultValue: 'Terminés et payés' }) },
     { key: 'cancelled', label: t('status.cancelled', { defaultValue: 'Annulés' }) },
   ];
 
@@ -409,11 +486,23 @@ export default function Dashboard() {
     <>
       <DashboardLayout title={t('nav.reservations')} subtitle={center?.name}>
         <div className="space-y-4 sm:space-y-5">
-          {/* ─── Header with Add button ─── */}
-          <div className="flex items-center justify-end">
+          {/* ─── Header with Add button + Mark all seen ─── */}
+          <div className="flex items-center justify-between">
+            {newCount > 0 && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="rounded-xl gap-1.5 text-blue-600 border-blue-200 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-800 dark:hover:bg-blue-950/30"
+                onClick={handleMarkAllSeen}
+              >
+                <Eye className="w-4 h-4" />
+                {t('dashboard.markAllSeen')} ({newCount})
+              </Button>
+            )}
+            {newCount === 0 && <div />}
             <Button onClick={() => navigate('/dashboard/calendar', { state: { openCreate: true } })} size="sm" className="rounded-xl gap-1.5">
               <Plus className="w-4 h-4" />
-              Ajouter une réservation
+              {t('dashboard.addReservation')}
             </Button>
           </div>
 
@@ -474,6 +563,59 @@ export default function Dashboard() {
             </button>
           </div>
 
+          {/* ─── Period filters (Month + Custom) ─── */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-0.5 scrollbar-none">
+            <button
+              onClick={() => handleQuickFilter('month')}
+              className={cn(
+                "px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 whitespace-nowrap flex-shrink-0",
+                quickFilter === 'month'
+                  ? "bg-foreground text-background shadow-sm"
+                  : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              {t('dashboard.thisMonth')}
+            </button>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  className={cn(
+                    "px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 whitespace-nowrap flex-shrink-0 flex items-center gap-1",
+                    quickFilter === 'custom'
+                      ? "bg-foreground text-background shadow-sm"
+                      : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
+                >
+                  <CalendarRange className="w-3 h-3" />
+                  {quickFilter === 'custom' && customDateFrom
+                    ? `${format(customDateFrom, 'd MMM', { locale: dateLocale })}${customDateTo ? ` → ${format(customDateTo, 'd MMM', { locale: dateLocale })}` : ''}`
+                    : t('dashboard.customPeriod')
+                  }
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-3" align="start">
+                <div className="space-y-3">
+                  <p className="text-xs font-medium text-muted-foreground">{t('dashboard.customPeriod')}</p>
+                  <Calendar
+                    mode="range"
+                    selected={customDateFrom && customDateTo ? { from: customDateFrom, to: customDateTo } : customDateFrom ? { from: customDateFrom, to: undefined } : undefined}
+                    onSelect={(range) => {
+                      setCustomDateFrom(range?.from);
+                      setCustomDateTo(range?.to);
+                      if (range?.from) {
+                        setQuickFilter('custom');
+                        setStatusFilter('all');
+                      }
+                    }}
+                    className="p-3 pointer-events-auto"
+                    locale={dateLocale}
+                  />
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+
           {/* ─── Search + Sort ─── */}
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
@@ -497,7 +639,7 @@ export default function Dashboard() {
 
           {/* ─── Status Chips + Service Filter ─── */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 -mx-1 px-1 scrollbar-none">
-            {statusChips.map(({ key, label }) => (
+            {statusChips.map(({ key, label, count }) => (
               <button
                 key={key}
                 onClick={() => { setStatusFilter(key); setQuickFilter('none'); }}
@@ -509,9 +651,14 @@ export default function Dashboard() {
                 )}
               >
                 {label}
-                {key === 'pending' && pendingCount > 0 && (
-                  <span className="ml-1.5 bg-amber-400/20 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full text-[10px] font-bold">
-                    {pendingCount}
+                {count !== undefined && count > 0 && (
+                  <span className={cn(
+                    "ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold",
+                    key === 'pending' ? "bg-amber-400/20 text-amber-600 dark:text-amber-400" :
+                    key === 'toCollect' ? "bg-emerald-400/20 text-emerald-600 dark:text-emerald-400" :
+                    "bg-muted text-muted-foreground"
+                  )}>
+                    {count}
                   </span>
                 )}
               </button>

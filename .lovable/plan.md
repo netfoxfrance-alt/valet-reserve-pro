@@ -1,60 +1,53 @@
 
 
-# Plan : Réservations pro-grade — "Nouveau", "À encaisser", filtres période
+## Plan : Prerendering SEO via Edge Function + Guide Cloudflare
 
-ChatGPT a raison : localStorage est fragile (multi-device, cache purgé, multi-utilisateur). La bonne solution est une colonne `seen_at` en base.
+### Ce que je vais faire (backend)
 
-## 1. Migration DB : ajouter `seen_at` sur `appointments`
+**Créer une Edge Function `prerender`** qui génère du HTML complet quand un bot (Google, Bing, etc.) visite le site. Cette fonction couvre :
 
-```sql
-ALTER TABLE public.appointments ADD COLUMN seen_at timestamptz DEFAULT NULL;
+1. **Page d'accueil (`/`)** : HTML statique avec le titre, la description, les features, le pricing, la FAQ — tout le contenu marketing visible sur la landing page.
+
+2. **Pages centres (`/:slug`)** : Requête en base pour récupérer le nom, l'adresse, le téléphone, les services/formules, les horaires, la description, les données SEO personnalisées. Génère un HTML complet avec :
+   - Balises `<title>`, `<meta description>`, Open Graph, Twitter Card
+   - JSON-LD `LocalBusiness` (schéma structuré pour Google)
+   - Le contenu textuel (nom, services, prix, adresse)
+
+3. **Pages légales** (`/confidentialite`, `/cgv`, `/mentions-legales`) : HTML basique avec le titre de la page.
+
+4. **Configuration** : `verify_jwt = false` dans `config.toml` (les bots n'ont pas de token).
+
+### Ce que tu devras faire (simple, ~10 minutes)
+
+1. **Créer un compte Cloudflare gratuit** sur [cloudflare.com](https://cloudflare.com)
+2. **Transférer le DNS de `cleaningpage.com`** vers Cloudflare (je te guiderai étape par étape avec des captures d'écran)
+3. **Copier-coller un script de ~20 lignes** que je te fournirai dans la section "Workers" de Cloudflare
+4. **Ré-ajouter le domaine dans Lovable** (l'enregistrement A vers `185.158.133.1`)
+
+### Risques : zéro
+
+- Les utilisateurs normaux ne verront **aucun changement** — ils continuent d'utiliser l'app React comme avant
+- Si le Worker Cloudflare tombe en panne, le site revient simplement à son fonctionnement actuel (pas de prerendering, mais pas de casse)
+- C'est la méthode **recommandée par Google** pour les SPAs ([Dynamic Rendering](https://developers.google.com/search/docs/crawling-indexing/javascript/dynamic-rendering))
+
+### Détails techniques
+
+```text
+Visiteur arrive sur cleaningpage.com
+        │
+  Cloudflare Worker (gratuit)
+        │
+        ├── User-Agent = Googlebot/Bingbot/etc.
+        │      └── Appel Edge Function "prerender?path=/slug"
+        │             └── Retourne HTML complet avec contenu + meta
+        │
+        └── Utilisateur normal
+               └── SPA React inchangée
 ```
 
-- `NULL` = nouveau, non vu par le pro
-- Quand le pro clique "Marquer comme vu" ou ouvre le détail → `UPDATE SET seen_at = now()`
-- Pas besoin de nouvelle table, juste une colonne nullable
-- RLS déjà en place (seul le owner peut UPDATE ses appointments)
+### Fichiers à créer/modifier
 
-## 2. Indicateur "Nouveau" sur chaque carte
-
-Sur `InboxCard`, si `appointment.seen_at === null` → badge bleu "Nouveau" à côté du statut. Disparaît automatiquement quand le pro ouvre le détail ou clique "Tout marquer comme vu".
-
-**Bouton global** en haut : "Tout marquer comme vu" → un seul UPDATE en batch sur tous les appointments non vus du centre.
-
-## 3. Filtre "À encaisser"
-
-Nouveau chip de statut entre "Confirmés" et "Terminés" :
-- Affiche les réservations **confirmées** dont la date est **aujourd'hui ou passée**
-- Ce sont les prestations réalisées mais pas encore clôturées
-- C'est la vue clé pour le traitement en lot (fin de semaine/mois)
-
-## 4. Filtres par période
-
-Ajouter aux quick filters existants (En attente / Aujourd'hui / Cette semaine) :
-- **Ce mois** 
-- **Période personnalisée** (date picker avec plage)
-
-## 5. Affichage acompte sur chaque carte
-
-Sur `InboxCard`, sous le prix, afficher :
-- `deposit_status === 'paid'` → "Acompte 20€ · Reste 80€"
-- Sinon rien
-
-## 6. Renommer "Terminé" → "Terminé et payé"
-
-Dans `fr.json` et `en.json`, le statut `completed` devient "Terminé et payé" / "Completed & paid". Le bouton "Terminer" dans le dropdown devient "Terminer et encaisser".
-
-## Fichiers impactés
-
-| Fichier | Modification |
-|---|---|
-| **Migration SQL** | `ALTER TABLE appointments ADD COLUMN seen_at timestamptz` |
-| `src/hooks/useAppointments.tsx` | Ajouter `seen_at` au type, fonction `markAllSeen()` et `markSeen(id)` |
-| `src/pages/Dashboard.tsx` | Badge "Nouveau", bouton "Tout vu", filtre "À encaisser", filtres mois/custom, affichage acompte |
-| `src/i18n/locales/fr.json` | Clés : "Nouveau", "À encaisser", "Terminé et payé", "Ce mois", "Tout marquer comme vu" |
-| `src/i18n/locales/en.json` | Idem en anglais |
-
-## Pas de localStorage
-
-Tout est en base. Multi-device, multi-utilisateur, persistant.
+1. **Créer** `supabase/functions/prerender/index.ts` — Edge Function qui génère le HTML
+2. **Modifier** `supabase/config.toml` — Ajouter `[functions.prerender] verify_jwt = false`
+3. **Fournir** le code du Cloudflare Worker à copier-coller (dans le chat, pas dans le code)
 

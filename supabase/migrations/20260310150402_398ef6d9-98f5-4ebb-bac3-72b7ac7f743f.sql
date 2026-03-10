@@ -1,0 +1,1 @@
+ALTER TABLE public.appointments ADD COLUMN seen_at timestamptz DEFAULT NULL;
