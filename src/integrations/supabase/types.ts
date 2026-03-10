@@ -36,6 +36,7 @@ export type Database = {
           id: string
           notes: string | null
           pack_id: string | null
+          seen_at: string | null
           status: string | null
           updated_at: string | null
           vehicle_type: string
@@ -61,6 +62,7 @@ export type Database = {
           id?: string
           notes?: string | null
           pack_id?: string | null
+          seen_at?: string | null
           status?: string | null
           updated_at?: string | null
           vehicle_type: string
@@ -86,6 +88,7 @@ export type Database = {
           id?: string
           notes?: string | null
           pack_id?: string | null
+          seen_at?: string | null
           status?: string | null
           updated_at?: string | null
           vehicle_type?: string
