@@ -489,6 +489,19 @@ export default function DashboardCalendar() {
       payload.service_name = selectedService?.name;
     } else if (serviceType === 'pack' && createForm.pack_id) {
       payload.pack_id = createForm.pack_id;
+      // If a variant is selected, use its price; otherwise use base pack price
+      const pack = packs.find(p => p.id === createForm.pack_id);
+      const variants = ((pack as any)?.price_variants || []) as { name: string; price: number }[];
+      if (selectedVariant && variants.length > 0) {
+        const variant = variants.find(v => v.name === selectedVariant);
+        if (variant) {
+          payload.custom_price = variant.price;
+          payload.price = variant.price;
+          payload.variant_name = variant.name;
+        }
+      } else if (pack) {
+        payload.custom_price = pack.price;
+      }
     }
     
     const { error } = await createAppointment(payload);
