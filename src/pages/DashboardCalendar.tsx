@@ -1540,6 +1540,20 @@ export default function DashboardCalendar() {
         onOpenChange={setSaleDialogOpen}
         onComplete={async (appointmentId) => {
           await handleUpdateStatus(appointmentId, 'completed');
+          // Chain to next confirmed appointment for today (bulk flow)
+          const todayStr = format(new Date(), 'yyyy-MM-dd');
+          const remaining = appointments.filter(a => 
+            a.appointment_date === todayStr && 
+            a.status === 'confirmed' && 
+            a.id !== appointmentId
+          );
+          if (remaining.length > 0) {
+            // Small delay for smoother UX
+            setTimeout(() => {
+              setSaleAppointment(remaining[0]);
+              setSaleDialogOpen(true);
+            }, 300);
+          }
         }}
       />
     </>
