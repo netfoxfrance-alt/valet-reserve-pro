@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { 
   Search, Check, X, Clock, CalendarDays, CalendarClock, 
   Phone, Mail, MoreHorizontal, CalendarPlus, CalendarCheck,
-  ArrowUpDown, ChevronDown, Plus
+  ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight, Plus, CreditCard
 } from 'lucide-react';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter } from '@/hooks/useCenter';
