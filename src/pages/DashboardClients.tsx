@@ -195,18 +195,18 @@ export default function DashboardClients() {
         ) : (
           <>
             {/* KPI Cards */}
-            <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
-              <Card variant="elevated" className="p-5 rounded-2xl">
-                <p className="text-sm font-medium text-muted-foreground mb-1">{t('clients.totalClients')}</p>
-                <p className="text-3xl font-bold text-foreground tracking-tight">{totalClients}</p>
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
+              <Card variant="elevated" className="p-3 sm:p-5 rounded-2xl">
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">{t('clients.totalClients')}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{totalClients}</p>
               </Card>
-              <Card variant="elevated" className="p-5 rounded-2xl">
-                <p className="text-sm font-medium text-muted-foreground mb-1">Particuliers</p>
-                <p className="text-3xl font-bold text-foreground tracking-tight">{partClients}</p>
+              <Card variant="elevated" className="p-3 sm:p-5 rounded-2xl">
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Particuliers</p>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{partClients}</p>
               </Card>
-              <Card variant="elevated" className="p-5 rounded-2xl">
-                <p className="text-sm font-medium text-muted-foreground mb-1">Professionnels</p>
-                <p className="text-3xl font-bold text-foreground tracking-tight">{proClients}</p>
+              <Card variant="elevated" className="p-3 sm:p-5 rounded-2xl">
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1 truncate">Professionnels</p>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{proClients}</p>
               </Card>
             </div>
 
@@ -388,7 +388,7 @@ export default function DashboardClients() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5 self-end sm:self-center shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1.5 self-end sm:self-center shrink-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-xl" onClick={(e) => { e.stopPropagation(); setViewingClient(client); }}>
                         <Eye className="w-4 h-4" />
                       </Button>

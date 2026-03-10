@@ -194,26 +194,26 @@ export default function DashboardInvoices() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
           <button onClick={() => setActiveTab('all')} className="text-left">
-            <Card className={cn("p-5 rounded-2xl transition-all", activeTab === 'all' ? "ring-2 ring-primary shadow-sm" : "hover:bg-secondary/50")}>
-              <p className="text-sm font-medium text-muted-foreground mb-1">{t('invoices.allQuotes')}</p>
-              <p className="text-3xl font-bold tracking-tight">{stats.total}</p>
+            <Card className={cn("p-3 sm:p-5 rounded-2xl transition-all", activeTab === 'all' ? "ring-2 ring-primary shadow-sm" : "hover:bg-secondary/50")}>
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1 truncate">{t('invoices.allQuotes')}</p>
+              <p className="text-2xl sm:text-3xl font-bold tracking-tight">{stats.total}</p>
             </Card>
           </button>
           <button onClick={() => setActiveTab('pending')} className="text-left">
-            <Card className={cn("p-5 rounded-2xl transition-all", activeTab === 'pending' ? "ring-2 ring-primary shadow-sm" : "hover:bg-secondary/50")}>
+            <Card className={cn("p-3 sm:p-5 rounded-2xl transition-all", activeTab === 'pending' ? "ring-2 ring-primary shadow-sm" : "hover:bg-secondary/50")}>
               <div className="flex items-center justify-between mb-1">
-                <p className="text-sm font-medium text-muted-foreground">{t('invoices.pending')}</p>
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{t('invoices.pending')}</p>
                 {stats.pending > 0 && <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />}
               </div>
-              <p className="text-3xl font-bold tracking-tight">{stats.pending}</p>
+              <p className="text-2xl sm:text-3xl font-bold tracking-tight">{stats.pending}</p>
             </Card>
           </button>
           <button onClick={() => setActiveTab('accepted')} className="text-left">
-            <Card className={cn("p-5 rounded-2xl transition-all", activeTab === 'accepted' ? "ring-2 ring-primary shadow-sm" : "hover:bg-secondary/50")}>
-              <p className="text-sm font-medium text-muted-foreground mb-1">{t('invoices.accepted')}</p>
-              <p className="text-3xl font-bold tracking-tight">{stats.accepted}</p>
+            <Card className={cn("p-3 sm:p-5 rounded-2xl transition-all", activeTab === 'accepted' ? "ring-2 ring-primary shadow-sm" : "hover:bg-secondary/50")}>
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1 truncate">{t('invoices.accepted')}</p>
+              <p className="text-2xl sm:text-3xl font-bold tracking-tight">{stats.accepted}</p>
             </Card>
           </button>
         </div>
@@ -275,19 +275,19 @@ export default function DashboardInvoices() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
+                    <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-3">
                       {quote.status === 'accepted' && (
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="rounded-xl h-9 text-xs font-medium border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-950/50"
+                          className="rounded-xl h-8 sm:h-9 text-[11px] sm:text-xs font-medium border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-950/50 px-2 sm:px-3"
                           onClick={(e) => { e.stopPropagation(); handleCreateServiceFromQuote(quote); }}
                         >
-                          <Wrench className="w-3.5 h-3.5 mr-1.5" />
-                          {t('invoices.createService')}
+                          <Wrench className="w-3.5 h-3.5 sm:mr-1.5" />
+                          <span className="hidden sm:inline">{t('invoices.createService')}</span>
                         </Button>
                       )}
-                      <span className="font-semibold text-lg">{quote.total.toFixed(0)}€</span>
+                      <span className="font-semibold text-base sm:text-lg">{quote.total.toFixed(0)}€</span>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl">

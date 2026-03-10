@@ -421,8 +421,8 @@ export default function DashboardStats() {
                     </Card>
 
                     <Card variant="elevated" className="p-4 sm:p-6 rounded-2xl">
-                      <h3 className="font-semibold text-foreground mb-4">{t('stats.monthlyRevenue')}</h3>
-                      <div className="h-64">
+                      <h3 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">{t('stats.monthlyRevenue')}</h3>
+                      <div className="h-48 sm:h-64">
                         <ResponsiveContainer width="100%" height="100%">
                           <BarChart data={monthlyData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
@@ -562,18 +562,18 @@ export default function DashboardStats() {
                   </div>
 
                   {/* Sales KPIs */}
-                  <div className="grid grid-cols-3 gap-3">
-                    <Card className="p-4 rounded-2xl">
-                      <p className="text-xs text-muted-foreground">{t('sales.revenue')}</p>
-                      <p className="text-xl sm:text-2xl font-bold text-foreground">{salesKpis.totalRevenue.toFixed(0)}€</p>
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                    <Card className="p-3 sm:p-4 rounded-2xl">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground">{t('sales.revenue')}</p>
+                      <p className="text-lg sm:text-2xl font-bold text-foreground">{salesKpis.totalRevenue.toFixed(0)}€</p>
                     </Card>
-                    <Card className="p-4 rounded-2xl">
-                      <p className="text-xs text-muted-foreground">{t('sales.salesCount')}</p>
-                      <p className="text-xl sm:text-2xl font-bold text-foreground">{salesKpis.count}</p>
+                    <Card className="p-3 sm:p-4 rounded-2xl">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground">{t('sales.salesCount')}</p>
+                      <p className="text-lg sm:text-2xl font-bold text-foreground">{salesKpis.count}</p>
                     </Card>
-                    <Card className="p-4 rounded-2xl">
-                      <p className="text-xs text-muted-foreground">{t('sales.avgBasket')}</p>
-                      <p className="text-xl sm:text-2xl font-bold text-foreground">{salesKpis.avgBasket.toFixed(0)}€</p>
+                    <Card className="p-3 sm:p-4 rounded-2xl">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{t('sales.avgBasket')}</p>
+                      <p className="text-lg sm:text-2xl font-bold text-foreground">{salesKpis.avgBasket.toFixed(0)}€</p>
                     </Card>
                   </div>
 
