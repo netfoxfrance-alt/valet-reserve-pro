@@ -8,7 +8,7 @@ import { useSearchParams } from 'react-router-dom';
 
 interface CalendarSyncSectionProps {
   centerId: string;
-  icalToken: string | null;
+  icalToken?: string | null;
   onRefreshToken?: () => Promise<void>;
   googleCalendarConnected?: boolean;
   googleCalendarEmail?: string | null;
