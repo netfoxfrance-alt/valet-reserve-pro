@@ -179,11 +179,7 @@ function InboxCard({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem onClick={() => {
-                  // Open CompleteSaleDialog instead of direct status update
-                  const event = new CustomEvent('open-sale-dialog', { detail: appointment });
-                  window.dispatchEvent(event);
-                }}>
+                <DropdownMenuItem onClick={() => onCompleteSale(appointment)}>
                   <Check className="w-4 h-4 mr-2" />{t('dashboard.finish')}
                 </DropdownMenuItem>
                 {canSendEmail && serviceName && price !== undefined && (
