@@ -326,7 +326,7 @@ export default function Dashboard() {
     });
 
     return result;
-  }, [appointments, quickFilter, statusFilter, serviceFilter, searchQuery, sortOrder, weekStart, weekEnd]);
+  }, [appointments, quickFilter, statusFilter, serviceFilter, searchQuery, sortOrder, weekStart, weekEnd, selectedDay]);
 
   // ─── Group by date ───
   const groupedAppointments = useMemo(() => {
