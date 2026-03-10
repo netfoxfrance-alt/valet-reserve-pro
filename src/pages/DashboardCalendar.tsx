@@ -86,6 +86,7 @@ export default function DashboardCalendar() {
   const [clientDropdownOpen, setClientDropdownOpen] = useState(false);
   const [serviceSearch, setServiceSearch] = useState('');
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState<string>('');
   const clientSearchRef = useRef<HTMLDivElement>(null);
   const serviceSearchRef = useRef<HTMLDivElement>(null);
   const [createForm, setCreateForm] = useState({
@@ -370,8 +371,14 @@ export default function DashboardCalendar() {
   // Filtered services for autocomplete
   const filteredServices = useMemo(() => {
     const items = serviceType === 'pack'
-      ? packs.map(p => ({ id: p.id, name: p.name, price: p.price, duration: p.duration || '', type: 'pack' as const }))
-      : customServices.filter(s => s.active).map(s => ({ id: s.id, name: s.name, price: s.price, duration: formatDuration(s.duration_minutes), type: 'custom' as const }));
+      ? packs.map(p => {
+          const variants = ((p as any).price_variants || []) as { name: string; price: number }[];
+          const hasVariants = variants.length > 0;
+          const minPrice = hasVariants ? Math.min(...variants.map(v => v.price)) : p.price;
+          const displayPrice = hasVariants ? `${minPrice}€+` : `${p.price}€`;
+          return { id: p.id, name: p.name, price: minPrice, displayPrice, duration: p.duration || '', type: 'pack' as const, hasVariants, variants };
+        })
+      : customServices.filter(s => s.active).map(s => ({ id: s.id, name: s.name, price: s.price, displayPrice: `${s.price}€`, duration: formatDuration(s.duration_minutes), type: 'custom' as const, hasVariants: false, variants: [] as { name: string; price: number }[] }));
     if (!serviceSearch.trim()) return items.slice(0, 8);
     const q = serviceSearch.toLowerCase();
     return items.filter(i => i.name.toLowerCase().includes(q)).slice(0, 8);
@@ -403,6 +410,7 @@ export default function DashboardCalendar() {
     setServiceSearch('');
     setClientDropdownOpen(false);
     setServiceDropdownOpen(false);
+    setSelectedVariant('');
     setCreateForm({
       client_name: '',
       client_email: '',
@@ -481,6 +489,19 @@ export default function DashboardCalendar() {
       payload.service_name = selectedService?.name;
     } else if (serviceType === 'pack' && createForm.pack_id) {
       payload.pack_id = createForm.pack_id;
+      // If a variant is selected, use its price; otherwise use base pack price
+      const pack = packs.find(p => p.id === createForm.pack_id);
+      const variants = ((pack as any)?.price_variants || []) as { name: string; price: number }[];
+      if (selectedVariant && variants.length > 0) {
+        const variant = variants.find(v => v.name === selectedVariant);
+        if (variant) {
+          payload.custom_price = variant.price;
+          payload.price = variant.price;
+          payload.variant_name = variant.name;
+        }
+      } else if (pack) {
+        payload.custom_price = pack.price;
+      }
     }
     
     const { error } = await createAppointment(payload);
@@ -1327,6 +1348,7 @@ export default function DashboardCalendar() {
                       type="button"
                       onClick={() => {
                         setServiceSearch('');
+                        setSelectedVariant('');
                         setCreateForm(prev => ({ ...prev, pack_id: '', custom_service_id: '', custom_price: '' }));
                       }}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
@@ -1344,6 +1366,7 @@ export default function DashboardCalendar() {
                         onClick={() => {
                           if (item.type === 'pack') {
                             setCreateForm(prev => ({ ...prev, pack_id: item.id, custom_service_id: '', custom_price: '' }));
+                            setSelectedVariant('');
                           } else {
                             handleCustomServiceChange(item.id);
                           }
@@ -1353,7 +1376,7 @@ export default function DashboardCalendar() {
                         className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary/60 transition-colors flex items-center justify-between"
                       >
                         <span className="font-medium text-foreground">{item.name}</span>
-                        <span className="text-muted-foreground text-xs">{item.duration} • {item.price}€</span>
+                        <span className="text-muted-foreground text-xs">{item.duration} • {item.displayPrice}</span>
                       </button>
                     ))}
                     {filteredServices.length === 0 && (
@@ -1363,15 +1386,53 @@ export default function DashboardCalendar() {
                 )}
               </div>
 
-              {/* Selected service preview */}
-              {createForm.pack_id && packs.find(p => p.id === createForm.pack_id) && (
-                <div className="bg-primary/5 rounded-lg p-3 text-sm">
-                  <p className="font-medium text-primary">{packs.find(p => p.id === createForm.pack_id)?.name}</p>
-                  <p className="text-muted-foreground">
-                    {packs.find(p => p.id === createForm.pack_id)?.duration || t('common.duration')} • {packs.find(p => p.id === createForm.pack_id)?.price}€
-                  </p>
-                </div>
-              )}
+              {/* Selected service preview + variant selector */}
+              {createForm.pack_id && (() => {
+                const pack = packs.find(p => p.id === createForm.pack_id);
+                if (!pack) return null;
+                const variants = ((pack as any).price_variants || []) as { name: string; price: number }[];
+                const hasVariants = variants.length > 0;
+                const displayPrice = hasVariants 
+                  ? (selectedVariant ? variants.find(v => v.name === selectedVariant)?.price : null)
+                  : pack.price;
+
+                return (
+                  <div className="space-y-2">
+                    <div className="bg-primary/5 rounded-lg p-3 text-sm">
+                      <p className="font-medium text-primary">{pack.name}</p>
+                      <p className="text-muted-foreground">
+                        {pack.duration || t('common.duration')} • {displayPrice !== null && displayPrice !== undefined ? `${displayPrice}€` : 'Sélectionnez une option'}
+                      </p>
+                    </div>
+                    {hasVariants && (
+                      <div className="space-y-1.5">
+                        <Label className="text-xs text-muted-foreground">Sélectionner une option *</Label>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          {variants.map((v) => (
+                            <button
+                              key={v.name}
+                              type="button"
+                              onClick={() => {
+                                setSelectedVariant(v.name);
+                                setCreateForm(prev => ({ ...prev, custom_price: v.price.toString() }));
+                              }}
+                              className={cn(
+                                "px-3 py-2 text-sm rounded-lg border transition-all text-left",
+                                selectedVariant === v.name
+                                  ? "border-primary bg-primary/10 text-primary font-medium"
+                                  : "border-border hover:border-primary/50 text-foreground"
+                              )}
+                            >
+                              <span className="block font-medium">{v.name}</span>
+                              <span className="text-xs text-muted-foreground">{v.price}€</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
               {createForm.custom_service_id && customServices.find(s => s.id === createForm.custom_service_id) && (
                 <div className="bg-primary/5 rounded-lg p-3 text-sm">
                   <p className="font-medium text-primary">{customServices.find(s => s.id === createForm.custom_service_id)?.name}</p>
