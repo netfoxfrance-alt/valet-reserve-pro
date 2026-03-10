@@ -31,6 +31,7 @@ export interface Appointment {
   deposit_refund_status: string;
   deposit_payment_intent_id: string | null;
   seen_at: string | null;
+  google_calendar_event_id: string | null;
   pack?: {
     id: string;
     name: string;
