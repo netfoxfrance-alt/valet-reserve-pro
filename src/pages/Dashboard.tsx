@@ -114,9 +114,7 @@ function InboxCard({
         "group flex items-center gap-3 p-3.5 sm:p-4 bg-card border rounded-2xl transition-all duration-200 cursor-pointer",
         isPending 
           ? "border-amber-200/80 dark:border-amber-800/50 hover:border-amber-300 hover:shadow-md" 
-          : isNew
-            ? "border-blue-200/80 dark:border-blue-800/50 hover:border-blue-300 hover:shadow-md"
-            : "border-border/50 hover:border-border hover:shadow-md"
+          : "border-border/50 hover:border-border hover:shadow-md"
       )}
       onClick={() => onViewDetails(appointment)}
     >
@@ -126,20 +124,12 @@ function InboxCard({
         style={{ backgroundColor: `hsl(${hue}, 55%, 50%)` }}
       >
         {initials}
-        {isNew && (
-          <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-card" />
-        )}
       </div>
 
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
           <p className="font-semibold text-foreground truncate text-sm sm:text-base">{appointment.client_name}</p>
-          {isNew && (
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
-              {t('dashboard.new')}
-            </span>
-          )}
           <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0", statusColor)}>
             {t(`status.${appointment.status}`)}
           </span>
@@ -477,7 +467,6 @@ export default function Dashboard() {
     { key: 'all', label: t('dashboard.all', { defaultValue: 'Tous' }) },
     { key: 'pending', label: t('dashboard.pendingStat'), count: pendingCount },
     { key: 'confirmed', label: t('status.confirmed', { defaultValue: 'Confirmés' }) },
-    { key: 'toCollect', label: t('dashboard.toCollect'), count: toCollectCount },
     { key: 'completed', label: t('status.completed', { defaultValue: 'Terminés et payés' }) },
     { key: 'cancelled', label: t('status.cancelled', { defaultValue: 'Annulés' }) },
   ];
@@ -486,20 +475,8 @@ export default function Dashboard() {
     <>
       <DashboardLayout title={t('nav.reservations')} subtitle={center?.name}>
         <div className="space-y-4 sm:space-y-5">
-          {/* ─── Header with Add button + Mark all seen ─── */}
-          <div className="flex items-center justify-between">
-            {newCount > 0 && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="rounded-xl gap-1.5 text-blue-600 border-blue-200 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-800 dark:hover:bg-blue-950/30"
-                onClick={handleMarkAllSeen}
-              >
-                <Eye className="w-4 h-4" />
-                {t('dashboard.markAllSeen')} ({newCount})
-              </Button>
-            )}
-            {newCount === 0 && <div />}
+          {/* ─── Header with Add button ─── */}
+          <div className="flex items-center justify-end">
             <Button onClick={() => navigate('/dashboard/calendar', { state: { openCreate: true } })} size="sm" className="rounded-xl gap-1.5">
               <Plus className="w-4 h-4" />
               {t('dashboard.addReservation')}
