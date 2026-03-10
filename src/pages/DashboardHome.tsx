@@ -8,7 +8,7 @@ import { useMyAppointments } from '@/hooks/useAppointments';
 import { useMyContactRequests } from '@/hooks/useContactRequests';
 import { useTranslation } from 'react-i18next';
 import { Settings, LogOut, Crown, AlertCircle, Share2, Copy, Check, Headphones, ExternalLink } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { SubscriptionBanner } from '@/components/dashboard/SubscriptionBanner';
 
