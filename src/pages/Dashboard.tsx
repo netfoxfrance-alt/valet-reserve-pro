@@ -217,7 +217,7 @@ function InboxCard({
 
 // ─── Filter Types ───
 type StatusFilter = 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
-type QuickFilter = 'none' | 'pending' | 'today' | 'week';
+type QuickFilter = 'none' | 'pending' | 'day' | 'week';
 type SortOrder = 'newest' | 'oldest';
 
 export default function Dashboard() {
@@ -228,8 +228,9 @@ export default function Dashboard() {
   
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
-  const [quickFilter, setQuickFilter] = useState<QuickFilter>('none');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
+  const [quickFilter, setQuickFilter] = useState<QuickFilter>('day');
+  const [selectedDay, setSelectedDay] = useState<Date>(startOfDay(new Date()));
+  const [sortOrder, setSortOrder] = useState<SortOrder>('oldest');
   const [serviceFilter, setServiceFilter] = useState<string>('all');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
