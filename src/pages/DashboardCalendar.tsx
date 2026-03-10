@@ -1511,6 +1511,16 @@ export default function DashboardCalendar() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Complete Sale Dialog */}
+      <CompleteSaleDialog
+        appointment={saleAppointment}
+        open={saleDialogOpen}
+        onOpenChange={setSaleDialogOpen}
+        onComplete={async (appointmentId) => {
+          await handleUpdateStatus(appointmentId, 'completed');
+        }}
+      />
     </>
   );
 }
