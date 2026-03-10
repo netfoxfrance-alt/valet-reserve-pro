@@ -99,27 +99,34 @@ serve(async (req) => {
   }
 
   try {
-    // Authenticate user
+    // Authenticate: accept both user JWT and service_role key
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-
     const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    const isServiceRole = token === serviceRoleKey;
+
+    let userId: string | null = null;
+
+    if (!isServiceRole) {
+      const supabase = createClient(
+        Deno.env.get('SUPABASE_URL')!,
+        Deno.env.get('SUPABASE_ANON_KEY')!,
+        { global: { headers: { Authorization: authHeader } } }
+      );
+
+      const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+      if (claimsError || !claimsData?.claims) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
+      }
+      userId = claimsData.claims.sub as string;
     }
-    const userId = claimsData.claims.sub;
 
     const { action, appointment_id } = await req.json();
-    log('Request received', { action, appointment_id, userId });
+    log('Request received', { action, appointment_id, userId, isServiceRole });
 
     if (!action || !appointment_id) {
       return new Response(JSON.stringify({ error: 'Missing action or appointment_id' }), { status: 400, headers: corsHeaders });
