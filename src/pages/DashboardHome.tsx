@@ -36,9 +36,25 @@ export default function DashboardHome() {
   const navigate = useNavigate();
   const { signOut, subscription } = useAuth();
   const { center } = useMyCenter();
+  const { appointments } = useMyAppointments();
+  const { requests } = useMyContactRequests();
   const { toast } = useToast();
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
+
+  // Badge counts
+  const pendingReservations = useMemo(() => 
+    appointments.filter(a => a.status === 'pending' || a.status === 'pending_validation').length
+  , [appointments]);
+  
+  const newRequests = useMemo(() => 
+    requests.filter(r => r.status === 'new').length
+  , [requests]);
+
+  const badges: Record<string, number> = {
+    reservations: pendingReservations,
+    requests: newRequests,
+  };
 
   const isPro = subscription.subscribed;
   const bookingUrl = center ? `${window.location.origin}/${center.slug}` : '';
