@@ -458,7 +458,8 @@
     "custom": "Perso",
     "noDataAvailable": "Aucune donnée disponible",
     "statsDetailDesc": "Détail des données statistiques pour le mois sélectionné",
-    "salesTab": "Ventes"
+    "salesTab": "Ventes",
+    "backToMonth": "Revenir au mois"
   },
   "settings": {
     "title": "Paramètres",

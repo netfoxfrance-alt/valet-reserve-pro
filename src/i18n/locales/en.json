@@ -458,7 +458,8 @@
     "custom": "Custom",
     "noDataAvailable": "No data available",
     "statsDetailDesc": "Statistical data detail for the selected month",
-    "salesTab": "Sales"
+    "salesTab": "Sales",
+    "backToMonth": "Back to month"
   },
   "settings": {
     "title": "Settings",
