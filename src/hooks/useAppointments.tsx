@@ -202,12 +202,26 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
         if (dateCompare !== 0) return dateCompare;
         return a.appointment_time.localeCompare(b.appointment_time);
       }));
+
+      // Auto-sync to Google Calendar (pro-created = confirmed)
+      (async () => {
+        try {
+          const { data: sessionData } = await supabase.auth.getSession();
+          const token = sessionData?.session?.access_token;
+          if (!token) return;
+          await supabase.functions.invoke('google-calendar-sync', {
+            headers: { Authorization: `Bearer ${token}` },
+            body: { action: 'create', appointment_id: newAppointment.id },
+          });
+        } catch (syncErr) {
+          console.warn('[Google Calendar Sync] Error (non-blocking):', syncErr);
+        }
+      })();
       
       // Send confirmation email if requested (for custom services)
       if (data.send_email && data.service_name && data.custom_price !== undefined && data.client_email) {
         (async () => {
           try {
-            // Get session token for authenticated email requests
             const { data: sessionData } = await supabase.auth.getSession();
             const token = sessionData?.session?.access_token;
             if (!token) return;
