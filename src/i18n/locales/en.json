@@ -425,7 +425,9 @@
     "nameAndPriceRequired": "Name and price required",
     "createAction": "Create service",
     "descriptionOptional": "Description (optional)",
-    "priceLabel": "Price (€)"
+    "priceLabel": "Price (€)",
+    "scheduleNow": "Schedule an appointment for this client?",
+    "scheduleAction": "Schedule"
   },
   "stats": {
     "title": "Statistics",
@@ -458,7 +460,8 @@
     "custom": "Custom",
     "noDataAvailable": "No data available",
     "statsDetailDesc": "Statistical data detail for the selected month",
-    "salesTab": "Sales"
+    "salesTab": "Sales",
+    "backToMonth": "Back to month"
   },
   "settings": {
     "title": "Settings",
@@ -944,6 +947,7 @@
     "avgBasket": "Average basket",
     "exportCSV": "Export CSV",
     "noSales": "No sales for this period",
-    "deposit": "Deposit"
+    "deposit": "Deposit",
+    "customRange": "Custom range"
   }
 }

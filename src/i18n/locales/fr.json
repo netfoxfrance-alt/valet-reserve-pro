@@ -425,7 +425,9 @@
     "nameAndPriceRequired": "Nom et prix requis",
     "createAction": "Créer la prestation",
     "descriptionOptional": "Description (optionnelle)",
-    "priceLabel": "Prix (€)"
+    "priceLabel": "Prix (€)",
+    "scheduleNow": "Planifier un RDV pour ce client ?",
+    "scheduleAction": "Planifier"
   },
   "stats": {
     "title": "Statistiques",
@@ -458,7 +460,8 @@
     "custom": "Perso",
     "noDataAvailable": "Aucune donnée disponible",
     "statsDetailDesc": "Détail des données statistiques pour le mois sélectionné",
-    "salesTab": "Ventes"
+    "salesTab": "Ventes",
+    "backToMonth": "Revenir au mois"
   },
   "settings": {
     "title": "Paramètres",
@@ -944,6 +947,7 @@
     "avgBasket": "Panier moyen",
     "exportCSV": "Exporter CSV",
     "noSales": "Aucune vente pour cette période",
-    "deposit": "Acompte"
+    "deposit": "Acompte",
+    "customRange": "Plage personnalisée"
   }
 }

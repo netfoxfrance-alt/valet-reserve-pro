@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 export default function DashboardCustomServices() {
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
   const { services, loading, createService, updateService, deleteService } = useMyCustomServices();
   const { clients } = useMyClients();
   const { toast } = useToast();
@@ -104,6 +105,28 @@ export default function DashboardCustomServices() {
       toast({ title: t('common.error'), description: error, variant: "destructive" });
     } else {
       toast({ title: t('customServices.serviceCreated') });
+      
+      // If created from a quote prefill with client, offer to schedule appointment
+      const state = location.state as { prefillService?: { client_id: string | null; client_name: string } } | null;
+      if (state?.prefillService?.client_id && data) {
+        const serviceId = (data as any).id;
+        const clientId = state.prefillService.client_id;
+        toast({
+          title: t('customServices.serviceCreated'),
+          description: t('customServices.scheduleNow'),
+          action: (
+            <Button 
+              size="sm" 
+              onClick={() => navigate('/dashboard/reservations', { 
+                state: { prefillBooking: { client_id: clientId, service_id: serviceId } } 
+              })}
+            >
+              {t('customServices.scheduleAction')}
+            </Button>
+          ),
+        });
+      }
+      
       resetCreateForm();
       setIsCreateOpen(false);
     }

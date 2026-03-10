@@ -87,6 +87,13 @@ export function useSales() {
     });
   };
 
+  const filterByDateRange = (start: Date, end: Date): Sale[] => {
+    return sales.filter(s => {
+      const d = new Date(s.sale_date);
+      return d >= startOfDay(start) && d <= endOfDay(end);
+    });
+  };
+
   const getKPIs = (filteredSales: Sale[]) => {
     const totalRevenue = filteredSales.reduce((sum, s) => sum + Number(s.amount_ttc), 0);
     const count = filteredSales.length;
@@ -120,5 +127,5 @@ export function useSales() {
     URL.revokeObjectURL(url);
   };
 
-  return { sales, loading, createSale, filterByPeriod, getKPIs, exportCSV, refetch: fetchSales };
+  return { sales, loading, createSale, filterByPeriod, filterByDateRange, getKPIs, exportCSV, refetch: fetchSales };
 }
