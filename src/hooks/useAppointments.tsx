@@ -30,6 +30,7 @@ export interface Appointment {
   deposit_checkout_session_id: string | null;
   deposit_refund_status: string;
   deposit_payment_intent_id: string | null;
+  seen_at: string | null;
   pack?: {
     id: string;
     name: string;
