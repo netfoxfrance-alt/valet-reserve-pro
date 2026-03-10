@@ -761,6 +761,7 @@ export default function Dashboard() {
         <ConfirmationCalendarDialog
           appointment={justConfirmedAppointment}
           centerAddress={center?.address || undefined}
+          isAlreadySynced={!!center?.google_calendar_connected}
           open={confirmDialogOpen}
           onOpenChange={setConfirmDialogOpen}
           onAddToCalendar={() => markAsSynced(justConfirmedAppointment.id)}
