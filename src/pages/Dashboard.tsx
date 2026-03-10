@@ -218,6 +218,8 @@ export default function Dashboard() {
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [justConfirmedAppointment, setJustConfirmedAppointment] = useState<Appointment | null>(null);
+  const [saleDialogOpen, setSaleDialogOpen] = useState(false);
+  const [saleAppointment, setSaleAppointment] = useState<Appointment | null>(null);
   
   const { appointments, loading, updateStatus, refetch } = useMyAppointments();
   const { center } = useMyCenter();
