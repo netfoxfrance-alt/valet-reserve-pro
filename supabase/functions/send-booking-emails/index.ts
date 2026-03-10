@@ -286,8 +286,8 @@ const handler = async (req: Request): Promise<Response> => {
         .eq('client_email', data.client_email)
         .eq('appointment_date', data.appointment_date)
         .eq('appointment_time', data.appointment_time)
-        .eq('status', 'pending_validation')
-        .gte('created_at', new Date(Date.now() - 5 * 60 * 1000).toISOString())
+        .in('status', ['pending', 'pending_validation'])
+        .gte('created_at', new Date(Date.now() - 10 * 60 * 1000).toISOString())
         .limit(1);
 
       if (appointmentError || !matchingAppointment || matchingAppointment.length === 0) {
