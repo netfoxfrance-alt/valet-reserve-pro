@@ -42,6 +42,10 @@ export default function DashboardHome() {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
+  // Fetch requests when center is available
+  useEffect(() => {
+    if (center) fetchRequests(center.id);
+  }, [center?.id]);
   // Badge counts
   const pendingReservations = useMemo(() => 
     appointments.filter(a => a.status === 'pending' || a.status === 'pending_validation').length
