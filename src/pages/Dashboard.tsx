@@ -48,10 +48,10 @@ const statusColorMap: Record<string, string> = {
 
 // ─── Compact Appointment Card ───
 function InboxCard({ 
-  appointment, centerAddress, isSynced,
+  appointment, centerAddress, isSynced, googleCalendarConnected,
   onConfirm, onRefuse, onCancel, onUpdateStatus, onSendEmail, onViewDetails, onAddToCalendar, onCompleteSale 
 }: { 
-  appointment: Appointment; centerAddress?: string; isSynced: boolean;
+  appointment: Appointment; centerAddress?: string; isSynced: boolean; googleCalendarConnected: boolean;
   onConfirm: (a: Appointment) => void;
   onRefuse: (a: Appointment) => void;
   onCancel: (a: Appointment) => void;
