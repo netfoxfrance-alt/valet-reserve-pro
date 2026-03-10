@@ -1444,16 +1444,27 @@ export default function DashboardCalendar() {
               )}
             </div>
 
-            {/* Date & Time */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>{t('dashboard.dateStar')}</Label>
-                <Input type="date" value={createForm.appointment_date} onChange={(e) => setCreateForm(prev => ({ ...prev, appointment_date: e.target.value }))} className="h-11 rounded-xl" />
-              </div>
-              <div className="space-y-2">
-                <Label>{t('dashboard.timeStar')}</Label>
-                <Input type="time" value={createForm.appointment_time} onChange={(e) => setCreateForm(prev => ({ ...prev, appointment_time: e.target.value }))} className="h-11 rounded-xl" />
-              </div>
+            {/* Date & Time — available slot picker */}
+            <div className="space-y-2">
+              <Label>{t('dashboard.dateStar')} / {t('dashboard.timeStar')}</Label>
+              {center?.id ? (
+                <AvailableSlotPicker
+                  centerId={center.id}
+                  serviceDurationMinutes={
+                    createForm.custom_service_id
+                      ? customServices.find(s => s.id === createForm.custom_service_id)?.duration_minutes
+                      : undefined
+                  }
+                  selectedDate={createForm.appointment_date}
+                  selectedTime={createForm.appointment_time}
+                  onSelect={(date, time) => setCreateForm(prev => ({ ...prev, appointment_date: date, appointment_time: time }))}
+                />
+              ) : (
+                <div className="grid grid-cols-2 gap-4">
+                  <Input type="date" value={createForm.appointment_date} onChange={(e) => setCreateForm(prev => ({ ...prev, appointment_date: e.target.value }))} className="h-11 rounded-xl" />
+                  <Input type="time" value={createForm.appointment_time} onChange={(e) => setCreateForm(prev => ({ ...prev, appointment_time: e.target.value }))} className="h-11 rounded-xl" />
+                </div>
+              )}
             </div>
             
             {/* Notes */}
