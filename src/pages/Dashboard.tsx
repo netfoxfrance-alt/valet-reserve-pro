@@ -14,7 +14,7 @@ import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter } from '@/hooks/useCenter';
 import { useMyClients } from '@/hooks/useClients';
 import { useCalendarSync } from '@/hooks/useCalendarSync';
-import { format, parseISO, startOfDay, isBefore, addDays, isToday, isTomorrow, startOfWeek, endOfWeek } from 'date-fns';
+import { format, parseISO, startOfDay, isBefore, addDays, subDays, isToday, isTomorrow, isSameDay, startOfWeek, endOfWeek } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
