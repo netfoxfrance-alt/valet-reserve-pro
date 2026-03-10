@@ -47,7 +47,7 @@ const statusColorMap: Record<string, string> = {
 // ─── Compact Appointment Card ───
 function InboxCard({ 
   appointment, centerAddress, isSynced,
-  onConfirm, onRefuse, onCancel, onUpdateStatus, onSendEmail, onViewDetails, onAddToCalendar 
+  onConfirm, onRefuse, onCancel, onUpdateStatus, onSendEmail, onViewDetails, onAddToCalendar, onCompleteSale 
 }: { 
   appointment: Appointment; centerAddress?: string; isSynced: boolean;
   onConfirm: (a: Appointment) => void;
@@ -57,6 +57,7 @@ function InboxCard({
   onSendEmail: (a: Appointment, kind: 'confirmation' | 'reminder') => void;
   onViewDetails: (a: Appointment) => void;
   onAddToCalendar: (a: Appointment) => void;
+  onCompleteSale: (a: Appointment) => void;
 }) {
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
