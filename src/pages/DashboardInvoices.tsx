@@ -275,19 +275,19 @@ export default function DashboardInvoices() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
+                    <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-3">
                       {quote.status === 'accepted' && (
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="rounded-xl h-9 text-xs font-medium border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-950/50"
+                          className="rounded-xl h-8 sm:h-9 text-[11px] sm:text-xs font-medium border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-950/50 px-2 sm:px-3"
                           onClick={(e) => { e.stopPropagation(); handleCreateServiceFromQuote(quote); }}
                         >
-                          <Wrench className="w-3.5 h-3.5 mr-1.5" />
-                          {t('invoices.createService')}
+                          <Wrench className="w-3.5 h-3.5 sm:mr-1.5" />
+                          <span className="hidden sm:inline">{t('invoices.createService')}</span>
                         </Button>
                       )}
-                      <span className="font-semibold text-lg">{quote.total.toFixed(0)}€</span>
+                      <span className="font-semibold text-base sm:text-lg">{quote.total.toFixed(0)}€</span>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl">

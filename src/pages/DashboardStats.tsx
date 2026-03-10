@@ -421,8 +421,8 @@ export default function DashboardStats() {
                     </Card>
 
                     <Card variant="elevated" className="p-4 sm:p-6 rounded-2xl">
-                      <h3 className="font-semibold text-foreground mb-4">{t('stats.monthlyRevenue')}</h3>
-                      <div className="h-64">
+                      <h3 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">{t('stats.monthlyRevenue')}</h3>
+                      <div className="h-48 sm:h-64">
                         <ResponsiveContainer width="100%" height="100%">
                           <BarChart data={monthlyData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
