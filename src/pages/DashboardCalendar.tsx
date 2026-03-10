@@ -67,7 +67,8 @@ export default function DashboardCalendar() {
   const [rescheduleForm, setRescheduleForm] = useState({ date: '', time: '' });
   const [loadingReschedule, setLoadingReschedule] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
-  
+  const [saleDialogOpen, setSaleDialogOpen] = useState(false);
+  const [saleAppointment, setSaleAppointment] = useState<Appointment | null>(null);
   const { appointments, loading, updateStatus, createAppointment, deleteAppointment, refetch } = useMyAppointments();
   const { center } = useMyCenter();
   const { packs } = useMyPacks();
