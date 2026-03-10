@@ -78,6 +78,10 @@ function InboxCard({
   // Deterministic color from name
   const hue = appointment.client_name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % 360;
 
+  // Deposit badge
+  const depositPaid = appointment.deposit_status === 'paid';
+  const depositPending = appointment.deposit_status === 'pending';
+
   const handleAddToCalendar = (e: React.MouseEvent) => {
     e.stopPropagation();
     const url = generateAppointmentCalendarUrl({
