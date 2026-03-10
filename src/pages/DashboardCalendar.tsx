@@ -223,6 +223,12 @@ export default function DashboardCalendar() {
     day = addDays(day, 1);
   }
 
+  // Today's confirmed appointments for bulk complete
+  const todayConfirmed = useMemo(() => {
+    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    return appointments.filter(a => a.appointment_date === todayStr && a.status === 'confirmed');
+  }, [appointments]);
+
   // Get appointments for a specific day
   const getAppointmentsForDay = (date: Date) => {
     return appointments.filter(apt => 
