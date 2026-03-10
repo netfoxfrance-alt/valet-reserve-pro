@@ -1,35 +1,80 @@
 import { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useMyAppointments } from '@/hooks/useAppointments';
 import { useMyCenter } from '@/hooks/useCenter';
+import { useSales, PeriodFilter } from '@/hooks/useSales';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, Search, Banknote, CreditCard, Building2, Zap, ShoppingCart } from 'lucide-react';
 import { format, parseISO, startOfMonth, endOfMonth, subMonths, addMonths, isWithinInterval, startOfWeek, endOfWeek, subWeeks, eachWeekOfInterval, eachMonthOfInterval } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
-// Apple-style vibrant chart colors
 const COLORS = ['#34C759', '#007AFF', '#5856D6', '#FF9500', '#AF52DE', '#FF3B30'];
+
+const paymentIcons: Record<string, typeof Banknote> = {
+  cash: Banknote,
+  card: CreditCard,
+  transfer: Building2,
+  stripe: Zap,
+};
+
+const paymentLabels: Record<string, { fr: string; en: string }> = {
+  cash: { fr: 'Espèces', en: 'Cash' },
+  card: { fr: 'CB', en: 'Card' },
+  transfer: { fr: 'Virement', en: 'Transfer' },
+  stripe: { fr: 'Stripe', en: 'Stripe' },
+};
 
 type DetailType = 'reservations' | 'revenue' | 'clients' | 'completed' | null;
 
 export default function DashboardStats() {
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isFr = i18n.language === 'fr';
+  const [searchParams, setSearchParams] = useSearchParams();
+  const defaultTab = searchParams.get('tab') || 'evolution';
+
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [detailDialog, setDetailDialog] = useState<DetailType>(null);
   const { appointments, loading } = useMyAppointments();
   const { center } = useMyCenter();
 
-  // Helper to get price from appointment
+  // Sales
+  const { sales, loading: salesLoading, filterByPeriod, getKPIs, exportCSV } = useSales();
+  const [salesPeriod, setSalesPeriod] = useState<PeriodFilter>('day');
+  const [salesSearch, setSalesSearch] = useState('');
+
+  const filteredSales = useMemo(() => {
+    let result = filterByPeriod(salesPeriod);
+    if (salesSearch.trim()) {
+      const q = salesSearch.toLowerCase();
+      result = result.filter(s =>
+        s.client_name.toLowerCase().includes(q) ||
+        s.service_name.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }, [sales, salesPeriod, salesSearch]);
+
+  const salesKpis = useMemo(() => getKPIs(filteredSales), [filteredSales]);
+
+  const salesPeriods: { key: PeriodFilter; label: string }[] = [
+    { key: 'day', label: t('sales.today') },
+    { key: 'week', label: t('sales.week') },
+    { key: 'month', label: t('sales.month') },
+    { key: 'all', label: t('common.all') },
+  ];
+
+  // Appointment helpers
   const getAppointmentPrice = (a: any) => a.custom_price || a.pack?.price || 0;
   const getServiceName = (a: any) => {
     if (a.custom_service) return a.custom_service.name;
@@ -84,7 +129,7 @@ export default function DashboardStats() {
     };
   }, [appointments, selectedMonth]);
 
-  // Weekly evolution data (last 8 weeks from selected month)
+  // Weekly evolution data
   const weeklyData = useMemo(() => {
     const weeks = eachWeekOfInterval({
       start: subWeeks(endOfMonth(selectedMonth), 7),
@@ -106,7 +151,7 @@ export default function DashboardStats() {
     });
   }, [appointments, selectedMonth]);
 
-  // Monthly evolution data (last 6 months from selected month)
+  // Monthly evolution data
   const monthlyData = useMemo(() => {
     const months = eachMonthOfInterval({
       start: subMonths(selectedMonth, 5),
@@ -128,7 +173,7 @@ export default function DashboardStats() {
     });
   }, [appointments, selectedMonth]);
 
-  // Service distribution (packs + custom services)
+  // Service distribution
   const serviceDistribution = useMemo(() => {
     const monthStart = startOfMonth(selectedMonth);
     const monthEnd = endOfMonth(selectedMonth);
@@ -176,22 +221,18 @@ export default function DashboardStats() {
       .sort((a, b) => b.value - a.value);
   }, [appointments, selectedMonth]);
 
-  // Unique clients for selected month
   const uniqueClientsCount = useMemo(() => {
     return new Set(stats.appointments.map(a => a.client_phone)).size;
   }, [stats.appointments]);
 
-  // Detail appointments based on dialog type
   const detailAppointments = useMemo(() => {
     if (!detailDialog) return [];
-    
     switch (detailDialog) {
       case 'reservations':
         return stats.appointments;
       case 'revenue':
         return stats.appointments.filter(a => getAppointmentPrice(a) > 0);
-      case 'clients':
-        // Return unique clients with their appointments
+      case 'clients': {
         const clientMap = new Map<string, typeof stats.appointments>();
         stats.appointments.forEach(a => {
           if (!clientMap.has(a.client_phone)) {
@@ -200,6 +241,7 @@ export default function DashboardStats() {
           clientMap.get(a.client_phone)!.push(a);
         });
         return Array.from(clientMap.values()).map(appts => appts[0]);
+      }
       case 'completed':
         return stats.appointments.filter(a => a.status === 'completed');
       default:
@@ -220,9 +262,13 @@ export default function DashboardStats() {
 
   const isCurrentMonth = format(selectedMonth, 'yyyy-MM') === format(new Date(), 'yyyy-MM');
 
+  const handleTabChange = (value: string) => {
+    setSearchParams(value === 'evolution' ? {} : { tab: value }, { replace: true });
+  };
+
   return (
     <>
-    <DashboardLayout title="Statistiques" subtitle={center?.name}>
+    <DashboardLayout title={t('stats.title')} subtitle={center?.name}>
           {loading ? (
             <div className="space-y-4">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -239,7 +285,7 @@ export default function DashboardStats() {
                 </Button>
                 <div className="text-center">
                   <h2 className="text-xl font-semibold text-foreground capitalize">
-                    {format(selectedMonth, 'MMMM yyyy', { locale: fr })}
+                    {format(selectedMonth, 'MMMM yyyy', { locale: dateLocale })}
                   </h2>
                   {!isCurrentMonth && (
                     <Button 
@@ -248,7 +294,7 @@ export default function DashboardStats() {
                       className="text-primary text-xs p-0 h-auto"
                       onClick={() => setSelectedMonth(new Date())}
                     >
-                      Revenir à aujourd'hui
+                      {t('stats.backToToday')}
                     </Button>
                   )}
                 </div>
@@ -262,9 +308,8 @@ export default function DashboardStats() {
                 </Button>
               </div>
 
-              {/* KPI Cards - Responsive grid */}
+              {/* KPI Cards */}
               <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                {/* Réservations */}
                 <Card 
                   variant="elevated" 
                   className="p-4 sm:p-5 cursor-pointer group hover:shadow-lg transition-all duration-200 rounded-2xl"
@@ -285,7 +330,6 @@ export default function DashboardStats() {
                   </div>
                 </Card>
 
-                {/* Chiffre d'affaires estimé */}
                 <Card 
                   variant="elevated" 
                   className="p-4 sm:p-5 cursor-pointer group hover:shadow-lg transition-all duration-200 rounded-2xl"
@@ -307,7 +351,6 @@ export default function DashboardStats() {
                   <p className="text-[10px] text-muted-foreground mt-1">{t('stats.basedOnBookings')}</p>
                 </Card>
 
-                {/* Clients */}
                 <Card 
                   variant="elevated" 
                   className="p-4 sm:p-5 cursor-pointer group hover:shadow-lg transition-all duration-200 rounded-2xl"
@@ -317,23 +360,22 @@ export default function DashboardStats() {
                   <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{stats.uniqueClients}</p>
                 </Card>
 
-                {/* Panier moyen */}
                 <Card variant="elevated" className="p-4 sm:p-5 rounded-2xl">
                   <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">{t('stats.avgBasket')}</p>
                   <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{stats.avgBasket}€</p>
                 </Card>
               </div>
 
-              <Tabs defaultValue="evolution" className="space-y-4 sm:space-y-6">
-                <TabsList className="w-full rounded-xl grid grid-cols-2 h-10">
+              <Tabs defaultValue={defaultTab} onValueChange={handleTabChange} className="space-y-4 sm:space-y-6">
+                <TabsList className="w-full rounded-xl grid grid-cols-3 h-10">
                   <TabsTrigger value="evolution" className="rounded-lg text-sm">{t('stats.evolution')}</TabsTrigger>
+                  <TabsTrigger value="sales" className="rounded-lg text-sm">{t('stats.salesTab')}</TabsTrigger>
                   <TabsTrigger value="formules" className="rounded-lg text-sm">{t('stats.services')}</TabsTrigger>
                 </TabsList>
 
                 {/* Evolution Tab */}
                 <TabsContent value="evolution" className="space-y-4 sm:space-y-6">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {/* Weekly Chart */}
                     <Card variant="elevated" className="p-4 sm:p-6 rounded-2xl">
                       <h3 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">{t('stats.weeklyReservations')}</h3>
                       <div className="h-48 sm:h-64">
@@ -346,8 +388,8 @@ export default function DashboardStats() {
                               </linearGradient>
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
-                            <XAxis dataKey="name" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} axisLine={false} tickLine={false} />
-                            <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} axisLine={false} tickLine={false} />
+                            <XAxis dataKey="name" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} axisLine={false} tickLine={false} />
+                            <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} axisLine={false} tickLine={false} />
                             <Tooltip 
                               contentStyle={{ 
                                 backgroundColor: 'hsl(var(--card))',
@@ -368,15 +410,14 @@ export default function DashboardStats() {
                       </div>
                     </Card>
 
-                    {/* Revenue Chart - Apple green */}
                     <Card variant="elevated" className="p-4 sm:p-6 rounded-2xl">
                       <h3 className="font-semibold text-foreground mb-4">{t('stats.monthlyRevenue')}</h3>
                       <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                           <BarChart data={monthlyData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
-                            <XAxis dataKey="name" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} axisLine={false} tickLine={false} />
-                            <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} axisLine={false} tickLine={false} />
+                            <XAxis dataKey="name" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} axisLine={false} tickLine={false} />
+                            <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} axisLine={false} tickLine={false} />
                             <Tooltip 
                               formatter={(value: number) => [`${value}€`, 'CA']}
                               contentStyle={{ 
@@ -393,7 +434,6 @@ export default function DashboardStats() {
                     </Card>
                   </div>
 
-                  {/* Total stats - Clickable */}
                   <Card variant="elevated" className="p-4 sm:p-6">
                     <h3 className="font-semibold text-foreground mb-4">{t('stats.monthlySummary')}</h3>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -428,10 +468,112 @@ export default function DashboardStats() {
                   </Card>
                 </TabsContent>
 
-                {/* Services Tab (renamed from Formules) */}
+                {/* Sales Tab */}
+                <TabsContent value="sales" className="space-y-4 sm:space-y-6">
+                  {/* Sales period filters */}
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div className="flex gap-2">
+                      {salesPeriods.map(p => (
+                        <Button
+                          key={p.key}
+                          variant={salesPeriod === p.key ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setSalesPeriod(p.key)}
+                          className="rounded-xl"
+                        >
+                          {p.label}
+                        </Button>
+                      ))}
+                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={() => exportCSV(filteredSales)}
+                      className="gap-2"
+                      size="sm"
+                      disabled={filteredSales.length === 0}
+                    >
+                      <Download className="w-4 h-4" />
+                      {t('sales.exportCSV')}
+                    </Button>
+                  </div>
+
+                  {/* Sales KPIs */}
+                  <div className="grid grid-cols-3 gap-3">
+                    <Card className="p-4 rounded-2xl">
+                      <p className="text-xs text-muted-foreground">{t('sales.revenue')}</p>
+                      <p className="text-xl sm:text-2xl font-bold text-foreground">{salesKpis.totalRevenue.toFixed(0)}€</p>
+                    </Card>
+                    <Card className="p-4 rounded-2xl">
+                      <p className="text-xs text-muted-foreground">{t('sales.salesCount')}</p>
+                      <p className="text-xl sm:text-2xl font-bold text-foreground">{salesKpis.count}</p>
+                    </Card>
+                    <Card className="p-4 rounded-2xl">
+                      <p className="text-xs text-muted-foreground">{t('sales.avgBasket')}</p>
+                      <p className="text-xl sm:text-2xl font-bold text-foreground">{salesKpis.avgBasket.toFixed(0)}€</p>
+                    </Card>
+                  </div>
+
+                  {/* Sales search */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      placeholder={t('common.search') + '...'}
+                      value={salesSearch}
+                      onChange={e => setSalesSearch(e.target.value)}
+                      className="pl-9 max-w-sm"
+                    />
+                  </div>
+
+                  {/* Sales list */}
+                  {salesLoading ? (
+                    <div className="space-y-2">
+                      {[1, 2, 3].map(i => <Skeleton key={i} className="h-16" />)}
+                    </div>
+                  ) : filteredSales.length === 0 ? (
+                    <div className="text-center py-16">
+                      <ShoppingCart className="w-12 h-12 mx-auto text-muted-foreground/50 mb-4" />
+                      <p className="text-muted-foreground">{t('sales.noSales')}</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {filteredSales.map(sale => {
+                        const PaymentIcon = paymentIcons[sale.payment_method] || Banknote;
+                        const paymentLabel = paymentLabels[sale.payment_method]?.[isFr ? 'fr' : 'en'] || sale.payment_method;
+
+                        return (
+                          <Card key={sale.id} className="p-4 rounded-2xl">
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-0.5">
+                                  <p className="font-semibold truncate">{sale.client_name}</p>
+                                  <Badge variant="outline" className="text-xs gap-1 shrink-0">
+                                    <PaymentIcon className="w-3 h-3" />
+                                    {paymentLabel}
+                                  </Badge>
+                                </div>
+                                <p className="text-sm text-muted-foreground truncate">
+                                  {sale.service_name} • {format(parseISO(sale.sale_date), 'd MMM yyyy', { locale: dateLocale })}
+                                </p>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <p className="font-bold text-lg">{Number(sale.amount_ttc).toFixed(0)}€</p>
+                                {sale.deposit_amount > 0 && (
+                                  <p className="text-xs text-muted-foreground">
+                                    {t('sales.deposit')}: {Number(sale.deposit_amount).toFixed(0)}€
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  )}
+                </TabsContent>
+
+                {/* Services Tab */}
                 <TabsContent value="formules" className="space-y-6">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                    {/* Pie Chart */}
                     <Card variant="elevated" className="p-4 sm:p-6">
                       <h3 className="font-semibold text-foreground mb-4">{t('stats.serviceDistribution')}</h3>
                       {serviceDistribution.length === 0 ? (
@@ -469,7 +611,6 @@ export default function DashboardStats() {
                       )}
                     </Card>
 
-                    {/* Service list */}
                     <Card variant="elevated" className="p-4 sm:p-6">
                       <h3 className="font-semibold text-foreground mb-4">{t('stats.servicePerformance')}</h3>
                       {serviceDistribution.length === 0 ? (
@@ -527,11 +668,11 @@ export default function DashboardStats() {
           <DialogHeader>
             <DialogTitle>{detailDialog ? detailTitle[detailDialog] : ''}</DialogTitle>
             <DialogDescription className="sr-only">
-              Détail des données statistiques pour le mois sélectionné
+              {t('stats.statsDetailDesc')}
             </DialogDescription>
           </DialogHeader>
           <div className="text-sm text-muted-foreground mb-4">
-            {format(selectedMonth, 'MMMM yyyy', { locale: fr })} • {detailAppointments.length} {detailDialog === 'clients' ? 'clients' : 'réservations'}
+            {format(selectedMonth, 'MMMM yyyy', { locale: dateLocale })} • {detailAppointments.length} {detailDialog === 'clients' ? 'clients' : t('stats.reservationsCount')}
           </div>
           <ScrollArea className="h-[60vh] pr-4">
             <div className="space-y-2">
@@ -540,7 +681,7 @@ export default function DashboardStats() {
                   <div>
                     <p className="font-medium text-foreground">{apt.client_name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {format(parseISO(apt.appointment_date), 'd MMM', { locale: fr })} à {apt.appointment_time.slice(0, 5)} • {getServiceName(apt)}
+                      {format(parseISO(apt.appointment_date), 'd MMM', { locale: dateLocale })} à {apt.appointment_time.slice(0, 5)} • {getServiceName(apt)}
                     </p>
                   </div>
                   <div className="text-right">
