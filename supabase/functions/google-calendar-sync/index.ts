@@ -233,7 +233,7 @@ serve(async (req) => {
       const event = buildCalendarEvent(appointment, center.address);
       log('Updating Google Calendar event', { eventId });
 
-      const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
+      const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}?sendUpdates=all`, {
         method: 'PUT',
         headers: calendarHeaders,
         body: JSON.stringify(event),
