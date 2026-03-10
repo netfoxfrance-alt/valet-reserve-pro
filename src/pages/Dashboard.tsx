@@ -28,6 +28,7 @@ import { sendBookingEmail, getClientEmail, buildEmailPayload, EmailType } from '
 import { generateAppointmentCalendarUrl } from '@/lib/calendarUtils';
 import { AppointmentDetailDialog } from '@/components/dashboard/AppointmentDetailDialog';
 import { ConfirmationCalendarDialog } from '@/components/dashboard/ConfirmationCalendarDialog';
+import { CompleteSaleDialog } from '@/components/dashboard/CompleteSaleDialog';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -46,7 +47,7 @@ const statusColorMap: Record<string, string> = {
 // ─── Compact Appointment Card ───
 function InboxCard({ 
   appointment, centerAddress, isSynced,
-  onConfirm, onRefuse, onCancel, onUpdateStatus, onSendEmail, onViewDetails, onAddToCalendar 
+  onConfirm, onRefuse, onCancel, onUpdateStatus, onSendEmail, onViewDetails, onAddToCalendar, onCompleteSale 
 }: { 
   appointment: Appointment; centerAddress?: string; isSynced: boolean;
   onConfirm: (a: Appointment) => void;
@@ -56,6 +57,7 @@ function InboxCard({
   onSendEmail: (a: Appointment, kind: 'confirmation' | 'reminder') => void;
   onViewDetails: (a: Appointment) => void;
   onAddToCalendar: (a: Appointment) => void;
+  onCompleteSale: (a: Appointment) => void;
 }) {
   const { t, i18n } = useTranslation();
   const dateLocale = i18n.language === 'en' ? enUS : fr;
@@ -177,7 +179,7 @@ function InboxCard({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem onClick={() => onUpdateStatus(appointment.id, 'completed')}>
+                <DropdownMenuItem onClick={() => onCompleteSale(appointment)}>
                   <Check className="w-4 h-4 mr-2" />{t('dashboard.finish')}
                 </DropdownMenuItem>
                 {canSendEmail && serviceName && price !== undefined && (
@@ -217,6 +219,8 @@ export default function Dashboard() {
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [justConfirmedAppointment, setJustConfirmedAppointment] = useState<Appointment | null>(null);
+  const [saleDialogOpen, setSaleDialogOpen] = useState(false);
+  const [saleAppointment, setSaleAppointment] = useState<Appointment | null>(null);
   
   const { appointments, loading, updateStatus, refetch } = useMyAppointments();
   const { center } = useMyCenter();
@@ -599,6 +603,7 @@ export default function Dashboard() {
                           onSendEmail={handleSendEmail}
                           onViewDetails={handleViewDetails}
                           onAddToCalendar={() => markAsSynced(apt.id)}
+                          onCompleteSale={(a) => { setSaleAppointment(a); setSaleDialogOpen(true); }}
                         />
                       ))}
                     </div>
@@ -637,6 +642,15 @@ export default function Dashboard() {
           onAddToCalendar={() => markAsSynced(justConfirmedAppointment.id)}
         />
       )}
+
+      <CompleteSaleDialog
+        appointment={saleAppointment}
+        open={saleDialogOpen}
+        onOpenChange={setSaleDialogOpen}
+        onComplete={async (appointmentId) => {
+          await handleUpdateStatus(appointmentId, 'completed');
+        }}
+      />
     </>
   );
 }

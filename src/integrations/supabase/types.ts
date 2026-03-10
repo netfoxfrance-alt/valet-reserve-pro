@@ -874,6 +874,99 @@ export type Database = {
           },
         ]
       }
+      sales: {
+        Row: {
+          amount_ht: number
+          amount_ttc: number
+          appointment_id: string | null
+          center_id: string
+          client_id: string | null
+          client_name: string
+          created_at: string | null
+          deposit_amount: number
+          id: string
+          notes: string | null
+          payment_method: string
+          remaining_amount: number
+          sale_date: string
+          service_name: string
+          vat_amount: number
+          vat_rate: number
+        }
+        Insert: {
+          amount_ht?: number
+          amount_ttc?: number
+          appointment_id?: string | null
+          center_id: string
+          client_id?: string | null
+          client_name: string
+          created_at?: string | null
+          deposit_amount?: number
+          id?: string
+          notes?: string | null
+          payment_method?: string
+          remaining_amount?: number
+          sale_date?: string
+          service_name: string
+          vat_amount?: number
+          vat_rate?: number
+        }
+        Update: {
+          amount_ht?: number
+          amount_ttc?: number
+          appointment_id?: string | null
+          center_id?: string
+          client_id?: string | null
+          client_name?: string
+          created_at?: string | null
+          deposit_amount?: number
+          id?: string
+          notes?: string | null
+          payment_method?: string
+          remaining_amount?: number
+          sale_date?: string
+          service_name?: string
+          vat_amount?: number
+          vat_rate?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "public_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
