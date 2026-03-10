@@ -478,20 +478,74 @@ export default function DashboardStats() {
 
                 {/* Sales Tab */}
                 <TabsContent value="sales" className="space-y-4 sm:space-y-6">
-                  {/* Sales period filters */}
+                  {/* Month navigation for sales */}
+                  <div className="flex items-center justify-between">
+                    <Button variant="ghost" size="icon" onClick={() => navigateSalesMonth('prev')}>
+                      <ChevronLeft className="w-5 h-5" />
+                    </Button>
+                    <div className="text-center">
+                      <h2 className="text-lg font-semibold text-foreground capitalize">
+                        {customRange && rangeStart && rangeEnd
+                          ? `${format(rangeStart, 'd MMM', { locale: dateLocale })} → ${format(rangeEnd, 'd MMM yyyy', { locale: dateLocale })}`
+                          : format(salesMonth, 'MMMM yyyy', { locale: dateLocale })
+                        }
+                      </h2>
+                      <div className="flex items-center justify-center gap-2 mt-1">
+                        {!isSalesCurrentMonth && !customRange && (
+                          <Button 
+                            variant="link" size="sm" 
+                            className="text-primary text-xs p-0 h-auto"
+                            onClick={() => setSalesMonth(new Date())}
+                          >
+                            {t('stats.backToToday')}
+                          </Button>
+                        )}
+                        {customRange && (
+                          <Button 
+                            variant="link" size="sm" 
+                            className="text-primary text-xs p-0 h-auto"
+                            onClick={() => { setCustomRange(false); setRangeStart(undefined); setRangeEnd(undefined); }}
+                          >
+                            {t('stats.backToMonth')}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    <Button 
+                      variant="ghost" size="icon" 
+                      onClick={() => navigateSalesMonth('next')}
+                      disabled={isSalesCurrentMonth && !customRange}
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </Button>
+                  </div>
+
+                  {/* Custom range picker */}
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                    <div className="flex gap-2">
-                      {salesPeriods.map(p => (
-                        <Button
-                          key={p.key}
-                          variant={salesPeriod === p.key ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => setSalesPeriod(p.key)}
-                          className="rounded-xl"
-                        >
-                          {p.label}
-                        </Button>
-                      ))}
+                    <div className="flex items-center gap-2">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" size="sm" className="rounded-xl text-xs gap-1.5">
+                            <CalendarIcon className="w-3.5 h-3.5" />
+                            {t('sales.customRange')}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="range"
+                            selected={rangeStart && rangeEnd ? { from: rangeStart, to: rangeEnd } : undefined}
+                            onSelect={(range) => {
+                              if (range?.from) {
+                                setRangeStart(range.from);
+                                setRangeEnd(range.to || range.from);
+                                if (range.to) setCustomRange(true);
+                              }
+                            }}
+                            className="pointer-events-auto"
+                            numberOfMonths={1}
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </div>
                     <Button
                       variant="outline"
