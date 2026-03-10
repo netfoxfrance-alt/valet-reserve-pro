@@ -555,7 +555,7 @@
     "pending_validation": "Pending",
     "pending": "Pending",
     "confirmed": "Confirmed",
-    "completed": "Completed",
+    "completed": "Completed & paid",
     "cancelled": "Cancelled",
     "refused": "Refused"
   },
