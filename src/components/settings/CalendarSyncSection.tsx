@@ -26,12 +26,8 @@ export function CalendarSyncSection({
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
-
-  const icalUrl = icalToken ? generateIcalSubscriptionUrl(centerId, icalToken) : null;
-  const googleSubscribeUrl = icalUrl ? generateGoogleCalendarSubscribeUrl(icalUrl) : null;
 
   // Handle Google OAuth return
   useEffect(() => {
