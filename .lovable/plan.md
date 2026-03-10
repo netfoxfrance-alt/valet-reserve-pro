@@ -1,53 +1,85 @@
 
 
-## Plan : Prerendering SEO via Edge Function + Guide Cloudflare
+# Plan : Interface unifiée — Fusionner Ventes dans Statistiques
 
-### Ce que je vais faire (backend)
+## Le problème actuel
 
-**Créer une Edge Function `prerender`** qui génère du HTML complet quand un bot (Google, Bing, etc.) visite le site. Cette fonction couvre :
+1. L'icône "Factures" du dashboard mène maintenant vers "Ventes" → les Devis ne sont plus accessibles depuis la grille
+2. "Ventes" et "Statistiques" se chevauchent (les deux affichent du CA)
+3. La page Ventes est isolée, pas intégrée dans le parcours
 
-1. **Page d'accueil (`/`)** : HTML statique avec le titre, la description, les features, le pricing, la FAQ — tout le contenu marketing visible sur la landing page.
+## La philosophie Apple : moins d'entrées, plus de profondeur
 
-2. **Pages centres (`/:slug`)** : Requête en base pour récupérer le nom, l'adresse, le téléphone, les services/formules, les horaires, la description, les données SEO personnalisées. Génère un HTML complet avec :
-   - Balises `<title>`, `<meta description>`, Open Graph, Twitter Card
-   - JSON-LD `LocalBusiness` (schéma structuré pour Google)
-   - Le contenu textuel (nom, services, prix, adresse)
+Un pro ne pense pas "je vais sur Ventes" puis "je vais sur Stats". Il pense : **"combien j'ai gagné ?"** → une seule destination.
 
-3. **Pages légales** (`/confidentialite`, `/cgv`, `/mentions-legales`) : HTML basique avec le titre de la page.
-
-4. **Configuration** : `verify_jwt = false` dans `config.toml` (les bots n'ont pas de token).
-
-### Ce que tu devras faire (simple, ~10 minutes)
-
-1. **Créer un compte Cloudflare gratuit** sur [cloudflare.com](https://cloudflare.com)
-2. **Transférer le DNS de `cleaningpage.com`** vers Cloudflare (je te guiderai étape par étape avec des captures d'écran)
-3. **Copier-coller un script de ~20 lignes** que je te fournirai dans la section "Workers" de Cloudflare
-4. **Ré-ajouter le domaine dans Lovable** (l'enregistrement A vers `185.158.133.1`)
-
-### Risques : zéro
-
-- Les utilisateurs normaux ne verront **aucun changement** — ils continuent d'utiliser l'app React comme avant
-- Si le Worker Cloudflare tombe en panne, le site revient simplement à son fonctionnement actuel (pas de prerendering, mais pas de casse)
-- C'est la méthode **recommandée par Google** pour les SPAs ([Dynamic Rendering](https://developers.google.com/search/docs/crawling-indexing/javascript/dynamic-rendering))
-
-### Détails techniques
+### Architecture simplifiée
 
 ```text
-Visiteur arrive sur cleaningpage.com
-        │
-  Cloudflare Worker (gratuit)
-        │
-        ├── User-Agent = Googlebot/Bingbot/etc.
-        │      └── Appel Edge Function "prerender?path=/slug"
-        │             └── Retourne HTML complet avec contenu + meta
-        │
-        └── Utilisateur normal
-               └── SPA React inchangée
+Grille d'accueil (8 icônes) :
+┌──────────────┬──────────────┬──────────────┐
+│ Réservations │   Agenda     │   Ma Page    │
+├──────────────┼──────────────┼──────────────┤
+│   Devis      │   Clients    │  Formules    │
+├──────────────┼──────────────┼──────────────┤
+│  Demandes    │ Statistiques │              │
+└──────────────┴──────────────┴──────────────┘
+
+Statistiques = le hub financier unique :
+┌─────────────────────────────────────────────┐
+│  KPIs : CA encaissé │ CA estimé │ Ventes │  │
+│         Panier moyen │ Clients              │
+├─────────────────────────────────────────────┤
+│  Onglets :                                  │
+│  [Vue d'ensemble]  [Ventes]  [Services]     │
+│                                             │
+│  Vue d'ensemble = graphiques actuels        │
+│  Ventes = liste des tickets + export CSV    │
+│  Services = répartition par formule         │
+└─────────────────────────────────────────────┘
 ```
 
-### Fichiers à créer/modifier
+## Ce qui change concrètement
 
-1. **Créer** `supabase/functions/prerender/index.ts` — Edge Function qui génère le HTML
-2. **Modifier** `supabase/config.toml` — Ajouter `[functions.prerender] verify_jwt = false`
-3. **Fournir** le code du Cloudflare Worker à copier-coller (dans le chat, pas dans le code)
+### 1. Grille d'accueil + nav rapide : "Ventes" redevient "Devis"
+- `DashboardHome.tsx` : icône Factures → lien `/dashboard/invoices` + label "Devis"
+- `DashboardLayout.tsx` : idem dans le panel de navigation rapide
+
+### 2. Page Statistiques : absorbe les Ventes
+- `DashboardStats.tsx` : ajouter un 3e onglet **"Ventes"** qui contient :
+  - Les KPIs ventes (CA encaissé, nombre, panier moyen) 
+  - La liste des tickets de vente avec filtres jour/semaine/mois
+  - Le bouton Export CSV
+  - La recherche par client/service
+- Les KPIs en haut distinguent clairement : **CA encaissé** (réel, depuis `sales`) vs **CA estimé** (théorique, depuis `appointments`)
+
+### 3. Sidebar : supprimer "Ventes" comme entrée séparée
+- Section "Clients" : Demandes, Clients, Devis
+- Section "Insights" : Statistiques (qui contient tout)
+- Supprimer l'entrée "Ventes" de la sidebar et mobile sidebar
+
+### 4. Route `/dashboard/sales` : redirection
+- Garder la route mais rediriger vers `/dashboard/stats` (onglet ventes) pour ne rien casser
+
+### 5. Suppression
+- `DashboardSales.tsx` : le contenu est absorbé dans `DashboardStats.tsx`, le fichier devient un simple redirect
+
+## Fichiers impactés
+
+| Fichier | Modification |
+|---|---|
+| `DashboardHome.tsx` | Icône "Devis" → `/dashboard/invoices` |
+| `DashboardLayout.tsx` | Idem dans le nav panel |
+| `DashboardStats.tsx` | Ajouter onglet "Ventes" avec liste, KPIs réels, export CSV |
+| `DashboardSales.tsx` | Remplacer par redirect vers `/dashboard/stats` |
+| `DashboardSidebar.tsx` | Retirer "Ventes", garder "Devis" dans Clients |
+| `MobileSidebar.tsx` | Idem |
+| `fr.json` / `en.json` | Ajuster les clés de traduction |
+
+## Résultat
+
+- **8 icônes**, chacune avec un rôle clair et distinct
+- **Devis** accessible directement depuis la grille (comme avant)
+- **Statistiques** = le hub unique pour tout ce qui touche à l'argent
+- Zéro confusion entre "Ventes" et "Stats"
+- Export CSV accessible depuis Stats > onglet Ventes
 
