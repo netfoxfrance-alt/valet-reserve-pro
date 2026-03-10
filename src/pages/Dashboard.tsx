@@ -130,11 +130,6 @@ function InboxCard({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
           <p className="font-semibold text-foreground truncate text-sm sm:text-base">{appointment.client_name}</p>
-          {isNew && (
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
-              {t('dashboard.new')}
-            </span>
-          )}
           <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0", statusColor)}>
             {t(`status.${appointment.status}`)}
           </span>
