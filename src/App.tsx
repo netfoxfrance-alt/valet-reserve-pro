@@ -26,6 +26,7 @@ import DashboardInvoices from "./pages/DashboardInvoices";
 import DashboardClients from "./pages/DashboardClients";
 import DashboardSupport from "./pages/DashboardSupport";
 import DashboardFormules from "./pages/DashboardFormules";
+import DashboardSales from "./pages/DashboardSales";
 
 import CompleteSignup from "./pages/CompleteSignup";
 import NotFound from "./pages/NotFound";
