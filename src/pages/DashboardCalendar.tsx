@@ -688,13 +688,28 @@ export default function DashboardCalendar() {
                 }}
                 blockedPeriods={blockedPeriods}
               />
-              {/* Floating action button */}
-              <button
-                onClick={() => openCreateDialog()}
-                className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 flex items-center justify-center active:scale-95 transition-transform"
-              >
-                <Plus className="w-6 h-6" />
-              </button>
+              {/* Floating action buttons */}
+              <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-3 items-end">
+                {todayConfirmed.length > 0 && (
+                  <button
+                    onClick={() => {
+                      // Start sequential sale completion for today's confirmed
+                      setSaleAppointment(todayConfirmed[0]);
+                      setSaleDialogOpen(true);
+                    }}
+                    className="flex items-center gap-2 h-12 px-5 rounded-full bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 active:scale-95 transition-transform font-semibold text-sm"
+                  >
+                    <CheckCheck className="w-5 h-5" />
+                    {t('calendar.completeToday', { count: todayConfirmed.length })}
+                  </button>
+                )}
+                <button
+                  onClick={() => openCreateDialog()}
+                  className="w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 flex items-center justify-center active:scale-95 transition-transform"
+                >
+                  <Plus className="w-6 h-6" />
+                </button>
+              </div>
             </div>
           )}
 
