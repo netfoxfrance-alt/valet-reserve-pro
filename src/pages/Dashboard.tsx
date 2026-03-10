@@ -254,8 +254,8 @@ export default function Dashboard() {
   , [appointments]);
   
   const todayCount = useMemo(() => 
-    appointments.filter(a => isToday(parseISO(a.appointment_date)) && a.status !== 'cancelled' && a.status !== 'refused').length
-  , [appointments]);
+    appointments.filter(a => isSameDay(parseISO(a.appointment_date), selectedDay) && a.status !== 'cancelled' && a.status !== 'refused').length
+  , [appointments, selectedDay]);
   
   const weekCount = useMemo(() => {
     return appointments.filter(a => {
