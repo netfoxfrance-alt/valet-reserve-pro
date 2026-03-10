@@ -94,7 +94,20 @@ const PrivacyPolicy = () => {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-foreground">9. Cookies</h2>
+            <h2 className="text-lg font-semibold text-foreground">9. Intégration Google Calendar</h2>
+            <p>CleaningPage peut proposer une intégration avec Google Calendar afin de synchroniser les rendez-vous des utilisateurs.</p>
+            <p>Lorsque l'utilisateur connecte son compte Google, CleaningPage peut utiliser l'API Google Calendar uniquement pour :</p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Créer un événement lorsqu'une réservation est confirmée</li>
+              <li>Modifier l'événement si un rendez-vous est déplacé</li>
+              <li>Supprimer l'événement si une réservation est annulée</li>
+            </ul>
+            <p>CleaningPage n'accède pas aux autres informations du calendrier et n'utilise ces données que pour assurer la synchronisation des rendez-vous.</p>
+            <p>L'utilisateur peut révoquer l'accès à son Google Calendar à tout moment depuis les paramètres de son compte Google.</p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground">10. Cookies</h2>
             <p>Le site peut utiliser des cookies nécessaires au bon fonctionnement du service. Les utilisateurs peuvent gérer leurs préférences via leur navigateur.</p>
           </section>
         </div>
