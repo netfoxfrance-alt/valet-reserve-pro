@@ -720,6 +720,7 @@ export default function Dashboard() {
                           appointment={apt}
                           centerAddress={center?.address || undefined}
                           isSynced={checkIsSynced(apt.id)}
+                          googleCalendarConnected={!!center?.google_calendar_connected}
                           onConfirm={handleConfirm}
                           onRefuse={handleRefuse}
                           onCancel={handleCancel}
