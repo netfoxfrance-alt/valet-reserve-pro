@@ -275,6 +275,24 @@ export default function DashboardCalendar() {
       toast.error(t('calendar.moveError'));
     } else {
       toast.success(t('calendar.moved'));
+      
+      // Auto-update Google Calendar event if it exists
+      if (appointmentToReschedule.google_calendar_event_id) {
+        (async () => {
+          try {
+            const { data: sessionData } = await supabase.auth.getSession();
+            const token = sessionData?.session?.access_token;
+            if (!token) return;
+            await supabase.functions.invoke('google-calendar-sync', {
+              headers: { Authorization: `Bearer ${token}` },
+              body: { action: 'update', appointment_id: appointmentToReschedule.id },
+            });
+          } catch (syncErr) {
+            console.warn('[Google Calendar Update] Error (non-blocking):', syncErr);
+          }
+        })();
+      }
+      
       setAppointmentToReschedule(null);
       setSelectedAppointment(null);
       // Refetch to update the calendar with new date/time

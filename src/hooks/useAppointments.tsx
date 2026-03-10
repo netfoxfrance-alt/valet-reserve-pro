@@ -31,6 +31,7 @@ export interface Appointment {
   deposit_refund_status: string;
   deposit_payment_intent_id: string | null;
   seen_at: string | null;
+  google_calendar_event_id: string | null;
   pack?: {
     id: string;
     name: string;
@@ -112,6 +113,23 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
             });
           } catch (syncErr) {
             console.warn('[Google Calendar Sync] Error (non-blocking):', syncErr);
+          }
+        })();
+      }
+
+      // Auto-delete from Google Calendar when cancelled or refused
+      if ((status === 'cancelled' || status === 'refused') && appointment?.google_calendar_event_id) {
+        (async () => {
+          try {
+            const { data: sessionData } = await supabase.auth.getSession();
+            const token = sessionData?.session?.access_token;
+            if (!token) return;
+            await supabase.functions.invoke('google-calendar-sync', {
+              headers: { Authorization: `Bearer ${token}` },
+              body: { action: 'delete', appointment_id: id },
+            });
+          } catch (syncErr) {
+            console.warn('[Google Calendar Delete] Error (non-blocking):', syncErr);
           }
         })();
       }
@@ -254,6 +272,24 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
   };
 
   const deleteAppointment = async (id: string) => {
+    const appointment = appointments.find(a => a.id === id);
+    
+    // Delete from Google Calendar first (before deleting from DB)
+    if (appointment?.google_calendar_event_id) {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData?.session?.access_token;
+        if (token) {
+          await supabase.functions.invoke('google-calendar-sync', {
+            headers: { Authorization: `Bearer ${token}` },
+            body: { action: 'delete', appointment_id: id },
+          });
+        }
+      } catch (syncErr) {
+        console.warn('[Google Calendar Delete] Error (non-blocking):', syncErr);
+      }
+    }
+
     const { error } = await supabase
       .from('appointments')
       .delete()

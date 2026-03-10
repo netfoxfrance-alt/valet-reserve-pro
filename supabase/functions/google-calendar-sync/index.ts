@@ -211,6 +211,43 @@ serve(async (req) => {
       log('Event created successfully', { eventId: result.id });
       return new Response(JSON.stringify({ success: true, event_id: result.id }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
+    } else if (action === 'update') {
+      const eventId = appointment.google_calendar_event_id;
+      if (!eventId) {
+        // No existing event — create one instead
+        const event = buildCalendarEvent(appointment, center.address);
+        log('No existing event, creating new one for update', { summary: event.summary });
+        const res = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+          method: 'POST',
+          headers: calendarHeaders,
+          body: JSON.stringify(event),
+        });
+        const result = await res.json();
+        if (res.ok && result.id) {
+          await adminClient.from('appointments').update({ google_calendar_event_id: result.id }).eq('id', appointment_id);
+          log('Event created on update fallback', { eventId: result.id });
+        }
+        return new Response(JSON.stringify({ success: true, event_id: result.id }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+
+      const event = buildCalendarEvent(appointment, center.address);
+      log('Updating Google Calendar event', { eventId });
+
+      const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
+        method: 'PUT',
+        headers: calendarHeaders,
+        body: JSON.stringify(event),
+      });
+
+      if (!res.ok) {
+        const body = await res.text();
+        log('Failed to update event', { status: res.status, body });
+        return new Response(JSON.stringify({ error: 'Failed to update calendar event' }), { status: 500, headers: corsHeaders });
+      }
+
+      log('Event updated successfully', { eventId });
+      return new Response(JSON.stringify({ success: true, event_id: eventId }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+
     } else if (action === 'delete') {
       const eventId = appointment.google_calendar_event_id;
       if (!eventId) {
