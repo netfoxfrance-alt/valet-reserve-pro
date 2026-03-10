@@ -95,6 +95,7 @@ serve(async (req) => {
             const packData = (updatedApt as any).packs;
             const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
 
+            // Send confirmation email
             try {
               const emailPayload = {
                 center_id: updatedApt.center_id,
@@ -120,6 +121,29 @@ serve(async (req) => {
               logStep("Confirmation email sent", { status: emailRes.status });
             } catch (emailError) {
               logStep("Email sending failed (non-blocking)", { error: String(emailError) });
+            }
+
+            // Auto-sync to Google Calendar
+            try {
+              const { data: centerGcal } = await supabaseClient
+                .from("centers")
+                .select("google_calendar_connected, google_calendar_refresh_token")
+                .eq("id", updatedApt.center_id)
+                .single();
+
+              if (centerGcal?.google_calendar_connected && centerGcal?.google_calendar_refresh_token) {
+                const syncRes = await fetch(`${supabaseUrl}/functions/v1/google-calendar-sync`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+                  },
+                  body: JSON.stringify({ action: "create", appointment_id: appointmentId }),
+                });
+                logStep("Google Calendar sync triggered", { status: syncRes.status });
+              }
+            } catch (syncError) {
+              logStep("Google Calendar sync failed (non-blocking)", { error: String(syncError) });
             }
           }
         }
