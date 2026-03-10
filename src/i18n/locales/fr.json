@@ -50,6 +50,8 @@
     "requests": "Demandes",
     "clients": "Clients",
     "invoicesQuotes": "Factures & Devis",
+    "sales": "Ventes",
+    "quotes": "Devis",
     "configuration": "Configuration",
     "myPage": "Ma Page",
     "packs": "Formules",
