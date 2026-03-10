@@ -56,25 +56,26 @@ export function CalendarSyncSection({
     }
   }, [searchParams]);
 
-  const handleConnectGoogle = () => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    
-    // Build Google OAuth URL
-    const redirectUri = `${supabaseUrl}/functions/v1/google-calendar-callback`;
-    const scope = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/userinfo.email';
-    
-    const params = new URLSearchParams({
-      client_id: clientId,
-      redirect_uri: redirectUri,
-      response_type: 'code',
-      scope,
-      access_type: 'offline',
-      prompt: 'consent', // Force consent to always get refresh_token
-      state: centerId,
-    });
+  const [isConnecting, setIsConnecting] = useState(false);
 
-    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+  const handleConnectGoogle = async () => {
+    setIsConnecting(true);
+    try {
+      const { data, error } = await (await import('@/integrations/supabase/client')).supabase.functions.invoke('google-calendar-connect', {
+        body: { center_id: centerId },
+      });
+
+      if (error || !data?.url) {
+        toast({ title: 'Erreur', description: 'Impossible de démarrer la connexion Google.', variant: 'destructive' });
+        return;
+      }
+
+      window.location.href = data.url;
+    } catch {
+      toast({ title: 'Erreur', description: 'Impossible de démarrer la connexion Google.', variant: 'destructive' });
+    } finally {
+      setIsConnecting(false);
+    }
   };
 
   const handleDisconnectGoogle = async () => {
