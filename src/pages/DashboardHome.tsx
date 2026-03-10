@@ -37,7 +37,7 @@ export default function DashboardHome() {
   const { signOut, subscription } = useAuth();
   const { center } = useMyCenter();
   const { appointments } = useMyAppointments();
-  const { requests } = useMyContactRequests();
+  const { requests, fetchRequests } = useMyContactRequests();
   const { toast } = useToast();
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
