@@ -334,8 +334,8 @@
     "manualShort": "Manuel"
   },
   "invoices": {
-    "title": "Factures & Devis",
-    "manage": "Gérez vos factures et devis",
+    "title": "Devis",
+    "manage": "Gérez vos devis",
     "invoices": "Factures",
     "quotes": "Devis",
     "pending": "En attente",
