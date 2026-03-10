@@ -123,7 +123,7 @@ function renderHomePage(): Response {
         <nav>
           <a href="${BASE_URL}/mentions-legales">Mentions légales</a>
           <a href="${BASE_URL}/confidentialite">Politique de confidentialité</a>
-          <a href="${BASE_URL}/cgv">Conditions générales de vente</a>
+          <a href="${BASE_URL}/cgu">Conditions générales d'utilisation</a>
         </nav>
       </footer>
     `,
