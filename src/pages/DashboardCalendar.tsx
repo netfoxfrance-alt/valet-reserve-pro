@@ -410,6 +410,7 @@ export default function DashboardCalendar() {
     setServiceSearch('');
     setClientDropdownOpen(false);
     setServiceDropdownOpen(false);
+    setSelectedVariant('');
     setCreateForm({
       client_name: '',
       client_email: '',
