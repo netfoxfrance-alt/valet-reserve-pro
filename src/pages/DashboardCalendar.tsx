@@ -676,6 +676,10 @@ export default function DashboardCalendar() {
                     time: apt.appointment_time.slice(0, 5) 
                   });
                 }}
+                onQuickComplete={(apt) => {
+                  setSaleAppointment(apt);
+                  setSaleDialogOpen(true);
+                }}
                 blockedPeriods={blockedPeriods}
               />
               {/* Floating action button */}
