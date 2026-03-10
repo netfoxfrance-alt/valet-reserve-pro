@@ -253,8 +253,7 @@
     "appointmentDetails": "Détails du rendez-vous",
     "appointmentDetailsDesc": "Voir et gérer les détails de cette réservation",
     "move": "Déplacer",
-    "cancelAppointment": "Annuler le rendez-vous",
-    "completeToday": "Terminer ({{count}})"
+    "cancelAppointment": "Annuler le rendez-vous"
   },
   "availability": {
     "title": "Disponibilités",
