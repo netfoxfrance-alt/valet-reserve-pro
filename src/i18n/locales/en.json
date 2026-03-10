@@ -944,6 +944,8 @@
     "avgBasket": "Average basket",
     "exportCSV": "Export CSV",
     "noSales": "No sales for this period",
-    "deposit": "Deposit"
+    "deposit": "Deposit",
+    "customRange": "Custom range"
   }
+}
 }

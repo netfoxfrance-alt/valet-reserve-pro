@@ -944,6 +944,8 @@
     "avgBasket": "Panier moyen",
     "exportCSV": "Exporter CSV",
     "noSales": "Aucune vente pour cette période",
-    "deposit": "Acompte"
+    "deposit": "Acompte",
+    "customRange": "Plage personnalisée"
   }
+}
 }
