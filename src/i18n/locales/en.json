@@ -927,5 +927,29 @@
     "calendarDays": ["M", "T", "W", "T", "F", "S", "S"],
     "sidebarItems": ["Bookings", "Calendar", "Requests", "Clients", "Invoices & Quotes", "Statistics"],
     "sidebarSlug": "clean-auto-pro"
+  },
+  "sales": {
+    "title": "Sales",
+    "subtitle": "Sales history and accounting export",
+    "completeSale": "Complete service",
+    "amountTTC": "Amount incl. tax (€)",
+    "amountHT": "Amount excl. tax",
+    "vatRate": "VAT rate",
+    "vat": "VAT",
+    "depositPaid": "Deposit paid",
+    "remaining": "Remaining to pay",
+    "paymentMethod": "Payment method",
+    "notesPlaceholder": "Payment notes...",
+    "validate": "Confirm sale",
+    "saleCreated": "Sale recorded",
+    "today": "Today",
+    "week": "Week",
+    "month": "Month",
+    "revenue": "Revenue",
+    "salesCount": "Sales count",
+    "avgBasket": "Average basket",
+    "exportCSV": "Export CSV",
+    "noSales": "No sales for this period",
+    "deposit": "Deposit"
   }
 }

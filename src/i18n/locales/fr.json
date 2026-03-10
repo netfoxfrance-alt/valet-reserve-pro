@@ -927,5 +927,29 @@
     "calendarDays": ["L", "M", "M", "J", "V", "S", "D"],
     "sidebarItems": ["Réservations", "Calendrier", "Demandes", "Clients", "Factures & Devis", "Statistiques"],
     "sidebarSlug": "clean-auto-pro"
+  },
+  "sales": {
+    "title": "Ventes",
+    "subtitle": "Historique de vos ventes et export comptable",
+    "completeSale": "Terminer la prestation",
+    "amountTTC": "Montant TTC (€)",
+    "amountHT": "Montant HT",
+    "vatRate": "Taux de TVA",
+    "vat": "TVA",
+    "depositPaid": "Acompte versé",
+    "remaining": "Reste à payer",
+    "paymentMethod": "Mode de paiement",
+    "notesPlaceholder": "Notes sur le paiement...",
+    "validate": "Valider la vente",
+    "saleCreated": "Vente enregistrée",
+    "today": "Aujourd'hui",
+    "week": "Semaine",
+    "month": "Mois",
+    "revenue": "Chiffre d'affaires",
+    "salesCount": "Nombre de ventes",
+    "avgBasket": "Panier moyen",
+    "exportCSV": "Exporter CSV",
+    "noSales": "Aucune vente pour cette période",
+    "deposit": "Acompte"
   }
 }
