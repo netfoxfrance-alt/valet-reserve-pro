@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Calendar, Copy, Check, RefreshCw, ChevronDown, ExternalLink, Unplug, Loader2, Mail } from 'lucide-react';
+import { Calendar, Check, ExternalLink, Unplug, Loader2, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { generateIcalSubscriptionUrl, generateGoogleCalendarSubscribeUrl } from '@/lib/calendarUtils';
 import { cn } from '@/lib/utils';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useSearchParams } from 'react-router-dom';
 
 interface CalendarSyncSectionProps {
