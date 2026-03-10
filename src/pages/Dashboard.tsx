@@ -188,7 +188,7 @@ function InboxCard({
             </Button>
           </>
         )}
-        {appointment.status === 'confirmed' && (
+        {appointment.status === 'confirmed' && !googleCalendarConnected && (
           <>
             <Button 
               variant="ghost" size="icon" 
