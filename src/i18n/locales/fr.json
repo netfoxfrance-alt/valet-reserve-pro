@@ -425,7 +425,9 @@
     "nameAndPriceRequired": "Nom et prix requis",
     "createAction": "Créer la prestation",
     "descriptionOptional": "Description (optionnelle)",
-    "priceLabel": "Prix (€)"
+    "priceLabel": "Prix (€)",
+    "scheduleNow": "Planifier un RDV pour ce client ?",
+    "scheduleAction": "Planifier"
   },
   "stats": {
     "title": "Statistiques",
