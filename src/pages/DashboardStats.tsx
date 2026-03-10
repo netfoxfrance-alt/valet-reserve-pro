@@ -562,18 +562,18 @@ export default function DashboardStats() {
                   </div>
 
                   {/* Sales KPIs */}
-                  <div className="grid grid-cols-3 gap-3">
-                    <Card className="p-4 rounded-2xl">
-                      <p className="text-xs text-muted-foreground">{t('sales.revenue')}</p>
-                      <p className="text-xl sm:text-2xl font-bold text-foreground">{salesKpis.totalRevenue.toFixed(0)}€</p>
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                    <Card className="p-3 sm:p-4 rounded-2xl">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground">{t('sales.revenue')}</p>
+                      <p className="text-lg sm:text-2xl font-bold text-foreground">{salesKpis.totalRevenue.toFixed(0)}€</p>
                     </Card>
-                    <Card className="p-4 rounded-2xl">
-                      <p className="text-xs text-muted-foreground">{t('sales.salesCount')}</p>
-                      <p className="text-xl sm:text-2xl font-bold text-foreground">{salesKpis.count}</p>
+                    <Card className="p-3 sm:p-4 rounded-2xl">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground">{t('sales.salesCount')}</p>
+                      <p className="text-lg sm:text-2xl font-bold text-foreground">{salesKpis.count}</p>
                     </Card>
-                    <Card className="p-4 rounded-2xl">
-                      <p className="text-xs text-muted-foreground">{t('sales.avgBasket')}</p>
-                      <p className="text-xl sm:text-2xl font-bold text-foreground">{salesKpis.avgBasket.toFixed(0)}€</p>
+                    <Card className="p-3 sm:p-4 rounded-2xl">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{t('sales.avgBasket')}</p>
+                      <p className="text-lg sm:text-2xl font-bold text-foreground">{salesKpis.avgBasket.toFixed(0)}€</p>
                     </Card>
                   </div>
 
