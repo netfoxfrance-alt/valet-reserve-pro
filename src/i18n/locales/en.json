@@ -430,7 +430,9 @@
   "stats": {
     "title": "Statistics",
     "reservations": "Bookings",
-    "revenue": "Revenue",
+    "revenue": "Est. revenue",
+    "estimatedRevenue": "Est. revenue",
+    "basedOnBookings": "Based on bookings",
     "clients": "Clients",
     "avgBasket": "Avg. basket",
     "backToToday": "Back to today",
