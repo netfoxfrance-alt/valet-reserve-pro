@@ -83,7 +83,7 @@ export function ConfirmationCalendarDialog({
             {isAlreadySynced ? (
               <Button className="flex-1 bg-primary/80 hover:bg-primary/70" disabled>
                 <CalendarCheck className="w-4 h-4 mr-2" />
-                Déjà dans l'agenda
+                Synchronisé automatiquement
               </Button>
             ) : (
               <Button className="flex-1" onClick={handleAddToCalendar}>
