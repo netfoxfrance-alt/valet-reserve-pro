@@ -285,13 +285,13 @@ export default function DashboardStats() {
                   </div>
                 </Card>
 
-                {/* Chiffre d'affaires */}
+                {/* Chiffre d'affaires estimé */}
                 <Card 
                   variant="elevated" 
                   className="p-4 sm:p-5 cursor-pointer group hover:shadow-lg transition-all duration-200 rounded-2xl"
                   onClick={() => setDetailDialog('revenue')}
                 >
-                  <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">{t('stats.revenue')}</p>
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">{t('stats.estimatedRevenue')}</p>
                   <div className="flex items-baseline gap-2 sm:gap-3">
                     <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{stats.thisMonthRevenue.toLocaleString('fr-FR')}€</p>
                     {stats.revenueChange !== 0 && (
@@ -304,6 +304,7 @@ export default function DashboardStats() {
                       </span>
                     )}
                   </div>
+                  <p className="text-[10px] text-muted-foreground mt-1">{t('stats.basedOnBookings')}</p>
                 </Card>
 
                 {/* Clients */}
