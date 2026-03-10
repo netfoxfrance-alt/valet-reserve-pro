@@ -31,6 +31,9 @@ export interface Center {
   stripe_connect_account_id?: string | null;
   payments_mode?: 'live' | 'test';
   cancellation_policy?: 'no_refund' | 'no_refund_48h';
+  // Google Calendar
+  google_calendar_connected?: boolean;
+  google_calendar_email?: string | null;
   created_at: string;
   updated_at: string;
 }

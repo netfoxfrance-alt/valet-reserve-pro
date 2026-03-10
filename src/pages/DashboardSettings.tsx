@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { Sparkles, Upload, Trash2, Loader2, CreditCard, Crown, ExternalLink, Link2, Check, X, Clock } from 'lucide-react';
 import { AddressWithMap } from '@/components/settings/AddressWithMap';
+import { CalendarSyncSection } from '@/components/settings/CalendarSyncSection';
 import { DepositSettingsSection } from '@/components/settings/DepositSettingsSection';
 import { Link } from 'react-router-dom';
 import { CenterCustomization, defaultCustomization } from '@/types/customization';
@@ -484,6 +485,27 @@ export default function DashboardSettings() {
               </div>
             </Card>
           </section>
+
+          {/* Google Calendar Sync Section */}
+          {center && (
+            <CalendarSyncSection
+              centerId={center.id}
+              icalToken={center.ical_token || null}
+              googleCalendarConnected={center.google_calendar_connected}
+              googleCalendarEmail={center.google_calendar_email}
+              onRefreshToken={async () => {
+                const newToken = crypto.randomUUID();
+                await updateCenter({ ical_token: newToken } as any);
+              }}
+              onDisconnectGoogle={async () => {
+                await updateCenter({ 
+                  google_calendar_connected: false, 
+                  google_calendar_email: null,
+                  google_calendar_refresh_token: null,
+                } as any);
+              }}
+            />
+          )}
 
           {/* Deposit Section */}
           <DepositSettingsSection
