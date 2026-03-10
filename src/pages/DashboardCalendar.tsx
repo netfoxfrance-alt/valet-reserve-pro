@@ -371,8 +371,14 @@ export default function DashboardCalendar() {
   // Filtered services for autocomplete
   const filteredServices = useMemo(() => {
     const items = serviceType === 'pack'
-      ? packs.map(p => ({ id: p.id, name: p.name, price: p.price, duration: p.duration || '', type: 'pack' as const }))
-      : customServices.filter(s => s.active).map(s => ({ id: s.id, name: s.name, price: s.price, duration: formatDuration(s.duration_minutes), type: 'custom' as const }));
+      ? packs.map(p => {
+          const variants = ((p as any).price_variants || []) as { name: string; price: number }[];
+          const hasVariants = variants.length > 0;
+          const minPrice = hasVariants ? Math.min(...variants.map(v => v.price)) : p.price;
+          const displayPrice = hasVariants ? `${minPrice}€+` : `${p.price}€`;
+          return { id: p.id, name: p.name, price: minPrice, displayPrice, duration: p.duration || '', type: 'pack' as const, hasVariants, variants };
+        })
+      : customServices.filter(s => s.active).map(s => ({ id: s.id, name: s.name, price: s.price, displayPrice: `${s.price}€`, duration: formatDuration(s.duration_minutes), type: 'custom' as const, hasVariants: false, variants: [] as { name: string; price: number }[] }));
     if (!serviceSearch.trim()) return items.slice(0, 8);
     const q = serviceSearch.toLowerCase();
     return items.filter(i => i.name.toLowerCase().includes(q)).slice(0, 8);
