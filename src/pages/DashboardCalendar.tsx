@@ -12,8 +12,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Checkbox } from '@/components/ui/checkbox';
 import { 
-  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight, LayoutGrid, CalendarDays, CalendarPlus, Users, Search, Eye, Building2, ChevronDown, ChevronRight as ChevronRightIcon
+  ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Clock, User, Ban, Loader2, GripVertical, Trash2, ArrowRight, LayoutGrid, CalendarDays, CalendarPlus, Users, Search, Eye, Building2, ChevronDown, ChevronRight as ChevronRightIcon, CheckCheck
 } from 'lucide-react';
+import { CompleteSaleDialog } from '@/components/dashboard/CompleteSaleDialog';
 import { useMyAppointments, Appointment } from '@/hooks/useAppointments';
 import { useMyCenter, useMyPacks } from '@/hooks/useCenter';
 import { useBlockedPeriods } from '@/hooks/useAvailability';
