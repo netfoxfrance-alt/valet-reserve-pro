@@ -272,6 +272,24 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
   };
 
   const deleteAppointment = async (id: string) => {
+    const appointment = appointments.find(a => a.id === id);
+    
+    // Delete from Google Calendar first (before deleting from DB)
+    if (appointment?.google_calendar_event_id) {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData?.session?.access_token;
+        if (token) {
+          await supabase.functions.invoke('google-calendar-sync', {
+            headers: { Authorization: `Bearer ${token}` },
+            body: { action: 'delete', appointment_id: id },
+          });
+        }
+      } catch (syncErr) {
+        console.warn('[Google Calendar Delete] Error (non-blocking):', syncErr);
+      }
+    }
+
     const { error } = await supabase
       .from('appointments')
       .delete()
