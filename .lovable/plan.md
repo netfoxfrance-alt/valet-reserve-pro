@@ -1,53 +1,49 @@
 
 
-## Plan : Prerendering SEO via Edge Function + Guide Cloudflare
+# Fix: Gestion intelligente des doublons clients partout
 
-### Ce que je vais faire (backend)
+## Problème
+Quand tu crées un client (depuis le calendrier, les clients, les demandes de devis, ou les factures), si un client avec le même téléphone existe déjà, l'INSERT brut échoue avec l'erreur `duplicate key value violates unique constraint "idx_clients_unique_phone_per_center"`.
 
-**Créer une Edge Function `prerender`** qui génère du HTML complet quand un bot (Google, Bing, etc.) visite le site. Cette fonction couvre :
+Le service `findOrCreateClient` dans `clientService.ts` gère déjà parfaitement les doublons (recherche par téléphone normalisé, puis email, puis création), mais il n'est utilisé que dans `useAppointments` pour les réservations. Les autres formulaires utilisent directement `useClients.createClient` qui fait un INSERT brut sans vérification.
 
-1. **Page d'accueil (`/`)** : HTML statique avec le titre, la description, les features, le pricing, la FAQ — tout le contenu marketing visible sur la landing page.
+## Solution
 
-2. **Pages centres (`/:slug`)** : Requête en base pour récupérer le nom, l'adresse, le téléphone, les services/formules, les horaires, la description, les données SEO personnalisées. Génère un HTML complet avec :
-   - Balises `<title>`, `<meta description>`, Open Graph, Twitter Card
-   - JSON-LD `LocalBusiness` (schéma structuré pour Google)
-   - Le contenu textuel (nom, services, prix, adresse)
+### 1. Modifier `useClients.createClient` pour utiliser la logique anti-doublon
 
-3. **Pages légales** (`/confidentialite`, `/cgv`, `/mentions-legales`) : HTML basique avec le titre de la page.
+Remplacer l'INSERT brut dans `useClients.tsx` par une logique qui :
+- Cherche d'abord un client existant par téléphone normalisé, puis par email
+- Si trouvé : met à jour les infos manquantes (enrichissement) et retourne le client existant
+- Si pas trouvé : crée le nouveau client
+- En cas d'erreur de contrainte unique (race condition) : retry automatique
 
-4. **Configuration** : `verify_jwt = false` dans `config.toml` (les bots n'ont pas de token).
+Concrètement, réutiliser la fonction `findOrCreateClient` de `clientService.ts` dans `createClient`, puis refetch le client complet avec ses relations.
 
-### Ce que tu devras faire (simple, ~10 minutes)
+### 2. Améliorer le message d'erreur utilisateur
 
-1. **Créer un compte Cloudflare gratuit** sur [cloudflare.com](https://cloudflare.com)
-2. **Transférer le DNS de `cleaningpage.com`** vers Cloudflare (je te guiderai étape par étape avec des captures d'écran)
-3. **Copier-coller un script de ~20 lignes** que je te fournirai dans la section "Workers" de Cloudflare
-4. **Ré-ajouter le domaine dans Lovable** (l'enregistrement A vers `185.158.133.1`)
+Au lieu d'afficher le message technique PostgreSQL, afficher un message clair :
+- "Ce client existe déjà (même numéro de téléphone)" avec possibilité de voir/modifier la fiche existante
+- Ou mieux : ne pas afficher d'erreur du tout, juste informer "Client existant retrouvé et mis à jour"
 
-### Risques : zéro
+### 3. Pages impactées (aucun changement nécessaire dans ces fichiers)
 
-- Les utilisateurs normaux ne verront **aucun changement** — ils continuent d'utiliser l'app React comme avant
-- Si le Worker Cloudflare tombe en panne, le site revient simplement à son fonctionnement actuel (pas de prerendering, mais pas de casse)
-- C'est la méthode **recommandée par Google** pour les SPAs ([Dynamic Rendering](https://developers.google.com/search/docs/crawling-indexing/javascript/dynamic-rendering))
+Les pages suivantes appellent toutes `createClient` depuis `useMyClients()`, donc elles bénéficieront automatiquement du fix :
+- `DashboardCalendar.tsx` (formulaire inline "Nouveau client")
+- `DashboardClients.tsx` (page clients)
+- `DashboardRequests.tsx` (créer fiche client depuis demande de devis)
+- `InvoiceFormDialog.tsx` (création client inline dans les factures/devis)
 
 ### Détails techniques
 
 ```text
-Visiteur arrive sur cleaningpage.com
-        │
-  Cloudflare Worker (gratuit)
-        │
-        ├── User-Agent = Googlebot/Bingbot/etc.
-        │      └── Appel Edge Function "prerender?path=/slug"
-        │             └── Retourne HTML complet avec contenu + meta
-        │
-        └── Utilisateur normal
-               └── SPA React inchangée
+Avant:  createClient() → INSERT brut → 💥 erreur unique constraint
+Après:  createClient() → findOrCreateClient() → SELECT existant OU INSERT → ✅ toujours OK
 ```
 
-### Fichiers à créer/modifier
-
-1. **Créer** `supabase/functions/prerender/index.ts` — Edge Function qui génère le HTML
-2. **Modifier** `supabase/config.toml` — Ajouter `[functions.prerender] verify_jwt = false`
-3. **Fournir** le code du Cloudflare Worker à copier-coller (dans le chat, pas dans le code)
+**Fichiers modifiés :**
+- `src/hooks/useClients.tsx` : Réécrire `createClient` pour utiliser `findOrCreateClient`, puis fetch le client complet avec ses relations. Retourner aussi un flag `isExisting` pour adapter le toast.
+- `src/pages/DashboardClients.tsx` : Adapter le toast ("Client ajouté" vs "Client existant retrouvé")
+- `src/pages/DashboardCalendar.tsx` : Idem pour le toast
+- `src/pages/DashboardRequests.tsx` : Idem
+- `src/components/invoices/InvoiceFormDialog.tsx` : Idem
 
