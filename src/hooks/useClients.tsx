@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useMyCenter } from './useCenter';
 import { CustomService } from './useCustomServices';
+import { findOrCreateClient } from '@/lib/clientService';
 
 export type ClientType = 'particulier' | 'professionnel';
 
