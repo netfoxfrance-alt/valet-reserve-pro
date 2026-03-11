@@ -71,25 +71,70 @@ export function useMyClients(options: UseMyClientsOptions = {}) {
     address?: string;
     default_service_id?: string | null;
     notes?: string;
-  }) => {
-    if (!center) return { error: 'Aucun centre trouvé' };
+    client_type?: string;
+    company_name?: string;
+  }): Promise<{ error: string | null; data: any; isExisting?: boolean }> => {
+    if (!center) return { error: 'Aucun centre trouvé', data: null };
     
+    const hasPhone = client.phone && client.phone.trim() !== '';
+    const hasEmail = client.email && client.email.trim() !== '';
+    
+    // Use findOrCreateClient for deduplication when phone or email is provided
+    if (hasPhone || hasEmail) {
+      const result = await findOrCreateClient({
+        center_id: center.id,
+        name: client.name,
+        phone: client.phone || '',
+        email: client.email || null,
+        address: client.address || null,
+        source: 'manual',
+      });
+      
+      if (result.error) {
+        return { error: result.error, data: null };
+      }
+      
+      if (result.clientId) {
+        // Update extra fields not handled by findOrCreateClient
+        const extraUpdates: Record<string, any> = {};
+        if (client.notes) extraUpdates.notes = client.notes;
+        if (client.default_service_id) extraUpdates.default_service_id = client.default_service_id;
+        if (client.client_type) extraUpdates.client_type = client.client_type;
+        if (client.company_name) extraUpdates.company_name = client.company_name;
+        
+        if (Object.keys(extraUpdates).length > 0) {
+          await supabase.from('clients' as any).update(extraUpdates).eq('id', result.clientId);
+        }
+        
+        // Fetch the full client with relations
+        const { data: fullClient } = await supabase
+          .from('clients' as any)
+          .select(`*, default_service:custom_services(*)`)
+          .eq('id', result.clientId)
+          .single();
+        
+        if (fullClient) {
+          await fetchClients();
+        }
+        
+        return { error: null, data: fullClient, isExisting: !result.isNew };
+      }
+    }
+    
+    // Fallback: direct insert (no phone/email to deduplicate on)
     const { data, error } = await supabase
       .from('clients' as any)
       .insert({
         ...client,
         center_id: center.id,
       })
-      .select(`
-        *,
-        default_service:custom_services(*)
-      `)
+      .select(`*, default_service:custom_services(*)`)
       .single();
 
     if (!error && data) {
       setClients([...clients, data as unknown as Client].sort((a, b) => a.name.localeCompare(b.name)));
     }
-    return { error: error?.message || null, data };
+    return { error: error?.message || null, data, isExisting: false };
   };
 
   const updateClient = async (id: string, updates: Partial<Client>) => {

@@ -121,7 +121,8 @@ export default function DashboardClients() {
     if (error) {
       toast({ title: "Erreur", description: error, variant: "destructive" });
     } else {
-      toast({ title: "Client ajouté" });
+      const result = createdClient as any;
+      toast({ title: result?.isExisting !== undefined && (await createClient({} as any)).isExisting ? "Client existant retrouvé" : "Client ajouté" });
       resetCreateForm();
       setIsCreateOpen(false);
     }
