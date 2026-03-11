@@ -235,7 +235,7 @@ export default function DashboardRequests() {
       return;
     }
     setCreatingClient(true);
-    const { error, data: createdClient } = await createClient({
+    const { error, data: createdClient, isExisting } = await createClient({
       name: newClientForm.name.trim(),
       email: newClientForm.email.trim() || undefined,
       phone: newClientForm.phone.trim() || undefined,
@@ -257,7 +257,7 @@ export default function DashboardRequests() {
     if (error) {
       toast({ title: 'Erreur', description: error, variant: 'destructive' });
     } else {
-      toast({ title: 'Client créé avec succès' });
+      toast({ title: isExisting ? 'Client existant retrouvé et mis à jour' : 'Client créé avec succès' });
       setCreateClientDialogOpen(false);
       await refetchClients();
     }

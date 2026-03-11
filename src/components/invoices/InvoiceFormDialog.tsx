@@ -128,7 +128,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
       return;
     }
     setInlineCreating(true);
-    const { error, data: createdClient } = await createClient({
+    const { error, data: createdClient, isExisting } = await createClient({
       name: newClientForm.name.trim(),
       email: newClientForm.email.trim() || undefined,
       phone: newClientForm.phone.trim() || undefined,
@@ -153,7 +153,7 @@ export function InvoiceFormDialog({ open, onOpenChange, type: initialType, invoi
       setClientEmail(c.email || '');
       setClientPhone(c.phone || '');
       setClientAddress(c.address || '');
-      toast({ title: 'Client créé', description: `${c.name} a été ajouté.` });
+      toast({ title: isExisting ? 'Client existant retrouvé' : 'Client créé', description: `${c.name} a été ${isExisting ? 'retrouvé et mis à jour' : 'ajouté'}.` });
       setShowClientCreateDialog(false);
       resetNewClientForm();
       refetchClients();

@@ -127,7 +127,7 @@ export default function DashboardCalendar() {
       return;
     }
     setNewClientCreating(true);
-    const { error, data: createdClient } = await createClient({
+    const { error, data: createdClient, isExisting } = await createClient({
       name: newClientForm.name.trim(),
       email: newClientForm.email.trim() || undefined,
       phone: newClientForm.phone.trim() || undefined,
@@ -153,7 +153,7 @@ export default function DashboardCalendar() {
         client_phone: c.phone || '',
         client_address: c.address || '',
       }));
-      toast.success(`${c.name} a été ajouté`);
+      toast.success(isExisting ? `${c.name} existant retrouvé et mis à jour` : `${c.name} a été ajouté`);
       setShowClientCreateDialog(false);
       resetNewClientForm();
       refetchClients();

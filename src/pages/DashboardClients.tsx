@@ -98,7 +98,7 @@ export default function DashboardClients() {
       return;
     }
     setCreating(true);
-    const { error, data: createdClient } = await createClient({
+    const { error, data: createdClient, isExisting } = await createClient({
       name: newClient.name.trim(),
       email: newClient.email.trim() || undefined,
       phone: newClient.phone.trim() || undefined,
@@ -121,7 +121,7 @@ export default function DashboardClients() {
     if (error) {
       toast({ title: "Erreur", description: error, variant: "destructive" });
     } else {
-      toast({ title: "Client ajouté" });
+      toast({ title: isExisting ? "Client existant retrouvé et mis à jour" : "Client ajouté" });
       resetCreateForm();
       setIsCreateOpen(false);
     }
