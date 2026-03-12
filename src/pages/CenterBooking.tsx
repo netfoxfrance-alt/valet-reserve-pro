@@ -640,10 +640,6 @@ export default function CenterBooking() {
                   {selectedPack.name}
                 </h1>
 
-                {selectedPack.description && (
-                  <RichDescription text={selectedPack.description} />
-                )}
-
                 {/* Pricing card with variant selection */}
                 <Card variant="elevated" className="p-5">
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Tarifs (TTC)</p>
@@ -693,6 +689,13 @@ export default function CenterBooking() {
                 )}
               </div>
             </div>
+
+            {/* Description below hero */}
+            {selectedPack.description && (
+              <div className="mt-12 lg:mt-16 max-w-3xl">
+                <RichDescription text={selectedPack.description} />
+              </div>
+            )}
 
             {/* Features grid */}
             {selectedPack.features && selectedPack.features.length > 0 && (
