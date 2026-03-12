@@ -26,7 +26,7 @@ function RichDescription({ text }: { text: string }) {
   if (text.includes('<') && text.includes('>')) {
     return (
       <div 
-        className="max-w-none [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:text-foreground [&_h1]:mt-6 [&_h1]:mb-2 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-foreground [&_h2]:mt-6 [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-foreground [&_h3]:mt-4 [&_h3]:mb-1 [&_p]:text-muted-foreground [&_p]:leading-relaxed [&_p]:mb-2 [&_strong]:text-foreground [&_strong]:font-semibold [&_em]:italic [&_u]:underline [&_ul]:space-y-1 [&_ul]:list-disc [&_ul]:pl-5 [&_li]:text-muted-foreground [&_ol]:space-y-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_hr]:my-4 [&_hr]:border-border text-sm"
+        className="max-w-none [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:text-foreground [&_h1]:mt-6 [&_h1]:mb-3 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-foreground [&_h2]:mt-6 [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-foreground [&_h3]:mt-5 [&_h3]:mb-2 [&_p]:text-muted-foreground [&_p]:leading-relaxed [&_p]:mb-4 [&_strong]:text-foreground [&_strong]:font-semibold [&_em]:italic [&_u]:underline [&_ul]:space-y-1 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_li]:text-muted-foreground [&_ol]:space-y-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_hr]:my-6 [&_hr]:border-border text-sm"
         dangerouslySetInnerHTML={{ __html: text }}
       />
     );
@@ -967,9 +967,6 @@ export default function CenterBooking() {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                             <div className="absolute bottom-0 inset-x-0 p-4">
-                              {pack.description && (
-                                <p className="text-white/70 text-xs mb-0.5 line-clamp-1">{pack.description}</p>
-                              )}
                               <p className="text-white font-bold text-base sm:text-lg leading-tight mb-0.5">
                                 {pack.name}
                               </p>
@@ -985,9 +982,6 @@ export default function CenterBooking() {
                                 {pack.name.charAt(0)}
                               </span>
                             </div>
-                            {pack.description && (
-                              <p className="text-muted-foreground text-xs mb-0.5 line-clamp-1">{pack.description}</p>
-                            )}
                             <p className="font-bold text-base sm:text-lg text-foreground leading-tight mb-0.5">
                               {pack.name}
                             </p>
