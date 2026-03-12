@@ -1,9 +1,47 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
-import { Bold, Italic, Underline as UnderlineIcon, List, Heading1, Heading2, Heading3, ListOrdered, Minus, Smile } from 'lucide-react';
+import { TextStyle } from '@tiptap/extension-text-style';
+import { Bold, Italic, Underline as UnderlineIcon, List, Heading1, Heading2, Heading3, ListOrdered, Minus, Smile, Type } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEffect, useRef, useState } from 'react';
+import { Mark, mergeAttributes } from '@tiptap/core';
+
+// Custom FontSize extension (inline style based)
+const FontSize = Mark.create({
+  name: 'fontSize',
+  addAttributes() {
+    return {
+      fontSize: {
+        default: null,
+        parseHTML: (element) => element.style.fontSize?.replace(/['"]+/g, '') || null,
+        renderHTML: (attributes) => {
+          if (!attributes.fontSize) return {};
+          return { style: `font-size: ${attributes.fontSize}` };
+        },
+      },
+    };
+  },
+  parseHTML() {
+    return [{ tag: 'span', getAttrs: (node) => {
+      const el = node as HTMLElement;
+      return el.style.fontSize ? {} : false;
+    }}];
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ['span', mergeAttributes(HTMLAttributes), 0];
+  },
+  addCommands() {
+    return {
+      setFontSize: (size: string) => ({ chain }: any) => {
+        return chain().setMark('fontSize', { fontSize: size }).run();
+      },
+      unsetFontSize: () => ({ chain }: any) => {
+        return chain().unsetMark('fontSize').run();
+      },
+    } as any;
+  },
+});
 
 interface RichTextEditorProps {
   content: string;
@@ -13,6 +51,15 @@ interface RichTextEditorProps {
 }
 
 const EMOJI_PICKS = ['✅', '⭐', '🔥', '💎', '🏠', '🚗', '✨', '🧹', '💧', '🪟', '📍', '📞', '💪', '👍', '🎯', '⚡', '🛡️', '🌟', '💼', '🔑'];
+
+const FONT_SIZES = [
+  { label: 'Petit', value: '12px' },
+  { label: 'Normal', value: '14px' },
+  { label: 'Moyen', value: '16px' },
+  { label: 'Grand', value: '18px' },
+  { label: 'Très grand', value: '22px' },
+  { label: 'Énorme', value: '28px' },
+];
 
 const ToolbarButton = ({
   active,
@@ -43,6 +90,7 @@ const ToolbarButton = ({
 export function RichTextEditor({ content, onChange, placeholder, className }: RichTextEditorProps) {
   const isInternalChange = useRef(false);
   const [showEmojis, setShowEmojis] = useState(false);
+  const [showSizes, setShowSizes] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -50,13 +98,14 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
         heading: { levels: [1, 2, 3] },
       }),
       Underline,
+      TextStyle,
+      FontSize,
     ],
     content: content || '',
     editorProps: {
       attributes: {
         class: cn(
           'focus:outline-none min-h-[140px] px-4 py-3 text-sm',
-          // Match the public page rendering exactly
           'prose prose-sm max-w-none',
           '[&_h1]:text-2xl [&_h1]:font-bold [&_h1]:text-foreground [&_h1]:mt-4 [&_h1]:mb-2',
           '[&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-foreground [&_h2]:mt-4 [&_h2]:mb-2',
@@ -78,7 +127,6 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
     },
   });
 
-  // Sync external content changes (but not our own updates)
   useEffect(() => {
     if (editor && !isInternalChange.current) {
       const currentHTML = editor.getHTML();
@@ -95,6 +143,21 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
       setShowEmojis(false);
     }
   };
+
+  const setFontSize = (size: string) => {
+    if (editor) {
+      (editor.chain().focus() as any).setFontSize(size);
+      setShowSizes(false);
+    }
+  };
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const close = () => { setShowEmojis(false); setShowSizes(false); };
+    if (showEmojis || showSizes) {
+      document.addEventListener('click', close, { once: true });
+    }
+  }, [showEmojis, showSizes]);
 
   if (!editor) return null;
 
@@ -126,6 +189,35 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
         </ToolbarButton>
 
         <div className="w-px h-5 bg-border/50 mx-1" />
+
+        {/* Font size picker */}
+        <div className="relative">
+          <ToolbarButton
+            onClick={(e) => { e.stopPropagation(); setShowSizes(!showSizes); setShowEmojis(false); }}
+            active={showSizes}
+            title="Taille du texte"
+          >
+            <Type className="w-4 h-4" />
+          </ToolbarButton>
+          {showSizes && (
+            <div 
+              className="absolute top-full left-0 mt-1 z-50 bg-popover border border-border rounded-xl shadow-lg py-1 w-[140px]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {FONT_SIZES.map((s) => (
+                <button
+                  key={s.value}
+                  type="button"
+                  onClick={() => setFontSize(s.value)}
+                  className="w-full text-left px-3 py-1.5 text-sm hover:bg-secondary transition-colors flex items-center justify-between"
+                >
+                  <span>{s.label}</span>
+                  <span className="text-[10px] text-muted-foreground">{s.value}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Bold */}
         <ToolbarButton
@@ -187,15 +279,17 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
         {/* Emoji picker */}
         <div className="relative">
           <ToolbarButton
-            onClick={() => setShowEmojis(!showEmojis)}
+            onClick={(e) => { e.stopPropagation(); setShowEmojis(!showEmojis); setShowSizes(false); }}
             active={showEmojis}
             title="Emoji"
           >
             <Smile className="w-4 h-4" />
           </ToolbarButton>
-
           {showEmojis && (
-            <div className="absolute top-full left-0 mt-1 z-50 bg-popover border border-border rounded-xl shadow-lg p-2 grid grid-cols-5 gap-1 w-[200px]">
+            <div 
+              className="absolute top-full left-0 mt-1 z-50 bg-popover border border-border rounded-xl shadow-lg p-2 grid grid-cols-5 gap-1 w-[200px]"
+              onClick={(e) => e.stopPropagation()}
+            >
               {EMOJI_PICKS.map((emoji) => (
                 <button
                   key={emoji}
