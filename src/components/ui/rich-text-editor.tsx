@@ -85,7 +85,7 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
           '[&_h1]:text-2xl [&_h1]:font-bold [&_h1]:text-foreground [&_h1]:mt-6 [&_h1]:mb-3',
           '[&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-foreground [&_h2]:mt-6 [&_h2]:mb-3',
           '[&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-foreground [&_h3]:mt-5 [&_h3]:mb-2',
-          '[&_p]:text-muted-foreground [&_p]:leading-relaxed [&_p]:mb-4',
+          '[&_p]:text-muted-foreground [&_p]:leading-relaxed [&_p]:mb-1 [&_p:empty]:min-h-[0.75em] [&_p:empty]:mb-1',
           '[&_strong]:text-foreground [&_strong]:font-semibold',
           '[&_em]:italic [&_u]:underline',
           '[&_ul]:space-y-1 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_li]:text-muted-foreground',
