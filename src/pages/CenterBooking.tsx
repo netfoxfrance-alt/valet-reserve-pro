@@ -967,9 +967,6 @@ export default function CenterBooking() {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                             <div className="absolute bottom-0 inset-x-0 p-4">
-                              {pack.description && (
-                                <p className="text-white/70 text-xs mb-0.5 line-clamp-1">{pack.description}</p>
-                              )}
                               <p className="text-white font-bold text-base sm:text-lg leading-tight mb-0.5">
                                 {pack.name}
                               </p>
