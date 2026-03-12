@@ -439,7 +439,13 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                             )}
                           </div>
                         </div>
-                        <p className="font-semibold text-primary text-sm">{pack.price}€</p>
+                        <p className="font-semibold text-primary text-sm">
+                          {pack.pricing_type === 'quote' 
+                            ? 'Sur devis' 
+                            : pack.price_variants && pack.price_variants.length > 0 
+                              ? `dès ${Math.min(...pack.price_variants.map(v => v.price))}€` 
+                              : `${pack.price}€`}
+                        </p>
                       </div>
                     );
                   })}
