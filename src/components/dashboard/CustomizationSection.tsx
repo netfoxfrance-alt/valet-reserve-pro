@@ -152,9 +152,9 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     <section className="mb-6 sm:mb-8">
       <Card variant="elevated" className="p-4 sm:p-6">
         <Tabs defaultValue="design" className="w-full">
-          {/* 4 Clean tabs: Design, Formules, Éléments, SEO */}
+          {/* 3 Clean tabs: Design, Formules, Éléments */}
           <div className="mb-6">
-            <TabsList className="grid grid-cols-4 gap-1 w-full bg-muted/50 p-1.5 rounded-xl h-auto">
+            <TabsList className="grid grid-cols-3 gap-1 w-full bg-muted/50 p-1.5 rounded-xl h-auto">
               <TabsTrigger value="design" className="flex flex-col items-center gap-0.5 px-2 py-2.5 text-xs sm:text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Palette className="w-4 h-4" />
                 <span>Design</span>
@@ -166,10 +166,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               <TabsTrigger value="blocks" className="flex flex-col items-center gap-0.5 px-2 py-2.5 text-xs sm:text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Layers className="w-4 h-4" />
                 <span>Éléments</span>
-              </TabsTrigger>
-              <TabsTrigger value="seo" className="flex flex-col items-center gap-0.5 px-2 py-2.5 text-xs sm:text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Search className="w-4 h-4" />
-                <span>SEO</span>
               </TabsTrigger>
             </TabsList>
           </div>
