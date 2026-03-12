@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CenterCustomization, defaultCustomization, defaultBlocks, HeaderStyle } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, Search, MapPin, Tag, Package, Layers, PanelTop, Minus } from 'lucide-react';
+import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, MapPin, Package, Layers, PanelTop, Minus } from 'lucide-react';
 import { BlocksEditor } from './BlocksEditor';
 import { cn, stripHtml } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
