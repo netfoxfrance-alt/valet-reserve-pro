@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, Search, MapPin, Tag, Package, Layers, PanelTop, Minus } from 'lucide-react';
 import { BlocksEditor } from './BlocksEditor';
-import { cn } from '@/lib/utils';
+import { cn, stripHtml } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
 import { Checkbox } from '@/components/ui/checkbox';
 

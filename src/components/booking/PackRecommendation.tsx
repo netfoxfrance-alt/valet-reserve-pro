@@ -28,7 +28,7 @@ export function PackRecommendation({ pack, onSelect }: PackRecommendationProps) 
             {pack.name}
           </h3>
           <p className="text-muted-foreground text-lg">
-            {pack.description}
+            {stripHtml(pack.description)}
           </p>
         </div>
         

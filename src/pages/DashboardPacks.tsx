@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { VariantsEditor } from '@/components/dashboard/VariantsEditor';
 import { FeaturesEditor } from '@/components/dashboard/FeaturesEditor';
 import { supabase } from '@/integrations/supabase/client';
+import { stripHtml } from '@/lib/utils';
 
 // Helper to parse duration string to { hours, minutes }
 const parseDuration = (duration: string): { hours: number; minutes: number } => {
