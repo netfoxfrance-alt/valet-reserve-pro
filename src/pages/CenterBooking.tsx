@@ -761,15 +761,11 @@ export default function CenterBooking() {
                 </div>
               )}
 
-              {/* Right: Name, description, CTA */}
+              {/* Right: Name, CTA */}
               <div className="flex flex-col justify-center space-y-5 lg:py-4">
                 <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground tracking-tight leading-[1.1]">
                   {selectedPack.name}
                 </h1>
-
-                {selectedPack.description && (
-                  <RichDescription text={selectedPack.description} />
-                )}
 
                 <Card variant="elevated" className="p-5">
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Tarif</p>
@@ -796,6 +792,13 @@ export default function CenterBooking() {
                 </Button>
               </div>
             </div>
+
+            {/* Description below hero */}
+            {selectedPack.description && (
+              <div className="mt-12 lg:mt-16 max-w-3xl">
+                <RichDescription text={selectedPack.description} />
+              </div>
+            )}
 
             {/* Features section */}
             {selectedPack.features && selectedPack.features.length > 0 && (
