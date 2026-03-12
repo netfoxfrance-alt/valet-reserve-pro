@@ -982,9 +982,6 @@ export default function CenterBooking() {
                                 {pack.name.charAt(0)}
                               </span>
                             </div>
-                            {pack.description && (
-                              <p className="text-muted-foreground text-xs mb-0.5 line-clamp-1">{pack.description}</p>
-                            )}
                             <p className="font-bold text-base sm:text-lg text-foreground leading-tight mb-0.5">
                               {pack.name}
                             </p>
