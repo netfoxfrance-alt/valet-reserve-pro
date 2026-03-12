@@ -640,10 +640,8 @@ export default function CenterBooking() {
                   {selectedPack.name}
                 </h1>
 
-                {selectedPack.description && !selectedPack.description.includes('\n') && !selectedPack.description.includes('<') && (
-                  <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                    {selectedPack.description}
-                  </p>
+                {selectedPack.description && (
+                  <RichDescription text={selectedPack.description} />
                 )}
 
                 {/* Pricing card with variant selection */}

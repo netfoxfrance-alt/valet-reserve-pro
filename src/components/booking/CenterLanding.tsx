@@ -400,12 +400,20 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
         >
           {block.title}
         </h2>
-        <p 
-          className="text-sm sm:text-base leading-relaxed whitespace-pre-line"
-          style={{ color: textColors.secondary }}
-        >
-          {block.content}
-        </p>
+        {block.content.includes('<') && block.content.includes('>') ? (
+          <div 
+            className="prose prose-sm max-w-none [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mt-4 [&_h1]:mb-2 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mt-4 [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_p]:leading-relaxed [&_strong]:font-semibold [&_ul]:space-y-1 [&_li]:leading-relaxed"
+            style={{ color: textColors.secondary }}
+            dangerouslySetInnerHTML={{ __html: block.content }}
+          />
+        ) : (
+          <p 
+            className="text-sm sm:text-base leading-relaxed whitespace-pre-line"
+            style={{ color: textColors.secondary }}
+          >
+            {block.content}
+          </p>
+        )}
       </div>
     );
   };
