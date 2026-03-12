@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CenterCustomization, defaultCustomization, defaultBlocks, HeaderStyle } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, Search, MapPin, Tag, Package, Layers, PanelTop, Minus } from 'lucide-react';
+import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, MapPin, Package, Layers, PanelTop, Minus } from 'lucide-react';
 import { BlocksEditor } from './BlocksEditor';
 import { cn, stripHtml } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
@@ -152,9 +152,9 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     <section className="mb-6 sm:mb-8">
       <Card variant="elevated" className="p-4 sm:p-6">
         <Tabs defaultValue="design" className="w-full">
-          {/* 4 Clean tabs: Design, Formules, Éléments, SEO */}
+          {/* 3 Clean tabs: Design, Formules, Éléments */}
           <div className="mb-6">
-            <TabsList className="grid grid-cols-4 gap-1 w-full bg-muted/50 p-1.5 rounded-xl h-auto">
+            <TabsList className="grid grid-cols-3 gap-1 w-full bg-muted/50 p-1.5 rounded-xl h-auto">
               <TabsTrigger value="design" className="flex flex-col items-center gap-0.5 px-2 py-2.5 text-xs sm:text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Palette className="w-4 h-4" />
                 <span>Design</span>
@@ -166,10 +166,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               <TabsTrigger value="blocks" className="flex flex-col items-center gap-0.5 px-2 py-2.5 text-xs sm:text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 <Layers className="w-4 h-4" />
                 <span>Éléments</span>
-              </TabsTrigger>
-              <TabsTrigger value="seo" className="flex flex-col items-center gap-0.5 px-2 py-2.5 text-xs sm:text-sm rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                <Search className="w-4 h-4" />
-                <span>SEO</span>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -470,86 +466,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             />
           </TabsContent>
 
-          {/* SEO Tab */}
-          <TabsContent value="seo" className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Personnalisez comment votre page apparaît sur Google.
-            </p>
-            
-            {/* Google Preview */}
-            <div className="p-4 rounded-lg bg-secondary/50">
-              <p className="text-xs text-muted-foreground mb-2">Aperçu Google</p>
-              <div className="space-y-0.5">
-                <p className="text-xs text-muted-foreground">cleaningpage.com › ...</p>
-                <p className="text-base text-[#1a0dab] hover:underline cursor-pointer font-medium line-clamp-1">
-                  {local.seo?.title || 'Votre titre Google'}
-                </p>
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {local.seo?.description || 'Votre description apparaîtra ici...'}
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="seo-city" className="flex items-center gap-2 text-sm">
-                  <MapPin className="w-4 h-4 text-muted-foreground" />
-                  Ville
-                </Label>
-                <Input
-                  id="seo-city"
-                  value={local.seo?.city || ''}
-                  onChange={(e) => updateSeo({ city: e.target.value })}
-                  placeholder="Paris, Lyon, Marseille..."
-                  className="h-10"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="seo-title" className="text-sm">Titre Google</Label>
-                <Input
-                  id="seo-title"
-                  value={local.seo?.title || ''}
-                  onChange={(e) => updateSeo({ title: e.target.value })}
-                  placeholder="Ex: Nettoyage auto à Paris | MonCentre"
-                  className="h-10"
-                  maxLength={60}
-                />
-                <p className="text-xs text-muted-foreground text-right">
-                  {(local.seo?.title || '').length}/60
-                </p>
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="seo-description" className="text-sm">Description</Label>
-                <Input
-                  id="seo-description"
-                  value={local.seo?.description || ''}
-                  onChange={(e) => updateSeo({ description: e.target.value })}
-                  placeholder="Décrivez votre activité en 2-3 phrases..."
-                  className="h-10"
-                  maxLength={160}
-                />
-                <p className="text-xs text-muted-foreground text-right">
-                  {(local.seo?.description || '').length}/160
-                </p>
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="seo-keywords" className="flex items-center gap-2 text-sm">
-                  <Tag className="w-4 h-4 text-muted-foreground" />
-                  Mots-clés
-                </Label>
-                <Input
-                  id="seo-keywords"
-                  value={local.seo?.keywords || ''}
-                  onChange={(e) => updateSeo({ keywords: e.target.value })}
-                  placeholder="nettoyage, detailing, voiture, Paris..."
-                  className="h-10"
-                />
-              </div>
-            </div>
-          </TabsContent>
         </Tabs>
       </Card>
     </section>
