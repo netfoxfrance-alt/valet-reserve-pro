@@ -279,7 +279,7 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
         {/* Emoji picker */}
         <div className="relative">
           <ToolbarButton
-            onClick={(e) => { e.stopPropagation(); setShowEmojis(!showEmojis); setShowSizes(false); }}
+            onClick={() => { setShowEmojis(!showEmojis); setShowSizes(false); }}
             active={showEmojis}
             title="Emoji"
           >
