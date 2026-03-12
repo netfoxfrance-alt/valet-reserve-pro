@@ -193,7 +193,7 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
         {/* Font size picker */}
         <div className="relative">
           <ToolbarButton
-            onClick={(e) => { e.stopPropagation(); setShowSizes(!showSizes); setShowEmojis(false); }}
+            onClick={() => { setShowSizes(!showSizes); setShowEmojis(false); }}
             active={showSizes}
             title="Taille du texte"
           >
