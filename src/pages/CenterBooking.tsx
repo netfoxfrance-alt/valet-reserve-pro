@@ -772,9 +772,7 @@ export default function CenterBooking() {
                 </h1>
 
                 {selectedPack.description && (
-                  <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                    {selectedPack.description.split('\n')[0].replace(/[*#\-]/g, '').trim()}
-                  </p>
+                  <RichDescription text={selectedPack.description} />
                 )}
 
                 <Card variant="elevated" className="p-5">
