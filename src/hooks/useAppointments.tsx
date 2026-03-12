@@ -397,19 +397,39 @@ export function useCreateAppointment() {
     setLoading(true);
 
     try {
+      // ── Pre-flight validation to prevent RLS violations ──
+      const safeVehicleType = (data.vehicle_type && data.vehicle_type.trim()) || 'standard';
+      const safeClientName = (data.client_name && data.client_name.trim()) || '';
+      const safeClientEmail = (data.client_email && data.client_email.trim()) || '';
+      const safeClientPhone = (data.client_phone && data.client_phone.trim()) || '';
+
+      if (!safeClientName || !safeClientEmail || !safeClientPhone) {
+        console.error('[CreateAppointment] Missing required client fields:', { 
+          name: !!safeClientName, email: !!safeClientEmail, phone: !!safeClientPhone 
+        });
+        return { error: 'Veuillez remplir tous les champs obligatoires (nom, email, téléphone).', appointmentId: null };
+      }
+
+      if (!data.center_id || !data.appointment_date || !data.appointment_time) {
+        console.error('[CreateAppointment] Missing booking fields:', { 
+          center_id: !!data.center_id, date: !!data.appointment_date, time: !!data.appointment_time 
+        });
+        return { error: 'Données de réservation incomplètes. Veuillez réessayer.', appointmentId: null };
+      }
+
       // Convert duration string to minutes (e.g., "1h30" → 90, "2h" → 120)
       const parseDurationToMinutes = (duration?: string): number => {
-        if (!duration) return 60; // default 1h
+        if (!duration) return 60;
         const hoursMatch = duration.match(/(\d+)h/);
         const minutesMatch = duration.match(/(\d+)(?:min|m(?!h))/);
         const hours = hoursMatch ? parseInt(hoursMatch[1], 10) : 0;
         const minutes = minutesMatch ? parseInt(minutesMatch[1], 10) : 0;
-        return hours * 60 + minutes || 60; // fallback to 60 if parsing fails
+        return hours * 60 + minutes || 60;
       };
 
       const duration_minutes = parseDurationToMinutes(data.duration);
 
-      // Anti-overlap check: use RPC to bypass RLS (anon users can't SELECT appointments)
+      // Anti-overlap check
       const { data: existingApts, error: overlapQueryError } = await supabase.rpc('get_occupied_slots', {
         p_center_id: data.center_id,
         p_from_date: data.appointment_date,
@@ -420,7 +440,6 @@ export function useCreateAppointment() {
       }
 
       if (existingApts && existingApts.length > 0) {
-        // Filter to only the target date
         const dayApts = existingApts.filter((apt: any) => apt.appointment_date === data.appointment_date);
         const newStartMin = timeToMin(data.appointment_time);
         const newEndMin = newStartMin + duration_minutes;
@@ -437,34 +456,44 @@ export function useCreateAppointment() {
         }
       }
 
-      // Note: On réservation publique (non authentifié), on ne peut pas créer de client
-      // car la table clients est protégée par RLS (propriétaire seulement)
-      // Le client_id sera null et pourra être associé plus tard par le pro
-
-      // Store the final price (variant or base pack price) in custom_price for accurate stats
       const finalPrice = data.price !== undefined ? data.price : null;
+      // Ensure pack_id is a valid reference or null
+      const safePackId = data.pack_id && data.pack_id.length > 10 ? data.pack_id : null;
+
+      console.log('[CreateAppointment] Inserting:', {
+        center_id: data.center_id,
+        pack_id: safePackId,
+        vehicle_type: safeVehicleType,
+        appointment_date: data.appointment_date,
+        appointment_time: data.appointment_time,
+        duration_minutes,
+      });
 
       const { data: insertedData, error } = await supabase
         .from('appointments')
         .insert({
           center_id: data.center_id,
-          pack_id: data.pack_id || null,
+          pack_id: safePackId,
           client_id: data.client_id || null,
           custom_service_id: data.custom_service_id || null,
-          client_name: data.client_name,
-          client_email: data.client_email,
-          client_phone: data.client_phone,
-          client_address: data.client_address,
-          vehicle_type: data.vehicle_type,
+          client_name: safeClientName,
+          client_email: safeClientEmail,
+          client_phone: safeClientPhone,
+          client_address: data.client_address || null,
+          vehicle_type: safeVehicleType,
           appointment_date: data.appointment_date,
           appointment_time: data.appointment_time,
-          notes: data.notes,
+          notes: data.notes || null,
           duration_minutes,
           custom_price: data.custom_price !== undefined && data.custom_price !== null ? data.custom_price : finalPrice,
           status: 'pending_validation',
         })
         .select('id')
         .single();
+
+      if (error) {
+        console.error('[CreateAppointment] DB error:', JSON.stringify(error));
+      }
 
       // Send "request received" email only when no deposit (deposit flow sends confirmation via webhook)
       if (!error && insertedData && data.pack_name && data.price !== undefined && !data.skip_email) {
