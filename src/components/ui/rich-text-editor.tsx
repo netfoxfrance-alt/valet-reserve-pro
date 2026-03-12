@@ -25,7 +25,7 @@ const FontSizeExtension = Extension.create({
       },
     }];
   },
-  addCommands() {
+  addCommands(): any {
     return {
       setFontSize: (size: number) => ({ chain }: any) => {
         return chain().setMark('textStyle', { fontSize: size }).run();
