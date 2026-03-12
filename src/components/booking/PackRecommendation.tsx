@@ -1,5 +1,6 @@
 import { Pack } from '@/types/booking';
 import { Card } from '@/components/ui/card';
+import { stripHtml } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Check, Clock, Star } from 'lucide-react';
 
@@ -27,7 +28,7 @@ export function PackRecommendation({ pack, onSelect }: PackRecommendationProps) 
             {pack.name}
           </h3>
           <p className="text-muted-foreground text-lg">
-            {pack.description}
+            {stripHtml(pack.description)}
           </p>
         </div>
         

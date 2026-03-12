@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { VariantsEditor } from '@/components/dashboard/VariantsEditor';
 import { FeaturesEditor } from '@/components/dashboard/FeaturesEditor';
 import { supabase } from '@/integrations/supabase/client';
+import { stripHtml } from '@/lib/utils';
 
 // Helper to parse duration string to { hours, minutes }
 const parseDuration = (duration: string): { hours: number; minutes: number } => {
@@ -641,7 +642,7 @@ export default function DashboardPacks() {
                             )}
                             <div className="flex-1 min-w-0">
                               <h3 className="font-semibold text-lg text-foreground truncate">{pack.name}</h3>
-                              <p className="text-sm text-muted-foreground line-clamp-2">{pack.description}</p>
+                              <p className="text-sm text-muted-foreground line-clamp-2">{stripHtml(pack.description)}</p>
                             </div>
                           </div>
                           <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6">
