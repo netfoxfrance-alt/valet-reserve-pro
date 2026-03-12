@@ -1,5 +1,6 @@
 import { Pack } from '@/types/booking';
 import { Card } from '@/components/ui/card';
+import { stripHtml } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Check, Clock, Star } from 'lucide-react';
 

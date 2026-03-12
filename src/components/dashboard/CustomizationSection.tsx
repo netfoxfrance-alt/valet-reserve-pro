@@ -435,7 +435,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                           <div>
                             <p className="font-medium text-sm">{pack.name}</p>
                             {pack.description && (
-                              <p className="text-xs text-muted-foreground line-clamp-1">{pack.description}</p>
+                              <p className="text-xs text-muted-foreground line-clamp-1">{stripHtml(pack.description)}</p>
                             )}
                           </div>
                         </div>
