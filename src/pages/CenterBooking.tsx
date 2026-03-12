@@ -711,13 +711,6 @@ export default function CenterBooking() {
               </div>
             )}
 
-            {/* Full description */}
-            {selectedPack.description && (selectedPack.description.includes('\n') || selectedPack.description.includes('<')) && (
-              <div className="mt-12 lg:mt-16 max-w-3xl">
-                <h2 className="text-xl font-semibold text-foreground mb-4">À propos</h2>
-                <RichDescription text={selectedPack.description} />
-              </div>
-            )}
           </div>
         </main>
       </div>
@@ -772,9 +765,7 @@ export default function CenterBooking() {
                 </h1>
 
                 {selectedPack.description && (
-                  <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                    {selectedPack.description.split('\n')[0].replace(/[*#\-]/g, '').trim()}
-                  </p>
+                  <RichDescription text={selectedPack.description} />
                 )}
 
                 <Card variant="elevated" className="p-5">
@@ -820,13 +811,6 @@ export default function CenterBooking() {
               </div>
             )}
 
-            {/* Full description below */}
-            {selectedPack.description && (selectedPack.description.includes('\n') || selectedPack.description.includes('<')) && (
-              <div className="mt-12 lg:mt-16 max-w-3xl">
-                <h2 className="text-xl font-semibold text-foreground mb-4">À propos</h2>
-                <RichDescription text={selectedPack.description} />
-              </div>
-            )}
           </div>
         </main>
       </div>
