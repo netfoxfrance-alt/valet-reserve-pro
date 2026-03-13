@@ -8,11 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CenterCustomization, defaultCustomization, defaultBlocks, HeaderStyle } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, MapPin, Package, Layers, PanelTop, Minus } from 'lucide-react';
+import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, MapPin, Package, Layers, PanelTop, Minus, ChevronDown } from 'lucide-react';
 import { BlocksEditor } from './BlocksEditor';
 import { cn, stripHtml } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
 import { Checkbox } from '@/components/ui/checkbox';
+import { COLOR_THEMES, ColorTheme } from '@/lib/pageTemplates';
 
 interface CustomizationSectionProps {
   centerId: string;
@@ -24,19 +25,19 @@ interface CustomizationSectionProps {
   centerPhone?: string;
 }
 
-const COLOR_PRESETS = [
-  { name: 'Bleu', primary: '#3b82f6', secondary: '#1e293b', accent: '#10b981' },
-  { name: 'Rouge', primary: '#ef4444', secondary: '#1c1917', accent: '#f59e0b' },
-  { name: 'Vert', primary: '#22c55e', secondary: '#14532d', accent: '#3b82f6' },
-  { name: 'Violet', primary: '#8b5cf6', secondary: '#1e1b4b', accent: '#ec4899' },
-  { name: 'Orange', primary: '#f97316', secondary: '#431407', accent: '#06b6d4' },
-  { name: 'Rose', primary: '#ec4899', secondary: '#500724', accent: '#8b5cf6' },
-];
+// Kept for backward compat but now using COLOR_THEMES
+const COLOR_PRESETS = COLOR_THEMES.slice(0, 6).map(t => ({
+  name: t.name,
+  primary: t.colors.primary,
+  secondary: t.colors.secondary,
+  accent: t.colors.accent,
+}));
 
 export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [], centerAddress, centerPhone }: CustomizationSectionProps) {
   const { toast } = useToast();
   const [uploadingCover, setUploadingCover] = useState(false);
   const [local, setLocal] = useState<CenterCustomization>(customization);
+  const [showCustomColors, setShowCustomColors] = useState(false);
 
   // Sync local state when prop changes from parent
   useEffect(() => {
@@ -79,13 +80,17 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     ? local.visible_pack_ids 
     : packs.map(p => p.id);
 
-  const applyPreset = (preset: typeof COLOR_PRESETS[0]) => {
+  const applyTheme = (theme: ColorTheme) => {
     updateColors({
-      primary: preset.primary,
-      secondary: preset.secondary,
-      accent: preset.accent,
+      primary: theme.colors.primary,
+      secondary: theme.colors.secondary,
+      accent: theme.colors.accent,
+      text_primary: theme.colors.text_primary,
+      text_secondary: theme.colors.text_secondary,
     });
   };
+
+  const currentThemeId = COLOR_THEMES.find(t => t.colors.primary === local.colors.primary)?.id;
 
   const handleCoverUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -280,83 +285,64 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             </div>
             )}
 
-            {/* Color Presets */}
+            {/* Theme Picker */}
             <div>
-              <Label className="text-sm font-medium mb-3 block">Couleurs</Label>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-4">
-                {COLOR_PRESETS.map((preset) => (
+              <Label className="text-sm font-medium mb-3 block">Thème de couleurs</Label>
+              <div className="grid grid-cols-4 gap-2 mb-3">
+                {COLOR_THEMES.map((theme) => (
                   <button
-                    key={preset.name}
-                    onClick={() => applyPreset(preset)}
+                    key={theme.id}
+                    onClick={() => applyTheme(theme)}
                     className={cn(
-                      "p-2.5 rounded-lg border-2 transition-all hover:scale-105",
-                      local.colors.primary === preset.primary 
-                        ? "border-primary ring-2 ring-primary/20" 
+                      "p-2 rounded-xl border-2 transition-all hover:scale-105 group",
+                      currentThemeId === theme.id
+                        ? "border-primary ring-2 ring-primary/20"
                         : "border-border hover:border-muted-foreground"
                     )}
                   >
-                    <div className="flex gap-1 mb-1">
-                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.primary }} />
-                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.secondary }} />
+                    <div className="flex justify-center gap-1 mb-1.5">
+                      <div className="w-5 h-5 rounded-full shadow-sm" style={{ backgroundColor: theme.colors.primary }} />
+                      <div className="w-5 h-5 rounded-full shadow-sm" style={{ backgroundColor: theme.colors.accent }} />
                     </div>
-                    <p className="text-[10px] text-center text-muted-foreground">{preset.name}</p>
+                    <p className="text-[10px] text-center text-muted-foreground font-medium">{theme.name}</p>
                   </button>
                 ))}
               </div>
-              
-              {/* Custom Colors */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <div className="space-y-1">
-                  <Label className="text-xs">Principale</Label>
-                  <div className="flex gap-1.5">
-                    <input
-                      type="color"
-                      value={local.colors.primary}
-                      onChange={(e) => updateColors({ primary: e.target.value })}
-                      className="w-10 h-9 rounded border border-border cursor-pointer"
-                    />
-                    <Input
-                      value={local.colors.primary}
-                      onChange={(e) => updateColors({ primary: e.target.value })}
-                      className="flex-1 h-9 text-xs"
-                    />
-                  </div>
-                </div>
 
-                <div className="space-y-1">
-                  <Label className="text-xs">Titres</Label>
-                  <div className="flex gap-1.5">
-                    <input
-                      type="color"
-                      value={local.colors.text_primary || '#111827'}
-                      onChange={(e) => updateColors({ text_primary: e.target.value })}
-                      className="w-10 h-9 rounded border border-border cursor-pointer"
-                    />
-                    <Input
-                      value={local.colors.text_primary || '#111827'}
-                      onChange={(e) => updateColors({ text_primary: e.target.value })}
-                      className="flex-1 h-9 text-xs"
-                    />
-                  </div>
-                </div>
+              {/* Collapsible custom colors */}
+              <button
+                onClick={() => setShowCustomColors(!showCustomColors)}
+                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-2"
+              >
+                <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", showCustomColors && "rotate-180")} />
+                Personnaliser les couleurs
+              </button>
 
-                <div className="space-y-1">
-                  <Label className="text-xs">Texte</Label>
-                  <div className="flex gap-1.5">
-                    <input
-                      type="color"
-                      value={local.colors.text_secondary || '#6b7280'}
-                      onChange={(e) => updateColors({ text_secondary: e.target.value })}
-                      className="w-10 h-9 rounded border border-border cursor-pointer"
-                    />
-                    <Input
-                      value={local.colors.text_secondary || '#6b7280'}
-                      onChange={(e) => updateColors({ text_secondary: e.target.value })}
-                      className="flex-1 h-9 text-xs"
-                    />
+              {showCustomColors && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-3 rounded-lg border bg-muted/30">
+                  <div className="space-y-1">
+                    <Label className="text-xs">Principale</Label>
+                    <div className="flex gap-1.5">
+                      <input type="color" value={local.colors.primary} onChange={(e) => updateColors({ primary: e.target.value })} className="w-10 h-9 rounded border border-border cursor-pointer" />
+                      <Input value={local.colors.primary} onChange={(e) => updateColors({ primary: e.target.value })} className="flex-1 h-9 text-xs" />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Titres</Label>
+                    <div className="flex gap-1.5">
+                      <input type="color" value={local.colors.text_primary || '#111827'} onChange={(e) => updateColors({ text_primary: e.target.value })} className="w-10 h-9 rounded border border-border cursor-pointer" />
+                      <Input value={local.colors.text_primary || '#111827'} onChange={(e) => updateColors({ text_primary: e.target.value })} className="flex-1 h-9 text-xs" />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Texte</Label>
+                    <div className="flex gap-1.5">
+                      <input type="color" value={local.colors.text_secondary || '#6b7280'} onChange={(e) => updateColors({ text_secondary: e.target.value })} className="w-10 h-9 rounded border border-border cursor-pointer" />
+                      <Input value={local.colors.text_secondary || '#6b7280'} onChange={(e) => updateColors({ text_secondary: e.target.value })} className="flex-1 h-9 text-xs" />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Dark Mode */}
               <div className="flex items-center justify-between py-3 px-3 rounded-lg border bg-secondary/30 mt-4">
@@ -369,7 +355,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                   onCheckedChange={(checked) => updateLayout({ dark_mode: checked })}
                 />
               </div>
-
             </div>
 
             {/* CTA Button Text */}
