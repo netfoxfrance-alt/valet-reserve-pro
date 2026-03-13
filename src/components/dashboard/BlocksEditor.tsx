@@ -356,8 +356,8 @@ export function BlocksEditor({
     } else if (type === 'reviews' && reviewPlatform) {
       newBlock.reviewPlatform = reviewPlatform;
       newBlock.reviewUrl = '';
-      newBlock.reviewRating = 5;
-      newBlock.reviewCount = 0;
+      newBlock.reviewRating = undefined;
+      newBlock.reviewCount = undefined;
     }
     
     onUpdateBlocks([...blocks, newBlock]);
