@@ -176,7 +176,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'brown',
-    name: 'Brown',
+    name: 'Caramel',
     fontFamily: 'montserrat',
     darkMode: false,
     primaryColor: '#92400e',
