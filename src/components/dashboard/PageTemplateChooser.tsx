@@ -1,143 +1,225 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { CenterCustomization, defaultCustomization, defaultBlocks, PageBlock } from '@/types/customization';
+import { CenterCustomization, defaultCustomization, PageBlock, FontFamily, FONT_MAP, GOOGLE_FONT_URLS } from '@/types/customization';
 import { cn } from '@/lib/utils';
-import { Check, Sparkles } from 'lucide-react';
+import { Check, Sparkles, ArrowRight } from 'lucide-react';
 
 interface PageTemplate {
   id: string;
   name: string;
-  description: string;
-  preview: {
-    headerStyle: 'banner' | 'minimal';
-    darkMode: boolean;
-    primaryColor: string;
-    secondaryColor: string;
-    accentColor: string;
-    textPrimary: string;
-    textSecondary: string;
-  };
+  fontFamily: FontFamily;
+  darkMode: boolean;
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  textPrimary: string;
+  textSecondary: string;
+  background: string;
+  backgroundGradient?: string;
+  headerStyle: 'banner' | 'minimal';
+  buttonRadius: string;
   blocks: PageBlock[];
   ctaText: string;
 }
 
 const TEMPLATES: PageTemplate[] = [
   {
-    id: 'classic',
-    name: 'Classique',
-    description: 'Bannière + formules. Simple et efficace.',
-    preview: {
-      headerStyle: 'banner',
-      darkMode: false,
-      primaryColor: '#3b82f6',
-      secondaryColor: '#1e293b',
-      accentColor: '#10b981',
-      textPrimary: '#111827',
-      textSecondary: '#6b7280',
-    },
+    id: 'default',
+    name: 'Default',
+    fontFamily: 'system',
+    darkMode: false,
+    primaryColor: '#3b82f6',
+    secondaryColor: '#1e293b',
+    accentColor: '#10b981',
+    textPrimary: '#111827',
+    textSecondary: '#6b7280',
+    background: '#ffffff',
+    headerStyle: 'banner',
+    buttonRadius: '9999px',
     blocks: [
       { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
     ],
     ctaText: 'Réserver',
   },
   {
-    id: 'modern',
-    name: 'Moderne',
-    description: 'Style minimal avec des touches élégantes.',
-    preview: {
-      headerStyle: 'minimal',
-      darkMode: false,
-      primaryColor: '#0ea5e9',
-      secondaryColor: '#0f172a',
-      accentColor: '#06b6d4',
-      textPrimary: '#0f172a',
-      textSecondary: '#64748b',
-    },
+    id: 'daft-punk',
+    name: 'Daft Punk',
+    fontFamily: 'space-grotesk',
+    darkMode: true,
+    primaryColor: '#ffffff',
+    secondaryColor: '#ffffff',
+    accentColor: '#888888',
+    textPrimary: '#ffffff',
+    textSecondary: '#999999',
+    background: '#0a0a0a',
+    headerStyle: 'minimal',
+    buttonRadius: '12px',
+    blocks: [
+      { id: 'formules', type: 'formules', title: 'Services', enabled: true, order: 1 },
+    ],
+    ctaText: 'Réserver',
+  },
+  {
+    id: 'grey',
+    name: 'Grey',
+    fontFamily: 'inter',
+    darkMode: false,
+    primaryColor: '#4b5563',
+    secondaryColor: '#1f2937',
+    accentColor: '#6b7280',
+    textPrimary: '#374151',
+    textSecondary: '#9ca3af',
+    background: '#f3f4f6',
+    headerStyle: 'minimal',
+    buttonRadius: '9999px',
+    blocks: [
+      { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
+    ],
+    ctaText: 'Réserver',
+  },
+  {
+    id: 'blue',
+    name: 'Blue',
+    fontFamily: 'dm-sans',
+    darkMode: false,
+    primaryColor: '#3b82f6',
+    secondaryColor: '#1e3a5f',
+    accentColor: '#60a5fa',
+    textPrimary: '#1e3a5f',
+    textSecondary: '#64748b',
+    background: '#dbeafe',
+    backgroundGradient: 'linear-gradient(180deg, #dbeafe 0%, #eff6ff 50%, #f0f9ff 100%)',
+    headerStyle: 'banner',
+    buttonRadius: '9999px',
+    blocks: [
+      { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
+    ],
+    ctaText: 'Prendre RDV',
+  },
+  {
+    id: 'aurora',
+    name: 'Aurora',
+    fontFamily: 'raleway',
+    darkMode: false,
+    primaryColor: '#be185d',
+    secondaryColor: '#1e1b4b',
+    accentColor: '#c084fc',
+    textPrimary: '#1e1b4b',
+    textSecondary: '#6b7280',
+    background: '#fce7f3',
+    backgroundGradient: 'linear-gradient(135deg, #fce7f3 0%, #ede9fe 50%, #dbeafe 100%)',
+    headerStyle: 'minimal',
+    buttonRadius: '9999px',
     blocks: [
       { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
       { id: 'reviews_google', type: 'reviews', title: 'Avis Google', enabled: true, order: 2, reviewPlatform: 'google', reviewRating: 5, reviewCount: 0, reviewUrl: '' },
-    ],
-    ctaText: 'Prendre rendez-vous',
-  },
-  {
-    id: 'bold',
-    name: 'Audacieux',
-    description: 'Couleurs vives et accrocheuses.',
-    preview: {
-      headerStyle: 'banner',
-      darkMode: false,
-      primaryColor: '#ef4444',
-      secondaryColor: '#1c1917',
-      accentColor: '#f59e0b',
-      textPrimary: '#1c1917',
-      textSecondary: '#78716c',
-    },
-    blocks: [
-      { id: 'formules', type: 'formules', title: 'Nos prestations', enabled: true, order: 1 },
-      { id: 'gallery_1', type: 'gallery', title: 'Nos réalisations', enabled: true, order: 2, images: [], galleryType: 'realizations' },
-    ],
-    ctaText: 'Réserver maintenant',
-  },
-  {
-    id: 'dark',
-    name: 'Premium',
-    description: 'Thème sombre, style luxe.',
-    preview: {
-      headerStyle: 'banner',
-      darkMode: true,
-      primaryColor: '#a855f7',
-      secondaryColor: '#1e1b4b',
-      accentColor: '#ec4899',
-      textPrimary: '#f8fafc',
-      textSecondary: '#94a3b8',
-    },
-    blocks: [
-      { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
-      { id: 'gallery_1', type: 'gallery', title: 'Galerie', enabled: true, order: 2, images: [], galleryType: 'gallery' },
-      { id: 'contact_1', type: 'contact', title: 'Contact', enabled: true, order: 3 },
     ],
     ctaText: 'Réserver',
   },
   {
     id: 'nature',
     name: 'Nature',
-    description: 'Tons verts apaisants et frais.',
-    preview: {
-      headerStyle: 'minimal',
-      darkMode: false,
-      primaryColor: '#22c55e',
-      secondaryColor: '#14532d',
-      accentColor: '#3b82f6',
-      textPrimary: '#14532d',
-      textSecondary: '#4b5563',
-    },
+    fontFamily: 'montserrat',
+    darkMode: false,
+    primaryColor: '#16a34a',
+    secondaryColor: '#14532d',
+    accentColor: '#22d3ee',
+    textPrimary: '#14532d',
+    textSecondary: '#4b5563',
+    background: '#f0fdf4',
+    backgroundGradient: 'linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 50%, #f0fdf4 100%)',
+    headerStyle: 'banner',
+    buttonRadius: '9999px',
     blocks: [
       { id: 'formules', type: 'formules', title: 'Nos services', enabled: true, order: 1 },
       { id: 'hours_1', type: 'hours', title: 'Horaires', enabled: true, order: 2 },
-      { id: 'address_1', type: 'address', title: 'Adresse', enabled: true, order: 3 },
     ],
     ctaText: 'Prendre RDV',
   },
   {
-    id: 'orange',
-    name: 'Énergie',
-    description: 'Orange dynamique et chaleureux.',
-    preview: {
-      headerStyle: 'banner',
-      darkMode: false,
-      primaryColor: '#f97316',
-      secondaryColor: '#431407',
-      accentColor: '#06b6d4',
-      textPrimary: '#431407',
-      textSecondary: '#78716c',
-    },
+    id: 'lemon',
+    name: 'Sharp Lemon',
+    fontFamily: 'poppins',
+    darkMode: false,
+    primaryColor: '#ca8a04',
+    secondaryColor: '#713f12',
+    accentColor: '#eab308',
+    textPrimary: '#713f12',
+    textSecondary: '#92400e',
+    background: '#fef9c3',
+    headerStyle: 'minimal',
+    buttonRadius: '12px',
     blocks: [
-      { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
-      { id: 'text_1', type: 'text_block', title: 'À propos', enabled: true, order: 2, content: '' },
+      { id: 'formules', type: 'formules', title: 'Nos prestations', enabled: true, order: 1 },
     ],
     ctaText: 'Réserver',
   },
+  {
+    id: 'premium',
+    name: 'Premium',
+    fontFamily: 'playfair',
+    darkMode: true,
+    primaryColor: '#a855f7',
+    secondaryColor: '#1e1b4b',
+    accentColor: '#ec4899',
+    textPrimary: '#f8fafc',
+    textSecondary: '#94a3b8',
+    background: '#0f0a1a',
+    backgroundGradient: 'linear-gradient(180deg, #0f0a1a 0%, #1a1035 50%, #0f0a1a 100%)',
+    headerStyle: 'banner',
+    buttonRadius: '9999px',
+    blocks: [
+      { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
+      { id: 'gallery_1', type: 'gallery', title: 'Galerie', enabled: true, order: 2, images: [], galleryType: 'gallery' },
+    ],
+    ctaText: 'Réserver',
+  },
+  {
+    id: 'brown',
+    name: 'Brown',
+    fontFamily: 'montserrat',
+    darkMode: false,
+    primaryColor: '#92400e',
+    secondaryColor: '#451a03',
+    accentColor: '#d97706',
+    textPrimary: '#451a03',
+    textSecondary: '#78350f',
+    background: '#fef3c7',
+    backgroundGradient: 'linear-gradient(180deg, #d2a679 0%, #fef3c7 40%, #fffbeb 100%)',
+    headerStyle: 'banner',
+    buttonRadius: '9999px',
+    blocks: [
+      { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
+    ],
+    ctaText: 'Réserver',
+  },
+  {
+    id: 'bold-red',
+    name: 'Bold',
+    fontFamily: 'space-grotesk',
+    darkMode: false,
+    primaryColor: '#dc2626',
+    secondaryColor: '#1c1917',
+    accentColor: '#f59e0b',
+    textPrimary: '#1c1917',
+    textSecondary: '#78716c',
+    background: '#ffffff',
+    headerStyle: 'banner',
+    buttonRadius: '12px',
+    blocks: [
+      { id: 'formules', type: 'formules', title: 'Nos prestations', enabled: true, order: 1 },
+      { id: 'gallery_1', type: 'gallery', title: 'Nos réalisations', enabled: true, order: 2, images: [], galleryType: 'realizations' },
+    ],
+    ctaText: 'Réserver maintenant',
+  },
 ];
+
+// Pre-load Google Fonts for template previews
+const fontLinks = new Set<string>();
+TEMPLATES.forEach(t => {
+  const url = GOOGLE_FONT_URLS[t.fontFamily];
+  if (url) fontLinks.add(url);
+});
 
 interface PageTemplateChooserProps {
   onSelect: (customization: CenterCustomization) => void;
@@ -154,15 +236,18 @@ export function PageTemplateChooser({ onSelect, onSkip }: PageTemplateChooserPro
     const customization: CenterCustomization = {
       ...defaultCustomization,
       colors: {
-        primary: template.preview.primaryColor,
-        secondary: template.preview.secondaryColor,
-        accent: template.preview.accentColor,
-        text_primary: template.preview.textPrimary,
-        text_secondary: template.preview.textSecondary,
+        primary: template.primaryColor,
+        secondary: template.secondaryColor,
+        accent: template.accentColor,
+        text_primary: template.textPrimary,
+        text_secondary: template.textSecondary,
+        background: template.background,
+        background_gradient: template.backgroundGradient,
       },
       layout: {
-        dark_mode: template.preview.darkMode,
-        header_style: template.preview.headerStyle,
+        dark_mode: template.darkMode,
+        header_style: template.headerStyle,
+        font_family: template.fontFamily,
       },
       texts: {
         ...defaultCustomization.texts,
@@ -175,111 +260,99 @@ export function PageTemplateChooser({ onSelect, onSkip }: PageTemplateChooserPro
   };
 
   return (
-    <div className="min-h-[calc(100vh-56px)] flex flex-col items-center justify-center p-6">
-      <div className="max-w-3xl w-full">
+    <div className="min-h-[calc(100vh-56px)] flex flex-col items-center justify-start p-6 overflow-y-auto">
+      {/* Font preload */}
+      {Array.from(fontLinks).map(url => (
+        <link key={url} rel="stylesheet" href={url} />
+      ))}
+
+      <div className="max-w-2xl w-full">
         {/* Header */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-5">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
             <Sparkles className="w-4 h-4" />
-            Nouvelle page
+            Thèmes
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3">
-            Choisissez un style
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Choisissez un thème
           </h1>
-          <p className="text-muted-foreground text-lg max-w-md mx-auto">
-            Sélectionnez un template pour démarrer. Vous pourrez tout personnaliser ensuite.
+          <p className="text-muted-foreground max-w-md mx-auto">
+            Sélectionnez un style pour démarrer. Vous pourrez tout personnaliser ensuite.
           </p>
         </div>
 
-        {/* Templates Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
+        {/* Templates Grid — paa.ge style visual cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
           {TEMPLATES.map((template) => (
             <button
               key={template.id}
               onClick={() => setSelected(template.id)}
               className={cn(
-                "relative flex flex-col rounded-2xl border-2 overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-lg text-left",
+                "relative flex flex-col rounded-2xl overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-lg text-left group",
                 selected === template.id
-                  ? "border-primary ring-4 ring-primary/20 shadow-lg"
-                  : "border-border hover:border-muted-foreground"
+                  ? "ring-[3px] ring-primary shadow-lg"
+                  : "ring-1 ring-border hover:ring-muted-foreground"
               )}
             >
-              {/* Mini preview */}
-              <div 
-                className="h-32 sm:h-40 relative overflow-hidden"
-                style={{ 
-                  backgroundColor: template.preview.darkMode ? '#111' : '#f8fafc',
+              {/* Visual preview — shows actual background + styled elements */}
+              <div
+                className="h-44 sm:h-52 relative overflow-hidden flex flex-col items-center justify-center p-4 gap-2.5"
+                style={{
+                  background: template.backgroundGradient || template.background,
+                  fontFamily: FONT_MAP[template.fontFamily] || FONT_MAP['system'],
                 }}
               >
-                {/* Header bar */}
-                <div 
-                  className="h-8 flex items-center px-3 gap-1.5"
-                  style={{ 
-                    backgroundColor: template.preview.headerStyle === 'banner' 
-                      ? template.preview.primaryColor + '20' 
-                      : 'transparent',
-                    borderBottom: `1px solid ${template.preview.darkMode ? '#333' : '#e5e7eb'}`
-                  }}
+                {/* Template name as "title" */}
+                <span
+                  className="text-base sm:text-lg font-bold tracking-tight text-center z-10"
+                  style={{ color: template.textPrimary }}
                 >
-                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: template.preview.primaryColor }} />
-                  <div 
-                    className="h-2 w-16 rounded-full" 
-                    style={{ backgroundColor: template.preview.textPrimary + '40' }} 
+                  {template.name}
+                </span>
+
+                {/* 3 fake button bars */}
+                {[0.75, 0.85, 0.65].map((w, i) => (
+                  <div
+                    key={i}
+                    className="h-9 sm:h-10 transition-all"
+                    style={{
+                      width: `${w * 100}%`,
+                      backgroundColor: template.darkMode
+                        ? `${template.primaryColor}22`
+                        : `${template.primaryColor}18`,
+                      borderRadius: template.buttonRadius,
+                      border: template.darkMode
+                        ? `1px solid ${template.primaryColor}33`
+                        : `1px solid ${template.primaryColor}20`,
+                    }}
                   />
-                </div>
-                
-                {/* Content preview lines */}
-                <div className="p-3 space-y-2">
-                  <div className="h-2 w-3/4 rounded-full" style={{ backgroundColor: template.preview.textPrimary + '25' }} />
-                  <div className="h-2 w-1/2 rounded-full" style={{ backgroundColor: template.preview.textSecondary + '25' }} />
-                  
-                  <div className="flex gap-1.5 mt-3">
-                    <div 
-                      className="h-6 flex-1 rounded-lg" 
-                      style={{ backgroundColor: template.preview.primaryColor + '20' }} 
-                    />
-                    <div 
-                      className="h-6 flex-1 rounded-lg" 
-                      style={{ backgroundColor: template.preview.primaryColor + '20' }} 
-                    />
-                  </div>
-                  
-                  <div 
-                    className="h-7 w-full rounded-lg mt-2" 
-                    style={{ backgroundColor: template.preview.primaryColor }} 
-                  />
-                </div>
+                ))}
 
                 {/* Selected check */}
                 {selected === template.id && (
-                  <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                  <div className="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-primary flex items-center justify-center shadow-lg">
                     <Check className="w-4 h-4 text-primary-foreground" />
                   </div>
                 )}
-              </div>
-
-              {/* Label */}
-              <div className="p-3 bg-background">
-                <p className="font-semibold text-sm text-foreground">{template.name}</p>
-                <p className="text-xs text-muted-foreground line-clamp-1">{template.description}</p>
               </div>
             </button>
           ))}
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex items-center justify-center gap-3 pb-6">
           <Button variant="ghost" onClick={onSkip} className="text-muted-foreground">
-            Passer cette étape
+            Passer
           </Button>
-          <Button 
-            variant="premium" 
-            size="lg" 
-            onClick={handleApply} 
+          <Button
+            variant="premium"
+            size="lg"
+            onClick={handleApply}
             disabled={!selected}
-            className="px-8"
+            className="px-8 gap-2"
           >
-            Utiliser ce template
+            Utiliser ce thème
+            <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
       </div>
