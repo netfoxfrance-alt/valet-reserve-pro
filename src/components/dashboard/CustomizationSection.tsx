@@ -8,11 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CenterCustomization, defaultCustomization, defaultBlocks, HeaderStyle } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, MapPin, Package, Layers, PanelTop, Minus } from 'lucide-react';
+import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, MapPin, Package, Layers, PanelTop, Minus, ChevronDown } from 'lucide-react';
 import { BlocksEditor } from './BlocksEditor';
 import { cn, stripHtml } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
 import { Checkbox } from '@/components/ui/checkbox';
+import { COLOR_THEMES, ColorTheme } from '@/lib/pageTemplates';
 
 interface CustomizationSectionProps {
   centerId: string;
