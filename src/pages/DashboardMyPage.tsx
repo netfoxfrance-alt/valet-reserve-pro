@@ -178,6 +178,7 @@ export default function DashboardMyPage() {
                     onLogoRemoved={async () => {
                       await updateCenter({ logo_url: null });
                     }}
+                    onOpenThemes={() => setShowTemplates(true)}
                   />
                 </div>
               )}
