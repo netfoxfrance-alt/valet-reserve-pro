@@ -7,6 +7,8 @@ import { Check, Sparkles, ArrowRight } from 'lucide-react';
 export interface PageTemplate {
   id: string;
   name: string;
+  description?: string;
+  category: 'theme' | 'template';
   fontFamily: FontFamily;
   darkMode: boolean;
   primaryColor: string;
