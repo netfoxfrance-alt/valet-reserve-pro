@@ -31,15 +31,6 @@ interface CustomizationSectionProps {
   onLogoRemoved?: () => void;
 }
 
-const COLOR_PRESETS = [
-  { name: 'Bleu', primary: '#3b82f6', secondary: '#1e293b', accent: '#10b981' },
-  { name: 'Rouge', primary: '#ef4444', secondary: '#1c1917', accent: '#f59e0b' },
-  { name: 'Vert', primary: '#22c55e', secondary: '#14532d', accent: '#3b82f6' },
-  { name: 'Violet', primary: '#8b5cf6', secondary: '#1e1b4b', accent: '#ec4899' },
-  { name: 'Orange', primary: '#f97316', secondary: '#431407', accent: '#06b6d4' },
-  { name: 'Rose', primary: '#ec4899', secondary: '#500724', accent: '#8b5cf6' },
-];
-
 const FONT_OPTIONS: { value: FontFamily; label: string; preview: string }[] = [
   { value: 'system', label: 'Système', preview: '-apple-system, sans-serif' },
   { value: 'inter', label: 'Inter', preview: '"Inter", sans-serif' },
