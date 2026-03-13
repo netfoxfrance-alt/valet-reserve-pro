@@ -31,15 +31,26 @@ function extractPlaceId(input: string): string | null {
  * Extract business name from various Google URL formats.
  */
 function extractBusinessName(url: string): string | null {
-  // From Google Maps: /maps/place/Business+Name/...
-  const mapsMatch = url.match(/\/maps\/place\/([^/@?]+)/);
-  if (mapsMatch) {
-    return decodeURIComponent(mapsMatch[1].replace(/\+/g, ' '));
-  }
-  
-  // From Google Search resolved URL: ?q=Business+Name
   try {
-    const urlObj = new URL(url);
+    let targetUrl = url;
+
+    // If it's a /sorry/ CAPTCHA page, get the real URL from `continue` param
+    if (url.includes('/sorry/index')) {
+      const urlObj = new URL(url);
+      const continueUrl = urlObj.searchParams.get('continue');
+      if (continueUrl) {
+        targetUrl = continueUrl;
+      }
+    }
+
+    // From Google Maps: /maps/place/Business+Name/...
+    const mapsMatch = targetUrl.match(/\/maps\/place\/([^/@?]+)/);
+    if (mapsMatch) {
+      return decodeURIComponent(mapsMatch[1].replace(/\+/g, ' '));
+    }
+
+    // From Google Search URL: ?q=Business+Name
+    const urlObj = new URL(targetUrl);
     const qParam = urlObj.searchParams.get('q');
     if (qParam) {
       return decodeURIComponent(qParam.replace(/\+/g, ' '));
