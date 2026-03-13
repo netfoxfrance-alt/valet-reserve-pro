@@ -478,7 +478,11 @@ export default function DashboardCalendar() {
     // Check overlapping
     const selectedService = customServices.find(s => s.id === createForm.custom_service_id);
     const selectedPack = packs.find(p => p.id === createForm.pack_id);
-    const duration = selectedService?.duration_minutes || 60;
+    const isQuotePack = selectedPack && (selectedPack as any).pricing_type === 'quote';
+    const duration = selectedService?.duration_minutes 
+      || (isQuotePack && createForm.duration_minutes ? parseInt(createForm.duration_minutes) : null)
+      || (selectedPack?.duration ? parseDurationStr(selectedPack.duration) : null)
+      || 60;
     
     const overlap = checkOverlap(createForm.appointment_date, createForm.appointment_time, duration);
     if (overlap) {
