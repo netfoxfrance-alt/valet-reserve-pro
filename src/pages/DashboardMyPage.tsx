@@ -13,12 +13,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { supabase } from '@/integrations/supabase/client';
-import { ExternalLink, Smartphone, Monitor, RefreshCw, Sparkles, Loader2, LayoutTemplate } from 'lucide-react';
+import { ExternalLink, Smartphone, Monitor, RefreshCw, Sparkles, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { trackEvent } from '@/lib/analytics';
-import { TemplateSelector } from '@/components/dashboard/TemplateSelector';
-import { PageOnboarding } from '@/components/dashboard/PageOnboarding';
 
 export default function DashboardMyPage() {
   const { t } = useTranslation();
@@ -35,10 +33,6 @@ export default function DashboardMyPage() {
   const [requestType, setRequestType] = useState<'design' | 'functionality' | 'both'>('functionality');
   const [requestMessage, setRequestMessage] = useState('');
   const [submittingRequest, setSubmittingRequest] = useState(false);
-  const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(() => {
-    return !localStorage.getItem('page_onboarding_done');
-  });
 
   useEffect(() => { if (center) setCustomization(center.customization || defaultCustomization); }, [center]);
 
@@ -96,21 +90,10 @@ export default function DashboardMyPage() {
 
   return (
     <DashboardLayout title={t('myPage.title')}>
-        {showOnboarding && center && user ? (
-          <PageOnboarding
-            customization={customization}
-            onUpdate={(c) => { setCustomization(c); setPreviewKey(prev => prev + 1); }}
-            onComplete={() => setShowOnboarding(false)}
-            userId={user.id}
-          />
-        ) : (
         <div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div><p className="text-muted-foreground text-sm">{t('myPage.customizeDesc')}</p></div>
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" onClick={() => setTemplateDialogOpen(true)}>
-                <LayoutTemplate className="w-4 h-4 mr-2" />Templates
-              </Button>
               <Button variant="ghost" size="sm" onClick={() => setRequestDialogOpen(true)} className="text-muted-foreground hover:text-foreground">
                 <Sparkles className="w-4 h-4 mr-2" />{t('myPage.privateCustomization')}
               </Button>
@@ -210,16 +193,6 @@ export default function DashboardMyPage() {
             </div>
           </div>
         </div>
-        )}
-      <TemplateSelector
-        open={templateDialogOpen}
-        onOpenChange={setTemplateDialogOpen}
-        currentCustomization={customization}
-        onApply={(newCustomization) => {
-          setCustomization(newCustomization);
-          handleRefreshPreview();
-        }}
-      />
       <Dialog open={requestDialogOpen} onOpenChange={setRequestDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
