@@ -210,6 +210,7 @@ export default function DashboardMyPage() {
             </div>
           </div>
         </div>
+        )}
       <TemplateSelector
         open={templateDialogOpen}
         onOpenChange={setTemplateDialogOpen}
