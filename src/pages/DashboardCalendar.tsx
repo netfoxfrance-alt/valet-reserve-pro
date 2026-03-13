@@ -1507,7 +1507,15 @@ export default function DashboardCalendar() {
                   serviceDurationMinutes={
                     createForm.custom_service_id
                       ? customServices.find(s => s.id === createForm.custom_service_id)?.duration_minutes
-                      : undefined
+                      : createForm.pack_id
+                        ? (() => {
+                            const pack = packs.find(p => p.id === createForm.pack_id);
+                            const isQuote = (pack as any)?.pricing_type === 'quote';
+                            if (isQuote && createForm.duration_minutes) return parseInt(createForm.duration_minutes);
+                            if (pack?.duration) return parseDurationStr(pack.duration);
+                            return undefined;
+                          })()
+                        : undefined
                   }
                   selectedDate={createForm.appointment_date}
                   selectedTime={createForm.appointment_time}
