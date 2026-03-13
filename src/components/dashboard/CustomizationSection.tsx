@@ -437,21 +437,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                   </Select>
                 </div>
 
-                {/* Font Size Scale */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-xs">Taille du texte</Label>
-                    <span className="text-xs text-muted-foreground">{Math.round((local.layout.font_size_scale || 1) * 100)}%</span>
-                  </div>
-                  <Slider
-                    value={[(local.layout.font_size_scale || 1) * 100]}
-                    min={85}
-                    max={120}
-                    step={5}
-                    onValueChange={([v]) => updateLayout({ font_size_scale: v / 100 })}
-                    className="py-2"
-                  />
-                </div>
               </div>
             </div>
 
