@@ -96,6 +96,9 @@ export default function DashboardMyPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div><p className="text-muted-foreground text-sm">{t('myPage.customizeDesc')}</p></div>
             <div className="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" onClick={() => setTemplateDialogOpen(true)}>
+                <LayoutTemplate className="w-4 h-4 mr-2" />Templates
+              </Button>
               <Button variant="ghost" size="sm" onClick={() => setRequestDialogOpen(true)} className="text-muted-foreground hover:text-foreground">
                 <Sparkles className="w-4 h-4 mr-2" />{t('myPage.privateCustomization')}
               </Button>
