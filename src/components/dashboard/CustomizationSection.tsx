@@ -110,11 +110,27 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     ? local.visible_pack_ids 
     : packs.map(p => p.id);
 
-  const applyPreset = (preset: typeof COLOR_PRESETS[0]) => {
-    updateColors({
-      primary: preset.primary,
-      secondary: preset.secondary,
-      accent: preset.accent,
+  const applyTemplate = (template: typeof TEMPLATES[0]) => {
+    updateLocal({
+      colors: {
+        primary: template.primaryColor,
+        secondary: template.secondaryColor,
+        accent: template.accentColor,
+        text_primary: template.textPrimary,
+        text_secondary: template.textSecondary,
+        background: template.background,
+        background_gradient: template.backgroundGradient,
+      },
+      layout: {
+        ...local.layout,
+        dark_mode: template.darkMode,
+        header_style: template.headerStyle,
+        font_family: template.fontFamily,
+      },
+      texts: {
+        ...local.texts,
+        cta_button: template.ctaText,
+      },
     });
   };
 
