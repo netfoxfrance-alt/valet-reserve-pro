@@ -533,13 +533,33 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               <div className="text-center py-8 text-muted-foreground">
                 <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p>Aucune formule créée</p>
-                <p className="text-sm">Créez des formules dans l'onglet "Formules" du menu.</p>
+                <p className="text-sm mb-4">Créez vos formules pour les afficher sur votre page.</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/dashboard/formules')}
+                  className="gap-1.5"
+                >
+                  <Plus className="w-4 h-4" />
+                  Créer une formule
+                </Button>
               </div>
             ) : (
               <>
-                <p className="text-sm text-muted-foreground">
-                  Sélectionnez les formules visibles sur votre page.
-                </p>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Sélectionnez les formules visibles sur votre page.
+                  </p>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigate('/dashboard/formules')}
+                    className="text-xs gap-1 h-7 px-2"
+                  >
+                    <Plus className="w-3 h-3" />
+                    Ajouter
+                  </Button>
+                </div>
                 <div className="space-y-2">
                   {packs.map((pack) => {
                     const isVisible = effectiveVisiblePacks.includes(pack.id);
