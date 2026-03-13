@@ -43,6 +43,7 @@ export interface PageBlock {
   reviewUrl?: string;               // URL to the review page
   reviewRating?: number;            // Rating (1-5, e.g. 4.8)
   reviewCount?: number;             // Number of reviews
+  reviewPlaceId?: string;           // Google Place ID for write-review URL
 }
 
 export type FontFamily = 

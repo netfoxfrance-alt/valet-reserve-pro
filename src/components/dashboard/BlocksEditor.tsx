@@ -262,7 +262,7 @@ export function BlocksEditor({
   };
 
   // Update review block properties
-  const updateReviewBlock = (id: string, updates: { reviewUrl?: string; reviewRating?: number; reviewCount?: number }) => {
+  const updateReviewBlock = (id: string, updates: { reviewUrl?: string; reviewRating?: number; reviewCount?: number; reviewPlaceId?: string }) => {
     onUpdateBlocks(blocks.map(b => 
       b.id === id ? { ...b, ...updates } : b
     ));

@@ -934,7 +934,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
           {/* Content */}
           <div className="flex-1 min-w-0">
             <p className="font-medium text-sm" style={{ color: textColors.primary }}>
-              {isGoogle ? 'Voir nos avis Google' : 'Voir nos avis TripAdvisor'}
+              {isGoogle ? (writeReviewUrl ? 'Laisser un avis Google' : 'Voir nos avis Google') : 'Voir nos avis TripAdvisor'}
             </p>
             <div className="flex items-center gap-1.5 mt-1">
               {/* Stars */}
