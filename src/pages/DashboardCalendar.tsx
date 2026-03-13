@@ -391,11 +391,12 @@ export default function DashboardCalendar() {
   const filteredServices = useMemo(() => {
     const items = serviceType === 'pack'
       ? packs.map(p => {
+          const isQuote = (p as any).pricing_type === 'quote';
           const variants = ((p as any).price_variants || []) as { name: string; price: number }[];
-          const hasVariants = variants.length > 0;
-          const minPrice = hasVariants ? Math.min(...variants.map(v => v.price)) : p.price;
-          const displayPrice = hasVariants ? `${minPrice}€+` : `${p.price}€`;
-          return { id: p.id, name: p.name, price: minPrice, displayPrice, duration: p.duration || '', type: 'pack' as const, hasVariants, variants };
+          const hasVariants = !isQuote && variants.length > 0;
+          const minPrice = isQuote ? 0 : (hasVariants ? Math.min(...variants.map(v => v.price)) : p.price);
+          const displayPrice = isQuote ? 'Sur devis' : (hasVariants ? `${minPrice}€+` : `${p.price}€`);
+          return { id: p.id, name: p.name, price: minPrice, displayPrice, duration: p.duration || '', type: 'pack' as const, hasVariants, variants, isQuote };
         })
       : customServices.filter(s => s.active).map(s => ({ id: s.id, name: s.name, price: s.price, displayPrice: `${s.price}€`, duration: formatDuration(s.duration_minutes), type: 'custom' as const, hasVariants: false, variants: [] as { name: string; price: number }[] }));
     if (!serviceSearch.trim()) return items.slice(0, 8);
