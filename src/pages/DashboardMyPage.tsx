@@ -34,6 +34,7 @@ export default function DashboardMyPage() {
   const [requestType, setRequestType] = useState<'design' | 'functionality' | 'both'>('functionality');
   const [requestMessage, setRequestMessage] = useState('');
   const [submittingRequest, setSubmittingRequest] = useState(false);
+  const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
 
   useEffect(() => { if (center) setCustomization(center.customization || defaultCustomization); }, [center]);
 
