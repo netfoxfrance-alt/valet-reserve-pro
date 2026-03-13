@@ -174,6 +174,49 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     }
   };
 
+  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast({ title: 'Erreur', description: 'Veuillez sélectionner une image.', variant: 'destructive' });
+      return;
+    }
+    setUploadingLogo(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${userId}/logo.${fileExt}`;
+      const { error: uploadError } = await supabase.storage
+        .from('center-logos')
+        .upload(fileName, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabase.storage
+        .from('center-logos')
+        .getPublicUrl(fileName);
+      onLogoUploaded?.(publicUrl);
+      toast({ title: 'Logo mis à jour !' });
+    } catch (error) {
+      toast({ title: 'Erreur', description: 'Impossible d\'uploader le logo.', variant: 'destructive' });
+    } finally {
+      setUploadingLogo(false);
+      event.target.value = '';
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    setUploadingLogo(true);
+    try {
+      await supabase.storage
+        .from('center-logos')
+        .remove([`${userId}/logo.png`, `${userId}/logo.jpg`, `${userId}/logo.jpeg`, `${userId}/logo.webp`]);
+      onLogoRemoved?.();
+      toast({ title: 'Logo supprimé' });
+    } catch (error) {
+      toast({ title: 'Erreur', description: 'Impossible de supprimer le logo.', variant: 'destructive' });
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
   const updateSeo = (seo: Partial<CenterCustomization['seo']>) => {
     updateLocal({ seo: { ...local.seo, ...seo } });
   };
