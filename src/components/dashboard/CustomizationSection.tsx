@@ -61,10 +61,11 @@ const BG_PRESETS = [
   { name: 'Nuit', value: '#0f0a1a', gradient: 'linear-gradient(180deg, #0f0a1a 0%, #1a1035 100%)' },
 ];
 
-export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [], centerAddress, centerPhone }: CustomizationSectionProps) {
+export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [], centerAddress, centerPhone, logoUrl, onLogoUploaded, onLogoRemoved }: CustomizationSectionProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const [local, setLocal] = useState<CenterCustomization>(customization);
 
   // Sync local state when prop changes from parent
