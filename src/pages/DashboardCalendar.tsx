@@ -1410,20 +1410,37 @@ export default function DashboardCalendar() {
               {createForm.pack_id && (() => {
                 const pack = packs.find(p => p.id === createForm.pack_id);
                 if (!pack) return null;
+                const isQuote = (pack as any).pricing_type === 'quote';
                 const variants = ((pack as any).price_variants || []) as { name: string; price: number }[];
-                const hasVariants = variants.length > 0;
-                const displayPrice = hasVariants 
-                  ? (selectedVariant ? variants.find(v => v.name === selectedVariant)?.price : null)
-                  : pack.price;
+                const hasVariants = !isQuote && variants.length > 0;
+                const displayPrice = isQuote
+                  ? (createForm.custom_price ? `${createForm.custom_price}€` : 'Sur devis')
+                  : hasVariants 
+                    ? (selectedVariant ? `${variants.find(v => v.name === selectedVariant)?.price}€` : 'Sélectionnez une option')
+                    : `${pack.price}€`;
 
                 return (
                   <div className="space-y-2">
                     <div className="bg-primary/5 rounded-lg p-3 text-sm">
                       <p className="font-medium text-primary">{pack.name}</p>
                       <p className="text-muted-foreground">
-                        {pack.duration || t('common.duration')} • {displayPrice !== null && displayPrice !== undefined ? `${displayPrice}€` : 'Sélectionnez une option'}
+                        {pack.duration || t('common.duration')} • {displayPrice}
                       </p>
                     </div>
+                    {isQuote && (
+                      <div className="space-y-1.5">
+                        <Label className="text-xs text-muted-foreground">Montant négocié (€) *</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="Ex: 150"
+                          value={createForm.custom_price}
+                          onChange={(e) => setCreateForm(prev => ({ ...prev, custom_price: e.target.value }))}
+                          className="h-11 rounded-xl"
+                        />
+                      </div>
+                    )}
                     {hasVariants && (
                       <div className="space-y-1.5">
                         <Label className="text-xs text-muted-foreground">Sélectionner une option *</Label>
