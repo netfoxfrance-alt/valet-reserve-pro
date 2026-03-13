@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CenterCustomization, defaultCustomization, PageBlock, FontFamily, FONT_MAP, GOOGLE_FONT_URLS } from '@/types/customization';
 import { cn } from '@/lib/utils';
-import { Check, Sparkles, ArrowRight } from 'lucide-react';
+import { Check, Sparkles, ArrowRight, Layers } from 'lucide-react';
 
 export interface PageTemplate {
   id: string;
   name: string;
+  description?: string;
+  category: 'theme' | 'template';
   fontFamily: FontFamily;
   darkMode: boolean;
   primaryColor: string;
@@ -23,194 +25,184 @@ export interface PageTemplate {
 }
 
 export const TEMPLATES: PageTemplate[] = [
+  // ── THEMES (style only, minimal blocks) ──
   {
-    id: 'default',
-    name: 'Classique',
-    fontFamily: 'system',
-    darkMode: false,
-    primaryColor: '#3b82f6',
-    secondaryColor: '#1e293b',
-    accentColor: '#10b981',
-    textPrimary: '#111827',
-    textSecondary: '#6b7280',
-    background: '#ffffff',
-    headerStyle: 'minimal',
-    buttonRadius: '9999px',
-    blocks: [
-      { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
-    ],
+    id: 'default', name: 'Classique', category: 'theme',
+    fontFamily: 'system', darkMode: false,
+    primaryColor: '#3b82f6', secondaryColor: '#1e293b', accentColor: '#10b981',
+    textPrimary: '#111827', textSecondary: '#6b7280', background: '#ffffff',
+    headerStyle: 'minimal', buttonRadius: '9999px',
+    blocks: [{ id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 }],
     ctaText: 'Réserver',
   },
   {
-    id: 'daft-punk',
-    name: 'Noir',
-    fontFamily: 'space-grotesk',
-    darkMode: true,
-    primaryColor: '#ffffff',
-    secondaryColor: '#ffffff',
-    accentColor: '#888888',
-    textPrimary: '#ffffff',
-    textSecondary: '#999999',
-    background: '#0a0a0a',
-    headerStyle: 'minimal',
-    buttonRadius: '12px',
-    blocks: [
-      { id: 'formules', type: 'formules', title: 'Services', enabled: true, order: 1 },
-    ],
+    id: 'daft-punk', name: 'Noir', category: 'theme',
+    fontFamily: 'space-grotesk', darkMode: true,
+    primaryColor: '#ffffff', secondaryColor: '#ffffff', accentColor: '#888888',
+    textPrimary: '#ffffff', textSecondary: '#999999', background: '#0a0a0a',
+    headerStyle: 'minimal', buttonRadius: '12px',
+    blocks: [{ id: 'formules', type: 'formules', title: 'Services', enabled: true, order: 1 }],
     ctaText: 'Réserver',
   },
   {
-    id: 'grey',
-    name: 'Gris',
-    fontFamily: 'inter',
-    darkMode: false,
-    primaryColor: '#4b5563',
-    secondaryColor: '#1f2937',
-    accentColor: '#6b7280',
-    textPrimary: '#374151',
-    textSecondary: '#9ca3af',
-    background: '#f3f4f6',
-    headerStyle: 'minimal',
-    buttonRadius: '9999px',
-    blocks: [
-      { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
-    ],
+    id: 'grey', name: 'Gris', category: 'theme',
+    fontFamily: 'inter', darkMode: false,
+    primaryColor: '#4b5563', secondaryColor: '#1f2937', accentColor: '#6b7280',
+    textPrimary: '#374151', textSecondary: '#9ca3af', background: '#f3f4f6',
+    headerStyle: 'minimal', buttonRadius: '9999px',
+    blocks: [{ id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 }],
     ctaText: 'Réserver',
   },
   {
-    id: 'blue',
-    name: 'Océan',
-    fontFamily: 'dm-sans',
-    darkMode: false,
-    primaryColor: '#3b82f6',
-    secondaryColor: '#1e3a5f',
-    accentColor: '#60a5fa',
-    textPrimary: '#1e3a5f',
-    textSecondary: '#64748b',
-    background: '#dbeafe',
+    id: 'blue', name: 'Océan', category: 'theme',
+    fontFamily: 'dm-sans', darkMode: false,
+    primaryColor: '#3b82f6', secondaryColor: '#1e3a5f', accentColor: '#60a5fa',
+    textPrimary: '#1e3a5f', textSecondary: '#64748b', background: '#dbeafe',
     backgroundGradient: 'linear-gradient(180deg, #dbeafe 0%, #eff6ff 50%, #f0f9ff 100%)',
-    headerStyle: 'banner',
-    buttonRadius: '9999px',
-    blocks: [
-      { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
-    ],
+    headerStyle: 'banner', buttonRadius: '9999px',
+    blocks: [{ id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 }],
     ctaText: 'Prendre RDV',
   },
   {
-    id: 'aurora',
-    name: 'Aurore',
-    fontFamily: 'raleway',
-    darkMode: false,
-    primaryColor: '#be185d',
-    secondaryColor: '#1e1b4b',
-    accentColor: '#c084fc',
-    textPrimary: '#1e1b4b',
-    textSecondary: '#6b7280',
-    background: '#fce7f3',
+    id: 'aurora', name: 'Aurore', category: 'theme',
+    fontFamily: 'raleway', darkMode: false,
+    primaryColor: '#be185d', secondaryColor: '#1e1b4b', accentColor: '#c084fc',
+    textPrimary: '#1e1b4b', textSecondary: '#6b7280', background: '#fce7f3',
     backgroundGradient: 'linear-gradient(135deg, #fce7f3 0%, #ede9fe 50%, #dbeafe 100%)',
-    headerStyle: 'minimal',
-    buttonRadius: '9999px',
-    blocks: [
-      { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
-      { id: 'reviews_google', type: 'reviews', title: 'Avis Google', enabled: true, order: 2, reviewPlatform: 'google', reviewRating: 5, reviewCount: 0, reviewUrl: '' },
-    ],
+    headerStyle: 'minimal', buttonRadius: '9999px',
+    blocks: [{ id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 }],
     ctaText: 'Réserver',
   },
   {
-    id: 'nature',
-    name: 'Nature',
-    fontFamily: 'montserrat',
-    darkMode: false,
-    primaryColor: '#16a34a',
-    secondaryColor: '#14532d',
-    accentColor: '#22d3ee',
-    textPrimary: '#14532d',
-    textSecondary: '#4b5563',
-    background: '#f0fdf4',
+    id: 'nature', name: 'Nature', category: 'theme',
+    fontFamily: 'montserrat', darkMode: false,
+    primaryColor: '#16a34a', secondaryColor: '#14532d', accentColor: '#22d3ee',
+    textPrimary: '#14532d', textSecondary: '#4b5563', background: '#f0fdf4',
     backgroundGradient: 'linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 50%, #f0fdf4 100%)',
-    headerStyle: 'banner',
-    buttonRadius: '9999px',
+    headerStyle: 'banner', buttonRadius: '9999px',
+    blocks: [{ id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 }],
+    ctaText: 'Prendre RDV',
+  },
+  {
+    id: 'lemon', name: 'Citron', category: 'theme',
+    fontFamily: 'poppins', darkMode: false,
+    primaryColor: '#ca8a04', secondaryColor: '#713f12', accentColor: '#eab308',
+    textPrimary: '#713f12', textSecondary: '#92400e', background: '#fef9c3',
+    headerStyle: 'minimal', buttonRadius: '12px',
+    blocks: [{ id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 }],
+    ctaText: 'Réserver',
+  },
+  {
+    id: 'premium', name: 'Prestige', category: 'theme',
+    fontFamily: 'playfair', darkMode: true,
+    primaryColor: '#a855f7', secondaryColor: '#1e1b4b', accentColor: '#ec4899',
+    textPrimary: '#f8fafc', textSecondary: '#94a3b8', background: '#0f0a1a',
+    backgroundGradient: 'linear-gradient(180deg, #0f0a1a 0%, #1a1035 50%, #0f0a1a 100%)',
+    headerStyle: 'banner', buttonRadius: '9999px',
+    blocks: [{ id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 }],
+    ctaText: 'Réserver',
+  },
+  {
+    id: 'brown', name: 'Caramel', category: 'theme',
+    fontFamily: 'montserrat', darkMode: false,
+    primaryColor: '#92400e', secondaryColor: '#451a03', accentColor: '#d97706',
+    textPrimary: '#451a03', textSecondary: '#78350f', background: '#fef3c7',
+    backgroundGradient: 'linear-gradient(180deg, #d2a679 0%, #fef3c7 40%, #fffbeb 100%)',
+    headerStyle: 'banner', buttonRadius: '9999px',
+    blocks: [{ id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 }],
+    ctaText: 'Réserver',
+  },
+  {
+    id: 'bold-red', name: 'Dynamique', category: 'theme',
+    fontFamily: 'space-grotesk', darkMode: false,
+    primaryColor: '#dc2626', secondaryColor: '#1c1917', accentColor: '#f59e0b',
+    textPrimary: '#1c1917', textSecondary: '#78716c', background: '#ffffff',
+    headerStyle: 'banner', buttonRadius: '12px',
+    blocks: [{ id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 }],
+    ctaText: 'Réserver',
+  },
+
+  // ── PAGE TEMPLATES (pre-built structures with multiple blocks) ──
+  {
+    id: 'tpl-vitrine', name: 'Vitrine', category: 'template',
+    description: 'Formules + Galerie + Horaires + Adresse',
+    fontFamily: 'dm-sans', darkMode: false,
+    primaryColor: '#3b82f6', secondaryColor: '#1e3a5f', accentColor: '#10b981',
+    textPrimary: '#1e3a5f', textSecondary: '#64748b', background: '#ffffff',
+    headerStyle: 'banner', buttonRadius: '9999px',
     blocks: [
-      { id: 'formules', type: 'formules', title: 'Nos services', enabled: true, order: 1 },
-      { id: 'hours_1', type: 'hours', title: 'Horaires', enabled: true, order: 2 },
+      { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
+      { id: 'gallery_1', type: 'gallery', title: 'Nos réalisations', enabled: true, order: 2, images: [], galleryType: 'realizations' },
+      { id: 'hours_1', type: 'hours', title: 'Horaires', enabled: true, order: 3 },
+      { id: 'address_1', type: 'address', title: 'Adresse', enabled: true, order: 4 },
     ],
     ctaText: 'Prendre RDV',
   },
   {
-    id: 'lemon',
-    name: 'Citron',
-    fontFamily: 'poppins',
-    darkMode: false,
-    primaryColor: '#ca8a04',
-    secondaryColor: '#713f12',
-    accentColor: '#eab308',
-    textPrimary: '#713f12',
-    textSecondary: '#92400e',
-    background: '#fef9c3',
-    headerStyle: 'minimal',
-    buttonRadius: '12px',
-    blocks: [
-      { id: 'formules', type: 'formules', title: 'Nos prestations', enabled: true, order: 1 },
-    ],
-    ctaText: 'Réserver',
-  },
-  {
-    id: 'premium',
-    name: 'Prestige',
-    fontFamily: 'playfair',
-    darkMode: true,
-    primaryColor: '#a855f7',
-    secondaryColor: '#1e1b4b',
-    accentColor: '#ec4899',
-    textPrimary: '#f8fafc',
-    textSecondary: '#94a3b8',
-    background: '#0f0a1a',
+    id: 'tpl-prestige', name: 'Prestige', category: 'template',
+    description: 'Formules + Galerie + Avis Google + À propos',
+    fontFamily: 'playfair', darkMode: true,
+    primaryColor: '#a855f7', secondaryColor: '#1e1b4b', accentColor: '#ec4899',
+    textPrimary: '#f8fafc', textSecondary: '#94a3b8', background: '#0f0a1a',
     backgroundGradient: 'linear-gradient(180deg, #0f0a1a 0%, #1a1035 50%, #0f0a1a 100%)',
-    headerStyle: 'banner',
-    buttonRadius: '9999px',
+    headerStyle: 'banner', buttonRadius: '9999px',
     blocks: [
       { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
       { id: 'gallery_1', type: 'gallery', title: 'Galerie', enabled: true, order: 2, images: [], galleryType: 'gallery' },
+      { id: 'reviews_google', type: 'reviews', title: 'Avis Google', enabled: true, order: 3, reviewPlatform: 'google', reviewRating: 5, reviewCount: 0, reviewUrl: '' },
+      { id: 'text_1', type: 'text_block', title: 'À propos', enabled: true, order: 4, content: '' },
     ],
     ctaText: 'Réserver',
   },
   {
-    id: 'brown',
-    name: 'Caramel',
-    fontFamily: 'montserrat',
-    darkMode: false,
-    primaryColor: '#92400e',
-    secondaryColor: '#451a03',
-    accentColor: '#d97706',
-    textPrimary: '#451a03',
-    textSecondary: '#78350f',
-    background: '#fef3c7',
-    backgroundGradient: 'linear-gradient(180deg, #d2a679 0%, #fef3c7 40%, #fffbeb 100%)',
-    headerStyle: 'banner',
-    buttonRadius: '9999px',
+    id: 'tpl-local', name: 'Local', category: 'template',
+    description: 'Formules + Avis + Horaires + Téléphone + Adresse',
+    fontFamily: 'montserrat', darkMode: false,
+    primaryColor: '#16a34a', secondaryColor: '#14532d', accentColor: '#22d3ee',
+    textPrimary: '#14532d', textSecondary: '#4b5563', background: '#f0fdf4',
+    backgroundGradient: 'linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 50%, #f0fdf4 100%)',
+    headerStyle: 'banner', buttonRadius: '9999px',
     blocks: [
-      { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
+      { id: 'formules', type: 'formules', title: 'Nos services', enabled: true, order: 1 },
+      { id: 'reviews_google', type: 'reviews', title: 'Avis Google', enabled: true, order: 2, reviewPlatform: 'google', reviewRating: 5, reviewCount: 0, reviewUrl: '' },
+      { id: 'hours_1', type: 'hours', title: 'Horaires', enabled: true, order: 3 },
+      { id: 'phone_1', type: 'phone', title: 'Téléphone', enabled: true, order: 4 },
+      { id: 'address_1', type: 'address', title: 'Adresse', enabled: true, order: 5 },
     ],
-    ctaText: 'Réserver',
+    ctaText: 'Prendre RDV',
   },
   {
-    id: 'bold-red',
-    name: 'Dynamique',
-    fontFamily: 'space-grotesk',
-    darkMode: false,
-    primaryColor: '#dc2626',
-    secondaryColor: '#1c1917',
-    accentColor: '#f59e0b',
-    textPrimary: '#1c1917',
-    textSecondary: '#78716c',
-    background: '#ffffff',
-    headerStyle: 'banner',
-    buttonRadius: '12px',
+    id: 'tpl-portfolio', name: 'Portfolio', category: 'template',
+    description: 'Formules + Avant/Après + Galerie + Avis',
+    fontFamily: 'space-grotesk', darkMode: false,
+    primaryColor: '#dc2626', secondaryColor: '#1c1917', accentColor: '#f59e0b',
+    textPrimary: '#1c1917', textSecondary: '#78716c', background: '#ffffff',
+    headerStyle: 'banner', buttonRadius: '12px',
     blocks: [
       { id: 'formules', type: 'formules', title: 'Nos prestations', enabled: true, order: 1 },
-      { id: 'gallery_1', type: 'gallery', title: 'Nos réalisations', enabled: true, order: 2, images: [], galleryType: 'realizations' },
+      { id: 'gallery_1', type: 'gallery', title: 'Avant / Après', enabled: true, order: 2, images: [], galleryType: 'before_after' },
+      { id: 'gallery_2', type: 'gallery', title: 'Nos réalisations', enabled: true, order: 3, images: [], galleryType: 'realizations' },
+      { id: 'reviews_google', type: 'reviews', title: 'Avis clients', enabled: true, order: 4, reviewPlatform: 'google', reviewRating: 5, reviewCount: 0, reviewUrl: '' },
     ],
     ctaText: 'Réserver maintenant',
+  },
+  {
+    id: 'tpl-complet', name: 'Complet', category: 'template',
+    description: 'Tous les éléments : formules, galerie, avis, horaires, contact',
+    fontFamily: 'inter', darkMode: false,
+    primaryColor: '#4b5563', secondaryColor: '#1f2937', accentColor: '#6b7280',
+    textPrimary: '#374151', textSecondary: '#9ca3af', background: '#f3f4f6',
+    headerStyle: 'banner', buttonRadius: '9999px',
+    blocks: [
+      { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
+      { id: 'gallery_1', type: 'gallery', title: 'Nos réalisations', enabled: true, order: 2, images: [], galleryType: 'realizations' },
+      { id: 'reviews_google', type: 'reviews', title: 'Avis Google', enabled: true, order: 3, reviewPlatform: 'google', reviewRating: 5, reviewCount: 0, reviewUrl: '' },
+      { id: 'text_1', type: 'text_block', title: 'À propos', enabled: true, order: 4, content: '' },
+      { id: 'hours_1', type: 'hours', title: 'Horaires', enabled: true, order: 5 },
+      { id: 'phone_1', type: 'phone', title: 'Téléphone', enabled: true, order: 6 },
+      { id: 'address_1', type: 'address', title: 'Adresse', enabled: true, order: 7 },
+    ],
+    ctaText: 'Réserver',
   },
 ];
 
@@ -226,8 +218,75 @@ interface PageTemplateChooserProps {
   onSkip: () => void;
 }
 
+const themes = TEMPLATES.filter(t => t.category === 'theme');
+const pageTemplates = TEMPLATES.filter(t => t.category === 'template');
+
+function TemplateCard({ template, selected, onSelect }: { template: PageTemplate; selected: boolean; onSelect: () => void }) {
+  return (
+    <button
+      onClick={onSelect}
+      className={cn(
+        "relative flex flex-col rounded-2xl overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-lg text-left group",
+        selected
+          ? "ring-[3px] ring-primary shadow-lg"
+          : "ring-1 ring-border hover:ring-muted-foreground"
+      )}
+    >
+      <div
+        className="h-44 sm:h-52 relative overflow-hidden flex flex-col items-center justify-center p-4 gap-2.5"
+        style={{
+          background: template.backgroundGradient || template.background,
+          fontFamily: FONT_MAP[template.fontFamily] || FONT_MAP['system'],
+        }}
+      >
+        <span
+          className="text-base sm:text-lg font-bold tracking-tight text-center z-10"
+          style={{ color: template.textPrimary }}
+        >
+          {template.name}
+        </span>
+
+        {/* Fake block bars — more bars for templates */}
+        {(template.category === 'template'
+          ? [0.75, 0.85, 0.65, 0.7, 0.8]
+          : [0.75, 0.85, 0.65]
+        ).map((w, i) => (
+          <div
+            key={i}
+            className={cn("transition-all", template.category === 'template' ? "h-6 sm:h-7" : "h-9 sm:h-10")}
+            style={{
+              width: `${w * 100}%`,
+              backgroundColor: template.darkMode
+                ? `${template.primaryColor}22`
+                : `${template.primaryColor}18`,
+              borderRadius: template.buttonRadius,
+              border: template.darkMode
+                ? `1px solid ${template.primaryColor}33`
+                : `1px solid ${template.primaryColor}20`,
+            }}
+          />
+        ))}
+
+        {selected && (
+          <div className="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-primary flex items-center justify-center shadow-lg">
+            <Check className="w-4 h-4 text-primary-foreground" />
+          </div>
+        )}
+      </div>
+
+      {/* Description for templates */}
+      {template.description && (
+        <div className="px-3 py-2 bg-card border-t border-border">
+          <p className="text-[11px] text-muted-foreground leading-tight">{template.description}</p>
+        </div>
+      )}
+    </button>
+  );
+}
+
 export function PageTemplateChooser({ onSelect, onSkip }: PageTemplateChooserProps) {
   const [selected, setSelected] = useState<string | null>(null);
+  const [tab, setTab] = useState<'themes' | 'templates'>('themes');
 
   const handleApply = () => {
     const template = TEMPLATES.find(t => t.id === selected);
@@ -259,6 +318,8 @@ export function PageTemplateChooser({ onSelect, onSkip }: PageTemplateChooserPro
     onSelect(customization);
   };
 
+  const currentItems = tab === 'themes' ? themes : pageTemplates;
+
   return (
     <div className="min-h-[calc(100vh-56px)] flex flex-col items-center justify-start p-6 overflow-y-auto">
       {/* Font preload */}
@@ -268,74 +329,59 @@ export function PageTemplateChooser({ onSelect, onSkip }: PageTemplateChooserPro
 
       <div className="max-w-2xl w-full">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            <Sparkles className="w-4 h-4" />
-            Thèmes
-          </div>
+        <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Choisissez un thème
+            Choisissez un style
           </h1>
           <p className="text-muted-foreground max-w-md mx-auto">
             Sélectionnez un style pour démarrer. Vous pourrez tout personnaliser ensuite.
           </p>
         </div>
 
-        {/* Templates Grid — paa.ge style visual cards */}
+        {/* Tabs */}
+        <div className="flex items-center gap-1 p-1 rounded-xl bg-muted mb-6 max-w-xs mx-auto">
+          <button
+            onClick={() => setTab('themes')}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+              tab === 'themes'
+                ? "bg-background shadow-sm text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Thèmes
+          </button>
+          <button
+            onClick={() => setTab('templates')}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+              tab === 'templates'
+                ? "bg-background shadow-sm text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            Pages types
+          </button>
+        </div>
+
+        {/* Subtitle */}
+        <p className="text-xs text-muted-foreground text-center mb-4">
+          {tab === 'themes'
+            ? 'Couleurs, polices et style visuel uniquement'
+            : 'Pages pré-construites avec des blocs configurés'}
+        </p>
+
+        {/* Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
-          {TEMPLATES.map((template) => (
-            <button
+          {currentItems.map((template) => (
+            <TemplateCard
               key={template.id}
-              onClick={() => setSelected(template.id)}
-              className={cn(
-                "relative flex flex-col rounded-2xl overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-lg text-left group",
-                selected === template.id
-                  ? "ring-[3px] ring-primary shadow-lg"
-                  : "ring-1 ring-border hover:ring-muted-foreground"
-              )}
-            >
-              {/* Visual preview — shows actual background + styled elements */}
-              <div
-                className="h-44 sm:h-52 relative overflow-hidden flex flex-col items-center justify-center p-4 gap-2.5"
-                style={{
-                  background: template.backgroundGradient || template.background,
-                  fontFamily: FONT_MAP[template.fontFamily] || FONT_MAP['system'],
-                }}
-              >
-                {/* Template name as "title" */}
-                <span
-                  className="text-base sm:text-lg font-bold tracking-tight text-center z-10"
-                  style={{ color: template.textPrimary }}
-                >
-                  {template.name}
-                </span>
-
-                {/* 3 fake button bars */}
-                {[0.75, 0.85, 0.65].map((w, i) => (
-                  <div
-                    key={i}
-                    className="h-9 sm:h-10 transition-all"
-                    style={{
-                      width: `${w * 100}%`,
-                      backgroundColor: template.darkMode
-                        ? `${template.primaryColor}22`
-                        : `${template.primaryColor}18`,
-                      borderRadius: template.buttonRadius,
-                      border: template.darkMode
-                        ? `1px solid ${template.primaryColor}33`
-                        : `1px solid ${template.primaryColor}20`,
-                    }}
-                  />
-                ))}
-
-                {/* Selected check */}
-                {selected === template.id && (
-                  <div className="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-primary flex items-center justify-center shadow-lg">
-                    <Check className="w-4 h-4 text-primary-foreground" />
-                  </div>
-                )}
-              </div>
-            </button>
+              template={template}
+              selected={selected === template.id}
+              onSelect={() => setSelected(template.id)}
+            />
           ))}
         </div>
 
@@ -351,7 +397,7 @@ export function PageTemplateChooser({ onSelect, onSkip }: PageTemplateChooserPro
             disabled={!selected}
             className="px-8 gap-2"
           >
-            Utiliser ce thème
+            Utiliser ce {tab === 'themes' ? 'thème' : 'template'}
             <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
