@@ -5,14 +5,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CenterCustomization, defaultCustomization, defaultBlocks, HeaderStyle } from '@/types/customization';
+import { CenterCustomization, defaultCustomization, defaultBlocks, HeaderStyle, FontFamily, FONT_MAP, GOOGLE_FONT_URLS } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, MapPin, Package, Layers, PanelTop, Minus } from 'lucide-react';
+import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, MapPin, Package, Layers, PanelTop, Minus, Plus, Type } from 'lucide-react';
 import { BlocksEditor } from './BlocksEditor';
 import { cn, stripHtml } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useNavigate } from 'react-router-dom';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
 
 interface CustomizationSectionProps {
   centerId: string;
@@ -33,8 +36,31 @@ const COLOR_PRESETS = [
   { name: 'Rose', primary: '#ec4899', secondary: '#500724', accent: '#8b5cf6' },
 ];
 
+const FONT_OPTIONS: { value: FontFamily; label: string; preview: string }[] = [
+  { value: 'system', label: 'Système', preview: '-apple-system, sans-serif' },
+  { value: 'inter', label: 'Inter', preview: '"Inter", sans-serif' },
+  { value: 'poppins', label: 'Poppins', preview: '"Poppins", sans-serif' },
+  { value: 'playfair', label: 'Playfair Display', preview: '"Playfair Display", serif' },
+  { value: 'montserrat', label: 'Montserrat', preview: '"Montserrat", sans-serif' },
+  { value: 'raleway', label: 'Raleway', preview: '"Raleway", sans-serif' },
+  { value: 'dm-sans', label: 'DM Sans', preview: '"DM Sans", sans-serif' },
+  { value: 'space-grotesk', label: 'Space Grotesk', preview: '"Space Grotesk", sans-serif' },
+];
+
+const BG_PRESETS = [
+  { name: 'Blanc', value: '#ffffff', gradient: undefined },
+  { name: 'Gris clair', value: '#f3f4f6', gradient: undefined },
+  { name: 'Crème', value: '#fefce8', gradient: undefined },
+  { name: 'Bleu doux', value: '#dbeafe', gradient: 'linear-gradient(180deg, #dbeafe 0%, #eff6ff 100%)' },
+  { name: 'Rose pâle', value: '#fce7f3', gradient: 'linear-gradient(135deg, #fce7f3 0%, #ede9fe 100%)' },
+  { name: 'Vert pâle', value: '#f0fdf4', gradient: 'linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 100%)' },
+  { name: 'Noir', value: '#0a0a0a', gradient: undefined },
+  { name: 'Nuit', value: '#0f0a1a', gradient: 'linear-gradient(180deg, #0f0a1a 0%, #1a1035 100%)' },
+];
+
 export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [], centerAddress, centerPhone }: CustomizationSectionProps) {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [uploadingCover, setUploadingCover] = useState(false);
   const [local, setLocal] = useState<CenterCustomization>(customization);
 
@@ -372,6 +398,109 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
 
             </div>
 
+            {/* Typography */}
+            <div>
+              <Label className="text-sm font-medium mb-3 block flex items-center gap-1.5">
+                <Type className="w-4 h-4" />
+                Typographie
+              </Label>
+              
+              {/* Font Family */}
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <Label className="text-xs">Police</Label>
+                  <Select
+                    value={local.layout.font_family || 'system'}
+                    onValueChange={(v) => {
+                      const font = v as FontFamily;
+                      // Preload font
+                      const url = GOOGLE_FONT_URLS[font];
+                      if (url && !document.querySelector(`link[href="${url}"]`)) {
+                        const link = document.createElement('link');
+                        link.rel = 'stylesheet';
+                        link.href = url;
+                        document.head.appendChild(link);
+                      }
+                      updateLayout({ font_family: font });
+                    }}
+                  >
+                    <SelectTrigger className="h-10">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FONT_OPTIONS.map(f => (
+                        <SelectItem key={f.value} value={f.value}>
+                          <span style={{ fontFamily: f.preview }}>{f.label}</span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Font Size Scale */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Taille du texte</Label>
+                    <span className="text-xs text-muted-foreground">{Math.round((local.layout.font_size_scale || 1) * 100)}%</span>
+                  </div>
+                  <Slider
+                    value={[(local.layout.font_size_scale || 1) * 100]}
+                    min={85}
+                    max={120}
+                    step={5}
+                    onValueChange={([v]) => updateLayout({ font_size_scale: v / 100 })}
+                    className="py-2"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Background */}
+            <div>
+              <Label className="text-sm font-medium mb-3 block">Fond de page</Label>
+              <div className="grid grid-cols-4 gap-2 mb-3">
+                {BG_PRESETS.map((bg) => {
+                  const isSelected = (local.colors.background || '#ffffff') === bg.value;
+                  return (
+                    <button
+                      key={bg.name}
+                      onClick={() => updateColors({ background: bg.value, background_gradient: bg.gradient })}
+                      className={cn(
+                        "h-12 rounded-lg border-2 transition-all hover:scale-105 relative overflow-hidden",
+                        isSelected ? "border-primary ring-2 ring-primary/20" : "border-border hover:border-muted-foreground"
+                      )}
+                      title={bg.name}
+                    >
+                      <div
+                        className="absolute inset-0"
+                        style={{ background: bg.gradient || bg.value }}
+                      />
+                      {isSelected && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-3 h-3 rounded-full bg-primary" />
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+              {/* Custom background color */}
+              <div className="flex gap-1.5 items-center">
+                <input
+                  type="color"
+                  value={local.colors.background || '#ffffff'}
+                  onChange={(e) => updateColors({ background: e.target.value, background_gradient: undefined })}
+                  className="w-10 h-9 rounded border border-border cursor-pointer"
+                />
+                <Input
+                  value={local.colors.background || '#ffffff'}
+                  onChange={(e) => updateColors({ background: e.target.value, background_gradient: undefined })}
+                  className="flex-1 h-9 text-xs"
+                  placeholder="#ffffff"
+                />
+              </div>
+            </div>
+
             {/* CTA Button Text */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Bouton d'action</Label>
@@ -404,13 +533,33 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               <div className="text-center py-8 text-muted-foreground">
                 <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p>Aucune formule créée</p>
-                <p className="text-sm">Créez des formules dans l'onglet "Formules" du menu.</p>
+                <p className="text-sm mb-4">Créez vos formules pour les afficher sur votre page.</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/dashboard/formules')}
+                  className="gap-1.5"
+                >
+                  <Plus className="w-4 h-4" />
+                  Créer une formule
+                </Button>
               </div>
             ) : (
               <>
-                <p className="text-sm text-muted-foreground">
-                  Sélectionnez les formules visibles sur votre page.
-                </p>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Sélectionnez les formules visibles sur votre page.
+                  </p>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigate('/dashboard/formules')}
+                    className="text-xs gap-1 h-7 px-2"
+                  >
+                    <Plus className="w-3 h-3" />
+                    Ajouter
+                  </Button>
+                </div>
                 <div className="space-y-2">
                   {packs.map((pack) => {
                     const isVisible = effectiveVisiblePacks.includes(pack.id);

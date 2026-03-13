@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { LocationMap } from '@/components/map/LocationMap';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { MapPin, Phone, Clock, User, MessageSquare, Send, CheckCircle, Instagram, Mail, Link2, ShoppingBag, BookOpen, Video, Calendar, FileText, ExternalLink, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { Center, Pack } from '@/hooks/useCenter';
-import { CenterCustomization, CustomLink, defaultCustomization, PageBlock, defaultBlocks, migrateToBlocks } from '@/types/customization';
+import { CenterCustomization, CustomLink, defaultCustomization, PageBlock, defaultBlocks, migrateToBlocks, FONT_MAP, GOOGLE_FONT_URLS } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -125,6 +125,20 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
     };
   }, [center.customization]);
 
+  // Load Google Font if custom font is selected
+  useEffect(() => {
+    const fontFamily = customization.layout.font_family;
+    if (fontFamily && fontFamily !== 'system') {
+      const url = GOOGLE_FONT_URLS[fontFamily];
+      if (url && !document.querySelector(`link[href="${url}"]`)) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = url;
+        document.head.appendChild(link);
+      }
+    }
+  }, [customization.layout.font_family]);
+
   // Get sorted, enabled blocks - respects user-defined order
   const activeBlocks = useMemo(() => {
     return [...customization.blocks]
@@ -148,14 +162,23 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
     secondary: customization.layout.dark_mode ? '#9ca3af' : (customization.colors.text_secondary || '#6b7280'),
   }), [customization]);
 
-  // Generate CSS variables for custom colors
+  // Generate CSS variables for custom colors + font + background
+  const fontFamily = customization.layout.font_family || 'system';
+  const fontScale = customization.layout.font_size_scale || 1;
+  const bgColor = customization.colors.background || (customization.layout.dark_mode ? '#0a0a0a' : '#ffffff');
+  const bgGradient = customization.colors.background_gradient;
+
   const customStyles = useMemo(() => ({
     '--custom-primary': customization.colors.primary,
     '--custom-secondary': customization.colors.secondary,
     '--custom-accent': customization.colors.accent,
     '--custom-text-primary': textColors.primary,
     '--custom-text-secondary': textColors.secondary,
-  } as React.CSSProperties), [customization.colors, textColors]);
+    fontFamily: FONT_MAP[fontFamily] || FONT_MAP['system'],
+    fontSize: `${fontScale * 100}%`,
+    background: bgGradient || bgColor,
+    minHeight: '100%',
+  } as React.CSSProperties), [customization.colors, textColors, fontFamily, fontScale, bgColor, bgGradient]);
 
   // Custom Links component
   const renderCustomLinks = () => {
