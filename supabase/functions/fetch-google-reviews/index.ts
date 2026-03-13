@@ -63,26 +63,31 @@ function extractBusinessName(url: string): string | null {
 }
 
 /**
- * Clean a business name for better search results.
- * Removes acronyms in parentheses, special chars, etc.
+ * Generate search query variations from a business name.
+ * "T.S.N (Top Services Nettoyage)" → ["T.S.N (Top Services Nettoyage)", "Top Services Nettoyage", "TSN Top Services Nettoyage"]
  */
-function cleanBusinessName(name: string): string {
-  // "T.S.N (Top Services Nettoyage)" → "Top Services Nettoyage"
+function getSearchVariations(name: string): string[] {
+  const variations: string[] = [name]; // Try original first
+  
   const inParens = name.match(/\(([^)]+)\)/);
   if (inParens) {
-    // Use the content inside parentheses if it looks like the full name
     const inside = inParens[1].trim();
-    if (inside.split(/\s+/).length >= 2) {
-      return inside;
-    }
+    const outside = name.replace(/\([^)]+\)/, '').replace(/\./g, '').trim();
+    // "Top Services Nettoyage" alone
+    variations.push(inside);
+    // Combine: "TSN Top Services Nettoyage"
+    if (outside) variations.push(`${outside} ${inside}`);
+  } else {
+    // Remove dots: "T.S.N" → "TSN"
+    const noDots = name.replace(/\./g, '').trim();
+    if (noDots !== name) variations.push(noDots);
   }
-  // Remove dots from acronyms: "T.S.N" → "TSN"
-  return name.replace(/\./g, '').trim();
+  
+  return [...new Set(variations)];
 }
 
-async function searchPlaceByText(query: string, apiKey: string): Promise<string | null> {
-  const cleanedQuery = cleanBusinessName(query);
-  console.log("Text search query:", cleanedQuery, "(original:", query, ")");
+async function searchPlaceByTextQuery(query: string, apiKey: string): Promise<{ id: string; name: string } | null> {
+  console.log("Text search query:", query);
   const searchRes = await fetch(
     `https://places.googleapis.com/v1/places:searchText`,
     {
@@ -92,7 +97,7 @@ async function searchPlaceByText(query: string, apiKey: string): Promise<string 
         "X-Goog-Api-Key": apiKey,
         "X-Goog-FieldMask": "places.id,places.displayName",
       },
-      body: JSON.stringify({ textQuery: cleanedQuery }),
+      body: JSON.stringify({ textQuery: query }),
     }
   );
 
