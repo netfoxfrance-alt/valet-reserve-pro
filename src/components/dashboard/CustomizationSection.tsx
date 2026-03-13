@@ -36,8 +36,31 @@ const COLOR_PRESETS = [
   { name: 'Rose', primary: '#ec4899', secondary: '#500724', accent: '#8b5cf6' },
 ];
 
+const FONT_OPTIONS: { value: FontFamily; label: string; preview: string }[] = [
+  { value: 'system', label: 'Système', preview: '-apple-system, sans-serif' },
+  { value: 'inter', label: 'Inter', preview: '"Inter", sans-serif' },
+  { value: 'poppins', label: 'Poppins', preview: '"Poppins", sans-serif' },
+  { value: 'playfair', label: 'Playfair Display', preview: '"Playfair Display", serif' },
+  { value: 'montserrat', label: 'Montserrat', preview: '"Montserrat", sans-serif' },
+  { value: 'raleway', label: 'Raleway', preview: '"Raleway", sans-serif' },
+  { value: 'dm-sans', label: 'DM Sans', preview: '"DM Sans", sans-serif' },
+  { value: 'space-grotesk', label: 'Space Grotesk', preview: '"Space Grotesk", sans-serif' },
+];
+
+const BG_PRESETS = [
+  { name: 'Blanc', value: '#ffffff', gradient: undefined },
+  { name: 'Gris clair', value: '#f3f4f6', gradient: undefined },
+  { name: 'Crème', value: '#fefce8', gradient: undefined },
+  { name: 'Bleu doux', value: '#dbeafe', gradient: 'linear-gradient(180deg, #dbeafe 0%, #eff6ff 100%)' },
+  { name: 'Rose pâle', value: '#fce7f3', gradient: 'linear-gradient(135deg, #fce7f3 0%, #ede9fe 100%)' },
+  { name: 'Vert pâle', value: '#f0fdf4', gradient: 'linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 100%)' },
+  { name: 'Noir', value: '#0a0a0a', gradient: undefined },
+  { name: 'Nuit', value: '#0f0a1a', gradient: 'linear-gradient(180deg, #0f0a1a 0%, #1a1035 100%)' },
+];
+
 export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [], centerAddress, centerPhone }: CustomizationSectionProps) {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [uploadingCover, setUploadingCover] = useState(false);
   const [local, setLocal] = useState<CenterCustomization>(customization);
 
