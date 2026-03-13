@@ -176,7 +176,7 @@ serve(async (req: Request) => {
     console.log("Success -", name, "Rating:", rating, "Count:", reviewCount);
 
     return new Response(
-      JSON.stringify({ success: true, rating, reviewCount, name }),
+      JSON.stringify({ success: true, rating, reviewCount, name, placeId }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error: any) {

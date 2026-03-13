@@ -887,10 +887,16 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
     const count = block.reviewCount || 0;
     const url = block.reviewUrl?.trim();
 
-    // Use URL directly - only add https:// if no protocol specified
-    const absoluteUrl = !url ? null 
-      : (url.startsWith('http://') || url.startsWith('https://')) ? url 
-      : `https://${url}`;
+    // For Google reviews with a Place ID, link directly to the write-review page
+    const writeReviewUrl = isGoogle && block.reviewPlaceId
+      ? `https://search.google.com/local/writereview?placeid=${block.reviewPlaceId}`
+      : null;
+
+    // Use write-review URL if available, otherwise fall back to the entered URL
+    const targetUrl = writeReviewUrl || url;
+    const absoluteUrl = !targetUrl ? null 
+      : (targetUrl.startsWith('http://') || targetUrl.startsWith('https://')) ? targetUrl 
+      : `https://${targetUrl}`;
 
     const Wrapper = absoluteUrl ? 'a' : 'div';
     const wrapperProps = absoluteUrl ? { 
@@ -928,7 +934,7 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
           {/* Content */}
           <div className="flex-1 min-w-0">
             <p className="font-medium text-sm" style={{ color: textColors.primary }}>
-              {isGoogle ? 'Voir nos avis Google' : 'Voir nos avis TripAdvisor'}
+              {isGoogle ? (writeReviewUrl ? 'Laisser un avis Google' : 'Voir nos avis Google') : 'Voir nos avis TripAdvisor'}
             </p>
             <div className="flex items-center gap-1.5 mt-1">
               {/* Stars */}
