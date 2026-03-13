@@ -25,6 +25,9 @@ interface CustomizationSectionProps {
   packs?: Pack[];
   centerAddress?: string;
   centerPhone?: string;
+  logoUrl?: string | null;
+  onLogoUploaded?: (url: string) => void;
+  onLogoRemoved?: () => void;
 }
 
 const COLOR_PRESETS = [
