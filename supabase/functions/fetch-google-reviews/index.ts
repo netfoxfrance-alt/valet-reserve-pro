@@ -28,13 +28,26 @@ function extractPlaceId(input: string): string | null {
 }
 
 /**
- * Extract business name from a Google Maps URL for text search fallback.
+ * Extract business name from various Google URL formats.
  */
 function extractBusinessName(url: string): string | null {
-  const match = url.match(/\/maps\/place\/([^/@?]+)/);
-  if (match) {
-    return decodeURIComponent(match[1].replace(/\+/g, ' '));
+  // From Google Maps: /maps/place/Business+Name/...
+  const mapsMatch = url.match(/\/maps\/place\/([^/@?]+)/);
+  if (mapsMatch) {
+    return decodeURIComponent(mapsMatch[1].replace(/\+/g, ' '));
   }
+  
+  // From Google Search resolved URL: ?q=Business+Name
+  try {
+    const urlObj = new URL(url);
+    const qParam = urlObj.searchParams.get('q');
+    if (qParam) {
+      return decodeURIComponent(qParam.replace(/\+/g, ' '));
+    }
+  } catch {
+    // Not a valid URL, ignore
+  }
+
   return null;
 }
 
