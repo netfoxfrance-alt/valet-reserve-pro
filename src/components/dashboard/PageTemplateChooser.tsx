@@ -22,7 +22,7 @@ interface PageTemplate {
   ctaText: string;
 }
 
-const TEMPLATES: PageTemplate[] = [
+export const TEMPLATES: PageTemplate[] = [
   {
     id: 'default',
     name: 'Classique',
