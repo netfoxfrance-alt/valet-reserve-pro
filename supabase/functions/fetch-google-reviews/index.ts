@@ -141,7 +141,7 @@ serve(async (req: Request) => {
       );
     }
 
-    const { url } = await req.json();
+    const { url, city } = await req.json();
     if (!url || typeof url !== "string") {
       return new Response(
         JSON.stringify({ error: "URL ou Place ID requis." }),
@@ -149,7 +149,8 @@ serve(async (req: Request) => {
       );
     }
 
-    console.log("Input:", url);
+    const cityStr = (city && typeof city === 'string') ? city.trim() : '';
+    console.log("Input:", url, "City:", cityStr);
 
     let placeId = extractPlaceId(url);
 
@@ -157,7 +158,7 @@ serve(async (req: Request) => {
     if (!placeId) {
       const businessName = extractBusinessName(url);
       if (businessName) {
-        placeId = await searchPlaceByText(businessName, GOOGLE_PLACES_API_KEY);
+        placeId = await searchPlaceByText(businessName, GOOGLE_PLACES_API_KEY, cityStr || undefined);
       }
     }
 
