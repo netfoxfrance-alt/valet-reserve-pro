@@ -20,6 +20,16 @@ import { useBlockedPeriods } from '@/hooks/useAvailability';
 import { useMyCustomServices, formatDuration } from '@/hooks/useCustomServices';
 import { useMyClients, ClientType } from '@/hooks/useClients';
 import { format, addMonths, subMonths, addWeeks, subWeeks, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, isToday, parseISO, isBefore } from 'date-fns';
+
+// Parse duration string like "1h30", "2h", "45min" to minutes
+const parseDurationStr = (duration: string): number => {
+  if (!duration) return 60;
+  const hoursMatch = duration.match(/(\d+)h/);
+  const minutesMatch = duration.match(/(\d+)(?:min|m(?!h))/);
+  const hours = hoursMatch ? parseInt(hoursMatch[1], 10) : 0;
+  const minutes = minutesMatch ? parseInt(minutesMatch[1], 10) : 0;
+  return hours * 60 + minutes || 60;
+};
 import { fr, enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
