@@ -53,6 +53,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) {
         console.error('Error checking subscription:', error);
+        // On error, keep previous state instead of leaving in limbo
+        setSubscriptionLoading(false);
         return;
       }
 
