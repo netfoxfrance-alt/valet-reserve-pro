@@ -273,8 +273,88 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               </div>
             </div>
 
+            {/* Logo Section - show when header_style is minimal */}
+            {(local.layout.header_style || 'minimal') === 'minimal' && (
+              <div>
+                <Label className="text-sm font-medium mb-3 block">Logo</Label>
+                {logoUrl ? (
+                  <div className="relative">
+                    <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-secondary/20">
+                      <img
+                        src={logoUrl}
+                        alt="Logo"
+                        className="max-w-[120px] max-h-[48px] w-auto h-auto object-contain rounded"
+                      />
+                      {uploadingLogo && (
+                        <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                      )}
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        className="sr-only"
+                        id="logo-upload-design"
+                      />
+                      <Label
+                        htmlFor="logo-upload-design"
+                        className={cn(
+                          buttonVariants({ variant: 'outline', size: 'sm' }),
+                          uploadingLogo && 'pointer-events-none opacity-50',
+                          "cursor-pointer"
+                        )}
+                      >
+                        <Upload className="w-4 h-4 mr-1.5" />
+                        Changer
+                      </Label>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleRemoveLogo}
+                        disabled={uploadingLogo}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+                    <Image className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                    <p className="text-sm text-muted-foreground mb-2">Aucun logo</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="sr-only"
+                      id="logo-upload-design-empty"
+                    />
+                    <Label
+                      htmlFor="logo-upload-design-empty"
+                      className={cn(
+                        buttonVariants({ variant: 'outline', size: 'sm' }),
+                        uploadingLogo && 'pointer-events-none opacity-50',
+                        "cursor-pointer"
+                      )}
+                    >
+                      {uploadingLogo ? (
+                        <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+                      ) : (
+                        <Upload className="w-4 h-4 mr-1.5" />
+                      )}
+                      Ajouter un logo
+                    </Label>
+                  </div>
+                )}
+                <p className="text-xs text-muted-foreground mt-2">
+                  Votre logo apparaîtra dans le header de votre page
+                </p>
+              </div>
+            )}
+
             {/* Banner Section - only show when header_style is banner */}
-            {(local.layout.header_style || 'banner') === 'banner' && (
+            {(local.layout.header_style || 'minimal') === 'banner' && (
             <div>
               <Label className="text-sm font-medium mb-3 block">Bannière</Label>
               {local.cover_url ? (
