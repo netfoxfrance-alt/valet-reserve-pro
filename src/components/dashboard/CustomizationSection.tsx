@@ -80,13 +80,17 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     ? local.visible_pack_ids 
     : packs.map(p => p.id);
 
-  const applyPreset = (preset: typeof COLOR_PRESETS[0]) => {
+  const applyTheme = (theme: ColorTheme) => {
     updateColors({
-      primary: preset.primary,
-      secondary: preset.secondary,
-      accent: preset.accent,
+      primary: theme.colors.primary,
+      secondary: theme.colors.secondary,
+      accent: theme.colors.accent,
+      text_primary: theme.colors.text_primary,
+      text_secondary: theme.colors.text_secondary,
     });
   };
+
+  const currentThemeId = COLOR_THEMES.find(t => t.colors.primary === local.colors.primary)?.id;
 
   const handleCoverUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
