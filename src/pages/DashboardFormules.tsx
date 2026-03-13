@@ -12,7 +12,7 @@ export default function DashboardFormules() {
     {
       icon: Package,
       title: t('nav.packs'),
-      description: t('formules.packsDesc', 'Vos formules fixes avec prix défini'),
+      description: t('formules.packsDesc', 'Vos formules à prix fixe ou sur devis, présentées sur votre page'),
       href: '/dashboard/packs',
       color: 'from-amber-400 to-orange-500',
     },
