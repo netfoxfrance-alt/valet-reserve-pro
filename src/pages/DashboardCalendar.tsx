@@ -101,6 +101,7 @@ export default function DashboardCalendar() {
     pack_id: '',
     custom_service_id: '',
     custom_price: '',
+    duration_minutes: '',
     notes: '',
   });
 
