@@ -33,7 +33,7 @@ interface DashboardLayoutProps {
   fullWidth?: boolean;
 }
 
-export function DashboardLayout({ title, subtitle, children }: DashboardLayoutProps) {
+export function DashboardLayout({ title, subtitle, children, fullWidth }: DashboardLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { signOut } = useAuth();
