@@ -25,14 +25,13 @@ interface CustomizationSectionProps {
   centerPhone?: string;
 }
 
-const COLOR_PRESETS = [
-  { name: 'Bleu', primary: '#3b82f6', secondary: '#1e293b', accent: '#10b981' },
-  { name: 'Rouge', primary: '#ef4444', secondary: '#1c1917', accent: '#f59e0b' },
-  { name: 'Vert', primary: '#22c55e', secondary: '#14532d', accent: '#3b82f6' },
-  { name: 'Violet', primary: '#8b5cf6', secondary: '#1e1b4b', accent: '#ec4899' },
-  { name: 'Orange', primary: '#f97316', secondary: '#431407', accent: '#06b6d4' },
-  { name: 'Rose', primary: '#ec4899', secondary: '#500724', accent: '#8b5cf6' },
-];
+// Kept for backward compat but now using COLOR_THEMES
+const COLOR_PRESETS = COLOR_THEMES.slice(0, 6).map(t => ({
+  name: t.name,
+  primary: t.colors.primary,
+  secondary: t.colors.secondary,
+  accent: t.colors.accent,
+}));
 
 export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [], centerAddress, centerPhone }: CustomizationSectionProps) {
   const { toast } = useToast();
