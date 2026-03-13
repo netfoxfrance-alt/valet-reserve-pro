@@ -188,14 +188,17 @@ async function renderCenterPage(slug: string): Promise<Response> {
   const customization = (center.customization as Record<string, any>) || {};
   const seo = customization.seo || {};
   const texts = customization.texts || {};
+  const coverUrl = customization.cover_url || null;
 
   // SEO data
   const centerName = center.name || 'Centre de nettoyage';
   const city = seo.city || '';
-  const seoTitle = seo.title || `${centerName} - Nettoyage professionnel${city ? ` à ${city}` : ''}`;
-  const seoDescription = seo.description || `${centerName} propose des services de nettoyage professionnel${city ? ` à ${city}` : ''}. Réservez en ligne facilement.`;
+  const seoTitle = seo.title || `${centerName}${city ? ` à ${city}` : ''}`;
+  const seoDescription = seo.description || texts.tagline || `${centerName} — Réservez en ligne facilement.${city ? ` Service à ${city}.` : ''}`;
   const seoKeywords = seo.keywords || '';
   const canonical = `${BASE_URL}/${slug}`;
+  // OG image priority: cover > logo > default
+  const ogImage = coverUrl || center.logo_url || `${BASE_URL}/og-image.png`;
 
   // Build packs HTML
   let packsHtml = '';
@@ -325,7 +328,8 @@ async function renderCenterPage(slug: string): Promise<Response> {
     title: seoTitle,
     description: seoDescription,
     canonical,
-    ogImage: center.logo_url || `${BASE_URL}/og-image.png`,
+    ogImage,
+    ogSiteName: centerName,
     keywords: seoKeywords,
     body,
     structuredData,
@@ -381,6 +385,7 @@ interface HtmlOptions {
   description: string;
   canonical?: string;
   ogImage?: string;
+  ogSiteName?: string;
   keywords?: string;
   body: string;
   structuredData?: Record<string, any>;
@@ -388,7 +393,8 @@ interface HtmlOptions {
 }
 
 function wrapHtml(opts: HtmlOptions): string {
-  const { title, description, canonical, ogImage, keywords, body, structuredData, noindex } = opts;
+  const { title, description, canonical, ogImage, ogSiteName, keywords, body, structuredData, noindex } = opts;
+  const siteName = ogSiteName || 'CleaningPage';
 
   return `<!DOCTYPE html>
 <html lang="fr">
@@ -405,8 +411,11 @@ function wrapHtml(opts: HtmlOptions): string {
   <meta property="og:title" content="${escapeAttr(title)}">
   <meta property="og:description" content="${escapeAttr(description)}">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="${escapeAttr(siteName)}">
   ${canonical ? `<meta property="og:url" content="${escapeAttr(canonical)}">` : ''}
-  ${ogImage ? `<meta property="og:image" content="${escapeAttr(ogImage)}">` : ''}
+  ${ogImage ? `<meta property="og:image" content="${escapeAttr(ogImage)}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">` : ''}
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
