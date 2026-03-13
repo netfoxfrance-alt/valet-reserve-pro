@@ -1449,7 +1449,10 @@ export default function DashboardCalendar() {
                     <div className="bg-primary/5 rounded-lg p-3 text-sm">
                       <p className="font-medium text-primary">{pack.name}</p>
                       <p className="text-muted-foreground">
-                        {pack.duration || t('common.duration')} • {displayPrice}
+                        {isQuote 
+                          ? (createForm.duration_minutes ? `${createForm.duration_minutes} min` : 'Durée à définir')
+                          : (pack.duration || t('common.duration'))
+                        } • {displayPrice}
                       </p>
                     </div>
                     {isQuote && (
