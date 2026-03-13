@@ -138,7 +138,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'lemon',
-    name: 'Sharp Lemon',
+    name: 'Citron',
     fontFamily: 'poppins',
     darkMode: false,
     primaryColor: '#ca8a04',
