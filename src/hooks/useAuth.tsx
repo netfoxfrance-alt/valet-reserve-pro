@@ -45,15 +45,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSubscriptionLoading(true);
 
     try {
+      // Always get fresh session to avoid stale tokens
+      const { data: { session: freshSession } } = await supabase.auth.getSession();
+      const token = freshSession?.access_token || session.access_token;
+
       const { data, error } = await supabase.functions.invoke('check-subscription', {
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (error) {
         console.error('Error checking subscription:', error);
-        // On error, keep previous state instead of leaving in limbo
         setSubscriptionLoading(false);
         return;
       }
