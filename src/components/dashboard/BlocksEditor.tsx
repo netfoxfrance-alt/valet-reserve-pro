@@ -38,6 +38,7 @@ interface BlocksEditorProps {
   userId: string;
   centerAddress?: string;
   centerPhone?: string;
+  centerCity?: string;
   headerStyle?: 'banner' | 'minimal';
 }
 
