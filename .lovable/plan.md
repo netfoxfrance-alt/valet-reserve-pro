@@ -1,53 +1,79 @@
 
 
-## Plan : Prerendering SEO via Edge Function + Guide Cloudflare
+# Refonte "Ma Page" -- Experience de creation inspiree Linktree/Paage
 
-### Ce que je vais faire (backend)
+## Constat
 
-**Créer une Edge Function `prerender`** qui génère du HTML complet quand un bot (Google, Bing, etc.) visite le site. Cette fonction couvre :
+Le systeme actuel (3 onglets: Design, Formules, Elements) est fonctionnel mais manque de "magie". Les pros ne se sentent pas en train de construire leur site. L'experience est trop technique (color pickers, inputs) et pas assez visuelle/guidee.
 
-1. **Page d'accueil (`/`)** : HTML statique avec le titre, la description, les features, le pricing, la FAQ — tout le contenu marketing visible sur la landing page.
+## Axes d'amelioration (par priorite)
 
-2. **Pages centres (`/:slug`)** : Requête en base pour récupérer le nom, l'adresse, le téléphone, les services/formules, les horaires, la description, les données SEO personnalisées. Génère un HTML complet avec :
-   - Balises `<title>`, `<meta description>`, Open Graph, Twitter Card
-   - JSON-LD `LocalBusiness` (schéma structuré pour Google)
-   - Le contenu textuel (nom, services, prix, adresse)
+### 1. Templates de demarrage (impact fort, effort moyen)
 
-3. **Pages légales** (`/confidentialite`, `/cgv`, `/mentions-legales`) : HTML basique avec le titre de la page.
+Quand un pro arrive sur "Ma Page" pour la premiere fois (ou via un bouton "Changer de template"), proposer 3-4 templates pre-configures avec apercu visuel :
 
-4. **Configuration** : `verify_jwt = false` dans `config.toml` (les bots n'ont pas de token).
+- **Minimal** : Header minimal, formules, contact. Couleurs neutres.
+- **Vitrine** : Banniere, galerie photos, formules, avis Google, horaires.
+- **Pro Nettoyage** : Banniere, texte de presentation, formules avec variantes, avant/apres, contact.
+- **Prestige** : Mode sombre, banniere, galerie, formules, liens reseaux.
 
-### Ce que tu devras faire (simple, ~10 minutes)
+Chaque template pre-remplit : header_style, blocks, couleurs, dark_mode. Le pro peut ensuite tout modifier.
 
-1. **Créer un compte Cloudflare gratuit** sur [cloudflare.com](https://cloudflare.com)
-2. **Transférer le DNS de `cleaningpage.com`** vers Cloudflare (je te guiderai étape par étape avec des captures d'écran)
-3. **Copier-coller un script de ~20 lignes** que je te fournirai dans la section "Workers" de Cloudflare
-4. **Ré-ajouter le domaine dans Lovable** (l'enregistrement A vers `185.158.133.1`)
+Implementation :
+- Fichier `src/lib/pageTemplates.ts` avec les presets
+- Dialog de selection au premier acces ou via bouton "Templates"
+- Appliquer = remplacer customization avec les valeurs du template
 
-### Risques : zéro
+### 2. Onboarding guide / Assistant pas-a-pas (impact fort, effort moyen)
 
-- Les utilisateurs normaux ne verront **aucun changement** — ils continuent d'utiliser l'app React comme avant
-- Si le Worker Cloudflare tombe en panne, le site revient simplement à son fonctionnement actuel (pas de prerendering, mais pas de casse)
-- C'est la méthode **recommandée par Google** pour les SPAs ([Dynamic Rendering](https://developers.google.com/search/docs/crawling-indexing/javascript/dynamic-rendering))
-
-### Détails techniques
+Au lieu de 3 onglets techniques, proposer un flow guide lors de la premiere configuration :
 
 ```text
-Visiteur arrive sur cleaningpage.com
-        │
-  Cloudflare Worker (gratuit)
-        │
-        ├── User-Agent = Googlebot/Bingbot/etc.
-        │      └── Appel Edge Function "prerender?path=/slug"
-        │             └── Retourne HTML complet avec contenu + meta
-        │
-        └── Utilisateur normal
-               └── SPA React inchangée
+Etape 1: "Choisissez un style"     → Template selector
+Etape 2: "Ajoutez votre banniere"  → Upload zone
+Etape 3: "Vos couleurs"            → 6 presets (1 clic)
+Etape 4: "Vos formules"            → Toggle on/off
+Etape 5: "Enrichissez"             → Suggestions contextuelles
 ```
 
-### Fichiers à créer/modifier
+Apres l'onboarding, le pro retrouve l'editeur normal (onglets). Un bouton "Recommencer" permet de relancer le guide.
 
-1. **Créer** `supabase/functions/prerender/index.ts` — Edge Function qui génère le HTML
-2. **Modifier** `supabase/config.toml` — Ajouter `[functions.prerender] verify_jwt = false`
-3. **Fournir** le code du Cloudflare Worker à copier-coller (dans le chat, pas dans le code)
+### 3. Ameliorer l'editeur existant (impact moyen, effort faible)
+
+- **Apercu en temps reel plus prominent** : L'apercu iPhone est deja la mais on peut le rendre plus central (style Paage/Linktree ou l'apercu domine).
+- **Bouton "+ Ajouter un element"** en sticky bottom comme Linktree (deja present mais peut etre plus visible).
+- **Drag & drop** pour reordonner les blocs au lieu des fleches haut/bas (utiliser `@dnd-kit/core`).
+- **Suggestions intelligentes** : Si le pro n'a pas de galerie, afficher un encart "Ajoutez des photos pour rassurer vos clients".
+
+### 4. Images de prestations generees par IA (impact wow, effort moyen)
+
+Utiliser Lovable AI (gemini-3-pro-image-preview ou gemini-3.1-flash-image-preview) pour generer des images de couverture ou de prestations :
+
+- Bouton "Generer une image" dans la galerie et sur la banniere
+- Prompt automatique base sur le nom du centre et ses services (ex: "Professional car cleaning service, modern, bright photography style")
+- L'image generee est uploadee dans le storage
+
+### 5. Couleurs simplifiees (effort faible)
+
+Remplacer les 3 color pickers + 6 presets par un systeme de "themes" comme Linktree :
+- 8-10 themes pre-definis (nom + apercu miniature avec couleurs)
+- Toggle clair/sombre
+- Option "Personnaliser" pour les color pickers (avance, cache par defaut)
+
+## Plan d'implementation (ordre recommande)
+
+| Phase | Tache | Fichiers |
+|-------|-------|----------|
+| 1 | Creer `pageTemplates.ts` avec 4 templates | `src/lib/pageTemplates.ts` |
+| 2 | Ajouter le selecteur de templates dans Ma Page | `DashboardMyPage.tsx`, nouveau composant `TemplateSelector.tsx` |
+| 3 | Refondre les couleurs en "Themes" (presets visuels) | `CustomizationSection.tsx` |
+| 4 | Ajouter l'onboarding guide premiere visite | Nouveau composant `PageOnboarding.tsx`, flag en DB ou localStorage |
+| 5 | Integrer la generation d'images IA | `BlocksEditor.tsx`, nouvelle edge function `generate-service-image` |
+| 6 | Suggestions contextuelles ("Ajoutez des photos") | `BlocksEditor.tsx` |
+
+## Ce qu'on ne fait PAS (pour rester simple)
+
+- Pas de drag & drop complexe (les fleches suffisent pour l'instant)
+- Pas d'editeur WYSIWYG inline sur la preview (trop complexe)
+- Pas de multi-pages (une seule page par pro)
 
