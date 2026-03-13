@@ -7,21 +7,16 @@ const corsHeaders = {
 
 /**
  * Extract a Place ID from a Google Maps URL, or return the input if it already looks like a Place ID.
- * Supports formats:
- *   - ChIJ... (raw Place ID)
- *   - https://maps.google.com/...?cid=... 
- *   - https://www.google.com/maps/place/...
- *   - https://g.co/... short links
  */
 function extractPlaceId(input: string): string | null {
   const trimmed = input.trim();
 
-  // Already a Place ID
+  // Already a Place ID (ChIJ format)
   if (/^ChIJ[A-Za-z0-9_-]+$/.test(trimmed)) {
     return trimmed;
   }
 
-  // From data parameter: !1sChIJ... pattern
+  // From data parameter: !1sChIJ... pattern  
   const dataMatch = trimmed.match(/!1s(ChIJ[A-Za-z0-9_-]+)/);
   if (dataMatch) return dataMatch[1];
 
@@ -34,12 +29,35 @@ function extractPlaceId(input: string): string | null {
 
 /**
  * Extract business name from a Google Maps URL for text search fallback.
- * e.g. https://www.google.com/maps/place/My+Business+Name/...
  */
 function extractBusinessName(url: string): string | null {
-  const match = url.match(/\/maps\/place\/([^/@]+)/);
+  const match = url.match(/\/maps\/place\/([^/@?]+)/);
   if (match) {
     return decodeURIComponent(match[1].replace(/\+/g, ' '));
+  }
+  return null;
+}
+
+async function searchPlaceByText(query: string, apiKey: string): Promise<string | null> {
+  console.log("Text search query:", query);
+  const searchRes = await fetch(
+    `https://places.googleapis.com/v1/places:searchText`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": apiKey,
+        "X-Goog-FieldMask": "places.id,places.displayName",
+      },
+      body: JSON.stringify({ textQuery: query }),
+    }
+  );
+
+  const searchData = await searchRes.json();
+  console.log("Text search response status:", searchRes.status, "data:", JSON.stringify(searchData).substring(0, 500));
+  
+  if (searchRes.ok && searchData.places?.length > 0) {
+    return searchData.places[0].id;
   }
   return null;
 }
@@ -66,76 +84,43 @@ serve(async (req: Request) => {
       );
     }
 
-    console.log("Fetching Google reviews for input:", url);
+    console.log("Input:", url);
 
     let placeId = extractPlaceId(url);
 
-    // If no Place ID found directly, try to resolve via Text Search
+    // If no Place ID, try text search with business name from URL
     if (!placeId) {
       const businessName = extractBusinessName(url);
       if (businessName) {
-        console.log("No Place ID found, searching by business name:", businessName);
-        const searchRes = await fetch(
-          `https://places.googleapis.com/v1/places:searchText`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-Goog-Api-Key": GOOGLE_PLACES_API_KEY,
-              "X-Goog-FieldMask": "places.id",
-            },
-            body: JSON.stringify({ textQuery: businessName }),
-          }
-        );
+        placeId = await searchPlaceByText(businessName, GOOGLE_PLACES_API_KEY);
+      }
+    }
 
-        if (searchRes.ok) {
-          const searchData = await searchRes.json();
-          if (searchData.places?.length > 0) {
-            placeId = searchData.places[0].id;
-            console.log("Found Place ID via text search:", placeId);
+    // Still no Place ID - try following redirects to get resolved URL
+    if (!placeId) {
+      try {
+        console.log("Following redirects...");
+        const resolveRes = await fetch(url, { redirect: "follow", headers: { "User-Agent": "Mozilla/5.0" } });
+        const finalUrl = resolveRes.url;
+        await resolveRes.text();
+        console.log("Resolved URL:", finalUrl);
+        
+        placeId = extractPlaceId(finalUrl);
+        
+        if (!placeId) {
+          const resolvedName = extractBusinessName(finalUrl);
+          if (resolvedName) {
+            placeId = await searchPlaceByText(resolvedName, GOOGLE_PLACES_API_KEY);
           }
         }
+      } catch (e) {
+        console.error("URL resolution failed:", e);
       }
+    }
 
-      // Last resort: try to follow the URL to get the final resolved URL with Place ID
-      if (!placeId) {
-        try {
-          console.log("Trying to resolve URL by following redirects...");
-          const resolveRes = await fetch(url, { redirect: "follow", headers: { "User-Agent": "Mozilla/5.0" } });
-          const finalUrl = resolveRes.url;
-          await resolveRes.text(); // consume body
-          console.log("Resolved URL:", finalUrl);
-          placeId = extractPlaceId(finalUrl);
-          
-          // Try business name from resolved URL
-          if (!placeId) {
-            const resolvedName = extractBusinessName(finalUrl);
-            if (resolvedName) {
-              const searchRes2 = await fetch(
-                `https://places.googleapis.com/v1/places:searchText`,
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "X-Goog-Api-Key": GOOGLE_PLACES_API_KEY,
-                    "X-Goog-FieldMask": "places.id",
-                  },
-                  body: JSON.stringify({ textQuery: resolvedName }),
-                }
-              );
-              if (searchRes2.ok) {
-                const searchData2 = await searchRes2.json();
-                if (searchData2.places?.length > 0) {
-                  placeId = searchData2.places[0].id;
-                  console.log("Found Place ID via resolved URL text search:", placeId);
-                }
-              }
-            }
-          }
-        } catch (e) {
-          console.error("URL resolution failed:", e);
-        }
-      }
+    // Last resort: use the entire input as a text search query
+    if (!placeId) {
+      placeId = await searchPlaceByText(url, GOOGLE_PLACES_API_KEY);
     }
 
     if (!placeId) {
@@ -187,10 +172,11 @@ serve(async (req: Request) => {
       );
     }
 
-    console.log("Success - Rating:", rating, "Count:", reviewCount);
+    const name = placeData.displayName?.text || "Établissement";
+    console.log("Success -", name, "Rating:", rating, "Count:", reviewCount);
 
     return new Response(
-      JSON.stringify({ success: true, rating, reviewCount }),
+      JSON.stringify({ success: true, rating, reviewCount, name }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error: any) {
