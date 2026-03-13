@@ -469,9 +469,14 @@ export function useCreateAppointment() {
         duration_minutes,
       });
 
-      const { data: insertedData, error } = await supabase
+      // Generate ID client-side to avoid needing SELECT after INSERT
+      // (SELECT RLS policy requires owner, but public users can only INSERT)
+      const generatedId = crypto.randomUUID();
+
+      const { error } = await supabase
         .from('appointments')
         .insert({
+          id: generatedId,
           center_id: data.center_id,
           pack_id: safePackId,
           client_id: data.client_id || null,
@@ -487,9 +492,7 @@ export function useCreateAppointment() {
           duration_minutes,
           custom_price: data.custom_price !== undefined && data.custom_price !== null ? data.custom_price : finalPrice,
           status: 'pending_validation',
-        })
-        .select('id')
-        .single();
+        });
 
       if (error) {
         console.error('[CreateAppointment] DB error:', JSON.stringify(error));
