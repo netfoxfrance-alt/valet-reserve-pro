@@ -4,7 +4,7 @@ import { CenterCustomization, defaultCustomization, PageBlock, FontFamily, FONT_
 import { cn } from '@/lib/utils';
 import { Check, Sparkles, ArrowRight } from 'lucide-react';
 
-interface PageTemplate {
+export interface PageTemplate {
   id: string;
   name: string;
   fontFamily: FontFamily;
@@ -22,10 +22,10 @@ interface PageTemplate {
   ctaText: string;
 }
 
-const TEMPLATES: PageTemplate[] = [
+export const TEMPLATES: PageTemplate[] = [
   {
     id: 'default',
-    name: 'Default',
+    name: 'Classique',
     fontFamily: 'system',
     darkMode: false,
     primaryColor: '#3b82f6',
@@ -43,7 +43,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'daft-punk',
-    name: 'Daft Punk',
+    name: 'Noir',
     fontFamily: 'space-grotesk',
     darkMode: true,
     primaryColor: '#ffffff',
@@ -61,7 +61,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'grey',
-    name: 'Grey',
+    name: 'Gris',
     fontFamily: 'inter',
     darkMode: false,
     primaryColor: '#4b5563',
@@ -79,7 +79,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'blue',
-    name: 'Blue',
+    name: 'Océan',
     fontFamily: 'dm-sans',
     darkMode: false,
     primaryColor: '#3b82f6',
@@ -98,7 +98,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'aurora',
-    name: 'Aurora',
+    name: 'Aurore',
     fontFamily: 'raleway',
     darkMode: false,
     primaryColor: '#be185d',
@@ -138,7 +138,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'lemon',
-    name: 'Sharp Lemon',
+    name: 'Citron',
     fontFamily: 'poppins',
     darkMode: false,
     primaryColor: '#ca8a04',
@@ -156,7 +156,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'premium',
-    name: 'Premium',
+    name: 'Prestige',
     fontFamily: 'playfair',
     darkMode: true,
     primaryColor: '#a855f7',
@@ -176,7 +176,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'brown',
-    name: 'Brown',
+    name: 'Caramel',
     fontFamily: 'montserrat',
     darkMode: false,
     primaryColor: '#92400e',
@@ -195,7 +195,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'bold-red',
-    name: 'Bold',
+    name: 'Dynamique',
     fontFamily: 'space-grotesk',
     darkMode: false,
     primaryColor: '#dc2626',

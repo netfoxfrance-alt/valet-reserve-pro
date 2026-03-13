@@ -8,8 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CenterCustomization, defaultCustomization, defaultBlocks, HeaderStyle, FontFamily, FONT_MAP, GOOGLE_FONT_URLS } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, MapPin, Package, Layers, PanelTop, Minus, Plus, Type } from 'lucide-react';
+import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, MapPin, Package, Layers, PanelTop, Minus, Plus, Type, Sparkles } from 'lucide-react';
 import { BlocksEditor } from './BlocksEditor';
+import { TEMPLATES } from './PageTemplateChooser';
 import { cn, stripHtml } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -29,15 +30,6 @@ interface CustomizationSectionProps {
   onLogoUploaded?: (url: string) => void;
   onLogoRemoved?: () => void;
 }
-
-const COLOR_PRESETS = [
-  { name: 'Bleu', primary: '#3b82f6', secondary: '#1e293b', accent: '#10b981' },
-  { name: 'Rouge', primary: '#ef4444', secondary: '#1c1917', accent: '#f59e0b' },
-  { name: 'Vert', primary: '#22c55e', secondary: '#14532d', accent: '#3b82f6' },
-  { name: 'Violet', primary: '#8b5cf6', secondary: '#1e1b4b', accent: '#ec4899' },
-  { name: 'Orange', primary: '#f97316', secondary: '#431407', accent: '#06b6d4' },
-  { name: 'Rose', primary: '#ec4899', secondary: '#500724', accent: '#8b5cf6' },
-];
 
 const FONT_OPTIONS: { value: FontFamily; label: string; preview: string }[] = [
   { value: 'system', label: 'Système', preview: '-apple-system, sans-serif' },
@@ -109,11 +101,27 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     ? local.visible_pack_ids 
     : packs.map(p => p.id);
 
-  const applyPreset = (preset: typeof COLOR_PRESETS[0]) => {
-    updateColors({
-      primary: preset.primary,
-      secondary: preset.secondary,
-      accent: preset.accent,
+  const applyTemplate = (template: typeof TEMPLATES[0]) => {
+    updateLocal({
+      colors: {
+        primary: template.primaryColor,
+        secondary: template.secondaryColor,
+        accent: template.accentColor,
+        text_primary: template.textPrimary,
+        text_secondary: template.textSecondary,
+        background: template.background,
+        background_gradient: template.backgroundGradient,
+      },
+      layout: {
+        ...local.layout,
+        dark_mode: template.darkMode,
+        header_style: template.headerStyle,
+        font_family: template.fontFamily,
+      },
+      texts: {
+        ...local.texts,
+        cta_button: template.ctaText,
+      },
     });
   };
 
@@ -430,26 +438,43 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             </div>
             )}
 
-            {/* Color Presets */}
+            {/* Theme Presets */}
             <div>
-              <Label className="text-sm font-medium mb-3 block">Couleurs</Label>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-4">
-                {COLOR_PRESETS.map((preset) => (
+              <Label className="text-sm font-medium mb-3 block flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4" />
+                Thèmes
+              </Label>
+              <div className="grid grid-cols-5 gap-2 mb-4">
+                {TEMPLATES.map((template) => (
                   <button
-                    key={preset.name}
-                    onClick={() => applyPreset(preset)}
+                    key={template.id}
+                    onClick={() => applyTemplate(template)}
                     className={cn(
-                      "p-2.5 rounded-lg border-2 transition-all hover:scale-105",
-                      local.colors.primary === preset.primary 
+                      "p-2 rounded-xl border-2 transition-all hover:scale-105 flex flex-col items-center gap-1.5",
+                      local.colors.primary === template.primaryColor && local.colors.background === template.background
                         ? "border-primary ring-2 ring-primary/20" 
                         : "border-border hover:border-muted-foreground"
                     )}
                   >
-                    <div className="flex gap-1 mb-1">
-                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.primary }} />
-                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.secondary }} />
+                    <div
+                      className="w-full aspect-[3/4] rounded-lg overflow-hidden flex flex-col items-center justify-center gap-1 p-1.5"
+                      style={{ background: template.backgroundGradient || template.background }}
+                    >
+                      {[0.7, 0.8, 0.6].map((w, i) => (
+                        <div
+                          key={i}
+                          className="h-2.5 rounded-full"
+                          style={{
+                            width: `${w * 100}%`,
+                            backgroundColor: template.darkMode
+                              ? `${template.primaryColor}30`
+                              : `${template.primaryColor}25`,
+                            borderRadius: template.buttonRadius,
+                          }}
+                        />
+                      ))}
                     </div>
-                    <p className="text-[10px] text-center text-muted-foreground">{preset.name}</p>
+                    <p className="text-[10px] text-center text-muted-foreground font-medium truncate w-full">{template.name}</p>
                   </button>
                 ))}
               </div>
