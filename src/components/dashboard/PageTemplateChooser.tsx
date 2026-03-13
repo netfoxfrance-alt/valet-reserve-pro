@@ -4,7 +4,7 @@ import { CenterCustomization, defaultCustomization, PageBlock, FontFamily, FONT_
 import { cn } from '@/lib/utils';
 import { Check, Sparkles, ArrowRight } from 'lucide-react';
 
-interface PageTemplate {
+export interface PageTemplate {
   id: string;
   name: string;
   fontFamily: FontFamily;
