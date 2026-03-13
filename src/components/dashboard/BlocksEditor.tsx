@@ -707,40 +707,13 @@ export function BlocksEditor({
               </div>
               {isGoogle && (
                 <p className="text-xs text-muted-foreground">
-                  Cliquez sur « Récupérer » pour obtenir automatiquement la note et le nombre d'avis.
+                  Collez le lien de votre fiche Google et cliquez « Récupérer ». Recliquez pour mettre à jour.
                 </p>
               )}
             </div>
             
-            {/* Rating & count - editable as fallback */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Note (sur 5)</Label>
-                <Input
-                  type="number"
-                  min="1"
-                  max="5"
-                  step="0.1"
-                  value={block.reviewRating || 5}
-                  onChange={(e) => updateReviewBlock(block.id, { reviewRating: parseFloat(e.target.value) || 5 })}
-                  className="h-9 text-sm"
-                />
-              </div>
-              
-              {/* Review count */}
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Nombre d'avis</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  value={block.reviewCount || 0}
-                  onChange={(e) => updateReviewBlock(block.id, { reviewCount: parseInt(e.target.value) || 0 })}
-                  className="h-9 text-sm"
-                />
-              </div>
-            </div>
-            
-            {/* Preview */}
+            {/* Preview - show only if data exists */}
+            {(block.reviewRating || block.reviewCount) ? (
             <div className="mt-2 p-3 rounded-xl bg-muted/30 border">
               <p className="text-xs text-muted-foreground mb-1">Aperçu</p>
               <div className="flex items-center gap-2">
