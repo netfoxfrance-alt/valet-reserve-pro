@@ -30,6 +30,7 @@ interface DashboardLayoutProps {
   title: string;
   subtitle?: string;
   children: React.ReactNode;
+  fullWidth?: boolean;
 }
 
 export function DashboardLayout({ title, subtitle, children }: DashboardLayoutProps) {
