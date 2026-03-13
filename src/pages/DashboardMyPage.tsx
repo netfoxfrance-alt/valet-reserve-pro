@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { trackEvent } from '@/lib/analytics';
 import { TemplateSelector } from '@/components/dashboard/TemplateSelector';
+import { PageOnboarding } from '@/components/dashboard/PageOnboarding';
 
 export default function DashboardMyPage() {
   const { t } = useTranslation();
