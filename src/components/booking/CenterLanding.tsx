@@ -125,6 +125,20 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
     };
   }, [center.customization]);
 
+  // Load Google Font if custom font is selected
+  useEffect(() => {
+    const fontFamily = customization.layout.font_family;
+    if (fontFamily && fontFamily !== 'system') {
+      const url = GOOGLE_FONT_URLS[fontFamily];
+      if (url && !document.querySelector(`link[href="${url}"]`)) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = url;
+        document.head.appendChild(link);
+      }
+    }
+  }, [customization.layout.font_family]);
+
   // Get sorted, enabled blocks - respects user-defined order
   const activeBlocks = useMemo(() => {
     return [...customization.blocks]
