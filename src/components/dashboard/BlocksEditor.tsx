@@ -174,6 +174,7 @@ export function BlocksEditor({
   userId,
   centerAddress,
   centerPhone,
+  centerCity,
   headerStyle,
 }: BlocksEditorProps) {
   const { toast } = useToast();
