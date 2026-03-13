@@ -285,9 +285,10 @@ export function BlocksEditor({
         toast({ title: 'Impossible de récupérer', description: data.error, variant: 'destructive' });
         return;
       }
-      const updates: { reviewRating?: number; reviewCount?: number } = {};
+      const updates: { reviewRating?: number; reviewCount?: number; reviewPlaceId?: string } = {};
       if (data?.rating != null) updates.reviewRating = Math.round(data.rating * 10) / 10;
       if (data?.reviewCount != null) updates.reviewCount = data.reviewCount;
+      if (data?.placeId) updates.reviewPlaceId = data.placeId;
       if (Object.keys(updates).length > 0) {
         updateReviewBlock(blockId, updates);
         if (updates.reviewRating) {
