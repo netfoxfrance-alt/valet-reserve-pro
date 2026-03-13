@@ -427,9 +427,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                   </Label>
                 </div>
               )}
-              <p className="text-xs text-muted-foreground mt-2">
-                Le logo se configure dans Paramètres → Informations
-              </p>
             </div>
             )}
 
