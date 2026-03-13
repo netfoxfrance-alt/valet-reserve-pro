@@ -111,12 +111,17 @@ async function searchPlaceByTextQuery(query: string, apiKey: string): Promise<{ 
 }
 
 /**
- * Try multiple search variations to find the place.
+ * Try multiple search variations to find the place, optionally appending city.
  */
-async function searchPlaceByText(name: string, apiKey: string): Promise<string | null> {
+async function searchPlaceByText(name: string, apiKey: string, city?: string): Promise<string | null> {
   const variations = getSearchVariations(name);
-  for (const variation of variations) {
-    const result = await searchPlaceByTextQuery(variation, apiKey);
+  // If we have a city, also try each variation + city
+  const queries = city 
+    ? [...variations.map(v => `${v} ${city}`), ...variations]
+    : variations;
+  
+  for (const query of queries) {
+    const result = await searchPlaceByTextQuery(query, apiKey);
     if (result) return result.id;
   }
   return null;
