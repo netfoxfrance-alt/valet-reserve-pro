@@ -79,7 +79,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'blue',
-    name: 'Blue',
+    name: 'Océan',
     fontFamily: 'dm-sans',
     darkMode: false,
     primaryColor: '#3b82f6',
