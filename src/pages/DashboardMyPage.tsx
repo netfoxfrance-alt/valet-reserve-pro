@@ -171,6 +171,13 @@ export default function DashboardMyPage() {
                     packs={packs}
                     centerAddress={center.address || undefined}
                     centerPhone={center.phone || undefined}
+                    logoUrl={center.logo_url}
+                    onLogoUploaded={async (url) => {
+                      await updateCenter({ logo_url: url });
+                    }}
+                    onLogoRemoved={async () => {
+                      await updateCenter({ logo_url: null });
+                    }}
                   />
                 </div>
               )}
