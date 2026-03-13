@@ -29,6 +29,7 @@ interface CustomizationSectionProps {
   logoUrl?: string | null;
   onLogoUploaded?: (url: string) => void;
   onLogoRemoved?: () => void;
+  onOpenThemes?: () => void;
 }
 
 const FONT_OPTIONS: { value: FontFamily; label: string; preview: string }[] = [
