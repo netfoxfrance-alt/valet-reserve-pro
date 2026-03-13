@@ -439,46 +439,28 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             </div>
             )}
 
-            {/* Theme Presets */}
-            <div>
-              <Label className="text-sm font-medium mb-3 block flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4" />
-                Thèmes
-              </Label>
-              <div className="grid grid-cols-5 gap-2 mb-4">
-                {TEMPLATES.map((template) => (
-                  <button
-                    key={template.id}
-                    onClick={() => applyTemplate(template)}
-                    className={cn(
-                      "p-2 rounded-xl border-2 transition-all hover:scale-105 flex flex-col items-center gap-1.5",
-                      local.colors.primary === template.primaryColor && local.colors.background === template.background
-                        ? "border-primary ring-2 ring-primary/20" 
-                        : "border-border hover:border-muted-foreground"
-                    )}
-                  >
+            {/* Theme Button */}
+            {onOpenThemes && (
+              <button
+                onClick={onOpenThemes}
+                className="w-full flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/30 hover:bg-primary/5 transition-all group"
+              >
+                <div className="flex -space-x-1.5">
+                  {TEMPLATES.slice(0, 3).map((t) => (
                     <div
-                      className="w-full aspect-[3/4] rounded-lg overflow-hidden flex flex-col items-center justify-center gap-1 p-1.5"
-                      style={{ background: template.backgroundGradient || template.background }}
-                    >
-                      {[0.7, 0.8, 0.6].map((w, i) => (
-                        <div
-                          key={i}
-                          className="h-2.5 rounded-full"
-                          style={{
-                            width: `${w * 100}%`,
-                            backgroundColor: template.darkMode
-                              ? `${template.primaryColor}30`
-                              : `${template.primaryColor}25`,
-                            borderRadius: template.buttonRadius,
-                          }}
-                        />
-                      ))}
-                    </div>
-                    <p className="text-[10px] text-center text-muted-foreground font-medium truncate w-full">{template.name}</p>
-                  </button>
-                ))}
-              </div>
+                      key={t.id}
+                      className="w-7 h-10 rounded-md border border-background shadow-sm"
+                      style={{ background: t.backgroundGradient || t.background }}
+                    />
+                  ))}
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-medium text-foreground">Thèmes</p>
+                  <p className="text-xs text-muted-foreground">Changer le style de votre page</p>
+                </div>
+                <Sparkles className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </button>
+            )}
               
               {/* Custom Colors */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
