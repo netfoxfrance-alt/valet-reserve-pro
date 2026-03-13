@@ -461,8 +461,10 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                 <Sparkles className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
               </button>
             )}
-              
-              {/* Custom Colors */}
+
+            {/* Custom Colors */}
+            <div>
+              <Label className="text-sm font-medium mb-3 block">Couleurs</Label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <div className="space-y-1">
                   <Label className="text-xs">Principale</Label>
@@ -527,7 +529,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                   onCheckedChange={(checked) => updateLayout({ dark_mode: checked })}
                 />
               </div>
-
             </div>
 
             {/* Typography */}
