@@ -47,9 +47,6 @@ export default function DashboardFormules() {
                 </div>
                 <div className="text-center">
                   <p className="text-lg font-semibold text-foreground">{option.title}</p>
-                  {option.optional && (
-                    <span className="text-xs text-muted-foreground/70 font-medium">(optionnel)</span>
-                  )}
                   <p className="text-sm text-muted-foreground mt-1">{option.description}</p>
                 </div>
               </Link>
