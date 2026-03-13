@@ -105,7 +105,19 @@ async function searchPlaceByTextQuery(query: string, apiKey: string): Promise<{ 
   console.log("Text search response status:", searchRes.status, "data:", JSON.stringify(searchData).substring(0, 500));
   
   if (searchRes.ok && searchData.places?.length > 0) {
-    return searchData.places[0].id;
+    return { id: searchData.places[0].id, name: searchData.places[0].displayName?.text || query };
+  }
+  return null;
+}
+
+/**
+ * Try multiple search variations to find the place.
+ */
+async function searchPlaceByText(name: string, apiKey: string): Promise<string | null> {
+  const variations = getSearchVariations(name);
+  for (const variation of variations) {
+    const result = await searchPlaceByTextQuery(variation, apiKey);
+    if (result) return result.id;
   }
   return null;
 }
