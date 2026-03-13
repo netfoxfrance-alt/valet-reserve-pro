@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CenterCustomization, defaultCustomization, PageBlock, FontFamily, FONT_MAP, GOOGLE_FONT_URLS } from '@/types/customization';
 import { cn } from '@/lib/utils';
-import { Check, Sparkles, ArrowRight } from 'lucide-react';
+import { Check, Sparkles, ArrowRight, Layers } from 'lucide-react';
 
 export interface PageTemplate {
   id: string;
