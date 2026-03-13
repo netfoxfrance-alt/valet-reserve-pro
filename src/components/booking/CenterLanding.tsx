@@ -162,14 +162,23 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
     secondary: customization.layout.dark_mode ? '#9ca3af' : (customization.colors.text_secondary || '#6b7280'),
   }), [customization]);
 
-  // Generate CSS variables for custom colors
+  // Generate CSS variables for custom colors + font + background
+  const fontFamily = customization.layout.font_family || 'system';
+  const fontScale = customization.layout.font_size_scale || 1;
+  const bgColor = customization.colors.background || (customization.layout.dark_mode ? '#0a0a0a' : '#ffffff');
+  const bgGradient = customization.colors.background_gradient;
+
   const customStyles = useMemo(() => ({
     '--custom-primary': customization.colors.primary,
     '--custom-secondary': customization.colors.secondary,
     '--custom-accent': customization.colors.accent,
     '--custom-text-primary': textColors.primary,
     '--custom-text-secondary': textColors.secondary,
-  } as React.CSSProperties), [customization.colors, textColors]);
+    fontFamily: FONT_MAP[fontFamily] || FONT_MAP['system'],
+    fontSize: `${fontScale * 100}%`,
+    background: bgGradient || bgColor,
+    minHeight: '100%',
+  } as React.CSSProperties), [customization.colors, textColors, fontFamily, fontScale, bgColor, bgGradient]);
 
   // Custom Links component
   const renderCustomLinks = () => {
