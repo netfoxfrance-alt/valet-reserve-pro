@@ -61,7 +61,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'grey',
-    name: 'Grey',
+    name: 'Gris',
     fontFamily: 'inter',
     darkMode: false,
     primaryColor: '#4b5563',
