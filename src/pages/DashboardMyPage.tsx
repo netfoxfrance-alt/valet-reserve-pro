@@ -96,6 +96,14 @@ export default function DashboardMyPage() {
 
   return (
     <DashboardLayout title={t('myPage.title')}>
+        {showOnboarding && center && user ? (
+          <PageOnboarding
+            customization={customization}
+            onUpdate={(c) => { setCustomization(c); setPreviewKey(prev => prev + 1); }}
+            onComplete={() => setShowOnboarding(false)}
+            userId={user.id}
+          />
+        ) : (
         <div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div><p className="text-muted-foreground text-sm">{t('myPage.customizeDesc')}</p></div>
