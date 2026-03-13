@@ -418,6 +418,28 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             </div>
             )}
 
+            {/* Theme Button */}
+            {onOpenThemes && (
+              <button
+                onClick={onOpenThemes}
+                className="w-full flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/30 hover:bg-primary/5 transition-all group"
+              >
+                <div className="flex -space-x-1.5">
+                  {TEMPLATES.slice(0, 3).map((t) => (
+                    <div
+                      key={t.id}
+                      className="w-7 h-10 rounded-md border border-background shadow-sm"
+                      style={{ background: t.backgroundGradient || t.background }}
+                    />
+                  ))}
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-medium text-foreground">Thèmes</p>
+                  <p className="text-xs text-muted-foreground">Changer le style de votre page</p>
+                </div>
+                <Sparkles className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </button>
+            )}
 
             {/* Custom Colors */}
             <div>
