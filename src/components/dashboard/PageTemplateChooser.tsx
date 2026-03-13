@@ -98,7 +98,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'aurora',
-    name: 'Aurora',
+    name: 'Aurore',
     fontFamily: 'raleway',
     darkMode: false,
     primaryColor: '#be185d',
