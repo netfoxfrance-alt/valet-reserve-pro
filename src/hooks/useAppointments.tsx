@@ -533,7 +533,7 @@ export function useCreateAppointment() {
         })();
       }
 
-      return { error: error ? formatAppointmentError(error) : null, appointmentId: insertedData?.id || null };
+      return { error: error ? formatAppointmentError(error) : null, appointmentId: error ? null : generatedId };
     } catch (err) {
       console.error('[CreateAppointment] Unexpected error:', err);
       return { error: formatAppointmentError(err), appointmentId: null };
