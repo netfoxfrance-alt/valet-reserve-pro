@@ -36,6 +36,9 @@ export default function DashboardMyPage() {
   const [requestMessage, setRequestMessage] = useState('');
   const [submittingRequest, setSubmittingRequest] = useState(false);
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    return !localStorage.getItem('page_onboarding_done');
+  });
 
   useEffect(() => { if (center) setCustomization(center.customization || defaultCustomization); }, [center]);
 
