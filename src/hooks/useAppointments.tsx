@@ -499,7 +499,7 @@ export function useCreateAppointment() {
       }
 
       // Send "request received" email only when no deposit (deposit flow sends confirmation via webhook)
-      if (!error && insertedData && data.pack_name && data.price !== undefined && !data.skip_email) {
+      if (!error && data.pack_name && data.price !== undefined && !data.skip_email) {
         (async () => {
           try {
             const response = await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
