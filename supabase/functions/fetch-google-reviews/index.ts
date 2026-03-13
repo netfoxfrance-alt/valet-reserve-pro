@@ -176,7 +176,7 @@ serve(async (req: Request) => {
         if (!placeId) {
           const resolvedName = extractBusinessName(finalUrl);
           if (resolvedName) {
-            placeId = await searchPlaceByText(resolvedName, GOOGLE_PLACES_API_KEY);
+            placeId = await searchPlaceByText(resolvedName, GOOGLE_PLACES_API_KEY, cityStr || undefined);
           }
         }
       } catch (e) {
