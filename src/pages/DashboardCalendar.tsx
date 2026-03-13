@@ -1434,30 +1434,32 @@ export default function DashboardCalendar() {
                       </p>
                     </div>
                     {isQuote && (
-                      <div className="space-y-1.5">
-                        <Label className="text-xs text-muted-foreground">Montant négocié (€) *</Label>
-                        <Input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          placeholder="Ex: 150"
-                          value={createForm.custom_price}
-                          onChange={(e) => setCreateForm(prev => ({ ...prev, custom_price: e.target.value }))}
-                          className="h-11 rounded-xl"
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs text-muted-foreground">Durée estimée (minutes) *</Label>
-                        <Input
-                          type="number"
-                          min="15"
-                          step="15"
-                          placeholder="Ex: 90"
-                          value={createForm.duration_minutes}
-                          onChange={(e) => setCreateForm(prev => ({ ...prev, duration_minutes: e.target.value }))}
-                          className="h-11 rounded-xl"
-                        />
-                      </div>
+                      <>
+                        <div className="space-y-1.5">
+                          <Label className="text-xs text-muted-foreground">Montant négocié (€) *</Label>
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            placeholder="Ex: 150"
+                            value={createForm.custom_price}
+                            onChange={(e) => setCreateForm(prev => ({ ...prev, custom_price: e.target.value }))}
+                            className="h-11 rounded-xl"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label className="text-xs text-muted-foreground">Durée estimée (minutes) *</Label>
+                          <Input
+                            type="number"
+                            min="15"
+                            step="15"
+                            placeholder="Ex: 90"
+                            value={createForm.duration_minutes}
+                            onChange={(e) => setCreateForm(prev => ({ ...prev, duration_minutes: e.target.value }))}
+                            className="h-11 rounded-xl"
+                          />
+                        </div>
+                      </>
                     )}
                     {hasVariants && (
                       <div className="space-y-1.5">
