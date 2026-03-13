@@ -218,8 +218,75 @@ interface PageTemplateChooserProps {
   onSkip: () => void;
 }
 
+const themes = TEMPLATES.filter(t => t.category === 'theme');
+const pageTemplates = TEMPLATES.filter(t => t.category === 'template');
+
+function TemplateCard({ template, selected, onSelect }: { template: PageTemplate; selected: boolean; onSelect: () => void }) {
+  return (
+    <button
+      onClick={onSelect}
+      className={cn(
+        "relative flex flex-col rounded-2xl overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-lg text-left group",
+        selected
+          ? "ring-[3px] ring-primary shadow-lg"
+          : "ring-1 ring-border hover:ring-muted-foreground"
+      )}
+    >
+      <div
+        className="h-44 sm:h-52 relative overflow-hidden flex flex-col items-center justify-center p-4 gap-2.5"
+        style={{
+          background: template.backgroundGradient || template.background,
+          fontFamily: FONT_MAP[template.fontFamily] || FONT_MAP['system'],
+        }}
+      >
+        <span
+          className="text-base sm:text-lg font-bold tracking-tight text-center z-10"
+          style={{ color: template.textPrimary }}
+        >
+          {template.name}
+        </span>
+
+        {/* Fake block bars — more bars for templates */}
+        {(template.category === 'template'
+          ? [0.75, 0.85, 0.65, 0.7, 0.8]
+          : [0.75, 0.85, 0.65]
+        ).map((w, i) => (
+          <div
+            key={i}
+            className={cn("transition-all", template.category === 'template' ? "h-6 sm:h-7" : "h-9 sm:h-10")}
+            style={{
+              width: `${w * 100}%`,
+              backgroundColor: template.darkMode
+                ? `${template.primaryColor}22`
+                : `${template.primaryColor}18`,
+              borderRadius: template.buttonRadius,
+              border: template.darkMode
+                ? `1px solid ${template.primaryColor}33`
+                : `1px solid ${template.primaryColor}20`,
+            }}
+          />
+        ))}
+
+        {selected && (
+          <div className="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-primary flex items-center justify-center shadow-lg">
+            <Check className="w-4 h-4 text-primary-foreground" />
+          </div>
+        )}
+      </div>
+
+      {/* Description for templates */}
+      {template.description && (
+        <div className="px-3 py-2 bg-card border-t border-border">
+          <p className="text-[11px] text-muted-foreground leading-tight">{template.description}</p>
+        </div>
+      )}
+    </button>
+  );
+}
+
 export function PageTemplateChooser({ onSelect, onSkip }: PageTemplateChooserProps) {
   const [selected, setSelected] = useState<string | null>(null);
+  const [tab, setTab] = useState<'themes' | 'templates'>('themes');
 
   const handleApply = () => {
     const template = TEMPLATES.find(t => t.id === selected);
@@ -251,6 +318,8 @@ export function PageTemplateChooser({ onSelect, onSkip }: PageTemplateChooserPro
     onSelect(customization);
   };
 
+  const currentItems = tab === 'themes' ? themes : pageTemplates;
+
   return (
     <div className="min-h-[calc(100vh-56px)] flex flex-col items-center justify-start p-6 overflow-y-auto">
       {/* Font preload */}
@@ -260,74 +329,59 @@ export function PageTemplateChooser({ onSelect, onSkip }: PageTemplateChooserPro
 
       <div className="max-w-2xl w-full">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            <Sparkles className="w-4 h-4" />
-            Thèmes
-          </div>
+        <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Choisissez un thème
+            Choisissez un style
           </h1>
           <p className="text-muted-foreground max-w-md mx-auto">
             Sélectionnez un style pour démarrer. Vous pourrez tout personnaliser ensuite.
           </p>
         </div>
 
-        {/* Templates Grid — paa.ge style visual cards */}
+        {/* Tabs */}
+        <div className="flex items-center gap-1 p-1 rounded-xl bg-muted mb-6 max-w-xs mx-auto">
+          <button
+            onClick={() => setTab('themes')}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+              tab === 'themes'
+                ? "bg-background shadow-sm text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Thèmes
+          </button>
+          <button
+            onClick={() => setTab('templates')}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+              tab === 'templates'
+                ? "bg-background shadow-sm text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            Pages types
+          </button>
+        </div>
+
+        {/* Subtitle */}
+        <p className="text-xs text-muted-foreground text-center mb-4">
+          {tab === 'themes'
+            ? 'Couleurs, polices et style visuel uniquement'
+            : 'Pages pré-construites avec des blocs configurés'}
+        </p>
+
+        {/* Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
-          {TEMPLATES.map((template) => (
-            <button
+          {currentItems.map((template) => (
+            <TemplateCard
               key={template.id}
-              onClick={() => setSelected(template.id)}
-              className={cn(
-                "relative flex flex-col rounded-2xl overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-lg text-left group",
-                selected === template.id
-                  ? "ring-[3px] ring-primary shadow-lg"
-                  : "ring-1 ring-border hover:ring-muted-foreground"
-              )}
-            >
-              {/* Visual preview — shows actual background + styled elements */}
-              <div
-                className="h-44 sm:h-52 relative overflow-hidden flex flex-col items-center justify-center p-4 gap-2.5"
-                style={{
-                  background: template.backgroundGradient || template.background,
-                  fontFamily: FONT_MAP[template.fontFamily] || FONT_MAP['system'],
-                }}
-              >
-                {/* Template name as "title" */}
-                <span
-                  className="text-base sm:text-lg font-bold tracking-tight text-center z-10"
-                  style={{ color: template.textPrimary }}
-                >
-                  {template.name}
-                </span>
-
-                {/* 3 fake button bars */}
-                {[0.75, 0.85, 0.65].map((w, i) => (
-                  <div
-                    key={i}
-                    className="h-9 sm:h-10 transition-all"
-                    style={{
-                      width: `${w * 100}%`,
-                      backgroundColor: template.darkMode
-                        ? `${template.primaryColor}22`
-                        : `${template.primaryColor}18`,
-                      borderRadius: template.buttonRadius,
-                      border: template.darkMode
-                        ? `1px solid ${template.primaryColor}33`
-                        : `1px solid ${template.primaryColor}20`,
-                    }}
-                  />
-                ))}
-
-                {/* Selected check */}
-                {selected === template.id && (
-                  <div className="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-primary flex items-center justify-center shadow-lg">
-                    <Check className="w-4 h-4 text-primary-foreground" />
-                  </div>
-                )}
-              </div>
-            </button>
+              template={template}
+              selected={selected === template.id}
+              onSelect={() => setSelected(template.id)}
+            />
           ))}
         </div>
 
@@ -343,7 +397,7 @@ export function PageTemplateChooser({ onSelect, onSkip }: PageTemplateChooserPro
             disabled={!selected}
             className="px-8 gap-2"
           >
-            Utiliser ce thème
+            Utiliser ce {tab === 'themes' ? 'thème' : 'template'}
             <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
