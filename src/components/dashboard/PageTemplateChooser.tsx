@@ -25,7 +25,7 @@ interface PageTemplate {
 const TEMPLATES: PageTemplate[] = [
   {
     id: 'default',
-    name: 'Default',
+    name: 'Classique',
     fontFamily: 'system',
     darkMode: false,
     primaryColor: '#3b82f6',
