@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { LocationMap } from '@/components/map/LocationMap';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
