@@ -37,6 +37,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
   const { toast } = useToast();
   const [uploadingCover, setUploadingCover] = useState(false);
   const [local, setLocal] = useState<CenterCustomization>(customization);
+  const [showCustomColors, setShowCustomColors] = useState(false);
 
   // Sync local state when prop changes from parent
   useEffect(() => {
