@@ -198,6 +198,15 @@ export default function DashboardMyPage() {
             </div>
           </div>
         </div>
+      <TemplateSelector
+        open={templateDialogOpen}
+        onOpenChange={setTemplateDialogOpen}
+        currentCustomization={customization}
+        onApply={(newCustomization) => {
+          setCustomization(newCustomization);
+          handleRefreshPreview();
+        }}
+      />
       <Dialog open={requestDialogOpen} onOpenChange={setRequestDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
