@@ -13,10 +13,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { supabase } from '@/integrations/supabase/client';
-import { ExternalLink, Smartphone, Monitor, RefreshCw, Sparkles, Loader2 } from 'lucide-react';
+import { ExternalLink, Smartphone, Monitor, RefreshCw, Sparkles, Loader2, LayoutTemplate } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { trackEvent } from '@/lib/analytics';
+import { TemplateSelector } from '@/components/dashboard/TemplateSelector';
 
 export default function DashboardMyPage() {
   const { t } = useTranslation();
