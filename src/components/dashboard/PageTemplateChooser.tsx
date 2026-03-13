@@ -195,7 +195,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'bold-red',
-    name: 'Bold',
+    name: 'Dynamique',
     fontFamily: 'space-grotesk',
     darkMode: false,
     primaryColor: '#dc2626',
