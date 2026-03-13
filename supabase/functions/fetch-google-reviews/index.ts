@@ -186,7 +186,7 @@ serve(async (req: Request) => {
 
     // Last resort: use the entire input as a text search query
     if (!placeId) {
-      placeId = await searchPlaceByText(url, GOOGLE_PLACES_API_KEY);
+      placeId = await searchPlaceByText(url, GOOGLE_PLACES_API_KEY, cityStr || undefined);
     }
 
     if (!placeId) {
