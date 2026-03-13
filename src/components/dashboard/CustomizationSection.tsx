@@ -447,26 +447,43 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             </div>
             )}
 
-            {/* Color Presets */}
+            {/* Theme Presets */}
             <div>
-              <Label className="text-sm font-medium mb-3 block">Couleurs</Label>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-4">
-                {COLOR_PRESETS.map((preset) => (
+              <Label className="text-sm font-medium mb-3 block flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4" />
+                Thèmes
+              </Label>
+              <div className="grid grid-cols-5 gap-2 mb-4">
+                {TEMPLATES.map((template) => (
                   <button
-                    key={preset.name}
-                    onClick={() => applyPreset(preset)}
+                    key={template.id}
+                    onClick={() => applyTemplate(template)}
                     className={cn(
-                      "p-2.5 rounded-lg border-2 transition-all hover:scale-105",
-                      local.colors.primary === preset.primary 
+                      "p-2 rounded-xl border-2 transition-all hover:scale-105 flex flex-col items-center gap-1.5",
+                      local.colors.primary === template.primaryColor && local.colors.background === template.background
                         ? "border-primary ring-2 ring-primary/20" 
                         : "border-border hover:border-muted-foreground"
                     )}
                   >
-                    <div className="flex gap-1 mb-1">
-                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.primary }} />
-                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.secondary }} />
+                    <div
+                      className="w-full aspect-[3/4] rounded-lg overflow-hidden flex flex-col items-center justify-center gap-1 p-1.5"
+                      style={{ background: template.backgroundGradient || template.background }}
+                    >
+                      {[0.7, 0.8, 0.6].map((w, i) => (
+                        <div
+                          key={i}
+                          className="h-2.5 rounded-full"
+                          style={{
+                            width: `${w * 100}%`,
+                            backgroundColor: template.darkMode
+                              ? `${template.primaryColor}30`
+                              : `${template.primaryColor}25`,
+                            borderRadius: template.buttonRadius,
+                          }}
+                        />
+                      ))}
                     </div>
-                    <p className="text-[10px] text-center text-muted-foreground">{preset.name}</p>
+                    <p className="text-[10px] text-center text-muted-foreground font-medium truncate w-full">{template.name}</p>
                   </button>
                 ))}
               </div>
