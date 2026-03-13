@@ -102,29 +102,8 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     ? local.visible_pack_ids 
     : packs.map(p => p.id);
 
-  const applyTemplate = (template: typeof TEMPLATES[0]) => {
-    updateLocal({
-      colors: {
-        primary: template.primaryColor,
-        secondary: template.secondaryColor,
-        accent: template.accentColor,
-        text_primary: template.textPrimary,
-        text_secondary: template.textSecondary,
-        background: template.background,
-        background_gradient: template.backgroundGradient,
-      },
-      layout: {
-        ...local.layout,
-        dark_mode: template.darkMode,
-        header_style: template.headerStyle,
-        font_family: template.fontFamily,
-      },
-      texts: {
-        ...local.texts,
-        cta_button: template.ctaText,
-      },
-    });
-  };
+
+
 
   const handleCoverUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
