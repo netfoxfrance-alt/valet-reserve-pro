@@ -385,6 +385,7 @@ interface HtmlOptions {
   description: string;
   canonical?: string;
   ogImage?: string;
+  ogSiteName?: string;
   keywords?: string;
   body: string;
   structuredData?: Record<string, any>;
@@ -392,7 +393,8 @@ interface HtmlOptions {
 }
 
 function wrapHtml(opts: HtmlOptions): string {
-  const { title, description, canonical, ogImage, keywords, body, structuredData, noindex } = opts;
+  const { title, description, canonical, ogImage, ogSiteName, keywords, body, structuredData, noindex } = opts;
+  const siteName = ogSiteName || 'CleaningPage';
 
   return `<!DOCTYPE html>
 <html lang="fr">
@@ -409,8 +411,11 @@ function wrapHtml(opts: HtmlOptions): string {
   <meta property="og:title" content="${escapeAttr(title)}">
   <meta property="og:description" content="${escapeAttr(description)}">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="${escapeAttr(siteName)}">
   ${canonical ? `<meta property="og:url" content="${escapeAttr(canonical)}">` : ''}
-  ${ogImage ? `<meta property="og:image" content="${escapeAttr(ogImage)}">` : ''}
+  ${ogImage ? `<meta property="og:image" content="${escapeAttr(ogImage)}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">` : ''}
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
