@@ -12,7 +12,6 @@ import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, MapPin, Packa
 import { BlocksEditor } from './BlocksEditor';
 import { TEMPLATES } from './PageTemplateChooser';
 import { cn, stripHtml } from '@/lib/utils';
-import { cn, stripHtml } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useNavigate } from 'react-router-dom';
