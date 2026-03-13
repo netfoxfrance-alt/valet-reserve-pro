@@ -38,6 +38,7 @@ interface BlocksEditorProps {
   userId: string;
   centerAddress?: string;
   centerPhone?: string;
+  centerCity?: string;
   headerStyle?: 'banner' | 'minimal';
 }
 
@@ -173,6 +174,7 @@ export function BlocksEditor({
   userId,
   centerAddress,
   centerPhone,
+  centerCity,
   headerStyle,
 }: BlocksEditorProps) {
   const { toast } = useToast();
@@ -278,7 +280,7 @@ export function BlocksEditor({
     setFetchingReviewsBlockId(blockId);
     try {
       const { data, error } = await supabase.functions.invoke('fetch-google-reviews', {
-        body: { url: url.trim() },
+        body: { url: url.trim(), city: centerCity || '' },
       });
       if (error) throw error;
       if (data?.error && !data?.rating && !data?.reviewCount) {

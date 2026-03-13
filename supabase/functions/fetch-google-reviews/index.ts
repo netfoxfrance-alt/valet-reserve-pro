@@ -28,17 +28,65 @@ function extractPlaceId(input: string): string | null {
 }
 
 /**
- * Extract business name from a Google Maps URL for text search fallback.
+ * Extract business name from various Google URL formats.
  */
 function extractBusinessName(url: string): string | null {
-  const match = url.match(/\/maps\/place\/([^/@?]+)/);
-  if (match) {
-    return decodeURIComponent(match[1].replace(/\+/g, ' '));
+  try {
+    let targetUrl = url;
+
+    // If it's a /sorry/ CAPTCHA page, get the real URL from `continue` param
+    if (url.includes('/sorry/index')) {
+      const urlObj = new URL(url);
+      const continueUrl = urlObj.searchParams.get('continue');
+      if (continueUrl) {
+        targetUrl = continueUrl;
+      }
+    }
+
+    // From Google Maps: /maps/place/Business+Name/...
+    const mapsMatch = targetUrl.match(/\/maps\/place\/([^/@?]+)/);
+    if (mapsMatch) {
+      return decodeURIComponent(mapsMatch[1].replace(/\+/g, ' '));
+    }
+
+    // From Google Search URL: ?q=Business+Name
+    const urlObj = new URL(targetUrl);
+    const qParam = urlObj.searchParams.get('q');
+    if (qParam) {
+      return decodeURIComponent(qParam.replace(/\+/g, ' '));
+    }
+  } catch {
+    // Not a valid URL, ignore
   }
+
   return null;
 }
 
-async function searchPlaceByText(query: string, apiKey: string): Promise<string | null> {
+/**
+ * Generate search query variations from a business name.
+ * "T.S.N (Top Services Nettoyage)" → ["T.S.N (Top Services Nettoyage)", "Top Services Nettoyage", "TSN Top Services Nettoyage"]
+ */
+function getSearchVariations(name: string): string[] {
+  const variations: string[] = [name]; // Try original first
+  
+  const inParens = name.match(/\(([^)]+)\)/);
+  if (inParens) {
+    const inside = inParens[1].trim();
+    const outside = name.replace(/\([^)]+\)/, '').replace(/\./g, '').trim();
+    // "Top Services Nettoyage" alone
+    variations.push(inside);
+    // Combine: "TSN Top Services Nettoyage"
+    if (outside) variations.push(`${outside} ${inside}`);
+  } else {
+    // Remove dots: "T.S.N" → "TSN"
+    const noDots = name.replace(/\./g, '').trim();
+    if (noDots !== name) variations.push(noDots);
+  }
+  
+  return [...new Set(variations)];
+}
+
+async function searchPlaceByTextQuery(query: string, apiKey: string): Promise<{ id: string; name: string } | null> {
   console.log("Text search query:", query);
   const searchRes = await fetch(
     `https://places.googleapis.com/v1/places:searchText`,
@@ -57,7 +105,24 @@ async function searchPlaceByText(query: string, apiKey: string): Promise<string 
   console.log("Text search response status:", searchRes.status, "data:", JSON.stringify(searchData).substring(0, 500));
   
   if (searchRes.ok && searchData.places?.length > 0) {
-    return searchData.places[0].id;
+    return { id: searchData.places[0].id, name: searchData.places[0].displayName?.text || query };
+  }
+  return null;
+}
+
+/**
+ * Try multiple search variations to find the place, optionally appending city.
+ */
+async function searchPlaceByText(name: string, apiKey: string, city?: string): Promise<string | null> {
+  const variations = getSearchVariations(name);
+  // If we have a city, also try each variation + city
+  const queries = city 
+    ? [...variations.map(v => `${v} ${city}`), ...variations]
+    : variations;
+  
+  for (const query of queries) {
+    const result = await searchPlaceByTextQuery(query, apiKey);
+    if (result) return result.id;
   }
   return null;
 }
@@ -76,7 +141,7 @@ serve(async (req: Request) => {
       );
     }
 
-    const { url } = await req.json();
+    const { url, city } = await req.json();
     if (!url || typeof url !== "string") {
       return new Response(
         JSON.stringify({ error: "URL ou Place ID requis." }),
@@ -84,7 +149,8 @@ serve(async (req: Request) => {
       );
     }
 
-    console.log("Input:", url);
+    const cityStr = (city && typeof city === 'string') ? city.trim() : '';
+    console.log("Input:", url, "City:", cityStr);
 
     let placeId = extractPlaceId(url);
 
@@ -92,7 +158,7 @@ serve(async (req: Request) => {
     if (!placeId) {
       const businessName = extractBusinessName(url);
       if (businessName) {
-        placeId = await searchPlaceByText(businessName, GOOGLE_PLACES_API_KEY);
+        placeId = await searchPlaceByText(businessName, GOOGLE_PLACES_API_KEY, cityStr || undefined);
       }
     }
 
@@ -110,7 +176,7 @@ serve(async (req: Request) => {
         if (!placeId) {
           const resolvedName = extractBusinessName(finalUrl);
           if (resolvedName) {
-            placeId = await searchPlaceByText(resolvedName, GOOGLE_PLACES_API_KEY);
+            placeId = await searchPlaceByText(resolvedName, GOOGLE_PLACES_API_KEY, cityStr || undefined);
           }
         }
       } catch (e) {
@@ -120,7 +186,7 @@ serve(async (req: Request) => {
 
     // Last resort: use the entire input as a text search query
     if (!placeId) {
-      placeId = await searchPlaceByText(url, GOOGLE_PLACES_API_KEY);
+      placeId = await searchPlaceByText(url, GOOGLE_PLACES_API_KEY, cityStr || undefined);
     }
 
     if (!placeId) {

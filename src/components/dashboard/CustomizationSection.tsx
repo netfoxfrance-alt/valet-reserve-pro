@@ -720,6 +720,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               userId={userId}
               centerAddress={centerAddress}
               centerPhone={centerPhone}
+              centerCity={local.seo?.city || ''}
               headerStyle={local.layout?.header_style || 'banner'}
             />
           </TabsContent>
