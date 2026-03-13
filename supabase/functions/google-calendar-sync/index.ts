@@ -43,6 +43,10 @@ function buildCalendarEvent(appointment: any, centerAddress?: string) {
   const serviceName = appointment.custom_services?.name || appointment.packs?.name || 'Prestation';
   const servicePrice = appointment.custom_price ?? appointment.custom_services?.price ?? appointment.packs?.price;
 
+  // Detect if this is a vehicle-related service
+  const vehicleTypes = ['citadine', 'berline', 'suv', 'utilitaire'];
+  const isVehicleService = appointment.vehicle_type && vehicleTypes.includes(appointment.vehicle_type.toLowerCase());
+
   // Build description
   const parts: string[] = [];
   parts.push(`📋 ${serviceName}`);
@@ -53,7 +57,7 @@ function buildCalendarEvent(appointment: any, centerAddress?: string) {
   if (appointment.client_phone) parts.push(`Tél: ${appointment.client_phone}`);
   if (appointment.client_email) parts.push(`Email: ${appointment.client_email}`);
   if (appointment.client_address) parts.push(`Adresse: ${appointment.client_address}`);
-  if (appointment.vehicle_type && appointment.vehicle_type !== 'custom') {
+  if (isVehicleService) {
     parts.push('');
     parts.push(`🚗 Véhicule: ${appointment.vehicle_type}`);
   }
@@ -63,9 +67,10 @@ function buildCalendarEvent(appointment: any, centerAddress?: string) {
   }
 
   const duration = appointment.duration_minutes || 60;
+  const summaryEmoji = isVehicleService ? '🚗' : '📋';
 
   return {
-    summary: `🚗 RDV - ${appointment.client_name}`,
+    summary: `${summaryEmoji} RDV - ${appointment.client_name}`,
     description: parts.join('\n'),
     location: appointment.client_address || centerAddress || undefined,
     start: {
