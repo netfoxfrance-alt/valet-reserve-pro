@@ -156,7 +156,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'premium',
-    name: 'Premium',
+    name: 'Prestige',
     fontFamily: 'playfair',
     darkMode: true,
     primaryColor: '#a855f7',
