@@ -62,8 +62,27 @@ function extractBusinessName(url: string): string | null {
   return null;
 }
 
+/**
+ * Clean a business name for better search results.
+ * Removes acronyms in parentheses, special chars, etc.
+ */
+function cleanBusinessName(name: string): string {
+  // "T.S.N (Top Services Nettoyage)" → "Top Services Nettoyage"
+  const inParens = name.match(/\(([^)]+)\)/);
+  if (inParens) {
+    // Use the content inside parentheses if it looks like the full name
+    const inside = inParens[1].trim();
+    if (inside.split(/\s+/).length >= 2) {
+      return inside;
+    }
+  }
+  // Remove dots from acronyms: "T.S.N" → "TSN"
+  return name.replace(/\./g, '').trim();
+}
+
 async function searchPlaceByText(query: string, apiKey: string): Promise<string | null> {
-  console.log("Text search query:", query);
+  const cleanedQuery = cleanBusinessName(query);
+  console.log("Text search query:", cleanedQuery, "(original:", query, ")");
   const searchRes = await fetch(
     `https://places.googleapis.com/v1/places:searchText`,
     {
@@ -73,7 +92,7 @@ async function searchPlaceByText(query: string, apiKey: string): Promise<string 
         "X-Goog-Api-Key": apiKey,
         "X-Goog-FieldMask": "places.id,places.displayName",
       },
-      body: JSON.stringify({ textQuery: query }),
+      body: JSON.stringify({ textQuery: cleanedQuery }),
     }
   );
 
