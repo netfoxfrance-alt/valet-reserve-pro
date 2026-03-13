@@ -398,6 +398,109 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
 
             </div>
 
+            {/* Typography */}
+            <div>
+              <Label className="text-sm font-medium mb-3 block flex items-center gap-1.5">
+                <Type className="w-4 h-4" />
+                Typographie
+              </Label>
+              
+              {/* Font Family */}
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <Label className="text-xs">Police</Label>
+                  <Select
+                    value={local.layout.font_family || 'system'}
+                    onValueChange={(v) => {
+                      const font = v as FontFamily;
+                      // Preload font
+                      const url = GOOGLE_FONT_URLS[font];
+                      if (url && !document.querySelector(`link[href="${url}"]`)) {
+                        const link = document.createElement('link');
+                        link.rel = 'stylesheet';
+                        link.href = url;
+                        document.head.appendChild(link);
+                      }
+                      updateLayout({ font_family: font });
+                    }}
+                  >
+                    <SelectTrigger className="h-10">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FONT_OPTIONS.map(f => (
+                        <SelectItem key={f.value} value={f.value}>
+                          <span style={{ fontFamily: f.preview }}>{f.label}</span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Font Size Scale */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Taille du texte</Label>
+                    <span className="text-xs text-muted-foreground">{Math.round((local.layout.font_size_scale || 1) * 100)}%</span>
+                  </div>
+                  <Slider
+                    value={[(local.layout.font_size_scale || 1) * 100]}
+                    min={85}
+                    max={120}
+                    step={5}
+                    onValueChange={([v]) => updateLayout({ font_size_scale: v / 100 })}
+                    className="py-2"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Background */}
+            <div>
+              <Label className="text-sm font-medium mb-3 block">Fond de page</Label>
+              <div className="grid grid-cols-4 gap-2 mb-3">
+                {BG_PRESETS.map((bg) => {
+                  const isSelected = (local.colors.background || '#ffffff') === bg.value;
+                  return (
+                    <button
+                      key={bg.name}
+                      onClick={() => updateColors({ background: bg.value, background_gradient: bg.gradient })}
+                      className={cn(
+                        "h-12 rounded-lg border-2 transition-all hover:scale-105 relative overflow-hidden",
+                        isSelected ? "border-primary ring-2 ring-primary/20" : "border-border hover:border-muted-foreground"
+                      )}
+                      title={bg.name}
+                    >
+                      <div
+                        className="absolute inset-0"
+                        style={{ background: bg.gradient || bg.value }}
+                      />
+                      {isSelected && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-3 h-3 rounded-full bg-primary" />
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+              {/* Custom background color */}
+              <div className="flex gap-1.5 items-center">
+                <input
+                  type="color"
+                  value={local.colors.background || '#ffffff'}
+                  onChange={(e) => updateColors({ background: e.target.value, background_gradient: undefined })}
+                  className="w-10 h-9 rounded border border-border cursor-pointer"
+                />
+                <Input
+                  value={local.colors.background || '#ffffff'}
+                  onChange={(e) => updateColors({ background: e.target.value, background_gradient: undefined })}
+                  className="flex-1 h-9 text-xs"
+                  placeholder="#ffffff"
+                />
+              </div>
+            </div>
+
             {/* CTA Button Text */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Bouton d'action</Label>
