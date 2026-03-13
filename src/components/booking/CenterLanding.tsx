@@ -887,10 +887,16 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
     const count = block.reviewCount || 0;
     const url = block.reviewUrl?.trim();
 
-    // Use URL directly - only add https:// if no protocol specified
-    const absoluteUrl = !url ? null 
-      : (url.startsWith('http://') || url.startsWith('https://')) ? url 
-      : `https://${url}`;
+    // For Google reviews with a Place ID, link directly to the write-review page
+    const writeReviewUrl = isGoogle && block.reviewPlaceId
+      ? `https://search.google.com/local/writereview?placeid=${block.reviewPlaceId}`
+      : null;
+
+    // Use write-review URL if available, otherwise fall back to the entered URL
+    const targetUrl = writeReviewUrl || url;
+    const absoluteUrl = !targetUrl ? null 
+      : (targetUrl.startsWith('http://') || targetUrl.startsWith('https://')) ? targetUrl 
+      : `https://${targetUrl}`;
 
     const Wrapper = absoluteUrl ? 'a' : 'div';
     const wrapperProps = absoluteUrl ? { 
