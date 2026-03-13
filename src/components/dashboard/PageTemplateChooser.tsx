@@ -43,7 +43,7 @@ const TEMPLATES: PageTemplate[] = [
   },
   {
     id: 'daft-punk',
-    name: 'Daft Punk',
+    name: 'Noir',
     fontFamily: 'space-grotesk',
     darkMode: true,
     primaryColor: '#ffffff',
