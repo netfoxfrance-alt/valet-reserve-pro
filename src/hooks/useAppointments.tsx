@@ -469,9 +469,14 @@ export function useCreateAppointment() {
         duration_minutes,
       });
 
-      const { data: insertedData, error } = await supabase
+      // Generate ID client-side to avoid needing SELECT after INSERT
+      // (SELECT RLS policy requires owner, but public users can only INSERT)
+      const generatedId = crypto.randomUUID();
+
+      const { error } = await supabase
         .from('appointments')
         .insert({
+          id: generatedId,
           center_id: data.center_id,
           pack_id: safePackId,
           client_id: data.client_id || null,
@@ -487,16 +492,14 @@ export function useCreateAppointment() {
           duration_minutes,
           custom_price: data.custom_price !== undefined && data.custom_price !== null ? data.custom_price : finalPrice,
           status: 'pending_validation',
-        })
-        .select('id')
-        .single();
+        });
 
       if (error) {
         console.error('[CreateAppointment] DB error:', JSON.stringify(error));
       }
 
       // Send "request received" email only when no deposit (deposit flow sends confirmation via webhook)
-      if (!error && insertedData && data.pack_name && data.price !== undefined && !data.skip_email) {
+      if (!error && data.pack_name && data.price !== undefined && !data.skip_email) {
         (async () => {
           try {
             const response = await fetch(`${SUPABASE_URL}/functions/v1/send-booking-emails`, {
@@ -530,7 +533,7 @@ export function useCreateAppointment() {
         })();
       }
 
-      return { error: error ? formatAppointmentError(error) : null, appointmentId: insertedData?.id || null };
+      return { error: error ? formatAppointmentError(error) : null, appointmentId: error ? null : generatedId };
     } catch (err) {
       console.error('[CreateAppointment] Unexpected error:', err);
       return { error: formatAppointmentError(err), appointmentId: null };
