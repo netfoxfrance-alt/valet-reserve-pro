@@ -25,6 +25,9 @@ interface CustomizationSectionProps {
   packs?: Pack[];
   centerAddress?: string;
   centerPhone?: string;
+  logoUrl?: string | null;
+  onLogoUploaded?: (url: string) => void;
+  onLogoRemoved?: () => void;
 }
 
 const COLOR_PRESETS = [
@@ -58,10 +61,11 @@ const BG_PRESETS = [
   { name: 'Nuit', value: '#0f0a1a', gradient: 'linear-gradient(180deg, #0f0a1a 0%, #1a1035 100%)' },
 ];
 
-export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [], centerAddress, centerPhone }: CustomizationSectionProps) {
+export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [], centerAddress, centerPhone, logoUrl, onLogoUploaded, onLogoRemoved }: CustomizationSectionProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const [local, setLocal] = useState<CenterCustomization>(customization);
 
   // Sync local state when prop changes from parent
@@ -170,6 +174,49 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     }
   };
 
+  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast({ title: 'Erreur', description: 'Veuillez sélectionner une image.', variant: 'destructive' });
+      return;
+    }
+    setUploadingLogo(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${userId}/logo.${fileExt}`;
+      const { error: uploadError } = await supabase.storage
+        .from('center-logos')
+        .upload(fileName, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabase.storage
+        .from('center-logos')
+        .getPublicUrl(fileName);
+      onLogoUploaded?.(publicUrl);
+      toast({ title: 'Logo mis à jour !' });
+    } catch (error) {
+      toast({ title: 'Erreur', description: 'Impossible d\'uploader le logo.', variant: 'destructive' });
+    } finally {
+      setUploadingLogo(false);
+      event.target.value = '';
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    setUploadingLogo(true);
+    try {
+      await supabase.storage
+        .from('center-logos')
+        .remove([`${userId}/logo.png`, `${userId}/logo.jpg`, `${userId}/logo.jpeg`, `${userId}/logo.webp`]);
+      onLogoRemoved?.();
+      toast({ title: 'Logo supprimé' });
+    } catch (error) {
+      toast({ title: 'Erreur', description: 'Impossible de supprimer le logo.', variant: 'destructive' });
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
   const updateSeo = (seo: Partial<CenterCustomization['seo']>) => {
     updateLocal({ seo: { ...local.seo, ...seo } });
   };
@@ -226,8 +273,88 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               </div>
             </div>
 
+            {/* Logo Section - show when header_style is minimal */}
+            {(local.layout.header_style || 'minimal') === 'minimal' && (
+              <div>
+                <Label className="text-sm font-medium mb-3 block">Logo</Label>
+                {logoUrl ? (
+                  <div className="relative">
+                    <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-secondary/20">
+                      <img
+                        src={logoUrl}
+                        alt="Logo"
+                        className="max-w-[120px] max-h-[48px] w-auto h-auto object-contain rounded"
+                      />
+                      {uploadingLogo && (
+                        <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                      )}
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        className="sr-only"
+                        id="logo-upload-design"
+                      />
+                      <Label
+                        htmlFor="logo-upload-design"
+                        className={cn(
+                          buttonVariants({ variant: 'outline', size: 'sm' }),
+                          uploadingLogo && 'pointer-events-none opacity-50',
+                          "cursor-pointer"
+                        )}
+                      >
+                        <Upload className="w-4 h-4 mr-1.5" />
+                        Changer
+                      </Label>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleRemoveLogo}
+                        disabled={uploadingLogo}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+                    <Image className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                    <p className="text-sm text-muted-foreground mb-2">Aucun logo</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="sr-only"
+                      id="logo-upload-design-empty"
+                    />
+                    <Label
+                      htmlFor="logo-upload-design-empty"
+                      className={cn(
+                        buttonVariants({ variant: 'outline', size: 'sm' }),
+                        uploadingLogo && 'pointer-events-none opacity-50',
+                        "cursor-pointer"
+                      )}
+                    >
+                      {uploadingLogo ? (
+                        <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+                      ) : (
+                        <Upload className="w-4 h-4 mr-1.5" />
+                      )}
+                      Ajouter un logo
+                    </Label>
+                  </div>
+                )}
+                <p className="text-xs text-muted-foreground mt-2">
+                  Votre logo apparaîtra dans le header de votre page
+                </p>
+              </div>
+            )}
+
             {/* Banner Section - only show when header_style is banner */}
-            {(local.layout.header_style || 'banner') === 'banner' && (
+            {(local.layout.header_style || 'minimal') === 'banner' && (
             <div>
               <Label className="text-sm font-medium mb-3 block">Bannière</Label>
               {local.cover_url ? (
@@ -300,9 +427,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                   </Label>
                 </div>
               )}
-              <p className="text-xs text-muted-foreground mt-2">
-                Le logo se configure dans Paramètres → Informations
-              </p>
             </div>
             )}
 

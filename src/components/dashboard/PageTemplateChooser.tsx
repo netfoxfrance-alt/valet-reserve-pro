@@ -34,7 +34,7 @@ const TEMPLATES: PageTemplate[] = [
     textPrimary: '#111827',
     textSecondary: '#6b7280',
     background: '#ffffff',
-    headerStyle: 'banner',
+    headerStyle: 'minimal',
     buttonRadius: '9999px',
     blocks: [
       { id: 'formules', type: 'formules', title: 'Nos formules', enabled: true, order: 1 },
