@@ -188,14 +188,17 @@ async function renderCenterPage(slug: string): Promise<Response> {
   const customization = (center.customization as Record<string, any>) || {};
   const seo = customization.seo || {};
   const texts = customization.texts || {};
+  const coverUrl = customization.cover_url || null;
 
   // SEO data
   const centerName = center.name || 'Centre de nettoyage';
   const city = seo.city || '';
-  const seoTitle = seo.title || `${centerName} - Nettoyage professionnel${city ? ` à ${city}` : ''}`;
-  const seoDescription = seo.description || `${centerName} propose des services de nettoyage professionnel${city ? ` à ${city}` : ''}. Réservez en ligne facilement.`;
+  const seoTitle = seo.title || `${centerName}${city ? ` à ${city}` : ''}`;
+  const seoDescription = seo.description || texts.tagline || `${centerName} — Réservez en ligne facilement.${city ? ` Service à ${city}.` : ''}`;
   const seoKeywords = seo.keywords || '';
   const canonical = `${BASE_URL}/${slug}`;
+  // OG image priority: cover > logo > default
+  const ogImage = coverUrl || center.logo_url || `${BASE_URL}/og-image.png`;
 
   // Build packs HTML
   let packsHtml = '';
