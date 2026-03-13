@@ -157,7 +157,7 @@ export const defaultCustomization: CenterCustomization = {
   },
   layout: {
     dark_mode: false,
-    header_style: 'banner',
+    header_style: 'minimal',
   },
   social: {
     instagram: '',
