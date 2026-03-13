@@ -296,7 +296,7 @@ export function BlocksEditor({
         if (updates.reviewRating) {
           toast({ title: 'Avis récupérés !', description: `Note: ${updates.reviewRating}/5 — ${updates.reviewCount ?? '?'} avis` });
         } else {
-          toast({ title: `${updates.reviewCount} avis trouvés`, description: 'Saisissez votre note manuellement ci-dessous.' });
+          toast({ title: `${updates.reviewCount} avis trouvés` });
         }
       } else {
         toast({ title: 'Aucune donnée trouvée', description: 'Vérifiez le lien ou saisissez les données manuellement.', variant: 'destructive' });
@@ -356,8 +356,8 @@ export function BlocksEditor({
     } else if (type === 'reviews' && reviewPlatform) {
       newBlock.reviewPlatform = reviewPlatform;
       newBlock.reviewUrl = '';
-      newBlock.reviewRating = 5;
-      newBlock.reviewCount = 0;
+      newBlock.reviewRating = undefined;
+      newBlock.reviewCount = undefined;
     }
     
     onUpdateBlocks([...blocks, newBlock]);
