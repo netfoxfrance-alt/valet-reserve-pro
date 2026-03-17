@@ -1,7 +1,8 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
-import { TextStyle } from '@tiptap/extension-text-style';
+// @ts-ignore - tiptap extension types
+import TextStyle from '@tiptap/extension-text-style';
 import { Bold, Italic, Underline as UnderlineIcon, List, ListOrdered, Minus, Smile, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEffect, useRef, useState, useCallback } from 'react';
