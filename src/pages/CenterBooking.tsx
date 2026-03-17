@@ -141,11 +141,14 @@ export default function CenterBooking() {
       ? `${center.name}${city ? ` à ${city}` : ''} : réservez votre nettoyage professionnel en ligne. Devis gratuit, prise de rendez-vous rapide. ${city ? `Nettoyage ${city} - ` : ''}Service de qualité.`
       : 'CleaningPage - Réservez votre nettoyage professionnel en ligne. Devis gratuit et prise de rendez-vous rapide.');
   
+  // OG image priority: cover > logo > default (aligned with prerender)
+  const ogImage = center?.customization?.cover_url || center?.logo_url || undefined;
+  
   useSEO({
     title: seoTitle,
     description: seoDescription,
     canonical: pageUrl,
-    ogImage: center?.logo_url || undefined,
+    ogImage,
     keywords: customSeo?.keywords || undefined,
   });
   const goToPrevStep = () => {
