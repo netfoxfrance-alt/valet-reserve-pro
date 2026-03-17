@@ -1,12 +1,26 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
-// @ts-ignore - tiptap extension types
-import TextStyle from '@tiptap/extension-text-style';
+import { Mark, Extension, mergeAttributes } from '@tiptap/core';
 import { Bold, Italic, Underline as UnderlineIcon, List, ListOrdered, Minus, Smile, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Extension } from '@tiptap/core';
+
+// Inline TextStyle mark (replaces @tiptap/extension-text-style)
+const TextStyle = Mark.create({
+  name: 'textStyle',
+  parseHTML() {
+    return [{ tag: 'span', getAttrs: (el) => (el as HTMLElement).hasAttribute('style') ? {} : false }];
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ['span', mergeAttributes(this.options?.HTMLAttributes || {}, HTMLAttributes), 0];
+  },
+  addAttributes() {
+    return {
+      style: { default: null, parseHTML: (el) => el.getAttribute('style') },
+    };
+  },
+});
 
 // FontSize extension using TextStyle's style attribute
 const FontSizeExtension = Extension.create({
