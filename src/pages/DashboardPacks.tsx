@@ -283,6 +283,18 @@ export default function DashboardPacks() {
                       placeholder="Nettoyage Complet"
                     />
                   </div>
+                  {categories.length > 0 && (
+                    <div className="space-y-2">
+                      <Label>Catégorie</Label>
+                      <Select value={newPack.category_id || 'none'} onValueChange={v => setNewPack({ ...newPack, category_id: v === 'none' ? null : v })}>
+                        <SelectTrigger><SelectValue placeholder="Aucune catégorie" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">Aucune catégorie</SelectItem>
+                          {categories.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                   {/* Duration - optional for quote type */}
                   <div className="space-y-2">
                     <Label>Durée estimée <span className="text-muted-foreground font-normal">(optionnelle)</span></Label>
