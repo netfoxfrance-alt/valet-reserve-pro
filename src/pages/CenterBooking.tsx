@@ -796,6 +796,9 @@ export default function CenterBooking() {
                       <span className={`text-sm font-medium ${selectedLocation === 'on_site' ? 'text-foreground' : 'text-muted-foreground'}`}>
                         Sur place
                       </span>
+                      {selectedLocation === 'on_site' && center.address && (
+                        <span className="text-xs text-muted-foreground text-center">{center.address}</span>
+                      )}
                     </button>
                     <button
                       onClick={() => setSelectedLocation('at_home')}
@@ -813,6 +816,9 @@ export default function CenterBooking() {
                       <span className={`text-sm font-medium ${selectedLocation === 'at_home' ? 'text-foreground' : 'text-muted-foreground'}`}>
                         À domicile
                       </span>
+                      {selectedLocation === 'at_home' && (
+                        <span className="text-xs text-muted-foreground text-center">Adresse à renseigner</span>
+                      )}
                     </button>
                   </div>
                 </div>
