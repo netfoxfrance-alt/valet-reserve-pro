@@ -157,6 +157,11 @@ export function ConfirmationView({ pack, date, time, clientName, centerName = "C
               <p className="text-sm text-muted-foreground">
                 Durée estimée : {pack.duration}
               </p>
+              {selectedOptions.length > 0 && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  + {selectedOptions.map(o => o.name).join(', ')}
+                </p>
+              )}
             </div>
           </div>
           
@@ -166,12 +171,15 @@ export function ConfirmationView({ pack, date, time, clientName, centerName = "C
             </div>
             <div>
               <p className="font-medium text-foreground">
-                {centerName}
+                {selectedLocation === 'at_home' ? 'À domicile' : centerName}
               </p>
-              {centerAddress && (
+              {selectedLocation !== 'at_home' && centerAddress && (
                 <p className="text-sm text-muted-foreground">
                   {centerAddress}
                 </p>
+              )}
+              {selectedLocation === 'at_home' && (
+                <p className="text-sm text-muted-foreground">Le professionnel se déplace chez vous</p>
               )}
             </div>
           </div>
