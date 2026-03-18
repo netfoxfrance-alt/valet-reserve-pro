@@ -442,6 +442,29 @@ export default function DashboardPacks() {
 
                 <FeaturesEditor features={newPack.features} onAdd={handleAddNewFeature} onUpdate={handleUpdateNewFeature} onRemove={handleRemoveNewFeature} />
 
+                {/* Options association for new formula */}
+                {allOptions.length > 0 && (
+                  <div className="space-y-2">
+                    <Label>Options associées</Label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {allOptions.map(opt => (
+                        <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg border border-border/50 hover:bg-secondary/30 cursor-pointer transition-colors">
+                          <Checkbox
+                            checked={newSelectedOptionIds.includes(opt.id)}
+                            onCheckedChange={(checked) => {
+                              setNewSelectedOptionIds(prev =>
+                                checked ? [...prev, opt.id] : prev.filter(id => id !== opt.id)
+                              );
+                            }}
+                          />
+                          <span className="text-sm font-medium flex-1">{opt.name}</span>
+                          <span className="text-sm text-muted-foreground">{opt.price}€</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Image upload */}
                 <div className="space-y-2">
                   <Label>Image (optionnel)</Label>
