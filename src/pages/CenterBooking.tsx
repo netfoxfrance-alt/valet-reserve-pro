@@ -72,11 +72,13 @@ type BookingStep =
   | 'landing'
   | 'contact-form'
   | 'contact-confirmation'
+  | 'select-category'
   | 'pack-detail'
   | 'quote-detail'
   | 'quote-form'
   | 'quote-confirmation'
   | 'select-pack'
+  | 'select-options'
   | 'calendar'
   | 'client-info'
   | 'confirmation';
