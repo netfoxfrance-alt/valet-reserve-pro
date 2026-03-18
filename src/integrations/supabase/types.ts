@@ -38,6 +38,7 @@ export type Database = {
           notes: string | null
           pack_id: string | null
           seen_at: string | null
+          selected_options: Json | null
           status: string | null
           updated_at: string | null
           vehicle_type: string
@@ -65,6 +66,7 @@ export type Database = {
           notes?: string | null
           pack_id?: string | null
           seen_at?: string | null
+          selected_options?: Json | null
           status?: string | null
           updated_at?: string | null
           vehicle_type: string
@@ -92,6 +94,7 @@ export type Database = {
           notes?: string | null
           pack_id?: string | null
           seen_at?: string | null
+          selected_options?: Json | null
           status?: string | null
           updated_at?: string | null
           vehicle_type?: string
@@ -816,9 +819,85 @@ export type Database = {
           },
         ]
       }
+      pack_option_links: {
+        Row: {
+          created_at: string
+          id: string
+          option_id: string
+          pack_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          option_id: string
+          pack_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          option_id?: string
+          pack_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pack_option_links_option_id_fkey"
+            columns: ["option_id"]
+            isOneToOne: false
+            referencedRelation: "service_options"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pack_option_links_pack_id_fkey"
+            columns: ["pack_id"]
+            isOneToOne: false
+            referencedRelation: "packs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pack_variant_prices: {
+        Row: {
+          created_at: string
+          id: string
+          pack_id: string
+          price: number
+          variant_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          pack_id: string
+          price?: number
+          variant_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          pack_id?: string
+          price?: number
+          variant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pack_variant_prices_pack_id_fkey"
+            columns: ["pack_id"]
+            isOneToOne: false
+            referencedRelation: "packs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pack_variant_prices_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "service_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       packs: {
         Row: {
           active: boolean | null
+          category_id: string | null
           center_id: string
           created_at: string | null
           description: string | null
@@ -835,6 +914,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean | null
+          category_id?: string | null
           center_id: string
           created_at?: string | null
           description?: string | null
@@ -851,6 +931,7 @@ export type Database = {
         }
         Update: {
           active?: boolean | null
+          category_id?: string | null
           center_id?: string
           created_at?: string | null
           description?: string | null
@@ -866,6 +947,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "packs_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "packs_center_id_fkey"
             columns: ["center_id"]
@@ -978,6 +1066,166 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_categories: {
+        Row: {
+          active: boolean
+          center_id: string
+          created_at: string
+          description: string | null
+          funnel_type: string
+          id: string
+          image_url: string | null
+          location_type: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          center_id: string
+          created_at?: string
+          description?: string | null
+          funnel_type?: string
+          id?: string
+          image_url?: string | null
+          location_type?: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          center_id?: string
+          created_at?: string
+          description?: string | null
+          funnel_type?: string
+          id?: string
+          image_url?: string | null
+          location_type?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_categories_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_categories_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_categories_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "public_centers_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_options: {
+        Row: {
+          active: boolean
+          center_id: string
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          id: string
+          name: string
+          price: number
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          center_id: string
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          name: string
+          price?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          center_id?: string
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          name?: string
+          price?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_options_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "admin_centers_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_options_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_options_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "public_centers_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_variants: {
+        Row: {
+          active: boolean
+          category_id: string
+          created_at: string
+          id: string
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          category_id: string
+          created_at?: string
+          id?: string
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          category_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_variants_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
             referencedColumns: ["id"]
           },
         ]
