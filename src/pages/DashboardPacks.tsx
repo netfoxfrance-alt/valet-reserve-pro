@@ -60,6 +60,7 @@ export default function DashboardPacks() {
     price_variants: [] as PriceVariant[],
     image_url: null as string | null,
     pricing_type: 'fixed' as 'fixed' | 'quote',
+    category_id: null as string | null,
   });
   const newImageInputRef = useRef<HTMLInputElement>(null);
   const editImageInputRef = useRef<HTMLInputElement>(null);
