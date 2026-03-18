@@ -250,6 +250,7 @@ export function useMyPacks() {
         ...p,
         price_variants: (p.price_variants as unknown as PriceVariant[]) || [],
         pricing_type: ((p as any).pricing_type || 'fixed') as 'fixed' | 'quote',
+        location_type: ((p as any).location_type || 'on_site') as LocationType,
       }));
       setPacks(transformedPacks);
       setLoading(false);
