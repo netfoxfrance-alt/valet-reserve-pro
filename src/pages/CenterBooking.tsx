@@ -735,7 +735,14 @@ export default function CenterBooking() {
                   size="xl" 
                   className="w-full sm:w-auto sm:px-12 mt-2"
                   disabled={hasVariants && !selectedVariant}
-                  onClick={() => setCurrentStep('calendar')}
+                  onClick={() => {
+                    setSelectedOptions([]);
+                    if (packOptions.length > 0) {
+                      setCurrentStep('select-options');
+                    } else {
+                      setCurrentStep('calendar');
+                    }
+                  }}
                 >
                   Réserver
                 </Button>
