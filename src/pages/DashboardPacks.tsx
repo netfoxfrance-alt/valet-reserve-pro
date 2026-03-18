@@ -549,7 +549,7 @@ export default function DashboardPacks() {
                         <FeaturesEditor features={editForm.features || []} onAdd={handleAddEditFeature} onUpdate={handleUpdateEditFeature} onRemove={handleRemoveEditFeature} />
 
                         {/* Options association */}
-                        <PackOptionsPicker packId={pack.id} allOptions={allOptions.map(o => ({ id: o.id, name: o.name, price: o.price }))} />
+                        <PackOptionsPicker packId={pack.id} allOptions={allOptions.map(o => ({ id: o.id, name: o.name, price: o.price, category: o.category }))} />
 
                         {/* Image upload */}
                         <div className="space-y-2">
