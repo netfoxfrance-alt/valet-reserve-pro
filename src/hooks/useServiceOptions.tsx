@@ -11,6 +11,7 @@ export interface ServiceOption {
   duration_minutes: number;
   sort_order: number;
   active: boolean;
+  category: string;
   created_at: string;
   updated_at: string;
 }
