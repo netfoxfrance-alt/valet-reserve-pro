@@ -115,6 +115,7 @@ export default function DashboardPacks() {
         price_variants: [],
         image_url: null,
         pricing_type: 'fixed',
+        category_id: null,
       });
     }
   };
