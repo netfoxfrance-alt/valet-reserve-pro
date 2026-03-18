@@ -88,6 +88,11 @@ const App = () => (
                 <DashboardPacks />
               </ProtectedRoute>
             } />
+            <Route path="/dashboard/services/:id" element={
+              <ProtectedRoute>
+                <DashboardServiceDetail />
+              </ProtectedRoute>
+            } />
             <Route path="/dashboard/custom-services" element={
               <ProtectedRoute>
                 <DashboardCustomServices />
