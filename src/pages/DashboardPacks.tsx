@@ -80,7 +80,7 @@ function PackOptionsPicker({ packId, allOptions }: { packId: string; allOptions:
 
   return (
     <div className="space-y-2">
-      <Label>Options associées</Label>
+      <Label>Options proposées</Label>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {allOptions.map(opt => (
           <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg border border-border/50 hover:bg-secondary/30 cursor-pointer transition-colors">
@@ -322,13 +322,13 @@ export default function DashboardPacks() {
   };
 
   // Variant callbacks (new)
-  const handleAddNewVariant = useCallback(() => setNewPack(prev => ({ ...prev, price_variants: [...prev.price_variants, { name: '', price: 0, image_url: null }] })), []);
-  const handleUpdateNewVariant = useCallback((i: number, f: 'name' | 'price' | 'image_url', v: string | number | null) => setNewPack(prev => { const vs = [...prev.price_variants]; vs[i] = { ...vs[i], [f]: v }; return { ...prev, price_variants: vs }; }), []);
+  const handleAddNewVariant = useCallback(() => setNewPack(prev => ({ ...prev, price_variants: [...prev.price_variants, { name: '', price: 0, image_url: null, description: null }] })), []);
+  const handleUpdateNewVariant = useCallback((i: number, f: 'name' | 'price' | 'image_url' | 'description', v: string | number | null) => setNewPack(prev => { const vs = [...prev.price_variants]; vs[i] = { ...vs[i], [f]: v }; return { ...prev, price_variants: vs }; }), []);
   const handleRemoveNewVariant = useCallback((i: number) => setNewPack(prev => ({ ...prev, price_variants: prev.price_variants.filter((_, j) => j !== i) })), []);
 
   // Variant callbacks (edit)
-  const handleAddEditVariant = useCallback(() => setEditForm(prev => ({ ...prev, price_variants: [...(prev.price_variants || []), { name: '', price: 0, image_url: null }] })), []);
-  const handleUpdateEditVariant = useCallback((i: number, f: 'name' | 'price' | 'image_url', v: string | number | null) => setEditForm(prev => { const vs = [...(prev.price_variants || [])]; vs[i] = { ...vs[i], [f]: v }; return { ...prev, price_variants: vs }; }), []);
+  const handleAddEditVariant = useCallback(() => setEditForm(prev => ({ ...prev, price_variants: [...(prev.price_variants || []), { name: '', price: 0, image_url: null, description: null }] })), []);
+  const handleUpdateEditVariant = useCallback((i: number, f: 'name' | 'price' | 'image_url' | 'description', v: string | number | null) => setEditForm(prev => { const vs = [...(prev.price_variants || [])]; vs[i] = { ...vs[i], [f]: v }; return { ...prev, price_variants: vs }; }), []);
   const handleRemoveEditVariant = useCallback((i: number) => setEditForm(prev => ({ ...prev, price_variants: (prev.price_variants || []).filter((_, j) => j !== i) })), []);
 
   // Feature callbacks (new)
@@ -445,7 +445,7 @@ export default function DashboardPacks() {
                 {/* Options association for new formula */}
                 {allOptions.length > 0 && (
                   <div className="space-y-2">
-                    <Label>Options associées</Label>
+                    <Label>Options proposées</Label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {allOptions.map(opt => (
                         <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg border border-border/50 hover:bg-secondary/30 cursor-pointer transition-colors">
