@@ -10,6 +10,7 @@ interface ClientFormProps {
   onSubmit: (data: ClientData) => void;
   isSubmitting?: boolean;
   defaultValues?: Partial<ClientData>;
+  requireAddress?: boolean;
 }
 
 export interface ClientData {
