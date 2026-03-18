@@ -300,11 +300,17 @@ export default function DashboardPacks() {
       toast.error('Veuillez remplir le nom et au moins un prix');
       return;
     }
-    const { error } = await createPack({ ...newPack, sort_order: packs.length });
+    const { data, error } = await createPack({ ...newPack, sort_order: packs.length });
     if (error) toast.error('Erreur lors de la création');
     else {
+      if (data && newSelectedOptionIds.length > 0) {
+        await supabase.from('pack_option_links').insert(
+          newSelectedOptionIds.map(oid => ({ pack_id: data.id, option_id: oid }))
+        );
+      }
       toast.success('Formule créée');
       setIsCreating(false);
+      setNewSelectedOptionIds([]);
       setNewPack({ name: '', description: '', price: 0, duration: '', features: [], sort_order: 0, active: true, price_variants: [], image_url: null, pricing_type: 'fixed', location_type: 'on_site' });
     }
   };
