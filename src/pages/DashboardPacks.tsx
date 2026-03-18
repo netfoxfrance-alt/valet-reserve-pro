@@ -39,6 +39,7 @@ const formatDuration = (hours: number, minutes: number): string => {
 interface PriceVariant {
   name: string;
   price: number;
+  image_url?: string | null;
 }
 
 const LOCATION_OPTIONS: { value: LocationType; label: string; icon: typeof MapPin }[] = [
