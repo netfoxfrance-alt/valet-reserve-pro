@@ -683,12 +683,15 @@ export default function CenterBooking() {
                 </Card>
 
                 {/* Location badge */}
-                {selectedPack.location_type && selectedPack.location_type !== 'on_site' && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    {selectedPack.location_type === 'at_home' ? <Home className="w-4 h-4" /> : <MapPin className="w-4 h-4" />}
-                    <span>{selectedPack.location_type === 'at_home' ? 'À domicile' : 'Sur place ou à domicile'}</span>
-                  </div>
-                )}
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  {selectedPack.location_type === 'at_home' ? (
+                    <><Home className="w-4 h-4" /><span>À domicile</span></>
+                  ) : selectedPack.location_type === 'both' ? (
+                    <><MapPin className="w-4 h-4" /><span>Sur place ou à domicile</span></>
+                  ) : (
+                    <><Building2 className="w-4 h-4" /><span>Sur place{center.address ? ` · ${center.address}` : ''}</span></>
+                  )}
+                </div>
 
                 {selectedPack.duration && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
