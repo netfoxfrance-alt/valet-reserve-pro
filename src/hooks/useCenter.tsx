@@ -274,6 +274,7 @@ export function useMyPacks() {
         ...data,
         price_variants: (data.price_variants as unknown as PriceVariant[]) || [],
         pricing_type: ((data as any).pricing_type || 'fixed') as 'fixed' | 'quote',
+        category_id: (data as any).category_id || null,
       };
       setPacks([...packs, transformedPack]);
     }
