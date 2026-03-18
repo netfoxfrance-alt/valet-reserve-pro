@@ -10,12 +10,15 @@ import { ContactRequestForm, ContactRequestData } from '@/components/booking/Con
 import { ClientLookupInline } from '@/components/booking/ClientLookupInline';
 import { ContactConfirmation } from '@/components/booking/ContactConfirmation';
 import { useCenterBySlug, Pack, PriceVariant } from '@/hooks/useCenter';
+import { useCenterCategories, ServiceCategory } from '@/hooks/useServiceCategories';
+import { usePackOptions, ServiceOption } from '@/hooks/useServiceOptions';
 import { useCreateAppointment } from '@/hooks/useAppointments';
 import { useCreateContactRequest } from '@/hooks/useContactRequests';
-import { AlertCircle, ChevronLeft, Check, Clock, FileText } from 'lucide-react';
+import { AlertCircle, ChevronLeft, Check, Clock, FileText, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { useSEO } from '@/hooks/useSEO';
 import { LocalBusinessSchema } from '@/components/seo/LocalBusinessSchema';
