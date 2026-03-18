@@ -44,6 +44,7 @@ interface PriceVariant {
 export default function DashboardPacks() {
   const { packs, loading, createPack, updatePack, deletePack } = useMyPacks();
   const { center } = useMyCenter();
+  const { categories } = useMyServiceCategories();
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
