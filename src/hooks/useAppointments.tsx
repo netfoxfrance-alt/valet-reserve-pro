@@ -492,6 +492,7 @@ export function useCreateAppointment() {
           duration_minutes,
           custom_price: data.custom_price !== undefined && data.custom_price !== null ? data.custom_price : finalPrice,
           status: 'pending_validation',
+          selected_options: data.selected_options && data.selected_options.length > 0 ? data.selected_options : [],
         });
 
       if (error) {

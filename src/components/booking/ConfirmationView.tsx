@@ -7,6 +7,13 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 
+interface SelectedOption {
+  id: string;
+  name: string;
+  price: number;
+  duration_minutes: number;
+}
+
 interface ConfirmationViewProps {
   pack: Pack;
   date: Date;
@@ -18,9 +25,11 @@ interface ConfirmationViewProps {
   depositAmount?: number;
   appointmentId?: string;
   cancellationPolicy?: 'no_refund' | 'no_refund_48h';
+  selectedOptions?: SelectedOption[];
+  selectedLocation?: 'on_site' | 'at_home' | null;
 }
 
-export function ConfirmationView({ pack, date, time, clientName, centerName = "Centre", centerAddress, depositEnabled, depositAmount, appointmentId, cancellationPolicy = 'no_refund' }: ConfirmationViewProps) {
+export function ConfirmationView({ pack, date, time, clientName, centerName = "Centre", centerAddress, depositEnabled, depositAmount, appointmentId, cancellationPolicy = 'no_refund', selectedOptions = [], selectedLocation }: ConfirmationViewProps) {
   const [payingDeposit, setPayingDeposit] = useState(false);
   const [depositError, setDepositError] = useState<string | null>(null);
 

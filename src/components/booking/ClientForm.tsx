@@ -21,7 +21,7 @@ export interface ClientData {
   notes: string;
 }
 
-export function ClientForm({ onSubmit, isSubmitting = false, defaultValues }: ClientFormProps) {
+export function ClientForm({ onSubmit, isSubmitting = false, defaultValues, requireAddress = false }: ClientFormProps) {
   const [formData, setFormData] = useState<ClientData>({
     name: defaultValues?.name || '',
     phone: defaultValues?.phone || '',
