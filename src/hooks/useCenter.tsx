@@ -62,6 +62,8 @@ export interface PriceVariant {
   price: number;
 }
 
+export type LocationType = 'on_site' | 'at_home' | 'both';
+
 export interface Pack {
   id: string;
   center_id: string;
@@ -75,6 +77,7 @@ export interface Pack {
   sort_order: number;
   active: boolean;
   pricing_type: 'fixed' | 'quote';
+  location_type: LocationType;
   created_at: string;
   updated_at: string;
 }
