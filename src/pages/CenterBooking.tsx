@@ -273,6 +273,7 @@ export default function CenterBooking() {
 
   // After pack-detail → decide next step
   const handleProceedFromDetail = () => {
+    // Show options step if there are options to pick OR location choice needed
     if (availableOptions.length > 0 || needsLocationChoice) {
       setCurrentStep('select-options');
     } else {
