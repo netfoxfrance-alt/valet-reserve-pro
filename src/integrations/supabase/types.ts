@@ -855,6 +855,45 @@ export type Database = {
           },
         ]
       }
+      pack_variant_prices: {
+        Row: {
+          created_at: string
+          id: string
+          pack_id: string
+          price: number
+          variant_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          pack_id: string
+          price?: number
+          variant_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          pack_id?: string
+          price?: number
+          variant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pack_variant_prices_pack_id_fkey"
+            columns: ["pack_id"]
+            isOneToOne: false
+            referencedRelation: "packs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pack_variant_prices_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "service_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       packs: {
         Row: {
           active: boolean | null
@@ -1037,8 +1076,10 @@ export type Database = {
           center_id: string
           created_at: string
           description: string | null
+          funnel_type: string
           id: string
           image_url: string | null
+          location_type: string
           name: string
           sort_order: number
           updated_at: string
@@ -1048,8 +1089,10 @@ export type Database = {
           center_id: string
           created_at?: string
           description?: string | null
+          funnel_type?: string
           id?: string
           image_url?: string | null
+          location_type?: string
           name: string
           sort_order?: number
           updated_at?: string
@@ -1059,8 +1102,10 @@ export type Database = {
           center_id?: string
           created_at?: string
           description?: string | null
+          funnel_type?: string
           id?: string
           image_url?: string | null
+          location_type?: string
           name?: string
           sort_order?: number
           updated_at?: string
@@ -1146,6 +1191,41 @@ export type Database = {
             columns: ["center_id"]
             isOneToOne: false
             referencedRelation: "public_centers_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_variants: {
+        Row: {
+          active: boolean
+          category_id: string
+          created_at: string
+          id: string
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          category_id: string
+          created_at?: string
+          id?: string
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          category_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_variants_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
             referencedColumns: ["id"]
           },
         ]
