@@ -255,7 +255,10 @@ export default function CenterBooking() {
     setSelectedPack(pack);
     setSelectedVariant(null);
     setSelectedOptions([]);
-    setSelectedLocation(null);
+    // Auto-set location for non-both packs
+    if (pack.location_type === 'on_site') setSelectedLocation('on_site');
+    else if (pack.location_type === 'at_home') setSelectedLocation('at_home');
+    else setSelectedLocation(null);
     
     if (pack.pricing_type === 'quote') {
       setCurrentStep('quote-detail');
