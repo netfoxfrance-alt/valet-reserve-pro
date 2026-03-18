@@ -392,7 +392,8 @@ export function useCreateAppointment() {
     custom_service_id?: string | null;
     client_id?: string | null;
     custom_price?: number | null;
-    skip_email?: boolean; // When deposit is enabled, skip email here (webhook handles it)
+    skip_email?: boolean;
+    selected_options?: { id: string; name: string; price: number }[];
   }) => {
     setLoading(true);
 
@@ -492,7 +493,8 @@ export function useCreateAppointment() {
           duration_minutes,
           custom_price: data.custom_price !== undefined && data.custom_price !== null ? data.custom_price : finalPrice,
           status: 'pending_validation',
-        });
+          selected_options: data.selected_options ? JSON.stringify(data.selected_options) : '[]',
+        } as any);
 
       if (error) {
         console.error('[CreateAppointment] DB error:', JSON.stringify(error));

@@ -10,12 +10,15 @@ import { ContactRequestForm, ContactRequestData } from '@/components/booking/Con
 import { ClientLookupInline } from '@/components/booking/ClientLookupInline';
 import { ContactConfirmation } from '@/components/booking/ContactConfirmation';
 import { useCenterBySlug, Pack, PriceVariant } from '@/hooks/useCenter';
+import { useCenterCategories, ServiceCategory } from '@/hooks/useServiceCategories';
+import { usePackOptions, ServiceOption } from '@/hooks/useServiceOptions';
 import { useCreateAppointment } from '@/hooks/useAppointments';
 import { useCreateContactRequest } from '@/hooks/useContactRequests';
-import { AlertCircle, ChevronLeft, Check, Clock, FileText } from 'lucide-react';
+import { AlertCircle, ChevronLeft, Check, Clock, FileText, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { useSEO } from '@/hooks/useSEO';
 import { LocalBusinessSchema } from '@/components/seo/LocalBusinessSchema';
@@ -69,11 +72,13 @@ type BookingStep =
   | 'landing'
   | 'contact-form'
   | 'contact-confirmation'
+  | 'select-category'
   | 'pack-detail'
   | 'quote-detail'
   | 'quote-form'
   | 'quote-confirmation'
   | 'select-pack'
+  | 'select-options'
   | 'calendar'
   | 'client-info'
   | 'confirmation';
@@ -90,6 +95,7 @@ export default function CenterBooking() {
     return hours * 60 + minutes || 60;
   };
   const { center, packs, availability, loading, error } = useCenterBySlug(slug || '');
+  const { categories } = useCenterCategories(center?.id || null);
   const { createAppointment, loading: submitting } = useCreateAppointment();
   const { createContactRequest, loading: submittingContact } = useCreateContactRequest();
   const { toast } = useToast();
@@ -97,6 +103,8 @@ export default function CenterBooking() {
   const [currentStep, setCurrentStep] = useState<BookingStep>('landing');
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<PriceVariant | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<ServiceCategory | null>(null);
+  const [selectedOptions, setSelectedOptions] = useState<ServiceOption[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [clientData, setClientData] = useState<ClientData | null>(null);
@@ -104,6 +112,12 @@ export default function CenterBooking() {
   const [lastAppointmentId, setLastAppointmentId] = useState<string | null>(null);
   // Recognized client state
   const [recognizedClient, setRecognizedClient] = useState<RecognizedClient | null>(null);
+  
+  // Fetch options for selected pack
+  const { options: packOptions } = usePackOptions(selectedPack?.id || null, center?.id || null);
+  
+  // Has categories with packs assigned?
+  const hasCategories = categories.length > 0 && packs.some(p => p.category_id);
   
   // Determine if center is Pro or Trial (has active subscription)
   const isPro = center?.subscription_plan === 'pro' || center?.subscription_plan === 'trial';
@@ -156,15 +170,22 @@ export default function CenterBooking() {
       case 'contact-form':
         setCurrentStep('landing');
         break;
+      case 'select-category':
+        setCurrentStep('landing');
+        break;
       case 'pack-detail':
-        if (packs.length > 1) {
+        if (hasCategories && selectedCategory) {
+          setCurrentStep('select-pack');
+        } else if (packs.length > 1) {
           setCurrentStep('select-pack');
         } else {
           setCurrentStep('landing');
         }
         break;
       case 'quote-detail':
-        if (packs.length > 1) {
+        if (hasCategories && selectedCategory) {
+          setCurrentStep('select-pack');
+        } else if (packs.length > 1) {
           setCurrentStep('select-pack');
         } else {
           setCurrentStep('landing');
@@ -174,11 +195,24 @@ export default function CenterBooking() {
         setCurrentStep('quote-detail');
         break;
       case 'select-pack':
-        setCurrentStep('landing');
+        if (hasCategories) {
+          setCurrentStep('select-category');
+        } else {
+          setCurrentStep('landing');
+        }
+        break;
+      case 'select-options':
+        if (selectedPack?.pricing_type === 'quote') {
+          setCurrentStep('quote-detail');
+        } else {
+          setCurrentStep('pack-detail');
+        }
         break;
       case 'calendar':
         if (recognizedClient?.service_id) {
           setCurrentStep('landing');
+        } else if (packOptions.length > 0) {
+          setCurrentStep('select-options');
         } else if (selectedPack?.pricing_type === 'quote') {
           setCurrentStep('quote-detail');
         } else {
@@ -196,14 +230,17 @@ export default function CenterBooking() {
   const handleRecognizedClient = (client: RecognizedClient) => {
     setRecognizedClient(client);
     if (client.service_id) {
-      // Client has a custom service → go directly to calendar
       setCurrentStep('calendar');
     }
-    // If no service, CenterLanding calls onStartBooking which goes to pack selection
   };
 
   const handleStartBooking = () => {
     if (isPro && packs.length > 0) {
+      // If there are categories with packs assigned, start with category selection
+      if (hasCategories) {
+        setCurrentStep('select-category');
+        return;
+      }
       if (packs.length === 1) {
         const pack = packs[0];
         setSelectedPack(pack);
@@ -217,6 +254,21 @@ export default function CenterBooking() {
       }
     } else {
       setCurrentStep('contact-form');
+    }
+  };
+
+  const handleSelectCategory = (category: ServiceCategory) => {
+    setSelectedCategory(category);
+    const categoryPacks = packs.filter(p => p.category_id === category.id);
+    if (categoryPacks.length === 1) {
+      setSelectedPack(categoryPacks[0]);
+      if (categoryPacks[0].pricing_type === 'quote') {
+        setCurrentStep('quote-detail');
+      } else {
+        setCurrentStep('pack-detail');
+      }
+    } else {
+      setCurrentStep('select-pack');
     }
   };
 
@@ -363,9 +415,15 @@ export default function CenterBooking() {
     // Standard pack flow
     if (!selectedPack) return;
     
-    const finalPrice = selectedVariant?.price || selectedPack.price;
+    const totalPrice = (selectedVariant?.price || selectedPack.price) + optionsTotalPrice;
     
     const isDepositActive = center.deposit_enabled && center.stripe_connect_status === 'active';
+    
+    // Build notes with selected options
+    const optionsNote = selectedOptions.length > 0 
+      ? `Options: ${selectedOptions.map(o => `${o.name} (+${o.price}€)`).join(', ')}`
+      : '';
+    const fullNotes = [data.notes, optionsNote].filter(Boolean).join('\n');
     
     const { error, appointmentId } = await createAppointment({
       center_id: center.id,
@@ -377,12 +435,13 @@ export default function CenterBooking() {
       vehicle_type: selectedVariant?.name || 'berline',
       appointment_date: `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`,
       appointment_time: selectedTime,
-      notes: data.notes,
+      notes: fullNotes,
       duration: selectedPack.duration || '1h',
       pack_name: selectedPack.name,
       variant_name: selectedVariant?.name,
-      price: finalPrice,
-      skip_email: isDepositActive, // Deposit flow: webhook sends confirmation after payment
+      price: totalPrice,
+      selected_options: selectedOptions.map(o => ({ id: o.id, name: o.name, price: o.price })),
+      skip_email: isDepositActive,
     });
     
     if (error) {
@@ -456,8 +515,10 @@ export default function CenterBooking() {
   
   const showBackButton = currentStep !== 'landing' && currentStep !== 'confirmation' && currentStep !== 'contact-confirmation' && currentStep !== 'quote-confirmation';
 
-  // Get final price (variant or pack base price)
-  const finalPrice = selectedVariant?.price || selectedPack?.price || 0;
+  // Get final price (variant or pack base price + options)
+  const optionsTotalPrice = selectedOptions.reduce((sum, o) => sum + o.price, 0);
+  const optionsTotalDuration = selectedOptions.reduce((sum, o) => sum + o.duration_minutes, 0);
+  const finalPrice = (selectedVariant?.price || selectedPack?.price || 0) + optionsTotalPrice;
 
   // Loading state
   if (loading) {
@@ -683,7 +744,14 @@ export default function CenterBooking() {
                   size="xl" 
                   className="w-full sm:w-auto sm:px-12 mt-2"
                   disabled={hasVariants && !selectedVariant}
-                  onClick={() => setCurrentStep('calendar')}
+                  onClick={() => {
+                    setSelectedOptions([]);
+                    if (packOptions.length > 0) {
+                      setCurrentStep('select-options');
+                    } else {
+                      setCurrentStep('calendar');
+                    }
+                  }}
                 >
                   Réserver
                 </Button>
@@ -918,6 +986,68 @@ export default function CenterBooking() {
             </div>
           )}
           
+          {/* Category Selection */}
+          {currentStep === 'select-category' && (
+            <div>
+              <div className="text-center mb-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+                  Que souhaitez-vous nettoyer ?
+                </h1>
+                <p className="text-muted-foreground">
+                  Choisissez le type de prestation
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {categories.filter(c => packs.some(p => p.category_id === c.id)).map((cat) => (
+                  <div
+                    key={cat.id}
+                    className="group cursor-pointer"
+                    onClick={() => handleSelectCategory(cat)}
+                  >
+                    <div className="relative rounded-2xl overflow-hidden mb-2.5 transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl" style={{ aspectRatio: '4/3' }}>
+                      {cat.image_url ? (
+                        <>
+                          <img src={cat.image_url} alt={cat.name} className="w-full h-full object-cover" loading="lazy" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                          <div className="absolute bottom-0 inset-x-0 p-4">
+                            <p className="text-white font-bold text-base sm:text-lg leading-tight">{cat.name}</p>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="w-full h-full flex flex-col justify-end p-4 bg-gradient-to-br from-secondary/60 to-secondary/20 border border-border/40 rounded-2xl">
+                          <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-auto mt-3">
+                            <span className="text-xl font-bold text-primary">{cat.name.charAt(0)}</span>
+                          </div>
+                          <p className="font-bold text-base sm:text-lg text-foreground leading-tight">{cat.name}</p>
+                        </div>
+                      )}
+                    </div>
+                    {cat.description && (
+                      <p className="text-xs text-muted-foreground px-1 line-clamp-1">{cat.description}</p>
+                    )}
+                  </div>
+                ))}
+                {/* Also show uncategorized packs as "Autres" if any exist */}
+                {packs.some(p => !p.category_id) && (
+                  <div
+                    className="group cursor-pointer"
+                    onClick={() => { setSelectedCategory(null); setCurrentStep('select-pack'); }}
+                  >
+                    <div className="relative rounded-2xl overflow-hidden mb-2.5 transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl bg-gradient-to-br from-secondary/60 to-secondary/20 border border-border/40" style={{ aspectRatio: '4/3' }}>
+                      <div className="w-full h-full flex flex-col justify-end p-4">
+                        <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-auto mt-3">
+                          <Plus className="w-5 h-5 text-primary" />
+                        </div>
+                        <p className="font-bold text-base sm:text-lg text-foreground leading-tight">Autres</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Pack Selection */}
           {currentStep === 'select-pack' && (
             <div>
@@ -926,7 +1056,7 @@ export default function CenterBooking() {
                   Choisissez votre formule
                 </h1>
                 <p className="text-muted-foreground">
-                  Sélectionnez la prestation qui vous convient
+                  {selectedCategory ? selectedCategory.name : 'Sélectionnez la prestation qui vous convient'}
                 </p>
               </div>
 
@@ -944,13 +1074,15 @@ export default function CenterBooking() {
               )}
               
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {packs.map((pack) => {
+                {(selectedCategory 
+                  ? packs.filter(p => p.category_id === selectedCategory.id)
+                  : hasCategories ? packs.filter(p => !p.category_id) : packs
+                ).map((pack) => {
                   const isQuote = pack.pricing_type === 'quote';
                   const hasVariants = !isQuote && pack.price_variants && pack.price_variants.length > 0;
                   const minPrice = hasVariants 
                     ? Math.min(...pack.price_variants.map(v => v.price))
                     : pack.price;
-                  const priceLabel = isQuote ? 'Sur devis' : (hasVariants ? `dès ${minPrice}€` : `${pack.price}€`);
 
                   return (
                     <div 
@@ -958,21 +1090,13 @@ export default function CenterBooking() {
                       className="group cursor-pointer"
                       onClick={() => handleSelectPack(pack)}
                     >
-                      {/* Image */}
                       <div className="relative rounded-2xl overflow-hidden mb-2.5 transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl" style={{ aspectRatio: '4/3' }}>
                         {pack.image_url ? (
                           <>
-                            <img
-                              src={pack.image_url}
-                              alt={pack.name}
-                              className="w-full h-full object-cover"
-                              loading="lazy"
-                            />
+                            <img src={pack.image_url} alt={pack.name} className="w-full h-full object-cover" loading="lazy" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                             <div className="absolute bottom-0 inset-x-0 p-4">
-                              <p className="text-white font-bold text-base sm:text-lg leading-tight mb-0.5">
-                                {pack.name}
-                              </p>
+                              <p className="text-white font-bold text-base sm:text-lg leading-tight mb-0.5">{pack.name}</p>
                               <p className="text-white/90 font-semibold text-lg sm:text-xl">
                                 {isQuote ? 'Sur devis' : hasVariants ? `dès ${minPrice}€` : `${pack.price}€`}
                               </p>
@@ -981,20 +1105,15 @@ export default function CenterBooking() {
                         ) : (
                           <div className="w-full h-full flex flex-col justify-end p-4 bg-gradient-to-br from-secondary/60 to-secondary/20 border border-border/40 rounded-2xl">
                             <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-auto mt-3">
-                              <span className="text-xl font-bold text-primary">
-                                {pack.name.charAt(0)}
-                              </span>
+                              <span className="text-xl font-bold text-primary">{pack.name.charAt(0)}</span>
                             </div>
-                            <p className="font-bold text-base sm:text-lg text-foreground leading-tight mb-0.5">
-                              {pack.name}
-                            </p>
+                            <p className="font-bold text-base sm:text-lg text-foreground leading-tight mb-0.5">{pack.name}</p>
                             <p className="font-semibold text-lg text-primary">
                               {isQuote ? 'Sur devis' : hasVariants ? `dès ${minPrice}€` : `${pack.price}€`}
                             </p>
                           </div>
                         )}
                       </div>
-                      {/* Info below */}
                       <div className="flex items-center justify-between px-1">
                         {pack.duration && (
                           <p className="text-xs text-muted-foreground flex items-center gap-1">
@@ -1011,6 +1130,84 @@ export default function CenterBooking() {
                     </div>
                   );
                 })}
+              </div>
+            </div>
+          )}
+
+          {/* Options Selection */}
+          {currentStep === 'select-options' && selectedPack && (
+            <div>
+              <div className="text-center mb-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+                  Options supplémentaires
+                </h1>
+                <p className="text-muted-foreground">
+                  Personnalisez votre {selectedPack.name}
+                </p>
+              </div>
+
+              <div className="max-w-lg mx-auto space-y-3 mb-8">
+                {packOptions.map((option) => {
+                  const isSelected = selectedOptions.some(o => o.id === option.id);
+                  return (
+                    <div
+                      key={option.id}
+                      className={`flex items-center justify-between p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
+                        isSelected 
+                          ? 'border-primary bg-primary/5' 
+                          : 'border-border hover:border-primary/30'
+                      }`}
+                      onClick={() => {
+                        if (isSelected) {
+                          setSelectedOptions(selectedOptions.filter(o => o.id !== option.id));
+                        } else {
+                          setSelectedOptions([...selectedOptions, option]);
+                        }
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Checkbox checked={isSelected} className="pointer-events-none" />
+                        <div>
+                          <p className="font-medium text-foreground">{option.name}</p>
+                          {option.description && (
+                            <p className="text-sm text-muted-foreground">{option.description}</p>
+                          )}
+                          {option.duration_minutes > 0 && (
+                            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                              <Clock className="w-3 h-3" /> +{option.duration_minutes}min
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <span className="text-lg font-bold text-primary whitespace-nowrap">+{option.price}€</span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Price summary */}
+              <div className="max-w-lg mx-auto">
+                <Card variant="elevated" className="p-4 mb-6">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Total</span>
+                    <span className="text-2xl font-bold text-foreground">{finalPrice}€</span>
+                  </div>
+                  {selectedOptions.length > 0 && (
+                    <div className="mt-2 pt-2 border-t border-border text-xs text-muted-foreground">
+                      {selectedPack.name} ({selectedVariant?.price || selectedPack.price}€)
+                      {selectedOptions.map(o => ` + ${o.name} (${o.price}€)`).join('')}
+                    </div>
+                  )}
+                </Card>
+
+                <Button
+                  variant="premium"
+                  size="xl"
+                  className="w-full"
+                  onClick={() => setCurrentStep('calendar')}
+                >
+                  {selectedOptions.length > 0 ? `Continuer • ${finalPrice}€` : 'Continuer sans option'}
+                </Button>
               </div>
             </div>
           )}
