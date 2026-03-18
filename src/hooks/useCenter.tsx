@@ -61,6 +61,7 @@ export interface PriceVariant {
   name: string;
   price: number;
   image_url?: string | null;
+  description?: string | null;
 }
 
 export type LocationType = 'on_site' | 'at_home' | 'both';
