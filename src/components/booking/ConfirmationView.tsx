@@ -7,6 +7,13 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 
+interface SelectedOption {
+  id: string;
+  name: string;
+  price: number;
+  duration_minutes: number;
+}
+
 interface ConfirmationViewProps {
   pack: Pack;
   date: Date;
@@ -18,9 +25,11 @@ interface ConfirmationViewProps {
   depositAmount?: number;
   appointmentId?: string;
   cancellationPolicy?: 'no_refund' | 'no_refund_48h';
+  selectedOptions?: SelectedOption[];
+  selectedLocation?: 'on_site' | 'at_home' | null;
 }
 
-export function ConfirmationView({ pack, date, time, clientName, centerName = "Centre", centerAddress, depositEnabled, depositAmount, appointmentId, cancellationPolicy = 'no_refund' }: ConfirmationViewProps) {
+export function ConfirmationView({ pack, date, time, clientName, centerName = "Centre", centerAddress, depositEnabled, depositAmount, appointmentId, cancellationPolicy = 'no_refund', selectedOptions = [], selectedLocation }: ConfirmationViewProps) {
   const [payingDeposit, setPayingDeposit] = useState(false);
   const [depositError, setDepositError] = useState<string | null>(null);
 
@@ -148,6 +157,11 @@ export function ConfirmationView({ pack, date, time, clientName, centerName = "C
               <p className="text-sm text-muted-foreground">
                 Durée estimée : {pack.duration}
               </p>
+              {selectedOptions.length > 0 && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  + {selectedOptions.map(o => o.name).join(', ')}
+                </p>
+              )}
             </div>
           </div>
           
@@ -157,12 +171,15 @@ export function ConfirmationView({ pack, date, time, clientName, centerName = "C
             </div>
             <div>
               <p className="font-medium text-foreground">
-                {centerName}
+                {selectedLocation === 'at_home' ? 'À domicile' : centerName}
               </p>
-              {centerAddress && (
+              {selectedLocation !== 'at_home' && centerAddress && (
                 <p className="text-sm text-muted-foreground">
                   {centerAddress}
                 </p>
+              )}
+              {selectedLocation === 'at_home' && (
+                <p className="text-sm text-muted-foreground">Le professionnel se déplace chez vous</p>
               )}
             </div>
           </div>

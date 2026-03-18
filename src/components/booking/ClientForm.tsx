@@ -10,6 +10,7 @@ interface ClientFormProps {
   onSubmit: (data: ClientData) => void;
   isSubmitting?: boolean;
   defaultValues?: Partial<ClientData>;
+  requireAddress?: boolean;
 }
 
 export interface ClientData {
@@ -20,7 +21,7 @@ export interface ClientData {
   notes: string;
 }
 
-export function ClientForm({ onSubmit, isSubmitting = false, defaultValues }: ClientFormProps) {
+export function ClientForm({ onSubmit, isSubmitting = false, defaultValues, requireAddress = false }: ClientFormProps) {
   const [formData, setFormData] = useState<ClientData>({
     name: defaultValues?.name || '',
     phone: defaultValues?.phone || '',

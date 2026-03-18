@@ -388,11 +388,11 @@ export function useCreateAppointment() {
     pack_name?: string;
     variant_name?: string;
     price?: number;
-    // Custom service fields for recognized clients
     custom_service_id?: string | null;
     client_id?: string | null;
     custom_price?: number | null;
-    skip_email?: boolean; // When deposit is enabled, skip email here (webhook handles it)
+    skip_email?: boolean;
+    selected_options?: { id: string; name: string; price: number; duration_minutes: number }[];
   }) => {
     setLoading(true);
 
@@ -492,6 +492,7 @@ export function useCreateAppointment() {
           duration_minutes,
           custom_price: data.custom_price !== undefined && data.custom_price !== null ? data.custom_price : finalPrice,
           status: 'pending_validation',
+          selected_options: data.selected_options && data.selected_options.length > 0 ? data.selected_options : [],
         });
 
       if (error) {
