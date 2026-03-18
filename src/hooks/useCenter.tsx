@@ -75,6 +75,7 @@ export interface Pack {
   sort_order: number;
   active: boolean;
   pricing_type: 'fixed' | 'quote';
+  category_id: string | null;
   created_at: string;
   updated_at: string;
 }
