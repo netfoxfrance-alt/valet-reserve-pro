@@ -527,6 +527,19 @@ export default function DashboardPacks() {
                           </div>
                         </div>
 
+                        {categories.length > 0 && (
+                          <div className="space-y-2">
+                            <Label>Catégorie</Label>
+                            <Select value={editForm.category_id || 'none'} onValueChange={v => setEditForm({ ...editForm, category_id: v === 'none' ? null : v })}>
+                              <SelectTrigger><SelectValue placeholder="Aucune catégorie" /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="none">Aucune catégorie</SelectItem>
+                                {categories.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+
                         {/* Pricing type toggle */}
                         <div className="space-y-2">
                           <Label>Type de tarification</Label>
