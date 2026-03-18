@@ -429,7 +429,7 @@ export default function DashboardPacks() {
                 )}
 
                 {newPack.pricing_type === 'fixed' && (
-                  <VariantsEditor variants={newPack.price_variants} onAdd={handleAddNewVariant} onUpdate={handleUpdateNewVariant} onRemove={handleRemoveNewVariant} />
+                  <VariantsEditor variants={newPack.price_variants} onAdd={handleAddNewVariant} onUpdate={handleUpdateNewVariant} onRemove={handleRemoveNewVariant} userId={user?.id} />
                 )}
 
                 {/* Location type */}
