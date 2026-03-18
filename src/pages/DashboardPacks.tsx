@@ -549,7 +549,7 @@ export default function DashboardPacks() {
                         )}
 
                         {(editForm.pricing_type !== 'quote') && (
-                          <VariantsEditor variants={editForm.price_variants || []} onAdd={handleAddEditVariant} onUpdate={handleUpdateEditVariant} onRemove={handleRemoveEditVariant} />
+                          <VariantsEditor variants={editForm.price_variants || []} onAdd={handleAddEditVariant} onUpdate={handleUpdateEditVariant} onRemove={handleRemoveEditVariant} userId={user?.id} />
                         )}
 
                         {/* Location type */}
