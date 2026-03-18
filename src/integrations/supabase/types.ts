@@ -1140,6 +1140,7 @@ export type Database = {
       service_options: {
         Row: {
           active: boolean
+          category: string
           center_id: string
           created_at: string
           description: string | null
@@ -1152,6 +1153,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          category?: string
           center_id: string
           created_at?: string
           description?: string | null
@@ -1164,6 +1166,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          category?: string
           center_id?: string
           created_at?: string
           description?: string | null
