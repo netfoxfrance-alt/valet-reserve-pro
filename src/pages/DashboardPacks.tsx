@@ -6,8 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import { useMyPacks, Pack, useMyCenter } from '@/hooks/useCenter';
+import { useMyServiceCategories } from '@/hooks/useServiceCategories';
 import { useAuth } from '@/hooks/useAuth';
 import { Pencil, Clock, Plus, Trash2, Loader2, ChevronDown, ChevronUp, Image as ImageIcon, X, FileText } from 'lucide-react';
 import { toast } from 'sonner';
