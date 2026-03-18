@@ -445,7 +445,7 @@ export default function DashboardPacks() {
                 {/* Options association for new formula */}
                 {allOptions.length > 0 && (
                   <div className="space-y-2">
-                    <Label>Options associées</Label>
+                    <Label>Options proposées</Label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {allOptions.map(opt => (
                         <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg border border-border/50 hover:bg-secondary/30 cursor-pointer transition-colors">
