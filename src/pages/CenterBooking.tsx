@@ -170,15 +170,22 @@ export default function CenterBooking() {
       case 'contact-form':
         setCurrentStep('landing');
         break;
+      case 'select-category':
+        setCurrentStep('landing');
+        break;
       case 'pack-detail':
-        if (packs.length > 1) {
+        if (hasCategories && selectedCategory) {
+          setCurrentStep('select-pack');
+        } else if (packs.length > 1) {
           setCurrentStep('select-pack');
         } else {
           setCurrentStep('landing');
         }
         break;
       case 'quote-detail':
-        if (packs.length > 1) {
+        if (hasCategories && selectedCategory) {
+          setCurrentStep('select-pack');
+        } else if (packs.length > 1) {
           setCurrentStep('select-pack');
         } else {
           setCurrentStep('landing');
@@ -188,11 +195,24 @@ export default function CenterBooking() {
         setCurrentStep('quote-detail');
         break;
       case 'select-pack':
-        setCurrentStep('landing');
+        if (hasCategories) {
+          setCurrentStep('select-category');
+        } else {
+          setCurrentStep('landing');
+        }
+        break;
+      case 'select-options':
+        if (selectedPack?.pricing_type === 'quote') {
+          setCurrentStep('quote-detail');
+        } else {
+          setCurrentStep('pack-detail');
+        }
         break;
       case 'calendar':
         if (recognizedClient?.service_id) {
           setCurrentStep('landing');
+        } else if (packOptions.length > 0) {
+          setCurrentStep('select-options');
         } else if (selectedPack?.pricing_type === 'quote') {
           setCurrentStep('quote-detail');
         } else {
@@ -210,14 +230,17 @@ export default function CenterBooking() {
   const handleRecognizedClient = (client: RecognizedClient) => {
     setRecognizedClient(client);
     if (client.service_id) {
-      // Client has a custom service → go directly to calendar
       setCurrentStep('calendar');
     }
-    // If no service, CenterLanding calls onStartBooking which goes to pack selection
   };
 
   const handleStartBooking = () => {
     if (isPro && packs.length > 0) {
+      // If there are categories with packs assigned, start with category selection
+      if (hasCategories) {
+        setCurrentStep('select-category');
+        return;
+      }
       if (packs.length === 1) {
         const pack = packs[0];
         setSelectedPack(pack);
@@ -231,6 +254,21 @@ export default function CenterBooking() {
       }
     } else {
       setCurrentStep('contact-form');
+    }
+  };
+
+  const handleSelectCategory = (category: ServiceCategory) => {
+    setSelectedCategory(category);
+    const categoryPacks = packs.filter(p => p.category_id === category.id);
+    if (categoryPacks.length === 1) {
+      setSelectedPack(categoryPacks[0]);
+      if (categoryPacks[0].pricing_type === 'quote') {
+        setCurrentStep('quote-detail');
+      } else {
+        setCurrentStep('pack-detail');
+      }
+    } else {
+      setCurrentStep('select-pack');
     }
   };
 
