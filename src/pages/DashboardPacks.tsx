@@ -79,6 +79,7 @@ export default function DashboardPacks() {
       price_variants: (pack as any).price_variants || [],
       image_url: (pack as any).image_url || null,
       pricing_type: pack.pricing_type || 'fixed',
+      category_id: pack.category_id || null,
     });
   };
 
