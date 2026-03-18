@@ -38,6 +38,7 @@ interface BlocksEditorProps {
   userId: string;
   centerAddress?: string;
   centerPhone?: string;
+  centerCity?: string;
   headerStyle?: 'banner' | 'minimal';
 }
 
@@ -173,6 +174,7 @@ export function BlocksEditor({
   userId,
   centerAddress,
   centerPhone,
+  centerCity,
   headerStyle,
 }: BlocksEditorProps) {
   const { toast } = useToast();
@@ -262,7 +264,7 @@ export function BlocksEditor({
   };
 
   // Update review block properties
-  const updateReviewBlock = (id: string, updates: { reviewUrl?: string; reviewRating?: number; reviewCount?: number }) => {
+  const updateReviewBlock = (id: string, updates: { reviewUrl?: string; reviewRating?: number; reviewCount?: number; reviewPlaceId?: string }) => {
     onUpdateBlocks(blocks.map(b => 
       b.id === id ? { ...b, ...updates } : b
     ));
@@ -278,22 +280,23 @@ export function BlocksEditor({
     setFetchingReviewsBlockId(blockId);
     try {
       const { data, error } = await supabase.functions.invoke('fetch-google-reviews', {
-        body: { url: url.trim() },
+        body: { url: url.trim(), city: centerCity || '' },
       });
       if (error) throw error;
       if (data?.error && !data?.rating && !data?.reviewCount) {
         toast({ title: 'Impossible de récupérer', description: data.error, variant: 'destructive' });
         return;
       }
-      const updates: { reviewRating?: number; reviewCount?: number } = {};
+      const updates: { reviewRating?: number; reviewCount?: number; reviewPlaceId?: string } = {};
       if (data?.rating != null) updates.reviewRating = Math.round(data.rating * 10) / 10;
       if (data?.reviewCount != null) updates.reviewCount = data.reviewCount;
+      if (data?.placeId) updates.reviewPlaceId = data.placeId;
       if (Object.keys(updates).length > 0) {
         updateReviewBlock(blockId, updates);
         if (updates.reviewRating) {
           toast({ title: 'Avis récupérés !', description: `Note: ${updates.reviewRating}/5 — ${updates.reviewCount ?? '?'} avis` });
         } else {
-          toast({ title: `${updates.reviewCount} avis trouvés`, description: 'Saisissez votre note manuellement ci-dessous.' });
+          toast({ title: `${updates.reviewCount} avis trouvés` });
         }
       } else {
         toast({ title: 'Aucune donnée trouvée', description: 'Vérifiez le lien ou saisissez les données manuellement.', variant: 'destructive' });
@@ -353,8 +356,8 @@ export function BlocksEditor({
     } else if (type === 'reviews' && reviewPlatform) {
       newBlock.reviewPlatform = reviewPlatform;
       newBlock.reviewUrl = '';
-      newBlock.reviewRating = 5;
-      newBlock.reviewCount = 0;
+      newBlock.reviewRating = undefined;
+      newBlock.reviewCount = undefined;
     }
     
     onUpdateBlocks([...blocks, newBlock]);
@@ -704,63 +707,37 @@ export function BlocksEditor({
               </div>
               {isGoogle && (
                 <p className="text-xs text-muted-foreground">
-                  Cliquez sur « Récupérer » pour obtenir automatiquement la note et le nombre d'avis.
+                  Collez le lien de votre fiche Google et cliquez « Récupérer ». Recliquez pour mettre à jour.
                 </p>
               )}
             </div>
             
-            {/* Rating & count - editable as fallback */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Note (sur 5)</Label>
-                <Input
-                  type="number"
-                  min="1"
-                  max="5"
-                  step="0.1"
-                  value={block.reviewRating || 5}
-                  onChange={(e) => updateReviewBlock(block.id, { reviewRating: parseFloat(e.target.value) || 5 })}
-                  className="h-9 text-sm"
-                />
-              </div>
-              
-              {/* Review count */}
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Nombre d'avis</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  value={block.reviewCount || 0}
-                  onChange={(e) => updateReviewBlock(block.id, { reviewCount: parseInt(e.target.value) || 0 })}
-                  className="h-9 text-sm"
-                />
-              </div>
-            </div>
-            
-            {/* Preview */}
-            <div className="mt-2 p-3 rounded-xl bg-muted/30 border">
-              <p className="text-xs text-muted-foreground mb-1">Aperçu</p>
-              <div className="flex items-center gap-2">
-                {isGoogle ? <GoogleIcon /> : <TripAdvisorIcon />}
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className={cn(
-                        "w-3.5 h-3.5",
-                        i < Math.floor(block.reviewRating || 5) ? "text-yellow-400" : "text-gray-300"
-                      )}
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                    </svg>
-                  ))}
-                  <span className="text-sm font-medium ml-1">{block.reviewRating || 5}</span>
-                  <span className="text-xs text-muted-foreground">({block.reviewCount || 0} avis)</span>
+            {/* Preview - show only if data exists */}
+            {(block.reviewRating || block.reviewCount) && (
+              <div className="mt-2 p-3 rounded-xl bg-muted/30 border">
+                <p className="text-xs text-muted-foreground mb-1">Aperçu</p>
+                <div className="flex items-center gap-2">
+                  {isGoogle ? <GoogleIcon /> : <TripAdvisorIcon />}
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <svg
+                        key={i}
+                        className={cn(
+                          "w-3.5 h-3.5",
+                          i < Math.floor(block.reviewRating || 5) ? "text-yellow-400" : "text-gray-300"
+                        )}
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                      </svg>
+                    ))}
+                    <span className="text-sm font-medium ml-1">{block.reviewRating || 5}</span>
+                    <span className="text-xs text-muted-foreground">({block.reviewCount || 0} avis)</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         );
 
