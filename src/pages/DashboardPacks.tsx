@@ -39,6 +39,7 @@ const formatDuration = (hours: number, minutes: number): string => {
 interface PriceVariant {
   name: string;
   price: number;
+  image_url?: string | null;
 }
 
 const LOCATION_OPTIONS: { value: LocationType; label: string; icon: typeof MapPin }[] = [
@@ -255,6 +256,7 @@ export default function DashboardPacks() {
   const [isCreating, setIsCreating] = useState(false);
   const [uploadingImage, setUploadingImage] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<Pack> & { price_variants?: PriceVariant[]; image_url?: string | null }>({});
+  const [newSelectedOptionIds, setNewSelectedOptionIds] = useState<string[]>([]);
   const [newPack, setNewPack] = useState({
     name: '',
     description: '',
@@ -298,11 +300,17 @@ export default function DashboardPacks() {
       toast.error('Veuillez remplir le nom et au moins un prix');
       return;
     }
-    const { error } = await createPack({ ...newPack, sort_order: packs.length });
+    const { data, error } = await createPack({ ...newPack, sort_order: packs.length });
     if (error) toast.error('Erreur lors de la création');
     else {
+      if (data && newSelectedOptionIds.length > 0) {
+        await supabase.from('pack_option_links').insert(
+          newSelectedOptionIds.map(oid => ({ pack_id: data.id, option_id: oid }))
+        );
+      }
       toast.success('Formule créée');
       setIsCreating(false);
+      setNewSelectedOptionIds([]);
       setNewPack({ name: '', description: '', price: 0, duration: '', features: [], sort_order: 0, active: true, price_variants: [], image_url: null, pricing_type: 'fixed', location_type: 'on_site' });
     }
   };
@@ -314,13 +322,13 @@ export default function DashboardPacks() {
   };
 
   // Variant callbacks (new)
-  const handleAddNewVariant = useCallback(() => setNewPack(prev => ({ ...prev, price_variants: [...prev.price_variants, { name: '', price: 0 }] })), []);
-  const handleUpdateNewVariant = useCallback((i: number, f: 'name' | 'price', v: string | number) => setNewPack(prev => { const vs = [...prev.price_variants]; vs[i] = { ...vs[i], [f]: v }; return { ...prev, price_variants: vs }; }), []);
+  const handleAddNewVariant = useCallback(() => setNewPack(prev => ({ ...prev, price_variants: [...prev.price_variants, { name: '', price: 0, image_url: null }] })), []);
+  const handleUpdateNewVariant = useCallback((i: number, f: 'name' | 'price' | 'image_url', v: string | number | null) => setNewPack(prev => { const vs = [...prev.price_variants]; vs[i] = { ...vs[i], [f]: v }; return { ...prev, price_variants: vs }; }), []);
   const handleRemoveNewVariant = useCallback((i: number) => setNewPack(prev => ({ ...prev, price_variants: prev.price_variants.filter((_, j) => j !== i) })), []);
 
   // Variant callbacks (edit)
-  const handleAddEditVariant = useCallback(() => setEditForm(prev => ({ ...prev, price_variants: [...(prev.price_variants || []), { name: '', price: 0 }] })), []);
-  const handleUpdateEditVariant = useCallback((i: number, f: 'name' | 'price', v: string | number) => setEditForm(prev => { const vs = [...(prev.price_variants || [])]; vs[i] = { ...vs[i], [f]: v }; return { ...prev, price_variants: vs }; }), []);
+  const handleAddEditVariant = useCallback(() => setEditForm(prev => ({ ...prev, price_variants: [...(prev.price_variants || []), { name: '', price: 0, image_url: null }] })), []);
+  const handleUpdateEditVariant = useCallback((i: number, f: 'name' | 'price' | 'image_url', v: string | number | null) => setEditForm(prev => { const vs = [...(prev.price_variants || [])]; vs[i] = { ...vs[i], [f]: v }; return { ...prev, price_variants: vs }; }), []);
   const handleRemoveEditVariant = useCallback((i: number) => setEditForm(prev => ({ ...prev, price_variants: (prev.price_variants || []).filter((_, j) => j !== i) })), []);
 
   // Feature callbacks (new)
@@ -421,7 +429,7 @@ export default function DashboardPacks() {
                 )}
 
                 {newPack.pricing_type === 'fixed' && (
-                  <VariantsEditor variants={newPack.price_variants} onAdd={handleAddNewVariant} onUpdate={handleUpdateNewVariant} onRemove={handleRemoveNewVariant} />
+                  <VariantsEditor variants={newPack.price_variants} onAdd={handleAddNewVariant} onUpdate={handleUpdateNewVariant} onRemove={handleRemoveNewVariant} userId={user?.id} />
                 )}
 
                 {/* Location type */}
@@ -433,6 +441,29 @@ export default function DashboardPacks() {
                 </div>
 
                 <FeaturesEditor features={newPack.features} onAdd={handleAddNewFeature} onUpdate={handleUpdateNewFeature} onRemove={handleRemoveNewFeature} />
+
+                {/* Options association for new formula */}
+                {allOptions.length > 0 && (
+                  <div className="space-y-2">
+                    <Label>Options associées</Label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {allOptions.map(opt => (
+                        <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg border border-border/50 hover:bg-secondary/30 cursor-pointer transition-colors">
+                          <Checkbox
+                            checked={newSelectedOptionIds.includes(opt.id)}
+                            onCheckedChange={(checked) => {
+                              setNewSelectedOptionIds(prev =>
+                                checked ? [...prev, opt.id] : prev.filter(id => id !== opt.id)
+                              );
+                            }}
+                          />
+                          <span className="text-sm font-medium flex-1">{opt.name}</span>
+                          <span className="text-sm text-muted-foreground">{opt.price}€</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Image upload */}
                 <div className="space-y-2">
@@ -518,7 +549,7 @@ export default function DashboardPacks() {
                         )}
 
                         {(editForm.pricing_type !== 'quote') && (
-                          <VariantsEditor variants={editForm.price_variants || []} onAdd={handleAddEditVariant} onUpdate={handleUpdateEditVariant} onRemove={handleRemoveEditVariant} />
+                          <VariantsEditor variants={editForm.price_variants || []} onAdd={handleAddEditVariant} onUpdate={handleUpdateEditVariant} onRemove={handleRemoveEditVariant} userId={user?.id} />
                         )}
 
                         {/* Location type */}
