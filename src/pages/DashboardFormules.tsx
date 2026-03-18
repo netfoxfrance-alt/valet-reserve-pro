@@ -12,14 +12,14 @@ export default function DashboardFormules() {
   const options = [
     {
       icon: Package,
-      title: t('nav.packs'),
+      title: t('formules.publicLabel', 'Formules publiques'),
       description: t('formules.packsDesc', 'Vos formules à prix fixe ou sur devis, présentées sur votre page'),
       href: '/dashboard/packs',
       color: 'from-amber-400 to-orange-500',
     },
     {
       icon: Wrench,
-      title: t('nav.services'),
+      title: t('formules.privateLabel', 'Formules privées'),
       description: t('formules.servicesDesc', 'Prestations personnalisées sur mesure'),
       href: '/dashboard/custom-services',
       color: 'from-blue-400 to-indigo-500',

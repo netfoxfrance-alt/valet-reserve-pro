@@ -62,6 +62,8 @@ export interface PriceVariant {
   price: number;
 }
 
+export type LocationType = 'on_site' | 'at_home' | 'both';
+
 export interface Pack {
   id: string;
   center_id: string;
@@ -75,6 +77,7 @@ export interface Pack {
   sort_order: number;
   active: boolean;
   pricing_type: 'fixed' | 'quote';
+  location_type: LocationType;
   created_at: string;
   updated_at: string;
 }
@@ -202,6 +205,7 @@ export function useCenterBySlug(slug: string) {
         ...p,
         price_variants: (p.price_variants as unknown as PriceVariant[]) || [],
         pricing_type: ((p as any).pricing_type || 'fixed') as 'fixed' | 'quote',
+        location_type: ((p as any).location_type || 'on_site') as LocationType,
       }));
       setPacks(transformedPacks);
 
@@ -246,6 +250,7 @@ export function useMyPacks() {
         ...p,
         price_variants: (p.price_variants as unknown as PriceVariant[]) || [],
         pricing_type: ((p as any).pricing_type || 'fixed') as 'fixed' | 'quote',
+        location_type: ((p as any).location_type || 'on_site') as LocationType,
       }));
       setPacks(transformedPacks);
       setLoading(false);
@@ -271,6 +276,7 @@ export function useMyPacks() {
         ...data,
         price_variants: (data.price_variants as unknown as PriceVariant[]) || [],
         pricing_type: ((data as any).pricing_type || 'fixed') as 'fixed' | 'quote',
+        location_type: ((data as any).location_type || 'on_site') as LocationType,
       };
       setPacks([...packs, transformedPack]);
     }

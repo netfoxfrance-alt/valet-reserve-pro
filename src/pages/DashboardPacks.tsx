@@ -4,17 +4,20 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Checkbox } from '@/components/ui/checkbox';
 
-import { useMyPacks, Pack, useMyCenter } from '@/hooks/useCenter';
+import { useMyPacks, Pack, useMyCenter, LocationType } from '@/hooks/useCenter';
+import { useMyServiceOptions, usePackOptions } from '@/hooks/useServiceOptions';
 import { useAuth } from '@/hooks/useAuth';
-import { Pencil, Clock, Plus, Trash2, Loader2, ChevronDown, ChevronUp, Image as ImageIcon, X, FileText } from 'lucide-react';
+import { Pencil, Clock, Plus, Trash2, Loader2, ChevronDown, ChevronUp, Image as ImageIcon, X, FileText, MapPin, Home, Building2, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import { VariantsEditor } from '@/components/dashboard/VariantsEditor';
 import { FeaturesEditor } from '@/components/dashboard/FeaturesEditor';
 import { supabase } from '@/integrations/supabase/client';
 import { stripHtml } from '@/lib/utils';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 // Helper to parse duration string to { hours, minutes }
 const parseDuration = (duration: string): { hours: number; minutes: number } => {
@@ -26,7 +29,6 @@ const parseDuration = (duration: string): { hours: number; minutes: number } => 
   };
 };
 
-// Helper to format { hours, minutes } to duration string
 const formatDuration = (hours: number, minutes: number): string => {
   if (hours === 0 && minutes === 0) return '';
   if (hours === 0) return `${minutes}min`;
@@ -39,11 +41,215 @@ interface PriceVariant {
   price: number;
 }
 
+const LOCATION_OPTIONS: { value: LocationType; label: string; icon: typeof MapPin }[] = [
+  { value: 'on_site', label: 'Sur place', icon: Building2 },
+  { value: 'at_home', label: 'À domicile', icon: Home },
+  { value: 'both', label: 'Les deux', icon: MapPin },
+];
+
+function LocationTypeSelector({ value, onChange }: { value: LocationType; onChange: (v: LocationType) => void }) {
+  return (
+    <div className="space-y-2">
+      <Label>Lieu d'intervention</Label>
+      <div className="flex gap-2">
+        {LOCATION_OPTIONS.map(opt => (
+          <Button
+            key={opt.value}
+            type="button"
+            variant={value === opt.value ? 'default' : 'outline'}
+            size="sm"
+            className="flex-1 rounded-xl"
+            onClick={() => onChange(opt.value)}
+          >
+            <opt.icon className="w-4 h-4 mr-1.5" />
+            {opt.label}
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PackOptionsPicker({ packId, allOptions }: { packId: string; allOptions: { id: string; name: string; price: number }[] }) {
+  const { optionIds, setOptions } = usePackOptions(packId);
+
+  if (allOptions.length === 0) return (
+    <p className="text-sm text-muted-foreground italic">Aucune option créée. Ajoutez-en dans l'onglet Options.</p>
+  );
+
+  return (
+    <div className="space-y-2">
+      <Label>Options associées</Label>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {allOptions.map(opt => (
+          <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg border border-border/50 hover:bg-secondary/30 cursor-pointer transition-colors">
+            <Checkbox
+              checked={optionIds.includes(opt.id)}
+              onCheckedChange={(checked) => {
+                const newIds = checked
+                  ? [...optionIds, opt.id]
+                  : optionIds.filter(id => id !== opt.id);
+                setOptions(newIds);
+              }}
+            />
+            <span className="text-sm font-medium flex-1">{opt.name}</span>
+            <span className="text-sm text-muted-foreground">{opt.price}€</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Options Tab ─────────────────────────────────────────
+function OptionsTab() {
+  const { options, loading, createOption, updateOption, deleteOption } = useMyServiceOptions();
+  const [isCreating, setIsCreating] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [newOpt, setNewOpt] = useState({ name: '', price: 0, duration_minutes: 0, description: '' });
+  const [editForm, setEditForm] = useState<{ name: string; price: number; duration_minutes: number; description: string }>({ name: '', price: 0, duration_minutes: 0, description: '' });
+
+  const handleCreate = async () => {
+    if (!newOpt.name) { toast.error('Nom requis'); return; }
+    const { error } = await createOption(newOpt);
+    if (error) toast.error('Erreur'); else { toast.success('Option créée'); setIsCreating(false); setNewOpt({ name: '', price: 0, duration_minutes: 0, description: '' }); }
+  };
+
+  const handleSave = async () => {
+    if (!editingId) return;
+    const { error } = await updateOption(editingId, editForm);
+    if (error) toast.error('Erreur'); else { toast.success('Option mise à jour'); setEditingId(null); }
+  };
+
+  if (loading) return <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>;
+
+  return (
+    <div>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-semibold text-foreground mb-1">Options & suppléments</h2>
+          <p className="text-sm text-muted-foreground">Créez des options que vos clients pourront ajouter lors de la réservation.</p>
+        </div>
+        <Button onClick={() => setIsCreating(true)} disabled={isCreating} className="w-full sm:w-auto">
+          <Plus className="w-4 h-4 mr-2" />
+          Nouvelle option
+        </Button>
+      </div>
+
+      {isCreating && (
+        <Card variant="elevated" className="p-4 sm:p-6 mb-4 border-2 border-primary/20">
+          <h3 className="font-semibold mb-4">Nouvelle option</h3>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Nom *</Label>
+                <Input value={newOpt.name} onChange={e => setNewOpt({ ...newOpt, name: e.target.value })} placeholder="Ex: Rénovation phares" />
+              </div>
+              <div className="space-y-2">
+                <Label>Prix (€)</Label>
+                <Input type="number" value={newOpt.price || ''} onChange={e => setNewOpt({ ...newOpt, price: parseFloat(e.target.value) || 0 })} placeholder="30" />
+              </div>
+              <div className="space-y-2">
+                <Label>Durée (min)</Label>
+                <Input type="number" value={newOpt.duration_minutes || ''} onChange={e => setNewOpt({ ...newOpt, duration_minutes: parseInt(e.target.value) || 0 })} placeholder="30" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Description (optionnel)</Label>
+              <Input value={newOpt.description} onChange={e => setNewOpt({ ...newOpt, description: e.target.value })} placeholder="Courte description visible par le client" />
+            </div>
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
+              <Button variant="ghost" onClick={() => setIsCreating(false)}>Annuler</Button>
+              <Button onClick={handleCreate}>Créer</Button>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      <div className="space-y-3">
+        {options.length === 0 && !isCreating ? (
+          <Card variant="elevated" className="p-6 text-center">
+            <p className="text-muted-foreground mb-4">Aucune option créée pour le moment.</p>
+            <Button onClick={() => setIsCreating(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Créer votre première option
+            </Button>
+          </Card>
+        ) : (
+          options.map(opt => (
+            <Card key={opt.id} variant="elevated" className="p-4 sm:p-5">
+              {editingId === opt.id ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label>Nom</Label>
+                      <Input value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Prix (€)</Label>
+                      <Input type="number" value={editForm.price || ''} onChange={e => setEditForm({ ...editForm, price: parseFloat(e.target.value) || 0 })} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Durée (min)</Label>
+                      <Input type="number" value={editForm.duration_minutes || ''} onChange={e => setEditForm({ ...editForm, duration_minutes: parseInt(e.target.value) || 0 })} />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Description</Label>
+                    <Input value={editForm.description} onChange={e => setEditForm({ ...editForm, description: e.target.value })} />
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button variant="ghost" onClick={() => setEditingId(null)}>Annuler</Button>
+                    <Button onClick={handleSave}>Enregistrer</Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3">
+                      <p className="font-semibold text-foreground truncate">{opt.name}</p>
+                      {opt.description && (
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <button className="flex-shrink-0"><Info className="w-4 h-4 text-muted-foreground" /></button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-64 text-sm">{opt.description}</PopoverContent>
+                        </Popover>
+                      )}
+                    </div>
+                    {opt.duration_minutes > 0 && (
+                      <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
+                        <Clock className="w-3 h-3" /> {opt.duration_minutes}min
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <p className="text-lg font-bold text-foreground">{opt.price}€</p>
+                    <div className="flex gap-1">
+                      <Button variant="ghost" size="icon" onClick={() => { setEditingId(opt.id); setEditForm({ name: opt.name, price: opt.price, duration_minutes: opt.duration_minutes, description: opt.description || '' }); }}>
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={async () => { const { error } = await deleteOption(opt.id); if (error) toast.error('Erreur'); else toast.success('Option supprimée'); }}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Card>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Component ──────────────────────────────────────
 export default function DashboardPacks() {
   const { packs, loading, createPack, updatePack, deletePack } = useMyPacks();
   const { center } = useMyCenter();
   const { user } = useAuth();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { options: allOptions } = useMyServiceOptions();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -60,6 +266,7 @@ export default function DashboardPacks() {
     price_variants: [] as PriceVariant[],
     image_url: null as string | null,
     pricing_type: 'fixed' as 'fixed' | 'quote',
+    location_type: 'on_site' as LocationType,
   });
   const newImageInputRef = useRef<HTMLInputElement>(null);
   const editImageInputRef = useRef<HTMLInputElement>(null);
@@ -75,18 +282,15 @@ export default function DashboardPacks() {
       price_variants: (pack as any).price_variants || [],
       image_url: (pack as any).image_url || null,
       pricing_type: pack.pricing_type || 'fixed',
+      location_type: pack.location_type || 'on_site',
     });
   };
 
   const handleSave = async () => {
     if (!editingId) return;
     const { error } = await updatePack(editingId, editForm);
-    if (error) {
-      toast.error('Erreur lors de la sauvegarde');
-    } else {
-      toast.success('Formule mise à jour');
-      setEditingId(null);
-    }
+    if (error) toast.error('Erreur lors de la sauvegarde');
+    else { toast.success('Formule mise à jour'); setEditingId(null); }
   };
 
   const handleCreate = async () => {
@@ -94,165 +298,74 @@ export default function DashboardPacks() {
       toast.error('Veuillez remplir le nom et au moins un prix');
       return;
     }
-    const { error } = await createPack({
-      ...newPack,
-      sort_order: packs.length
-    });
-    if (error) {
-      toast.error('Erreur lors de la création');
-    } else {
+    const { error } = await createPack({ ...newPack, sort_order: packs.length });
+    if (error) toast.error('Erreur lors de la création');
+    else {
       toast.success('Formule créée');
       setIsCreating(false);
-      setNewPack({
-        name: '',
-        description: '',
-        price: 0,
-        duration: '',
-        features: [],
-        sort_order: 0,
-        active: true,
-        price_variants: [],
-        image_url: null,
-        pricing_type: 'fixed',
-      });
+      setNewPack({ name: '', description: '', price: 0, duration: '', features: [], sort_order: 0, active: true, price_variants: [], image_url: null, pricing_type: 'fixed', location_type: 'on_site' });
     }
   };
 
   const handleDelete = async (id: string) => {
     const { error } = await deletePack(id);
-    if (error) {
-      toast.error('Erreur lors de la suppression');
-    } else {
-      toast.success('Formule supprimée');
-    }
+    if (error) toast.error('Erreur lors de la suppression');
+    else toast.success('Formule supprimée');
   };
 
-  // Stable callbacks for new pack variants
-  const handleAddNewVariant = useCallback(() => {
-    setNewPack(prev => ({
-      ...prev,
-      price_variants: [...prev.price_variants, { name: '', price: 0 }],
-    }));
-  }, []);
+  // Variant callbacks (new)
+  const handleAddNewVariant = useCallback(() => setNewPack(prev => ({ ...prev, price_variants: [...prev.price_variants, { name: '', price: 0 }] })), []);
+  const handleUpdateNewVariant = useCallback((i: number, f: 'name' | 'price', v: string | number) => setNewPack(prev => { const vs = [...prev.price_variants]; vs[i] = { ...vs[i], [f]: v }; return { ...prev, price_variants: vs }; }), []);
+  const handleRemoveNewVariant = useCallback((i: number) => setNewPack(prev => ({ ...prev, price_variants: prev.price_variants.filter((_, j) => j !== i) })), []);
 
-  const handleUpdateNewVariant = useCallback((index: number, field: 'name' | 'price', value: string | number) => {
-    setNewPack(prev => {
-      const variants = [...prev.price_variants];
-      variants[index] = { ...variants[index], [field]: value };
-      return { ...prev, price_variants: variants };
-    });
-  }, []);
+  // Variant callbacks (edit)
+  const handleAddEditVariant = useCallback(() => setEditForm(prev => ({ ...prev, price_variants: [...(prev.price_variants || []), { name: '', price: 0 }] })), []);
+  const handleUpdateEditVariant = useCallback((i: number, f: 'name' | 'price', v: string | number) => setEditForm(prev => { const vs = [...(prev.price_variants || [])]; vs[i] = { ...vs[i], [f]: v }; return { ...prev, price_variants: vs }; }), []);
+  const handleRemoveEditVariant = useCallback((i: number) => setEditForm(prev => ({ ...prev, price_variants: (prev.price_variants || []).filter((_, j) => j !== i) })), []);
 
-  const handleRemoveNewVariant = useCallback((index: number) => {
-    setNewPack(prev => ({
-      ...prev,
-      price_variants: prev.price_variants.filter((_, i) => i !== index),
-    }));
-  }, []);
+  // Feature callbacks (new)
+  const handleAddNewFeature = useCallback(() => setNewPack(prev => ({ ...prev, features: [...prev.features, ''] })), []);
+  const handleUpdateNewFeature = useCallback((i: number, v: string) => setNewPack(prev => { const fs = [...prev.features]; fs[i] = v; return { ...prev, features: fs }; }), []);
+  const handleRemoveNewFeature = useCallback((i: number) => setNewPack(prev => ({ ...prev, features: prev.features.filter((_, j) => j !== i) })), []);
 
-  // Stable callbacks for edit form variants
-  const handleAddEditVariant = useCallback(() => {
-    setEditForm(prev => ({
-      ...prev,
-      price_variants: [...(prev.price_variants || []), { name: '', price: 0 }],
-    }));
-  }, []);
+  // Feature callbacks (edit)
+  const handleAddEditFeature = useCallback(() => setEditForm(prev => ({ ...prev, features: [...(prev.features || []), ''] })), []);
+  const handleUpdateEditFeature = useCallback((i: number, v: string) => setEditForm(prev => { const fs = [...(prev.features || [])]; fs[i] = v; return { ...prev, features: fs }; }), []);
+  const handleRemoveEditFeature = useCallback((i: number) => setEditForm(prev => ({ ...prev, features: (prev.features || []).filter((_, j) => j !== i) })), []);
 
-  const handleUpdateEditVariant = useCallback((index: number, field: 'name' | 'price', value: string | number) => {
-    setEditForm(prev => {
-      const variants = [...(prev.price_variants || [])];
-      variants[index] = { ...variants[index], [field]: value };
-      return { ...prev, price_variants: variants };
-    });
-  }, []);
-
-  const handleRemoveEditVariant = useCallback((index: number) => {
-    setEditForm(prev => ({
-      ...prev,
-      price_variants: (prev.price_variants || []).filter((_, i) => i !== index),
-    }));
-  }, []);
-
-  // Stable callbacks for new pack features
-  const handleAddNewFeature = useCallback(() => {
-    setNewPack(prev => ({ ...prev, features: [...prev.features, ''] }));
-  }, []);
-
-  const handleUpdateNewFeature = useCallback((index: number, value: string) => {
-    setNewPack(prev => {
-      const features = [...prev.features];
-      features[index] = value;
-      return { ...prev, features };
-    });
-  }, []);
-
-  const handleRemoveNewFeature = useCallback((index: number) => {
-    setNewPack(prev => ({ ...prev, features: prev.features.filter((_, i) => i !== index) }));
-  }, []);
-
-  // Stable callbacks for edit form features
-  const handleAddEditFeature = useCallback(() => {
-    setEditForm(prev => ({ ...prev, features: [...(prev.features || []), ''] }));
-  }, []);
-
-  const handleUpdateEditFeature = useCallback((index: number, value: string) => {
-    setEditForm(prev => {
-      const features = [...(prev.features || [])];
-      features[index] = value;
-      return { ...prev, features };
-    });
-  }, []);
-
-  const handleRemoveEditFeature = useCallback((index: number) => {
-    setEditForm(prev => ({ ...prev, features: (prev.features || []).filter((_, i) => i !== index) }));
-  }, []);
-
-  // Image upload handler
+  // Image upload
   const handleImageUpload = async (file: File, target: 'new' | 'edit') => {
     if (!center || !user) return;
-    
     const targetId = target === 'edit' && editingId ? editingId : 'new';
     setUploadingImage(targetId);
-    
     const fileExt = file.name.split('.').pop()?.toLowerCase();
     const fileName = `${user.id}/${targetId}-${Date.now()}.${fileExt}`;
-    
-    const { error: uploadError } = await supabase.storage
-      .from('center-gallery')
-      .upload(fileName, file, { upsert: true });
-    
-    if (uploadError) {
-      toast.error('Erreur lors du téléchargement');
-      setUploadingImage(null);
-      return;
-    }
-    
-    const { data: urlData } = supabase.storage
-      .from('center-gallery')
-      .getPublicUrl(fileName);
-    
+    const { error: uploadError } = await supabase.storage.from('center-gallery').upload(fileName, file, { upsert: true });
+    if (uploadError) { toast.error('Erreur lors du téléchargement'); setUploadingImage(null); return; }
+    const { data: urlData } = supabase.storage.from('center-gallery').getPublicUrl(fileName);
     const imageUrl = urlData.publicUrl;
-    
-    if (target === 'new') {
-      setNewPack(prev => ({ ...prev, image_url: imageUrl }));
-    } else {
-      setEditForm(prev => ({ ...prev, image_url: imageUrl }));
-    }
-    
+    if (target === 'new') setNewPack(prev => ({ ...prev, image_url: imageUrl }));
+    else setEditForm(prev => ({ ...prev, image_url: imageUrl }));
     setUploadingImage(null);
     toast.success('Image ajoutée');
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
+    return <div className="min-h-screen bg-background flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
   }
 
+  const locationLabel = (lt: string) => LOCATION_OPTIONS.find(o => o.value === lt)?.label || 'Sur place';
+  const LocationIcon = (lt: string) => LOCATION_OPTIONS.find(o => o.value === lt)?.icon || Building2;
+
   return (
-    <DashboardLayout title="Formules">
+    <DashboardLayout title="Formules publiques">
+      <Tabs defaultValue="formules" className="w-full">
+        <TabsList className="mb-6 w-full sm:w-auto">
+          <TabsTrigger value="formules" className="flex-1 sm:flex-auto">Formules</TabsTrigger>
+          <TabsTrigger value="options" className="flex-1 sm:flex-auto">Options</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="formules">
           <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1 sm:mb-2">Vos offres</h2>
@@ -271,73 +384,30 @@ export default function DashboardPacks() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="new-name">Nom *</Label>
-                    <Input
-                      id="new-name"
-                      value={newPack.name}
-                      onChange={(e) => setNewPack({ ...newPack, name: e.target.value })}
-                      placeholder="Nettoyage Complet"
-                    />
+                    <Input id="new-name" value={newPack.name} onChange={(e) => setNewPack({ ...newPack, name: e.target.value })} placeholder="Nettoyage Complet" />
                   </div>
-                  {/* Duration - optional for quote type */}
                   <div className="space-y-2">
                     <Label>Durée estimée <span className="text-muted-foreground font-normal">(optionnelle)</span></Label>
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-1">
-                        <Input
-                          type="number"
-                          min="0"
-                          max="23"
-                          className="w-16 text-center"
-                          value={parseDuration(newPack.duration).hours}
-                          onChange={(e) => {
-                            const hours = Math.max(0, Math.min(23, parseInt(e.target.value) || 0));
-                            const { minutes } = parseDuration(newPack.duration);
-                            setNewPack({ ...newPack, duration: formatDuration(hours, minutes) });
-                          }}
-                        />
+                        <Input type="number" min="0" max="23" className="w-16 text-center" value={parseDuration(newPack.duration).hours} onChange={(e) => { const h = Math.max(0, Math.min(23, parseInt(e.target.value) || 0)); const { minutes } = parseDuration(newPack.duration); setNewPack({ ...newPack, duration: formatDuration(h, minutes) }); }} />
                         <span className="text-sm text-muted-foreground">h</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Input
-                          type="number"
-                          min="0"
-                          max="59"
-                          className="w-16 text-center"
-                          value={parseDuration(newPack.duration).minutes}
-                          onChange={(e) => {
-                            const minutes = Math.max(0, Math.min(59, parseInt(e.target.value) || 0));
-                            const { hours } = parseDuration(newPack.duration);
-                            setNewPack({ ...newPack, duration: formatDuration(hours, minutes) });
-                          }}
-                        />
+                        <Input type="number" min="0" max="59" className="w-16 text-center" value={parseDuration(newPack.duration).minutes} onChange={(e) => { const m = Math.max(0, Math.min(59, parseInt(e.target.value) || 0)); const { hours } = parseDuration(newPack.duration); setNewPack({ ...newPack, duration: formatDuration(hours, m) }); }} />
                         <span className="text-sm text-muted-foreground">min</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Pricing type toggle */}
+                {/* Pricing type */}
                 <div className="space-y-2">
                   <Label>Type de tarification</Label>
                   <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant={newPack.pricing_type === 'fixed' ? 'default' : 'outline'}
-                      size="sm"
-                      className="flex-1 rounded-xl"
-                      onClick={() => setNewPack({ ...newPack, pricing_type: 'fixed' })}
-                    >
-                      Prix fixe
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={newPack.pricing_type === 'quote' ? 'default' : 'outline'}
-                      size="sm"
-                      className="flex-1 rounded-xl"
-                      onClick={() => setNewPack({ ...newPack, pricing_type: 'quote', price: 0, price_variants: [] })}
-                    >
-                      <FileText className="w-4 h-4 mr-1.5" />
-                      Sur devis
+                    <Button type="button" variant={newPack.pricing_type === 'fixed' ? 'default' : 'outline'} size="sm" className="flex-1 rounded-xl" onClick={() => setNewPack({ ...newPack, pricing_type: 'fixed' })}>Prix fixe</Button>
+                    <Button type="button" variant={newPack.pricing_type === 'quote' ? 'default' : 'outline'} size="sm" className="flex-1 rounded-xl" onClick={() => setNewPack({ ...newPack, pricing_type: 'quote', price: 0, price_variants: [] })}>
+                      <FileText className="w-4 h-4 mr-1.5" />Sur devis
                     </Button>
                   </div>
                 </div>
@@ -345,103 +415,50 @@ export default function DashboardPacks() {
                 {newPack.pricing_type === 'fixed' && newPack.price_variants.length === 0 && (
                   <div className="space-y-2">
                     <Label htmlFor="new-price">Prix unique (€)</Label>
-                    <Input
-                      id="new-price"
-                      type="number"
-                      value={newPack.price || ''}
-                      onChange={(e) => setNewPack({ ...newPack, price: parseFloat(e.target.value) || 0 })}
-                      placeholder="49"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Ou ajoutez des variantes de prix ci-dessous
-                    </p>
+                    <Input id="new-price" type="number" value={newPack.price || ''} onChange={(e) => setNewPack({ ...newPack, price: parseFloat(e.target.value) || 0 })} placeholder="49" />
+                    <p className="text-xs text-muted-foreground">Ou ajoutez des variantes de prix ci-dessous</p>
                   </div>
                 )}
 
                 {newPack.pricing_type === 'fixed' && (
-                  <VariantsEditor
-                  variants={newPack.price_variants} 
-                  onAdd={handleAddNewVariant}
-                  onUpdate={handleUpdateNewVariant}
-                  onRemove={handleRemoveNewVariant}
-                />
+                  <VariantsEditor variants={newPack.price_variants} onAdd={handleAddNewVariant} onUpdate={handleUpdateNewVariant} onRemove={handleRemoveNewVariant} />
                 )}
+
+                {/* Location type */}
+                <LocationTypeSelector value={newPack.location_type} onChange={(v) => setNewPack({ ...newPack, location_type: v })} />
 
                 <div className="space-y-2">
                   <Label htmlFor="new-description">Description</Label>
-                  <RichTextEditor
-                    content={newPack.description}
-                    onChange={(html) => setNewPack({ ...newPack, description: html })}
-                    placeholder="Décrivez votre prestation..."
-                  />
+                  <RichTextEditor content={newPack.description} onChange={(html) => setNewPack({ ...newPack, description: html })} placeholder="Décrivez votre prestation..." />
                 </div>
 
-                <FeaturesEditor 
-                  features={newPack.features} 
-                  onAdd={handleAddNewFeature}
-                  onUpdate={handleUpdateNewFeature}
-                  onRemove={handleRemoveNewFeature}
-                />
+                <FeaturesEditor features={newPack.features} onAdd={handleAddNewFeature} onUpdate={handleUpdateNewFeature} onRemove={handleRemoveNewFeature} />
 
-                {/* Image upload for new pack */}
+                {/* Image upload */}
                 <div className="space-y-2">
                   <Label>Image (optionnel)</Label>
-                  <input
-                    ref={newImageInputRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleImageUpload(file, 'new');
-                    }}
-                  />
+                  <input ref={newImageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleImageUpload(file, 'new'); }} />
                   {newPack.image_url ? (
                     <div className="relative inline-block">
-                      <img 
-                        src={newPack.image_url} 
-                        alt="Pack image" 
-                        className="w-32 h-24 object-cover rounded-lg"
-                      />
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-                        onClick={() => setNewPack({ ...newPack, image_url: null })}
-                      >
-                        <X className="w-3 h-3" />
-                      </Button>
+                      <img src={newPack.image_url} alt="Pack image" className="w-32 h-24 object-cover rounded-lg" />
+                      <Button variant="destructive" size="icon" className="absolute -top-2 -right-2 h-6 w-6 rounded-full" onClick={() => setNewPack({ ...newPack, image_url: null })}><X className="w-3 h-3" /></Button>
                     </div>
                   ) : (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full sm:w-auto"
-                      disabled={uploadingImage === 'new'}
-                      onClick={() => newImageInputRef.current?.click()}
-                    >
-                      {uploadingImage === 'new' ? (
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      ) : (
-                        <ImageIcon className="w-4 h-4 mr-2" />
-                      )}
+                    <Button type="button" variant="outline" className="w-full sm:w-auto" disabled={uploadingImage === 'new'} onClick={() => newImageInputRef.current?.click()}>
+                      {uploadingImage === 'new' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ImageIcon className="w-4 h-4 mr-2" />}
                       Ajouter une image
                     </Button>
                   )}
                 </div>
 
                 <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
-                  <Button variant="ghost" onClick={() => setIsCreating(false)} className="w-full sm:w-auto">
-                    Annuler
-                  </Button>
-                  <Button onClick={handleCreate} className="w-full sm:w-auto">
-                    Créer
-                  </Button>
+                  <Button variant="ghost" onClick={() => setIsCreating(false)} className="w-full sm:w-auto">Annuler</Button>
+                  <Button onClick={handleCreate} className="w-full sm:w-auto">Créer</Button>
                 </div>
               </div>
             </Card>
           )}
-          
+
           <div className="space-y-3 sm:space-y-4">
             {packs.length === 0 && !isCreating ? (
               <Card variant="elevated" className="p-6 sm:p-8 text-center">
@@ -455,9 +472,8 @@ export default function DashboardPacks() {
               packs.map((pack) => {
                 const variants = (pack as any).price_variants as PriceVariant[] || [];
                 const isExpanded = expandedId === pack.id;
-                const minPrice = variants.length > 0 
-                  ? Math.min(...variants.map(v => v.price))
-                  : pack.price;
+                const minPrice = variants.length > 0 ? Math.min(...variants.map(v => v.price)) : pack.price;
+                const LocIcon = LocationIcon(pack.location_type);
 
                 return (
                   <Card key={pack.id} variant="elevated" className="p-4 sm:p-6">
@@ -465,194 +481,103 @@ export default function DashboardPacks() {
                       <div className="space-y-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor={`name-${pack.id}`}>Nom</Label>
-                            <Input
-                              id={`name-${pack.id}`}
-                              value={editForm.name || ''}
-                              onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                            />
+                            <Label>Nom</Label>
+                            <Input value={editForm.name || ''} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} />
                           </div>
                           <div className="space-y-2">
                             <Label>Durée estimée <span className="text-muted-foreground font-normal">(optionnelle)</span></Label>
                             <div className="flex items-center gap-2">
                               <div className="flex items-center gap-1">
-                                <Input
-                                  type="number"
-                                  min="0"
-                                  max="23"
-                                  className="w-16 text-center"
-                                  value={parseDuration(editForm.duration || '1h').hours}
-                                  onChange={(e) => {
-                                    const hours = Math.max(0, Math.min(23, parseInt(e.target.value) || 0));
-                                    const { minutes } = parseDuration(editForm.duration || '1h');
-                                    setEditForm({ ...editForm, duration: formatDuration(hours, minutes) });
-                                  }}
-                                />
+                                <Input type="number" min="0" max="23" className="w-16 text-center" value={parseDuration(editForm.duration || '').hours} onChange={(e) => { const h = Math.max(0, Math.min(23, parseInt(e.target.value) || 0)); const { minutes } = parseDuration(editForm.duration || ''); setEditForm({ ...editForm, duration: formatDuration(h, minutes) }); }} />
                                 <span className="text-sm text-muted-foreground">h</span>
                               </div>
                               <div className="flex items-center gap-1">
-                                <Input
-                                  type="number"
-                                  min="0"
-                                  max="59"
-                                  className="w-16 text-center"
-                                  value={parseDuration(editForm.duration || '1h').minutes}
-                                  onChange={(e) => {
-                                    const minutes = Math.max(0, Math.min(59, parseInt(e.target.value) || 0));
-                                    const { hours } = parseDuration(editForm.duration || '1h');
-                                    setEditForm({ ...editForm, duration: formatDuration(hours, minutes) });
-                                  }}
-                                />
+                                <Input type="number" min="0" max="59" className="w-16 text-center" value={parseDuration(editForm.duration || '').minutes} onChange={(e) => { const m = Math.max(0, Math.min(59, parseInt(e.target.value) || 0)); const { hours } = parseDuration(editForm.duration || ''); setEditForm({ ...editForm, duration: formatDuration(hours, m) }); }} />
                                 <span className="text-sm text-muted-foreground">min</span>
                               </div>
                             </div>
                           </div>
                         </div>
 
-                        {/* Pricing type toggle */}
+                        {/* Pricing type */}
                         <div className="space-y-2">
                           <Label>Type de tarification</Label>
                           <div className="flex gap-2">
-                            <Button
-                              type="button"
-                              variant={editForm.pricing_type === 'fixed' || !editForm.pricing_type ? 'default' : 'outline'}
-                              size="sm"
-                              className="flex-1 rounded-xl"
-                              onClick={() => setEditForm({ ...editForm, pricing_type: 'fixed' })}
-                            >
-                              Prix fixe
-                            </Button>
-                            <Button
-                              type="button"
-                              variant={editForm.pricing_type === 'quote' ? 'default' : 'outline'}
-                              size="sm"
-                              className="flex-1 rounded-xl"
-                              onClick={() => setEditForm({ ...editForm, pricing_type: 'quote', price: 0, price_variants: [] })}
-                            >
-                              <FileText className="w-4 h-4 mr-1.5" />
-                              Sur devis
+                            <Button type="button" variant={editForm.pricing_type === 'fixed' || !editForm.pricing_type ? 'default' : 'outline'} size="sm" className="flex-1 rounded-xl" onClick={() => setEditForm({ ...editForm, pricing_type: 'fixed' })}>Prix fixe</Button>
+                            <Button type="button" variant={editForm.pricing_type === 'quote' ? 'default' : 'outline'} size="sm" className="flex-1 rounded-xl" onClick={() => setEditForm({ ...editForm, pricing_type: 'quote', price: 0, price_variants: [] })}>
+                              <FileText className="w-4 h-4 mr-1.5" />Sur devis
                             </Button>
                           </div>
                         </div>
 
                         {(editForm.pricing_type !== 'quote') && (editForm.price_variants?.length || 0) === 0 && (
                           <div className="space-y-2">
-                            <Label htmlFor={`price-${pack.id}`}>Prix unique (€)</Label>
-                            <Input
-                              id={`price-${pack.id}`}
-                              type="number"
-                              value={editForm.price || ''}
-                              onChange={(e) => setEditForm({ ...editForm, price: parseFloat(e.target.value) || 0 })}
-                            />
+                            <Label>Prix unique (€)</Label>
+                            <Input type="number" value={editForm.price || ''} onChange={(e) => setEditForm({ ...editForm, price: parseFloat(e.target.value) || 0 })} />
                           </div>
                         )}
 
                         {(editForm.pricing_type !== 'quote') && (
-                          <VariantsEditor 
-                            variants={editForm.price_variants || []} 
-                            onAdd={handleAddEditVariant}
-                            onUpdate={handleUpdateEditVariant}
-                            onRemove={handleRemoveEditVariant}
-                          />
+                          <VariantsEditor variants={editForm.price_variants || []} onAdd={handleAddEditVariant} onUpdate={handleUpdateEditVariant} onRemove={handleRemoveEditVariant} />
                         )}
 
+                        {/* Location type */}
+                        <LocationTypeSelector value={(editForm.location_type as LocationType) || 'on_site'} onChange={(v) => setEditForm({ ...editForm, location_type: v })} />
+
                         <div className="space-y-2">
-                          <Label htmlFor={`description-${pack.id}`}>Description</Label>
-                          <RichTextEditor
-                            content={editForm.description || ''}
-                            onChange={(html) => setEditForm({ ...editForm, description: html })}
-                            placeholder="Décrivez votre prestation..."
-                          />
+                          <Label>Description</Label>
+                          <RichTextEditor content={editForm.description || ''} onChange={(html) => setEditForm({ ...editForm, description: html })} placeholder="Décrivez votre prestation..." />
                         </div>
 
-                        <FeaturesEditor 
-                          features={editForm.features || []} 
-                          onAdd={handleAddEditFeature}
-                          onUpdate={handleUpdateEditFeature}
-                          onRemove={handleRemoveEditFeature}
-                        />
+                        <FeaturesEditor features={editForm.features || []} onAdd={handleAddEditFeature} onUpdate={handleUpdateEditFeature} onRemove={handleRemoveEditFeature} />
 
-                        {/* Image upload for edit */}
+                        {/* Options association */}
+                        <PackOptionsPicker packId={pack.id} allOptions={allOptions.map(o => ({ id: o.id, name: o.name, price: o.price }))} />
+
+                        {/* Image upload */}
                         <div className="space-y-2">
                           <Label>Image (optionnel)</Label>
-                          <input
-                            ref={editImageInputRef}
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleImageUpload(file, 'edit');
-                            }}
-                          />
+                          <input ref={editImageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleImageUpload(file, 'edit'); }} />
                           {editForm.image_url ? (
                             <div className="relative inline-block">
-                              <img 
-                                src={editForm.image_url} 
-                                alt="Pack image" 
-                                className="w-32 h-24 object-cover rounded-lg"
-                              />
-                              <Button
-                                variant="destructive"
-                                size="icon"
-                                className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-                                onClick={() => setEditForm({ ...editForm, image_url: null })}
-                              >
-                                <X className="w-3 h-3" />
-                              </Button>
+                              <img src={editForm.image_url} alt="Pack image" className="w-32 h-24 object-cover rounded-lg" />
+                              <Button variant="destructive" size="icon" className="absolute -top-2 -right-2 h-6 w-6 rounded-full" onClick={() => setEditForm({ ...editForm, image_url: null })}><X className="w-3 h-3" /></Button>
                             </div>
                           ) : (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              className="w-full sm:w-auto"
-                              disabled={uploadingImage === editingId}
-                              onClick={() => editImageInputRef.current?.click()}
-                            >
-                              {uploadingImage === editingId ? (
-                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              ) : (
-                                <ImageIcon className="w-4 h-4 mr-2" />
-                              )}
+                            <Button type="button" variant="outline" className="w-full sm:w-auto" disabled={uploadingImage === editingId} onClick={() => editImageInputRef.current?.click()}>
+                              {uploadingImage === editingId ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ImageIcon className="w-4 h-4 mr-2" />}
                               Ajouter une image
                             </Button>
                           )}
                         </div>
 
                         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
-                          <Button variant="ghost" onClick={() => setEditingId(null)} className="w-full sm:w-auto">
-                            Annuler
-                          </Button>
-                          <Button onClick={handleSave} className="w-full sm:w-auto">
-                            Enregistrer
-                          </Button>
+                          <Button variant="ghost" onClick={() => setEditingId(null)} className="w-full sm:w-auto">Annuler</Button>
+                          <Button onClick={handleSave} className="w-full sm:w-auto">Enregistrer</Button>
                         </div>
                       </div>
                     ) : (
                       <div>
                         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                          {/* Image + Info */}
                           <div className="flex gap-4 flex-1 min-w-0">
                             {(pack as any).image_url && (
-                              <img 
-                                src={(pack as any).image_url} 
-                                alt={pack.name}
-                                className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-xl flex-shrink-0"
-                              />
+                              <img src={(pack as any).image_url} alt={pack.name} className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-xl flex-shrink-0" />
                             )}
                             <div className="flex-1 min-w-0">
                               <h3 className="font-semibold text-lg text-foreground truncate">{pack.name}</h3>
                               <p className="text-sm text-muted-foreground line-clamp-2">{stripHtml(pack.description)}</p>
+                              <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+                                <LocIcon className="w-3 h-3" />
+                                {locationLabel(pack.location_type)}
+                              </div>
                             </div>
                           </div>
                           <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6">
                             <div className="text-left sm:text-right">
                               <p className="text-xl sm:text-2xl font-bold text-foreground">
-                                {pack.pricing_type === 'quote' 
-                                  ? 'Sur devis' 
-                                  : variants.length > 0 ? `À partir de ${minPrice}€` : `${pack.price}€`}
+                                {pack.pricing_type === 'quote' ? 'Sur devis' : variants.length > 0 ? `À partir de ${minPrice}€` : `${pack.price}€`}
                               </p>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                              <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                 {pack.pricing_type === 'quote' ? (
                                   <><FileText className="w-4 h-4" /> Demande de devis</>
                                 ) : pack.duration ? (
@@ -661,32 +586,15 @@ export default function DashboardPacks() {
                               </div>
                             </div>
                             <div className="flex gap-1">
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => handleEdit(pack)}
-                              >
-                                <Pencil className="w-4 h-4" />
-                              </Button>
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => handleDelete(pack.id)}
-                                className="text-destructive hover:text-destructive"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
+                              <Button variant="ghost" size="icon" onClick={() => handleEdit(pack)}><Pencil className="w-4 h-4" /></Button>
+                              <Button variant="ghost" size="icon" onClick={() => handleDelete(pack.id)} className="text-destructive hover:text-destructive"><Trash2 className="w-4 h-4" /></Button>
                             </div>
                           </div>
                         </div>
 
-                        {/* Show variants preview */}
                         {variants.length > 0 && (
                           <div className="mt-4 pt-4 border-t border-border">
-                            <button
-                              onClick={() => setExpandedId(isExpanded ? null : pack.id)}
-                              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                            >
+                            <button onClick={() => setExpandedId(isExpanded ? null : pack.id)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
                               {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                               {variants.length} variante{variants.length > 1 ? 's' : ''} de prix
                             </button>
@@ -703,15 +611,12 @@ export default function DashboardPacks() {
                           </div>
                         )}
 
-                        {/* Show features */}
                         {pack.features && pack.features.length > 0 && (
                           <div className="mt-4 pt-4 border-t border-border">
                             <p className="text-sm text-muted-foreground mb-2">Inclus :</p>
                             <div className="flex flex-wrap gap-2">
                               {pack.features.map((f, i) => (
-                                <span key={i} className="bg-secondary/30 text-sm px-2 py-1 rounded">
-                                  {f}
-                                </span>
+                                <span key={i} className="bg-secondary/30 text-sm px-2 py-1 rounded">{f}</span>
                               ))}
                             </div>
                           </div>
@@ -723,6 +628,12 @@ export default function DashboardPacks() {
               })
             )}
           </div>
+        </TabsContent>
+
+        <TabsContent value="options">
+          <OptionsTab />
+        </TabsContent>
+      </Tabs>
     </DashboardLayout>
   );
 }
