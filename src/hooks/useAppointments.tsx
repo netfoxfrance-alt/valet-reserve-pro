@@ -388,11 +388,11 @@ export function useCreateAppointment() {
     pack_name?: string;
     variant_name?: string;
     price?: number;
-    // Custom service fields for recognized clients
     custom_service_id?: string | null;
     client_id?: string | null;
     custom_price?: number | null;
-    skip_email?: boolean; // When deposit is enabled, skip email here (webhook handles it)
+    skip_email?: boolean;
+    selected_options?: { id: string; name: string; price: number; duration_minutes: number }[];
   }) => {
     setLoading(true);
 
