@@ -415,9 +415,15 @@ export default function CenterBooking() {
     // Standard pack flow
     if (!selectedPack) return;
     
-    const finalPrice = selectedVariant?.price || selectedPack.price;
+    const totalPrice = (selectedVariant?.price || selectedPack.price) + optionsTotalPrice;
     
     const isDepositActive = center.deposit_enabled && center.stripe_connect_status === 'active';
+    
+    // Build notes with selected options
+    const optionsNote = selectedOptions.length > 0 
+      ? `Options: ${selectedOptions.map(o => `${o.name} (+${o.price}€)`).join(', ')}`
+      : '';
+    const fullNotes = [data.notes, optionsNote].filter(Boolean).join('\n');
     
     const { error, appointmentId } = await createAppointment({
       center_id: center.id,
@@ -429,12 +435,13 @@ export default function CenterBooking() {
       vehicle_type: selectedVariant?.name || 'berline',
       appointment_date: `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`,
       appointment_time: selectedTime,
-      notes: data.notes,
+      notes: fullNotes,
       duration: selectedPack.duration || '1h',
       pack_name: selectedPack.name,
       variant_name: selectedVariant?.name,
-      price: finalPrice,
-      skip_email: isDepositActive, // Deposit flow: webhook sends confirmation after payment
+      price: totalPrice,
+      selected_options: selectedOptions.map(o => ({ id: o.id, name: o.name, price: o.price })),
+      skip_email: isDepositActive,
     });
     
     if (error) {
