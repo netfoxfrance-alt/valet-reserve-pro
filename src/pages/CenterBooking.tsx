@@ -255,7 +255,10 @@ export default function CenterBooking() {
     setSelectedPack(pack);
     setSelectedVariant(null);
     setSelectedOptions([]);
-    setSelectedLocation(null);
+    // Auto-set location for non-both packs
+    if (pack.location_type === 'on_site') setSelectedLocation('on_site');
+    else if (pack.location_type === 'at_home') setSelectedLocation('at_home');
+    else setSelectedLocation(null);
     
     if (pack.pricing_type === 'quote') {
       setCurrentStep('quote-detail');
@@ -270,6 +273,7 @@ export default function CenterBooking() {
 
   // After pack-detail → decide next step
   const handleProceedFromDetail = () => {
+    // Show options step if there are options to pick OR location choice needed
     if (availableOptions.length > 0 || needsLocationChoice) {
       setCurrentStep('select-options');
     } else {
@@ -679,12 +683,15 @@ export default function CenterBooking() {
                 </Card>
 
                 {/* Location badge */}
-                {selectedPack.location_type && selectedPack.location_type !== 'on_site' && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    {selectedPack.location_type === 'at_home' ? <Home className="w-4 h-4" /> : <MapPin className="w-4 h-4" />}
-                    <span>{selectedPack.location_type === 'at_home' ? 'À domicile' : 'Sur place ou à domicile'}</span>
-                  </div>
-                )}
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  {selectedPack.location_type === 'at_home' ? (
+                    <><Home className="w-4 h-4" /><span>À domicile</span></>
+                  ) : selectedPack.location_type === 'both' ? (
+                    <><MapPin className="w-4 h-4" /><span>Sur place ou à domicile</span></>
+                  ) : (
+                    <><Building2 className="w-4 h-4" /><span>Sur place{center.address ? ` · ${center.address}` : ''}</span></>
+                  )}
+                </div>
 
                 {selectedPack.duration && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -789,6 +796,9 @@ export default function CenterBooking() {
                       <span className={`text-sm font-medium ${selectedLocation === 'on_site' ? 'text-foreground' : 'text-muted-foreground'}`}>
                         Sur place
                       </span>
+                      {selectedLocation === 'on_site' && center.address && (
+                        <span className="text-xs text-muted-foreground text-center">{center.address}</span>
+                      )}
                     </button>
                     <button
                       onClick={() => setSelectedLocation('at_home')}
@@ -806,6 +816,9 @@ export default function CenterBooking() {
                       <span className={`text-sm font-medium ${selectedLocation === 'at_home' ? 'text-foreground' : 'text-muted-foreground'}`}>
                         À domicile
                       </span>
+                      {selectedLocation === 'at_home' && (
+                        <span className="text-xs text-muted-foreground text-center">Adresse à renseigner</span>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1150,17 +1163,32 @@ export default function CenterBooking() {
           
           {/* Client Info */}
           {currentStep === 'client-info' && (
-            <ClientForm 
-              onSubmit={handleClientSubmit} 
-              isSubmitting={submitting}
-              requireAddress={needsAddress}
-              defaultValues={recognizedClient ? {
-                name: recognizedClient.client_name || '',
-                phone: recognizedClient.client_phone || '',
-                email: recognizedClient.client_email || '',
-                address: recognizedClient.client_address || '',
-              } : undefined}
-            />
+            <div>
+              {selectedLocation === 'on_site' && center.address && (
+                <Card variant="elevated" className="p-4 mb-6 max-w-lg mx-auto">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Building2 className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Rendez-vous sur place</p>
+                      <p className="text-sm text-muted-foreground">{center.address}</p>
+                    </div>
+                  </div>
+                </Card>
+              )}
+              <ClientForm 
+                onSubmit={handleClientSubmit} 
+                isSubmitting={submitting}
+                requireAddress={needsAddress}
+                defaultValues={recognizedClient ? {
+                  name: recognizedClient.client_name || '',
+                  phone: recognizedClient.client_phone || '',
+                  email: recognizedClient.client_email || '',
+                  address: recognizedClient.client_address || '',
+                } : undefined}
+              />
+            </div>
           )}
           
           {/* Confirmation */}
