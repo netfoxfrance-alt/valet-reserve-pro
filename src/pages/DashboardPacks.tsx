@@ -70,50 +70,33 @@ function LocationTypeSelector({ value, onChange }: { value: LocationType; onChan
   );
 }
 
-function PackOptionsPicker({ packId, allOptions }: { packId: string; allOptions: { id: string; name: string; price: number; category: string }[] }) {
+function PackOptionsPicker({ packId, allOptions }: { packId: string; allOptions: { id: string; name: string; price: number }[] }) {
   const { optionIds, setOptions } = usePackOptions(packId);
 
   if (allOptions.length === 0) return (
     <p className="text-sm text-muted-foreground italic">Aucune option créée. Ajoutez-en dans l'onglet Options.</p>
   );
 
-  // Group by category
-  const grouped = allOptions.reduce<Record<string, typeof allOptions>>((acc, opt) => {
-    const cat = opt.category || 'Sans catégorie';
-    (acc[cat] = acc[cat] || []).push(opt);
-    return acc;
-  }, {});
-  const sortedCategories = Object.keys(grouped).sort((a, b) => {
-    if (a === 'Sans catégorie') return 1;
-    if (b === 'Sans catégorie') return -1;
-    return a.localeCompare(b);
-  });
-
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <Label>Options associées</Label>
-      {sortedCategories.map(cat => (
-        <div key={cat}>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">{cat}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {grouped[cat].map(opt => (
-              <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg border border-border/50 hover:bg-secondary/30 cursor-pointer transition-colors">
-                <Checkbox
-                  checked={optionIds.includes(opt.id)}
-                  onCheckedChange={(checked) => {
-                    const newIds = checked
-                      ? [...optionIds, opt.id]
-                      : optionIds.filter(id => id !== opt.id);
-                    setOptions(newIds);
-                  }}
-                />
-                <span className="text-sm font-medium flex-1">{opt.name}</span>
-                <span className="text-sm text-muted-foreground">{opt.price}€</span>
-              </label>
-            ))}
-          </div>
-        </div>
-      ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {allOptions.map(opt => (
+          <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg border border-border/50 hover:bg-secondary/30 cursor-pointer transition-colors">
+            <Checkbox
+              checked={optionIds.includes(opt.id)}
+              onCheckedChange={(checked) => {
+                const newIds = checked
+                  ? [...optionIds, opt.id]
+                  : optionIds.filter(id => id !== opt.id);
+                setOptions(newIds);
+              }}
+            />
+            <span className="text-sm font-medium flex-1">{opt.name}</span>
+            <span className="text-sm text-muted-foreground">{opt.price}€</span>
+          </label>
+        ))}
+      </div>
     </div>
   );
 }
@@ -123,16 +106,13 @@ function OptionsTab() {
   const { options, loading, createOption, updateOption, deleteOption } = useMyServiceOptions();
   const [isCreating, setIsCreating] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [newOpt, setNewOpt] = useState({ name: '', price: 0, duration_minutes: 0, description: '', category: '' });
-  const [editForm, setEditForm] = useState<{ name: string; price: number; duration_minutes: number; description: string; category: string }>({ name: '', price: 0, duration_minutes: 0, description: '', category: '' });
-
-  // Get unique categories for suggestions
-  const existingCategories = [...new Set(options.map(o => o.category).filter(Boolean))].sort();
+  const [newOpt, setNewOpt] = useState({ name: '', price: 0, duration_minutes: 0, description: '' });
+  const [editForm, setEditForm] = useState<{ name: string; price: number; duration_minutes: number; description: string }>({ name: '', price: 0, duration_minutes: 0, description: '' });
 
   const handleCreate = async () => {
     if (!newOpt.name) { toast.error('Nom requis'); return; }
     const { error } = await createOption(newOpt);
-    if (error) toast.error('Erreur'); else { toast.success('Option créée'); setIsCreating(false); setNewOpt({ name: '', price: 0, duration_minutes: 0, description: '', category: '' }); }
+    if (error) toast.error('Erreur'); else { toast.success('Option créée'); setIsCreating(false); setNewOpt({ name: '', price: 0, duration_minutes: 0, description: '' }); }
   };
 
   const handleSave = async () => {
@@ -143,34 +123,12 @@ function OptionsTab() {
 
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>;
 
-  // Group options by category
-  const grouped = options.reduce<Record<string, typeof options>>((acc, opt) => {
-    const cat = opt.category || 'Sans catégorie';
-    (acc[cat] = acc[cat] || []).push(opt);
-    return acc;
-  }, {});
-  const sortedCategories = Object.keys(grouped).sort((a, b) => {
-    if (a === 'Sans catégorie') return 1;
-    if (b === 'Sans catégorie') return -1;
-    return a.localeCompare(b);
-  });
-
-  const CategoryInput = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
-    <div className="space-y-2">
-      <Label>Catégorie</Label>
-      <Input value={value} onChange={e => onChange(e.target.value)} placeholder="Ex: Traitement, Shampoing, Suppléments" list="option-categories" />
-      <datalist id="option-categories">
-        {existingCategories.map(c => <option key={c} value={c} />)}
-      </datalist>
-    </div>
-  );
-
   return (
     <div>
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-foreground mb-1">Options & suppléments</h2>
-          <p className="text-sm text-muted-foreground">Créez des options que vos clients pourront ajouter lors de la réservation. Triez-les par catégorie.</p>
+          <p className="text-sm text-muted-foreground">Créez des options que vos clients pourront ajouter lors de la réservation.</p>
         </div>
         <Button onClick={() => setIsCreating(true)} disabled={isCreating} className="w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" />
@@ -182,7 +140,6 @@ function OptionsTab() {
         <Card variant="elevated" className="p-4 sm:p-6 mb-4 border-2 border-primary/20">
           <h3 className="font-semibold mb-4">Nouvelle option</h3>
           <div className="space-y-4">
-            <CategoryInput value={newOpt.category} onChange={v => setNewOpt({ ...newOpt, category: v })} />
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>Nom *</Label>
@@ -209,7 +166,7 @@ function OptionsTab() {
         </Card>
       )}
 
-      <div className="space-y-6">
+      <div className="space-y-3">
         {options.length === 0 && !isCreating ? (
           <Card variant="elevated" className="p-6 text-center">
             <p className="text-muted-foreground mb-4">Aucune option créée pour le moment.</p>
@@ -219,84 +176,75 @@ function OptionsTab() {
             </Button>
           </Card>
         ) : (
-          sortedCategories.map(cat => (
-            <div key={cat}>
-              <div className="flex items-center gap-2 mb-3">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{cat}</h3>
-                <div className="flex-1 h-px bg-border" />
-              </div>
-              <div className="space-y-3">
-                {grouped[cat].map(opt => (
-                  <Card key={opt.id} variant="elevated" className="p-4 sm:p-5">
-                    {editingId === opt.id ? (
-                      <div className="space-y-4">
-                        <CategoryInput value={editForm.category} onChange={v => setEditForm({ ...editForm, category: v })} />
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                          <div className="space-y-2">
-                            <Label>Nom</Label>
-                            <Input value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Prix (€)</Label>
-                            <Input type="number" value={editForm.price || ''} onChange={e => setEditForm({ ...editForm, price: parseFloat(e.target.value) || 0 })} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Durée (min)</Label>
-                            <Input type="number" value={editForm.duration_minutes || ''} onChange={e => setEditForm({ ...editForm, duration_minutes: parseInt(e.target.value) || 0 })} />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Description</Label>
-                          <Input value={editForm.description} onChange={e => setEditForm({ ...editForm, description: e.target.value })} />
-                        </div>
-                        <div className="flex justify-end gap-2">
-                          <Button variant="ghost" onClick={() => setEditingId(null)}>Annuler</Button>
-                          <Button onClick={handleSave}>Enregistrer</Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3">
-                            <p className="font-semibold text-foreground truncate">{opt.name}</p>
-                            {opt.description && (
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <button className="flex-shrink-0"><Info className="w-4 h-4 text-muted-foreground" /></button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-64 text-sm">{opt.description}</PopoverContent>
-                              </Popover>
-                            )}
-                          </div>
-                          {opt.duration_minutes > 0 && (
-                            <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
-                              <Clock className="w-3 h-3" /> {opt.duration_minutes}min
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <p className="text-lg font-bold text-foreground">{opt.price}€</p>
-                          <div className="flex gap-1">
-                            <Button variant="ghost" size="icon" onClick={() => { setEditingId(opt.id); setEditForm({ name: opt.name, price: opt.price, duration_minutes: opt.duration_minutes, description: opt.description || '', category: opt.category || '' }); }}>
-                              <Pencil className="w-4 h-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={async () => { const { error } = await deleteOption(opt.id); if (error) toast.error('Erreur'); else toast.success('Option supprimée'); }}>
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
+          options.map(opt => (
+            <Card key={opt.id} variant="elevated" className="p-4 sm:p-5">
+              {editingId === opt.id ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label>Nom</Label>
+                      <Input value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Prix (€)</Label>
+                      <Input type="number" value={editForm.price || ''} onChange={e => setEditForm({ ...editForm, price: parseFloat(e.target.value) || 0 })} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Durée (min)</Label>
+                      <Input type="number" value={editForm.duration_minutes || ''} onChange={e => setEditForm({ ...editForm, duration_minutes: parseInt(e.target.value) || 0 })} />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Description</Label>
+                    <Input value={editForm.description} onChange={e => setEditForm({ ...editForm, description: e.target.value })} />
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button variant="ghost" onClick={() => setEditingId(null)}>Annuler</Button>
+                    <Button onClick={handleSave}>Enregistrer</Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3">
+                      <p className="font-semibold text-foreground truncate">{opt.name}</p>
+                      {opt.description && (
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <button className="flex-shrink-0"><Info className="w-4 h-4 text-muted-foreground" /></button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-64 text-sm">{opt.description}</PopoverContent>
+                        </Popover>
+                      )}
+                    </div>
+                    {opt.duration_minutes > 0 && (
+                      <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
+                        <Clock className="w-3 h-3" /> {opt.duration_minutes}min
+                      </p>
                     )}
-                  </Card>
-                ))}
-              </div>
-            </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <p className="text-lg font-bold text-foreground">{opt.price}€</p>
+                    <div className="flex gap-1">
+                      <Button variant="ghost" size="icon" onClick={() => { setEditingId(opt.id); setEditForm({ name: opt.name, price: opt.price, duration_minutes: opt.duration_minutes, description: opt.description || '' }); }}>
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={async () => { const { error } = await deleteOption(opt.id); if (error) toast.error('Erreur'); else toast.success('Option supprimée'); }}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Card>
           ))
         )}
       </div>
     </div>
   );
 }
+
+// ─── Main Component ──────────────────────────────────────
 export default function DashboardPacks() {
   const { packs, loading, createPack, updatePack, deletePack } = useMyPacks();
   const { center } = useMyCenter();
@@ -584,7 +532,7 @@ export default function DashboardPacks() {
                         <FeaturesEditor features={editForm.features || []} onAdd={handleAddEditFeature} onUpdate={handleUpdateEditFeature} onRemove={handleRemoveEditFeature} />
 
                         {/* Options association */}
-                        <PackOptionsPicker packId={pack.id} allOptions={allOptions.map(o => ({ id: o.id, name: o.name, price: o.price, category: o.category }))} />
+                        <PackOptionsPicker packId={pack.id} allOptions={allOptions.map(o => ({ id: o.id, name: o.name, price: o.price }))} />
 
                         {/* Image upload */}
                         <div className="space-y-2">

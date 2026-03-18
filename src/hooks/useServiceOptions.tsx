@@ -11,7 +11,6 @@ export interface ServiceOption {
   duration_minutes: number;
   sort_order: number;
   active: boolean;
-  category: string;
   created_at: string;
   updated_at: string;
 }
@@ -37,7 +36,7 @@ export function useMyServiceOptions() {
     fetch();
   }, [center]);
 
-  const createOption = async (option: { name: string; price: number; duration_minutes: number; description?: string; category?: string }) => {
+  const createOption = async (option: { name: string; price: number; duration_minutes: number; description?: string }) => {
     if (!center) return { error: 'No center' };
     const { data, error } = await supabase
       .from('service_options')
