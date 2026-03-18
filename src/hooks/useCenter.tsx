@@ -203,6 +203,7 @@ export function useCenterBySlug(slug: string) {
         ...p,
         price_variants: (p.price_variants as unknown as PriceVariant[]) || [],
         pricing_type: ((p as any).pricing_type || 'fixed') as 'fixed' | 'quote',
+        category_id: (p as any).category_id || null,
       }));
       setPacks(transformedPacks);
 
