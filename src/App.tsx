@@ -94,6 +94,16 @@ const App = () => (
                 <DashboardCustomServices />
               </ProtectedRoute>
             } />
+            <Route path="/dashboard/categories" element={
+              <ProtectedRoute>
+                <DashboardCategories />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/options" element={
+              <ProtectedRoute>
+                <DashboardOptions />
+              </ProtectedRoute>
+            } />
             <Route path="/dashboard/stats" element={
               <ProtectedRoute>
                 <DashboardStats />
