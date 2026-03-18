@@ -89,18 +89,23 @@ export default function DashboardFormules() {
                   </PopoverTrigger>
                   <PopoverContent className="w-80 text-sm" side="top" align="end">
                     <div className="space-y-3">
-                      <p className="font-semibold text-foreground">Prestations personnalisées (optionnel)</p>
-                      <p className="text-muted-foreground">
-                        Si vous avez des prestations spécifiques réservées à certains clients, vous pouvez les créer ici.
-                      </p>
-                      <p className="text-muted-foreground">
-                        Ces prestations ne seront <span className="font-medium text-foreground">pas visibles publiquement</span> sur votre page. Elles servent uniquement pour des cas particuliers : tarif négocié, prestation spéciale ou service réservé à un client précis.
-                      </p>
-                      <p className="text-muted-foreground">Une fois la prestation créée, vous pourrez :</p>
-                      <ul className="list-disc list-inside text-muted-foreground space-y-1 pl-1">
-                        <li>l'utiliser pour créer des réservations manuellement</li>
-                        <li>permettre au client concerné de réserver uniquement les prestations qui lui sont attribuées</li>
-                      </ul>
+                      {(option as any).optionalInfo ? (
+                        <>
+                          <p className="font-semibold text-foreground">{(option as any).optionalInfo.title}</p>
+                          <p className="text-muted-foreground">{(option as any).optionalInfo.desc}</p>
+                          <p className="text-muted-foreground">{(option as any).optionalInfo.details}</p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="font-semibold text-foreground">Prestations personnalisées (optionnel)</p>
+                          <p className="text-muted-foreground">
+                            Si vous avez des prestations spécifiques réservées à certains clients, vous pouvez les créer ici.
+                          </p>
+                          <p className="text-muted-foreground">
+                            Ces prestations ne seront <span className="font-medium text-foreground">pas visibles publiquement</span> sur votre page. Elles servent uniquement pour des cas particuliers.
+                          </p>
+                        </>
+                      )}
                     </div>
                   </PopoverContent>
                 </Popover>
