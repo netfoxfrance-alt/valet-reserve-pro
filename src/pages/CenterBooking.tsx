@@ -95,6 +95,7 @@ export default function CenterBooking() {
     return hours * 60 + minutes || 60;
   };
   const { center, packs, availability, loading, error } = useCenterBySlug(slug || '');
+  const { categories } = useCenterCategories(center?.id || null);
   const { createAppointment, loading: submitting } = useCreateAppointment();
   const { createContactRequest, loading: submittingContact } = useCreateContactRequest();
   const { toast } = useToast();
@@ -102,6 +103,8 @@ export default function CenterBooking() {
   const [currentStep, setCurrentStep] = useState<BookingStep>('landing');
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<PriceVariant | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<ServiceCategory | null>(null);
+  const [selectedOptions, setSelectedOptions] = useState<ServiceOption[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [clientData, setClientData] = useState<ClientData | null>(null);
@@ -109,6 +112,12 @@ export default function CenterBooking() {
   const [lastAppointmentId, setLastAppointmentId] = useState<string | null>(null);
   // Recognized client state
   const [recognizedClient, setRecognizedClient] = useState<RecognizedClient | null>(null);
+  
+  // Fetch options for selected pack
+  const { options: packOptions } = usePackOptions(selectedPack?.id || null, center?.id || null);
+  
+  // Has categories with packs assigned?
+  const hasCategories = categories.length > 0 && packs.some(p => p.category_id);
   
   // Determine if center is Pro or Trial (has active subscription)
   const isPro = center?.subscription_plan === 'pro' || center?.subscription_plan === 'trial';
