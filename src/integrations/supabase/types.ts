@@ -905,6 +905,7 @@ export type Database = {
           features: string[] | null
           id: string
           image_url: string | null
+          location_type: string
           name: string
           price: number
           price_variants: Json | null
@@ -922,6 +923,7 @@ export type Database = {
           features?: string[] | null
           id?: string
           image_url?: string | null
+          location_type?: string
           name: string
           price: number
           price_variants?: Json | null
@@ -939,6 +941,7 @@ export type Database = {
           features?: string[] | null
           id?: string
           image_url?: string | null
+          location_type?: string
           name?: string
           price?: number
           price_variants?: Json | null
