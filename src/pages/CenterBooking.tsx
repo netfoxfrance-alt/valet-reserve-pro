@@ -508,8 +508,10 @@ export default function CenterBooking() {
   
   const showBackButton = currentStep !== 'landing' && currentStep !== 'confirmation' && currentStep !== 'contact-confirmation' && currentStep !== 'quote-confirmation';
 
-  // Get final price (variant or pack base price)
-  const finalPrice = selectedVariant?.price || selectedPack?.price || 0;
+  // Get final price (variant or pack base price + options)
+  const optionsTotalPrice = selectedOptions.reduce((sum, o) => sum + o.price, 0);
+  const optionsTotalDuration = selectedOptions.reduce((sum, o) => sum + o.duration_minutes, 0);
+  const finalPrice = (selectedVariant?.price || selectedPack?.price || 0) + optionsTotalPrice;
 
   // Loading state
   if (loading) {
