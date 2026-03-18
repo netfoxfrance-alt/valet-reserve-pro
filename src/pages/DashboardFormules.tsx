@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useMyCenter } from '@/hooks/useCenter';
-import { Package, Wrench, Info } from 'lucide-react';
+import { Package, Wrench, FolderOpen, Settings2, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
@@ -16,6 +16,32 @@ export default function DashboardFormules() {
       description: t('formules.packsDesc', 'Vos formules à prix fixe ou sur devis, présentées sur votre page'),
       href: '/dashboard/packs',
       color: 'from-amber-400 to-orange-500',
+    },
+    {
+      icon: FolderOpen,
+      title: 'Catégories',
+      description: 'Groupez vos formules par type (ex: Véhicules, Matelas...)',
+      href: '/dashboard/categories',
+      color: 'from-emerald-400 to-teal-500',
+      optional: true,
+      optionalInfo: {
+        title: 'Catégories (optionnel)',
+        desc: 'Permet de proposer un parcours en étapes : le client choisit d\'abord un type de service, puis la formule associée.',
+        details: 'Idéal si vous proposez des services différents (ex: véhicules, matelas, vitres). Si vous n\'en créez pas, vos formules s\'affichent directement.',
+      },
+    },
+    {
+      icon: Settings2,
+      title: 'Options',
+      description: 'Suppléments proposés avec vos formules (ex: Cuir, Ozone...)',
+      href: '/dashboard/options',
+      color: 'from-violet-400 to-purple-500',
+      optional: true,
+      optionalInfo: {
+        title: 'Options supplémentaires (optionnel)',
+        desc: 'Permettez à vos clients de personnaliser leur réservation en ajoutant des options en supplément.',
+        details: 'Exemples : Traitement cuir +30€, Traitement Ozone +25€, Nettoyage moteur +40€. Vous choisissez quelles options proposer pour chaque formule.',
+      },
     },
     {
       icon: Wrench,
