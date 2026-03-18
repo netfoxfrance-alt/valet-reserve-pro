@@ -170,16 +170,18 @@ export function ConfirmationView({ pack, date, time, clientName, centerName = "C
               <MapPin className="w-5 h-5 text-foreground" />
             </div>
             <div>
-              <p className="font-medium text-foreground">
-                {selectedLocation === 'at_home' ? 'À domicile' : centerName}
-              </p>
-              {selectedLocation !== 'at_home' && centerAddress && (
-                <p className="text-sm text-muted-foreground">
-                  {centerAddress}
-                </p>
-              )}
-              {selectedLocation === 'at_home' && (
-                <p className="text-sm text-muted-foreground">Le professionnel se déplace chez vous</p>
+              {selectedLocation === 'at_home' ? (
+                <>
+                  <p className="font-medium text-foreground">À domicile</p>
+                  <p className="text-sm text-muted-foreground">Le professionnel se déplace chez vous</p>
+                </>
+              ) : (
+                <>
+                  <p className="font-medium text-foreground">Sur place · {centerName}</p>
+                  {centerAddress && (
+                    <p className="text-sm text-muted-foreground">{centerAddress}</p>
+                  )}
+                </>
               )}
             </div>
           </div>

@@ -1163,17 +1163,32 @@ export default function CenterBooking() {
           
           {/* Client Info */}
           {currentStep === 'client-info' && (
-            <ClientForm 
-              onSubmit={handleClientSubmit} 
-              isSubmitting={submitting}
-              requireAddress={needsAddress}
-              defaultValues={recognizedClient ? {
-                name: recognizedClient.client_name || '',
-                phone: recognizedClient.client_phone || '',
-                email: recognizedClient.client_email || '',
-                address: recognizedClient.client_address || '',
-              } : undefined}
-            />
+            <div>
+              {selectedLocation === 'on_site' && center.address && (
+                <Card variant="elevated" className="p-4 mb-6 max-w-lg mx-auto">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Building2 className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Rendez-vous sur place</p>
+                      <p className="text-sm text-muted-foreground">{center.address}</p>
+                    </div>
+                  </div>
+                </Card>
+              )}
+              <ClientForm 
+                onSubmit={handleClientSubmit} 
+                isSubmitting={submitting}
+                requireAddress={needsAddress}
+                defaultValues={recognizedClient ? {
+                  name: recognizedClient.client_name || '',
+                  phone: recognizedClient.client_phone || '',
+                  email: recognizedClient.client_email || '',
+                  address: recognizedClient.client_address || '',
+                } : undefined}
+              />
+            </div>
           )}
           
           {/* Confirmation */}

@@ -104,23 +104,25 @@ export function ClientForm({ onSubmit, isSubmitting = false, defaultValues, requ
             </div>
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="address" className="text-sm font-medium">
-              Adresse d'intervention
-            </Label>
-            <div className="relative">
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <Input
-                id="address"
-                type="text"
-                placeholder="12 rue de Paris, 75001 Paris"
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="pl-12 h-12 rounded-xl"
-                required
-              />
+          {requireAddress && (
+            <div className="space-y-2">
+              <Label htmlFor="address" className="text-sm font-medium">
+                Adresse d'intervention
+              </Label>
+              <div className="relative">
+                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input
+                  id="address"
+                  type="text"
+                  placeholder="12 rue de Paris, 75001 Paris"
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  className="pl-12 h-12 rounded-xl"
+                  required
+                />
+              </div>
             </div>
-          </div>
+          )}
           
           <div className="space-y-2">
             <Label htmlFor="notes" className="text-sm font-medium">
