@@ -5,18 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CenterCustomization, defaultCustomization, defaultBlocks, HeaderStyle, FontFamily, FONT_MAP, GOOGLE_FONT_URLS } from '@/types/customization';
+import { CenterCustomization, defaultCustomization, defaultBlocks, HeaderStyle } from '@/types/customization';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, MapPin, Package, Layers, PanelTop, Minus, Plus, Type, Sparkles } from 'lucide-react';
+import { Palette, Image, Upload, Trash2, Loader2, Instagram, Mail, MapPin, Package, Layers, PanelTop, Minus } from 'lucide-react';
 import { BlocksEditor } from './BlocksEditor';
-import { TEMPLATES } from './PageTemplateChooser';
 import { cn, stripHtml } from '@/lib/utils';
 import { Pack } from '@/hooks/useCenter';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useNavigate } from 'react-router-dom';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
 
 interface CustomizationSectionProps {
   centerId: string;
@@ -26,39 +22,20 @@ interface CustomizationSectionProps {
   packs?: Pack[];
   centerAddress?: string;
   centerPhone?: string;
-  logoUrl?: string | null;
-  onLogoUploaded?: (url: string) => void;
-  onLogoRemoved?: () => void;
-  onOpenThemes?: () => void;
 }
 
-const FONT_OPTIONS: { value: FontFamily; label: string; preview: string }[] = [
-  { value: 'system', label: 'Système', preview: '-apple-system, sans-serif' },
-  { value: 'inter', label: 'Inter', preview: '"Inter", sans-serif' },
-  { value: 'poppins', label: 'Poppins', preview: '"Poppins", sans-serif' },
-  { value: 'playfair', label: 'Playfair Display', preview: '"Playfair Display", serif' },
-  { value: 'montserrat', label: 'Montserrat', preview: '"Montserrat", sans-serif' },
-  { value: 'raleway', label: 'Raleway', preview: '"Raleway", sans-serif' },
-  { value: 'dm-sans', label: 'DM Sans', preview: '"DM Sans", sans-serif' },
-  { value: 'space-grotesk', label: 'Space Grotesk', preview: '"Space Grotesk", sans-serif' },
+const COLOR_PRESETS = [
+  { name: 'Bleu', primary: '#3b82f6', secondary: '#1e293b', accent: '#10b981' },
+  { name: 'Rouge', primary: '#ef4444', secondary: '#1c1917', accent: '#f59e0b' },
+  { name: 'Vert', primary: '#22c55e', secondary: '#14532d', accent: '#3b82f6' },
+  { name: 'Violet', primary: '#8b5cf6', secondary: '#1e1b4b', accent: '#ec4899' },
+  { name: 'Orange', primary: '#f97316', secondary: '#431407', accent: '#06b6d4' },
+  { name: 'Rose', primary: '#ec4899', secondary: '#500724', accent: '#8b5cf6' },
 ];
 
-const BG_PRESETS = [
-  { name: 'Blanc', value: '#ffffff', gradient: undefined },
-  { name: 'Gris clair', value: '#f3f4f6', gradient: undefined },
-  { name: 'Crème', value: '#fefce8', gradient: undefined },
-  { name: 'Bleu doux', value: '#dbeafe', gradient: 'linear-gradient(180deg, #dbeafe 0%, #eff6ff 100%)' },
-  { name: 'Rose pâle', value: '#fce7f3', gradient: 'linear-gradient(135deg, #fce7f3 0%, #ede9fe 100%)' },
-  { name: 'Vert pâle', value: '#f0fdf4', gradient: 'linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 100%)' },
-  { name: 'Noir', value: '#0a0a0a', gradient: undefined },
-  { name: 'Nuit', value: '#0f0a1a', gradient: 'linear-gradient(180deg, #0f0a1a 0%, #1a1035 100%)' },
-];
-
-export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [], centerAddress, centerPhone, logoUrl, onLogoUploaded, onLogoRemoved, onOpenThemes }: CustomizationSectionProps) {
+export function CustomizationSection({ centerId, userId, customization, onUpdate, packs = [], centerAddress, centerPhone }: CustomizationSectionProps) {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [uploadingCover, setUploadingCover] = useState(false);
-  const [uploadingLogo, setUploadingLogo] = useState(false);
   const [local, setLocal] = useState<CenterCustomization>(customization);
 
   // Sync local state when prop changes from parent
@@ -102,8 +79,13 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
     ? local.visible_pack_ids 
     : packs.map(p => p.id);
 
-
-
+  const applyPreset = (preset: typeof COLOR_PRESETS[0]) => {
+    updateColors({
+      primary: preset.primary,
+      secondary: preset.secondary,
+      accent: preset.accent,
+    });
+  };
 
   const handleCoverUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -159,49 +141,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
       toast({ title: 'Erreur', description: 'Impossible de supprimer l\'image.', variant: 'destructive' });
     } finally {
       setUploadingCover(false);
-    }
-  };
-
-  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      toast({ title: 'Erreur', description: 'Veuillez sélectionner une image.', variant: 'destructive' });
-      return;
-    }
-    setUploadingLogo(true);
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${userId}/logo.${fileExt}`;
-      const { error: uploadError } = await supabase.storage
-        .from('center-logos')
-        .upload(fileName, file, { upsert: true });
-      if (uploadError) throw uploadError;
-      const { data: { publicUrl } } = supabase.storage
-        .from('center-logos')
-        .getPublicUrl(fileName);
-      onLogoUploaded?.(publicUrl);
-      toast({ title: 'Logo mis à jour !' });
-    } catch (error) {
-      toast({ title: 'Erreur', description: 'Impossible d\'uploader le logo.', variant: 'destructive' });
-    } finally {
-      setUploadingLogo(false);
-      event.target.value = '';
-    }
-  };
-
-  const handleRemoveLogo = async () => {
-    setUploadingLogo(true);
-    try {
-      await supabase.storage
-        .from('center-logos')
-        .remove([`${userId}/logo.png`, `${userId}/logo.jpg`, `${userId}/logo.jpeg`, `${userId}/logo.webp`]);
-      onLogoRemoved?.();
-      toast({ title: 'Logo supprimé' });
-    } catch (error) {
-      toast({ title: 'Erreur', description: 'Impossible de supprimer le logo.', variant: 'destructive' });
-    } finally {
-      setUploadingLogo(false);
     }
   };
 
@@ -261,88 +200,8 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               </div>
             </div>
 
-            {/* Logo Section - show when header_style is minimal */}
-            {(local.layout.header_style || 'minimal') === 'minimal' && (
-              <div>
-                <Label className="text-sm font-medium mb-3 block">Logo</Label>
-                {logoUrl ? (
-                  <div className="relative">
-                    <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-secondary/20">
-                      <img
-                        src={logoUrl}
-                        alt="Logo"
-                        className="max-w-[120px] max-h-[48px] w-auto h-auto object-contain rounded"
-                      />
-                      {uploadingLogo && (
-                        <Loader2 className="w-5 h-5 animate-spin text-primary" />
-                      )}
-                    </div>
-                    <div className="flex gap-2 mt-2">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleLogoUpload}
-                        className="sr-only"
-                        id="logo-upload-design"
-                      />
-                      <Label
-                        htmlFor="logo-upload-design"
-                        className={cn(
-                          buttonVariants({ variant: 'outline', size: 'sm' }),
-                          uploadingLogo && 'pointer-events-none opacity-50',
-                          "cursor-pointer"
-                        )}
-                      >
-                        <Upload className="w-4 h-4 mr-1.5" />
-                        Changer
-                      </Label>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleRemoveLogo}
-                        disabled={uploadingLogo}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
-                    <Image className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-                    <p className="text-sm text-muted-foreground mb-2">Aucun logo</p>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleLogoUpload}
-                      className="sr-only"
-                      id="logo-upload-design-empty"
-                    />
-                    <Label
-                      htmlFor="logo-upload-design-empty"
-                      className={cn(
-                        buttonVariants({ variant: 'outline', size: 'sm' }),
-                        uploadingLogo && 'pointer-events-none opacity-50',
-                        "cursor-pointer"
-                      )}
-                    >
-                      {uploadingLogo ? (
-                        <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
-                      ) : (
-                        <Upload className="w-4 h-4 mr-1.5" />
-                      )}
-                      Ajouter un logo
-                    </Label>
-                  </div>
-                )}
-                <p className="text-xs text-muted-foreground mt-2">
-                  Votre logo apparaîtra dans le header de votre page
-                </p>
-              </div>
-            )}
-
             {/* Banner Section - only show when header_style is banner */}
-            {(local.layout.header_style || 'minimal') === 'banner' && (
+            {(local.layout.header_style || 'banner') === 'banner' && (
             <div>
               <Label className="text-sm font-medium mb-3 block">Bannière</Label>
               {local.cover_url ? (
@@ -415,35 +274,37 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                   </Label>
                 </div>
               )}
+              <p className="text-xs text-muted-foreground mt-2">
+                Le logo se configure dans Paramètres → Informations
+              </p>
             </div>
             )}
 
-            {/* Theme Button */}
-            {onOpenThemes && (
-              <button
-                onClick={onOpenThemes}
-                className="w-full flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/30 hover:bg-primary/5 transition-all group"
-              >
-                <div className="flex -space-x-1.5">
-                  {TEMPLATES.slice(0, 3).map((t) => (
-                    <div
-                      key={t.id}
-                      className="w-7 h-10 rounded-md border border-background shadow-sm"
-                      style={{ background: t.backgroundGradient || t.background }}
-                    />
-                  ))}
-                </div>
-                <div className="flex-1 text-left">
-                  <p className="text-sm font-medium text-foreground">Thèmes</p>
-                  <p className="text-xs text-muted-foreground">Changer le style de votre page</p>
-                </div>
-                <Sparkles className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-              </button>
-            )}
-
-            {/* Custom Colors */}
+            {/* Color Presets */}
             <div>
               <Label className="text-sm font-medium mb-3 block">Couleurs</Label>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-4">
+                {COLOR_PRESETS.map((preset) => (
+                  <button
+                    key={preset.name}
+                    onClick={() => applyPreset(preset)}
+                    className={cn(
+                      "p-2.5 rounded-lg border-2 transition-all hover:scale-105",
+                      local.colors.primary === preset.primary 
+                        ? "border-primary ring-2 ring-primary/20" 
+                        : "border-border hover:border-muted-foreground"
+                    )}
+                  >
+                    <div className="flex gap-1 mb-1">
+                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.primary }} />
+                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.secondary }} />
+                    </div>
+                    <p className="text-[10px] text-center text-muted-foreground">{preset.name}</p>
+                  </button>
+                ))}
+              </div>
+              
+              {/* Custom Colors */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <div className="space-y-1">
                   <Label className="text-xs">Principale</Label>
@@ -508,94 +369,7 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
                   onCheckedChange={(checked) => updateLayout({ dark_mode: checked })}
                 />
               </div>
-            </div>
 
-            {/* Typography */}
-            <div>
-              <Label className="text-sm font-medium mb-3 block flex items-center gap-1.5">
-                <Type className="w-4 h-4" />
-                Typographie
-              </Label>
-              
-              {/* Font Family */}
-              <div className="space-y-3">
-                <div className="space-y-1">
-                  <Label className="text-xs">Police</Label>
-                  <Select
-                    value={local.layout.font_family || 'system'}
-                    onValueChange={(v) => {
-                      const font = v as FontFamily;
-                      // Preload font
-                      const url = GOOGLE_FONT_URLS[font];
-                      if (url && !document.querySelector(`link[href="${url}"]`)) {
-                        const link = document.createElement('link');
-                        link.rel = 'stylesheet';
-                        link.href = url;
-                        document.head.appendChild(link);
-                      }
-                      updateLayout({ font_family: font });
-                    }}
-                  >
-                    <SelectTrigger className="h-10">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {FONT_OPTIONS.map(f => (
-                        <SelectItem key={f.value} value={f.value}>
-                          <span style={{ fontFamily: f.preview }}>{f.label}</span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-              </div>
-            </div>
-
-            {/* Background */}
-            <div>
-              <Label className="text-sm font-medium mb-3 block">Fond de page</Label>
-              <div className="grid grid-cols-4 gap-2 mb-3">
-                {BG_PRESETS.map((bg) => {
-                  const isSelected = (local.colors.background || '#ffffff') === bg.value;
-                  return (
-                    <button
-                      key={bg.name}
-                      onClick={() => updateColors({ background: bg.value, background_gradient: bg.gradient })}
-                      className={cn(
-                        "h-12 rounded-lg border-2 transition-all hover:scale-105 relative overflow-hidden",
-                        isSelected ? "border-primary ring-2 ring-primary/20" : "border-border hover:border-muted-foreground"
-                      )}
-                      title={bg.name}
-                    >
-                      <div
-                        className="absolute inset-0"
-                        style={{ background: bg.gradient || bg.value }}
-                      />
-                      {isSelected && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-3 h-3 rounded-full bg-primary" />
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-              {/* Custom background color */}
-              <div className="flex gap-1.5 items-center">
-                <input
-                  type="color"
-                  value={local.colors.background || '#ffffff'}
-                  onChange={(e) => updateColors({ background: e.target.value, background_gradient: undefined })}
-                  className="w-10 h-9 rounded border border-border cursor-pointer"
-                />
-                <Input
-                  value={local.colors.background || '#ffffff'}
-                  onChange={(e) => updateColors({ background: e.target.value, background_gradient: undefined })}
-                  className="flex-1 h-9 text-xs"
-                  placeholder="#ffffff"
-                />
-              </div>
             </div>
 
             {/* CTA Button Text */}
@@ -630,33 +404,13 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               <div className="text-center py-8 text-muted-foreground">
                 <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p>Aucune formule créée</p>
-                <p className="text-sm mb-4">Créez vos formules pour les afficher sur votre page.</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate('/dashboard/formules')}
-                  className="gap-1.5"
-                >
-                  <Plus className="w-4 h-4" />
-                  Créer une formule
-                </Button>
+                <p className="text-sm">Créez des formules dans l'onglet "Formules" du menu.</p>
               </div>
             ) : (
               <>
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    Sélectionnez les formules visibles sur votre page.
-                  </p>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => navigate('/dashboard/formules')}
-                    className="text-xs gap-1 h-7 px-2"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Ajouter
-                  </Button>
-                </div>
+                <p className="text-sm text-muted-foreground">
+                  Sélectionnez les formules visibles sur votre page.
+                </p>
                 <div className="space-y-2">
                   {packs.map((pack) => {
                     const isVisible = effectiveVisiblePacks.includes(pack.id);
@@ -708,7 +462,6 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
               userId={userId}
               centerAddress={centerAddress}
               centerPhone={centerPhone}
-              centerCity={local.seo?.city || ''}
               headerStyle={local.layout?.header_style || 'banner'}
             />
           </TabsContent>

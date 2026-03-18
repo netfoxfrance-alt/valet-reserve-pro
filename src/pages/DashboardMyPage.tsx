@@ -8,17 +8,15 @@ import { useToast } from '@/hooks/use-toast';
 import { CenterCustomization, defaultCustomization } from '@/types/customization';
 import { CustomizationSection } from '@/components/dashboard/CustomizationSection';
 import { CenterLanding } from '@/components/booking/CenterLanding';
-import { PageTemplateChooser } from '@/components/dashboard/PageTemplateChooser';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { supabase } from '@/integrations/supabase/client';
-import { ExternalLink, Smartphone, Monitor, RefreshCw, Sparkles, Loader2, PanelLeftClose, PanelLeftOpen, Eye } from 'lucide-react';
+import { ExternalLink, Smartphone, Monitor, RefreshCw, Sparkles, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { trackEvent } from '@/lib/analytics';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function DashboardMyPage() {
   const { t } = useTranslation();
@@ -26,55 +24,27 @@ export default function DashboardMyPage() {
   const { packs } = useMyPacks();
   const { user } = useAuth();
   const { toast } = useToast();
-  const isMobile = useIsMobile();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [customization, setCustomization] = useState<CenterCustomization>(defaultCustomization);
-  const [previewMode, setPreviewMode] = useState<'mobile' | 'desktop'>('desktop');
+  const [previewMode, setPreviewMode] = useState<'mobile' | 'desktop'>('mobile');
   const [previewKey, setPreviewKey] = useState(0);
-  const [panelOpen, setPanelOpen] = useState(true);
-  const [showTemplates, setShowTemplates] = useState(false);
   const [requestDialogOpen, setRequestDialogOpen] = useState(false);
   const [requestType, setRequestType] = useState<'design' | 'functionality' | 'both'>('functionality');
   const [requestMessage, setRequestMessage] = useState('');
   const [submittingRequest, setSubmittingRequest] = useState(false);
-  // Mobile: show either editor or preview
-  const [mobileView, setMobileView] = useState<'editor' | 'preview'>('editor');
 
-  useEffect(() => {
-    if (center) {
-      const cust = center.customization || defaultCustomization;
-      setCustomization(cust);
-      // Show template chooser for brand new pages (only default blocks, no cover)
-      const isNewPage = !cust.cover_url && 
-        (!cust.blocks || cust.blocks.length <= 1) && 
-        cust.colors.primary === defaultCustomization.colors.primary;
-      if (isNewPage && !localStorage.getItem(`template_chosen_${center.id}`)) {
-        setShowTemplates(true);
-      }
-    }
-  }, [center]);
+  useEffect(() => { if (center) setCustomization(center.customization || defaultCustomization); }, [center]);
 
   const handleSave = async () => {
     setSaving(true);
     const { error } = await updateCenter({ customization });
     setSaving(false);
-    if (error) {
-      toast({ title: t('common.error'), description: error, variant: 'destructive' });
-    } else {
+    if (error) { toast({ title: t('common.error'), description: error, variant: 'destructive' }); }
+    else {
       trackEvent('page_published');
       toast({ title: t('common.saved'), description: t('settings.changesSaved') });
     }
-  };
-
-  const handleTemplateSelect = (cust: CenterCustomization) => {
-    setCustomization(cust);
-    setShowTemplates(false);
-    if (center) localStorage.setItem(`template_chosen_${center.id}`, '1');
-  };
-
-  const handleTemplateSkip = () => {
-    setShowTemplates(false);
-    if (center) localStorage.setItem(`template_chosen_${center.id}`, '1');
   };
 
   const handleRefreshPreview = () => setPreviewKey(prev => prev + 1);
@@ -85,9 +55,18 @@ export default function DashboardMyPage() {
     try {
       const { error } = await supabase.from('custom_requests').insert({ center_id: center.id, center_name: center.name, contact_email: user.email || '', request_type: requestType, message: requestMessage.trim() });
       if (error) throw error;
+
+      // Send email notification
       await supabase.functions.invoke('send-booking-emails', {
-        body: { type: 'custom_request', centerName: center.name, contactEmail: user.email || '', requestType, message: requestMessage.trim() },
+        body: {
+          type: 'custom_request',
+          centerName: center.name,
+          contactEmail: user.email || '',
+          requestType,
+          message: requestMessage.trim(),
+        },
       });
+
       toast({ title: t('myPage.requestSent'), description: t('myPage.requestSentDesc') });
       setRequestDialogOpen(false); setRequestMessage(''); setRequestType('functionality');
     } catch (error) {
@@ -100,266 +79,120 @@ export default function DashboardMyPage() {
 
   if (loading) {
     return (
-      <DashboardLayout title={t('myPage.title')} fullWidth>
-        <div className="flex h-[calc(100vh-56px)]">
-          <div className="w-96 border-r p-6"><Skeleton className="h-full w-full rounded-xl" /></div>
-          <div className="flex-1 p-6"><Skeleton className="h-full w-full rounded-xl" /></div>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  // Template chooser overlay
-  if (showTemplates) {
-    return (
-      <DashboardLayout title={t('myPage.title')} fullWidth>
-        <PageTemplateChooser onSelect={handleTemplateSelect} onSkip={handleTemplateSkip} />
+      <DashboardLayout title={t('myPage.title')}>
+        <Skeleton className="h-8 w-48 mb-8" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8"><Skeleton className="h-[600px] w-full" /><Skeleton className="h-[400px] w-full" /></div>
       </DashboardLayout>
     );
   }
 
   const publicUrl = center ? `${window.location.origin}/${center.slug}` : '';
 
-  // Mobile layout
-  if (isMobile) {
-    return (
-      <DashboardLayout title={t('myPage.title')} fullWidth>
-        <div className="flex flex-col h-[calc(100vh-56px)]">
-          {/* Mobile toolbar */}
-          <div className="flex items-center justify-between p-3 border-b bg-background">
-            <div className="flex bg-muted rounded-xl p-0.5">
-              <button
-                onClick={() => setMobileView('editor')}
-                className={cn(
-                  "px-4 py-2 rounded-lg text-sm font-medium transition-all",
-                  mobileView === 'editor' ? "bg-background shadow-sm text-foreground" : "text-muted-foreground"
-                )}
-              >
-                Éditer
-              </button>
-              <button
-                onClick={() => setMobileView('preview')}
-                className={cn(
-                  "px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5",
-                  mobileView === 'preview' ? "bg-background shadow-sm text-foreground" : "text-muted-foreground"
-                )}
-              >
-                <Eye className="w-3.5 h-3.5" />
-                Aperçu
-              </button>
-            </div>
-            <div className="flex gap-1.5">
+  return (
+    <DashboardLayout title={t('myPage.title')}>
+        <div>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div><p className="text-muted-foreground text-sm">{t('myPage.customizeDesc')}</p></div>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="ghost" size="sm" onClick={() => setRequestDialogOpen(true)} className="text-muted-foreground hover:text-foreground">
+                <Sparkles className="w-4 h-4 mr-2" />{t('myPage.privateCustomization')}
+              </Button>
               <Button variant="outline" size="sm" onClick={() => window.open(publicUrl, '_blank')} disabled={!center}>
-                <ExternalLink className="w-3.5 h-3.5" />
+                <ExternalLink className="w-4 h-4 mr-2" /><span className="hidden sm:inline">{t('myPage.viewOnline')}</span><span className="sm:hidden">{t('common.view')}</span>
               </Button>
               <Button variant="premium" size="sm" onClick={handleSave} disabled={saving}>
-                {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : t('common.save')}
+                {saving ? t('common.saving') : t('common.save')}
               </Button>
             </div>
           </div>
 
-          {/* Mobile content */}
-          {mobileView === 'editor' ? (
-            <div className="flex-1 overflow-y-auto p-4">
+          <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] 2xl:grid-cols-[1fr_420px] gap-6 xl:gap-8">
+            {/* Preview - appears second on mobile, first on desktop */}
+            <div className="order-2 xl:order-1">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-base sm:text-lg font-semibold text-foreground">{t('myPage.preview')}</h2>
+                <div className="flex items-center gap-1.5">
+                  <div className="flex bg-muted rounded-lg p-0.5">
+                    <button 
+                      onClick={() => setPreviewMode('mobile')} 
+                      className={cn(
+                        "p-1.5 sm:p-2 rounded-md transition-all duration-200",
+                        previewMode === 'mobile' ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <Smartphone className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={() => setPreviewMode('desktop')} 
+                      className={cn(
+                        "p-1.5 sm:p-2 rounded-md transition-all duration-200 hidden sm:flex",
+                        previewMode === 'desktop' ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <Monitor className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <Button variant="ghost" size="icon" onClick={handleRefreshPreview} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                    <RefreshCw className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Preview container with device frame */}
+              <div className={cn(
+                "rounded-2xl flex justify-center transition-all duration-300",
+                previewMode === 'desktop' 
+                  ? "bg-muted/40 p-3 sm:p-5" 
+                  : "bg-muted/40 p-3 sm:p-6"
+              )}>
+                <div 
+                  key={previewKey} 
+                  className={cn(
+                    "bg-background overflow-hidden transition-all duration-300 relative flex flex-col",
+                    previewMode === 'mobile' 
+                      ? "w-full max-w-[375px] rounded-[2.5rem] ring-[6px] ring-foreground/10 shadow-2xl" 
+                      : "w-full rounded-xl ring-1 ring-border shadow-lg"
+                  )}
+                  style={{ 
+                    height: previewMode === 'mobile' ? 'min(680px, calc(100vh - 280px))' : 'min(620px, calc(100vh - 280px))',
+                  }}
+                >
+                  {/* iPhone notch (mobile only) */}
+                  {previewMode === 'mobile' && (
+                    <div className="relative z-10 flex justify-center pt-2 pb-1 bg-background">
+                      <div className="w-[120px] h-[28px] bg-foreground/10 rounded-full" />
+                    </div>
+                  )}
+
+                  {/* Scrollable content */}
+                  <div className="flex-1 overflow-y-auto overflow-x-hidden">
+                    {previewCenter && (
+                      <CenterLanding 
+                        center={previewCenter} 
+                        packs={packs} 
+                        onStartBooking={() => {}} 
+                        onSelectPack={() => {}} 
+                        hasPacks={packs.length > 0} 
+                        isPro={center?.subscription_plan === 'pro' || center?.subscription_plan === 'trial'} 
+                        isPreview 
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Customization panel - appears first on mobile */}
+            <div className="order-1 xl:order-2">
+              <h2 className="text-lg font-semibold text-foreground mb-4">{t('myPage.customization')}</h2>
               {center && user && (
                 <div className="[&>section]:mb-0">
-                  <CustomizationSection
-                    centerId={center.id}
-                    userId={user.id}
-                    customization={customization}
-                    onUpdate={setCustomization}
-                    packs={packs}
-                    centerAddress={center.address || undefined}
-                    centerPhone={center.phone || undefined}
-                    logoUrl={center.logo_url}
-                    onLogoUploaded={async (url) => {
-                      await updateCenter({ logo_url: url });
-                    }}
-                    onLogoRemoved={async () => {
-                      await updateCenter({ logo_url: null });
-                    }}
-                    onOpenThemes={() => setShowTemplates(true)}
-                  />
+                  <CustomizationSection centerId={center.id} userId={user.id} customization={customization} onUpdate={setCustomization} packs={packs} />
                 </div>
               )}
-            </div>
-          ) : (
-            <div className="flex-1 overflow-y-auto bg-muted/30">
-              {previewCenter && (
-                <CenterLanding
-                  center={previewCenter}
-                  packs={packs}
-                  onStartBooking={() => {}}
-                  onSelectPack={() => {}}
-                  hasPacks={packs.length > 0}
-                  isPro={center?.subscription_plan === 'pro' || center?.subscription_plan === 'trial'}
-                  isPreview
-                />
-              )}
-            </div>
-          )}
-        </div>
-        
-        {/* Request dialog */}
-        {renderRequestDialog()}
-      </DashboardLayout>
-    );
-  }
-
-  // Desktop layout: Editor sidebar + Full preview
-  return (
-    <DashboardLayout title={t('myPage.title')} fullWidth>
-      <div className="flex h-[calc(100vh-56px)]">
-        {/* Editor Panel (left sidebar) */}
-        <div
-          className={cn(
-            "border-r border-border bg-background flex flex-col transition-all duration-300 shrink-0",
-            panelOpen ? "w-[400px] 2xl:w-[440px]" : "w-0"
-          )}
-        >
-          {panelOpen && (
-            <>
-              {/* Panel header */}
-              <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
-                <div>
-                  <h2 className="font-semibold text-foreground text-sm">Personnalisation</h2>
-                  <p className="text-xs text-muted-foreground">Modifiez votre page en direct</p>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setRequestDialogOpen(true)}
-                    className="text-muted-foreground hover:text-foreground h-8 w-8 p-0"
-                    title={t('myPage.privateCustomization')}
-                  >
-                    <Sparkles className="w-4 h-4" />
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => window.open(publicUrl, '_blank')} disabled={!center} className="h-8 w-8 p-0">
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </Button>
-                  <Button variant="premium" size="sm" onClick={handleSave} disabled={saving} className="h-8 px-3">
-                    {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : t('common.save')}
-                  </Button>
-                </div>
-              </div>
-
-              {/* Panel content - scrollable */}
-              <div className="flex-1 overflow-y-auto p-4">
-                {center && user && (
-                  <div className="[&>section]:mb-0">
-                    <CustomizationSection
-                      centerId={center.id}
-                      userId={user.id}
-                      customization={customization}
-                      onUpdate={setCustomization}
-                      packs={packs}
-                      centerAddress={center.address || undefined}
-                      centerPhone={center.phone || undefined}
-                      logoUrl={center.logo_url}
-                      onLogoUploaded={async (url) => {
-                        await updateCenter({ logo_url: url });
-                      }}
-                      onLogoRemoved={async () => {
-                        await updateCenter({ logo_url: null });
-                      }}
-                      onOpenThemes={() => setShowTemplates(true)}
-                    />
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Preview area (right, takes remaining space) */}
-        <div className="flex-1 flex flex-col min-w-0 bg-muted/20">
-          {/* Preview toolbar */}
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-background shrink-0">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setPanelOpen(!panelOpen)}
-                title={panelOpen ? 'Masquer le panneau' : 'Afficher le panneau'}
-              >
-                {panelOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeftOpen className="w-4 h-4" />}
-              </Button>
-              <span className="text-sm font-medium text-foreground">Aperçu</span>
-            </div>
-
-            <div className="flex items-center gap-1.5">
-              <div className="flex bg-muted rounded-lg p-0.5">
-                <button
-                  onClick={() => setPreviewMode('mobile')}
-                  className={cn(
-                    "p-1.5 rounded-md transition-all duration-200",
-                    previewMode === 'mobile' ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <Smartphone className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setPreviewMode('desktop')}
-                  className={cn(
-                    "p-1.5 rounded-md transition-all duration-200",
-                    previewMode === 'desktop' ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <Monitor className="w-4 h-4" />
-                </button>
-              </div>
-              <Button variant="ghost" size="icon" onClick={handleRefreshPreview} className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                <RefreshCw className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Preview content */}
-          <div className="flex-1 overflow-hidden flex items-start justify-center p-4 2xl:p-6">
-            <div
-              key={previewKey}
-              className={cn(
-                "bg-background overflow-hidden transition-all duration-300 relative flex flex-col h-full",
-                previewMode === 'mobile'
-                  ? "w-full max-w-[390px] rounded-[2.5rem] ring-[6px] ring-foreground/10 shadow-2xl"
-                  : "w-full rounded-xl ring-1 ring-border shadow-lg"
-              )}
-            >
-              {/* iPhone notch (mobile only) */}
-              {previewMode === 'mobile' && (
-                <div className="relative z-10 flex justify-center pt-2 pb-1 bg-background shrink-0">
-                  <div className="w-[120px] h-[28px] bg-foreground/10 rounded-full" />
-                </div>
-              )}
-
-              {/* Scrollable content */}
-              <div className="flex-1 overflow-y-auto overflow-x-hidden">
-                {previewCenter && (
-                  <CenterLanding
-                    center={previewCenter}
-                    packs={packs}
-                    onStartBooking={() => {}}
-                    onSelectPack={() => {}}
-                    hasPacks={packs.length > 0}
-                    isPro={center?.subscription_plan === 'pro' || center?.subscription_plan === 'trial'}
-                    isPreview
-                  />
-                )}
-              </div>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Request dialog */}
-      {renderRequestDialog()}
-    </DashboardLayout>
-  );
-
-  function renderRequestDialog() {
-    return (
       <Dialog open={requestDialogOpen} onOpenChange={setRequestDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -397,6 +230,6 @@ export default function DashboardMyPage() {
           </div>
         </DialogContent>
       </Dialog>
-    );
-  }
+    </DashboardLayout>
+  );
 }

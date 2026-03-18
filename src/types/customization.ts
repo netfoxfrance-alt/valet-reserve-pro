@@ -43,39 +43,7 @@ export interface PageBlock {
   reviewUrl?: string;               // URL to the review page
   reviewRating?: number;            // Rating (1-5, e.g. 4.8)
   reviewCount?: number;             // Number of reviews
-  reviewPlaceId?: string;           // Google Place ID for write-review URL
 }
-
-export type FontFamily = 
-  | 'system'       // System default
-  | 'inter'        // Inter - Clean modern
-  | 'poppins'      // Poppins - Geometric friendly
-  | 'playfair'     // Playfair Display - Elegant serif
-  | 'montserrat'   // Montserrat - Professional
-  | 'raleway'      // Raleway - Thin elegant
-  | 'dm-sans'      // DM Sans - Clean rounded
-  | 'space-grotesk'; // Space Grotesk - Techy
-
-export const FONT_MAP: Record<FontFamily, string> = {
-  'system': '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-  'inter': '"Inter", sans-serif',
-  'poppins': '"Poppins", sans-serif',
-  'playfair': '"Playfair Display", serif',
-  'montserrat': '"Montserrat", sans-serif',
-  'raleway': '"Raleway", sans-serif',
-  'dm-sans': '"DM Sans", sans-serif',
-  'space-grotesk': '"Space Grotesk", sans-serif',
-};
-
-export const GOOGLE_FONT_URLS: Partial<Record<FontFamily, string>> = {
-  'inter': 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap',
-  'poppins': 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap',
-  'playfair': 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap',
-  'montserrat': 'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap',
-  'raleway': 'https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap',
-  'dm-sans': 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap',
-  'space-grotesk': 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap',
-};
 
 export interface CenterCustomization {
   colors: {
@@ -84,8 +52,6 @@ export interface CenterCustomization {
     accent: string;
     text_primary: string;
     text_secondary: string;
-    background?: string;    // Page background color
-    background_gradient?: string; // Optional gradient
   };
   texts: {
     tagline: string;
@@ -95,8 +61,6 @@ export interface CenterCustomization {
   layout: {
     dark_mode: boolean;
     header_style: HeaderStyle;
-    font_family?: FontFamily;
-    font_size_scale?: number; // 0.85 to 1.2, default 1
   };
   social: {
     instagram: string;
@@ -158,7 +122,7 @@ export const defaultCustomization: CenterCustomization = {
   },
   layout: {
     dark_mode: false,
-    header_style: 'minimal',
+    header_style: 'banner',
   },
   social: {
     instagram: '',

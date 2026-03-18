@@ -30,10 +30,9 @@ interface DashboardLayoutProps {
   title: string;
   subtitle?: string;
   children: React.ReactNode;
-  fullWidth?: boolean;
 }
 
-export function DashboardLayout({ title, subtitle, children, fullWidth }: DashboardLayoutProps) {
+export function DashboardLayout({ title, subtitle, children }: DashboardLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { signOut } = useAuth();
@@ -174,7 +173,7 @@ export function DashboardLayout({ title, subtitle, children, fullWidth }: Dashbo
         </div>
       </div>
       
-      <main className={fullWidth ? "" : "p-4 lg:p-8 max-w-6xl mx-auto"}>
+      <main className="p-4 lg:p-8 max-w-6xl mx-auto">
         {children}
       </main>
     </div>

@@ -6,10 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import { useMyPacks, Pack, useMyCenter } from '@/hooks/useCenter';
-import { useMyServiceCategories } from '@/hooks/useServiceCategories';
 import { useAuth } from '@/hooks/useAuth';
 import { Pencil, Clock, Plus, Trash2, Loader2, ChevronDown, ChevronUp, Image as ImageIcon, X, FileText } from 'lucide-react';
 import { toast } from 'sonner';
@@ -44,7 +42,6 @@ interface PriceVariant {
 export default function DashboardPacks() {
   const { packs, loading, createPack, updatePack, deletePack } = useMyPacks();
   const { center } = useMyCenter();
-  const { categories } = useMyServiceCategories();
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -63,7 +60,6 @@ export default function DashboardPacks() {
     price_variants: [] as PriceVariant[],
     image_url: null as string | null,
     pricing_type: 'fixed' as 'fixed' | 'quote',
-    category_id: null as string | null,
   });
   const newImageInputRef = useRef<HTMLInputElement>(null);
   const editImageInputRef = useRef<HTMLInputElement>(null);
@@ -79,7 +75,6 @@ export default function DashboardPacks() {
       price_variants: (pack as any).price_variants || [],
       image_url: (pack as any).image_url || null,
       pricing_type: pack.pricing_type || 'fixed',
-      category_id: pack.category_id || null,
     });
   };
 
@@ -119,7 +114,6 @@ export default function DashboardPacks() {
         price_variants: [],
         image_url: null,
         pricing_type: 'fixed',
-        category_id: null,
       });
     }
   };
@@ -284,21 +278,9 @@ export default function DashboardPacks() {
                       placeholder="Nettoyage Complet"
                     />
                   </div>
-                  {categories.length > 0 && (
-                    <div className="space-y-2">
-                      <Label>Catégorie</Label>
-                      <Select value={newPack.category_id || 'none'} onValueChange={v => setNewPack({ ...newPack, category_id: v === 'none' ? null : v })}>
-                        <SelectTrigger><SelectValue placeholder="Aucune catégorie" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">Aucune catégorie</SelectItem>
-                          {categories.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
                   {/* Duration - optional for quote type */}
                   <div className="space-y-2">
-                    <Label>Durée estimée <span className="text-muted-foreground font-normal">(optionnelle)</span></Label>
+                    <Label>Durée estimée {newPack.pricing_type === 'quote' && <span className="text-muted-foreground font-normal">(optionnelle)</span>}</Label>
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-1">
                         <Input
@@ -491,7 +473,7 @@ export default function DashboardPacks() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label>Durée estimée <span className="text-muted-foreground font-normal">(optionnelle)</span></Label>
+                            <Label>Durée {editForm.pricing_type === 'quote' && <span className="text-muted-foreground font-normal">(optionnelle)</span>}</Label>
                             <div className="flex items-center gap-2">
                               <div className="flex items-center gap-1">
                                 <Input
@@ -526,19 +508,6 @@ export default function DashboardPacks() {
                             </div>
                           </div>
                         </div>
-
-                        {categories.length > 0 && (
-                          <div className="space-y-2">
-                            <Label>Catégorie</Label>
-                            <Select value={editForm.category_id || 'none'} onValueChange={v => setEditForm({ ...editForm, category_id: v === 'none' ? null : v })}>
-                              <SelectTrigger><SelectValue placeholder="Aucune catégorie" /></SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="none">Aucune catégorie</SelectItem>
-                                {categories.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        )}
 
                         {/* Pricing type toggle */}
                         <div className="space-y-2">

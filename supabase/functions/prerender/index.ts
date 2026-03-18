@@ -188,30 +188,14 @@ async function renderCenterPage(slug: string): Promise<Response> {
   const customization = (center.customization as Record<string, any>) || {};
   const seo = customization.seo || {};
   const texts = customization.texts || {};
-  const coverUrl = customization.cover_url || null;
 
-  // SEO data with rich defaults
+  // SEO data
   const centerName = center.name || 'Centre de nettoyage';
   const city = seo.city || '';
-  const tagline = texts.tagline || '';
-  
-  // Title: custom > generated
-  const seoTitle = seo.title || `${centerName}${city ? ` à ${city}` : ''} — Réservez en ligne facilement.`;
-  
-  // Description: custom > tagline > rich generated
-  let seoDescription = seo.description;
-  if (!seoDescription) {
-    if (tagline) {
-      seoDescription = tagline;
-    } else {
-      seoDescription = `${centerName}${city ? ` à ${city}` : ''} — Réservez en ligne facilement.`;
-    }
-  }
-  
+  const seoTitle = seo.title || `${centerName} - Nettoyage professionnel${city ? ` à ${city}` : ''}`;
+  const seoDescription = seo.description || `${centerName} propose des services de nettoyage professionnel${city ? ` à ${city}` : ''}. Réservez en ligne facilement.`;
   const seoKeywords = seo.keywords || '';
   const canonical = `${BASE_URL}/${slug}`;
-  // OG image priority: cover > logo > default
-  const ogImage = coverUrl || center.logo_url || `${BASE_URL}/og-image.png`;
 
   // Build packs HTML
   let packsHtml = '';
@@ -341,8 +325,7 @@ async function renderCenterPage(slug: string): Promise<Response> {
     title: seoTitle,
     description: seoDescription,
     canonical,
-    ogImage,
-    ogSiteName: centerName,
+    ogImage: center.logo_url || `${BASE_URL}/og-image.png`,
     keywords: seoKeywords,
     body,
     structuredData,
@@ -398,7 +381,6 @@ interface HtmlOptions {
   description: string;
   canonical?: string;
   ogImage?: string;
-  ogSiteName?: string;
   keywords?: string;
   body: string;
   structuredData?: Record<string, any>;
@@ -406,8 +388,7 @@ interface HtmlOptions {
 }
 
 function wrapHtml(opts: HtmlOptions): string {
-  const { title, description, canonical, ogImage, ogSiteName, keywords, body, structuredData, noindex } = opts;
-  const siteName = ogSiteName || 'CleaningPage';
+  const { title, description, canonical, ogImage, keywords, body, structuredData, noindex } = opts;
 
   return `<!DOCTYPE html>
 <html lang="fr">
@@ -424,11 +405,8 @@ function wrapHtml(opts: HtmlOptions): string {
   <meta property="og:title" content="${escapeAttr(title)}">
   <meta property="og:description" content="${escapeAttr(description)}">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="${escapeAttr(siteName)}">
   ${canonical ? `<meta property="og:url" content="${escapeAttr(canonical)}">` : ''}
-  ${ogImage ? `<meta property="og:image" content="${escapeAttr(ogImage)}">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">` : ''}
+  ${ogImage ? `<meta property="og:image" content="${escapeAttr(ogImage)}">` : ''}
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">

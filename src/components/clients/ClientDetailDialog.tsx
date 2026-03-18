@@ -159,8 +159,7 @@ export function ClientDetailDialog({ client, open, onOpenChange }: ClientDetailD
               ) : (
                 <div className="space-y-2 max-h-64 overflow-y-auto">
                   {appointments.map((apt) => {
-                    const price = apt.custom_price ?? apt.pack?.price ?? null;
-                    const hasPrice = price !== null && price !== 0;
+                    const price = apt.custom_price || apt.pack?.price || 0;
                     const serviceName = apt.custom_service?.name || apt.pack?.name || 'Service';
                     return (
                       <div key={apt.id} className="flex items-center justify-between gap-3 p-3 bg-secondary/20 rounded-xl">
@@ -169,7 +168,7 @@ export function ClientDetailDialog({ client, open, onOpenChange }: ClientDetailD
                           <p className="text-sm text-muted-foreground">{format(parseISO(apt.appointment_date), 'd MMMM yyyy', { locale: dateLocale })}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className="font-semibold text-foreground">{hasPrice ? `${price}€` : 'Sur devis'}</span>
+                          <span className="font-semibold text-foreground">{price}€</span>
                           <Badge className={`${statusColorMap[apt.status] || statusColorMap.pending} text-xs`}>{t(`status.${apt.status}`)}</Badge>
                         </div>
                       </div>

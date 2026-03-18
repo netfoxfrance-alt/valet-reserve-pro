@@ -27,8 +27,6 @@ import DashboardClients from "./pages/DashboardClients";
 import DashboardSupport from "./pages/DashboardSupport";
 import DashboardFormules from "./pages/DashboardFormules";
 import DashboardSales from "./pages/DashboardSales";
-import DashboardCategories from "./pages/DashboardCategories";
-import DashboardOptions from "./pages/DashboardOptions";
 
 import CompleteSignup from "./pages/CompleteSignup";
 import NotFound from "./pages/NotFound";
@@ -92,16 +90,6 @@ const App = () => (
             <Route path="/dashboard/custom-services" element={
               <ProtectedRoute>
                 <DashboardCustomServices />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/categories" element={
-              <ProtectedRoute>
-                <DashboardCategories />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/options" element={
-              <ProtectedRoute>
-                <DashboardOptions />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/stats" element={
