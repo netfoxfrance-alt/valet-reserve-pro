@@ -322,13 +322,13 @@ export default function DashboardPacks() {
   };
 
   // Variant callbacks (new)
-  const handleAddNewVariant = useCallback(() => setNewPack(prev => ({ ...prev, price_variants: [...prev.price_variants, { name: '', price: 0, image_url: null }] })), []);
-  const handleUpdateNewVariant = useCallback((i: number, f: 'name' | 'price' | 'image_url', v: string | number | null) => setNewPack(prev => { const vs = [...prev.price_variants]; vs[i] = { ...vs[i], [f]: v }; return { ...prev, price_variants: vs }; }), []);
+  const handleAddNewVariant = useCallback(() => setNewPack(prev => ({ ...prev, price_variants: [...prev.price_variants, { name: '', price: 0, image_url: null, description: null }] })), []);
+  const handleUpdateNewVariant = useCallback((i: number, f: 'name' | 'price' | 'image_url' | 'description', v: string | number | null) => setNewPack(prev => { const vs = [...prev.price_variants]; vs[i] = { ...vs[i], [f]: v }; return { ...prev, price_variants: vs }; }), []);
   const handleRemoveNewVariant = useCallback((i: number) => setNewPack(prev => ({ ...prev, price_variants: prev.price_variants.filter((_, j) => j !== i) })), []);
 
   // Variant callbacks (edit)
-  const handleAddEditVariant = useCallback(() => setEditForm(prev => ({ ...prev, price_variants: [...(prev.price_variants || []), { name: '', price: 0, image_url: null }] })), []);
-  const handleUpdateEditVariant = useCallback((i: number, f: 'name' | 'price' | 'image_url', v: string | number | null) => setEditForm(prev => { const vs = [...(prev.price_variants || [])]; vs[i] = { ...vs[i], [f]: v }; return { ...prev, price_variants: vs }; }), []);
+  const handleAddEditVariant = useCallback(() => setEditForm(prev => ({ ...prev, price_variants: [...(prev.price_variants || []), { name: '', price: 0, image_url: null, description: null }] })), []);
+  const handleUpdateEditVariant = useCallback((i: number, f: 'name' | 'price' | 'image_url' | 'description', v: string | number | null) => setEditForm(prev => { const vs = [...(prev.price_variants || [])]; vs[i] = { ...vs[i], [f]: v }; return { ...prev, price_variants: vs }; }), []);
   const handleRemoveEditVariant = useCallback((i: number) => setEditForm(prev => ({ ...prev, price_variants: (prev.price_variants || []).filter((_, j) => j !== i) })), []);
 
   // Feature callbacks (new)
