@@ -392,7 +392,7 @@ export default function DashboardPacks() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="new-name">Nom *</Label>
-                    <Input id="new-name" value={newPack.name} onChange={(e) => setNewPack({ ...newPack, name: e.target.value })} placeholder="Nettoyage Complet" />
+                    <Input id="new-name" value={newPack.name} onChange={(e) => setNewPack({ ...newPack, name: e.target.value })} placeholder="Ex: Lavage Premium" />
                   </div>
                   <div className="space-y-2">
                     <Label>Durée estimée <span className="text-muted-foreground font-normal">(optionnelle)</span></Label>
