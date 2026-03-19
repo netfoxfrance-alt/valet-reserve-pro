@@ -73,17 +73,25 @@ function LocationTypeSelector({ value, onChange }: { value: LocationType; onChan
 
 function PackOptionsPicker({ packId, allOptions }: { packId: string; allOptions: { id: string; name: string; price: number }[] }) {
   const { optionIds, setOptions } = usePackOptions(packId);
+  const [search, setSearch] = useState('');
 
   if (allOptions.length === 0) return (
     <p className="text-sm text-muted-foreground italic">Aucune option créée. Ajoutez-en dans l'onglet Options.</p>
   );
 
+  const filtered = allOptions.filter(opt => opt.name.toLowerCase().includes(search.toLowerCase()));
+
   return (
     <div className="space-y-2">
       <Label>Options proposées</Label>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        {allOptions.map(opt => (
-          <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg border border-border/50 hover:bg-secondary/30 cursor-pointer transition-colors">
+      {allOptions.length > 4 && (
+        <Input placeholder="Rechercher une option…" value={search} onChange={e => setSearch(e.target.value)} className="mb-1" />
+      )}
+      <div className="max-h-48 overflow-y-auto space-y-1 rounded-lg border border-border/50 p-2">
+        {filtered.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-2">Aucun résultat</p>
+        ) : filtered.map(opt => (
+          <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-secondary/30 cursor-pointer transition-colors">
             <Checkbox
               checked={optionIds.includes(opt.id)}
               onCheckedChange={(checked) => {
@@ -257,6 +265,7 @@ export default function DashboardPacks() {
   const [uploadingImage, setUploadingImage] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<Pack> & { price_variants?: PriceVariant[]; image_url?: string | null }>({});
   const [newSelectedOptionIds, setNewSelectedOptionIds] = useState<string[]>([]);
+  const [newOptSearch, setNewOptSearch] = useState('');
   const [newPack, setNewPack] = useState({
     name: '',
     description: '',
@@ -392,7 +401,7 @@ export default function DashboardPacks() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="new-name">Nom *</Label>
-                    <Input id="new-name" value={newPack.name} onChange={(e) => setNewPack({ ...newPack, name: e.target.value })} placeholder="Nettoyage Complet" />
+                    <Input id="new-name" value={newPack.name} onChange={(e) => setNewPack({ ...newPack, name: e.target.value })} placeholder="Ex: Lavage Premium" />
                   </div>
                   <div className="space-y-2">
                     <Label>Durée estimée <span className="text-muted-foreground font-normal">(optionnelle)</span></Label>
@@ -446,21 +455,29 @@ export default function DashboardPacks() {
                 {allOptions.length > 0 && (
                   <div className="space-y-2">
                     <Label>Options proposées</Label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {allOptions.map(opt => (
-                        <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg border border-border/50 hover:bg-secondary/30 cursor-pointer transition-colors">
-                          <Checkbox
-                            checked={newSelectedOptionIds.includes(opt.id)}
-                            onCheckedChange={(checked) => {
-                              setNewSelectedOptionIds(prev =>
-                                checked ? [...prev, opt.id] : prev.filter(id => id !== opt.id)
-                              );
-                            }}
-                          />
-                          <span className="text-sm font-medium flex-1">{opt.name}</span>
-                          <span className="text-sm text-muted-foreground">{opt.price}€</span>
-                        </label>
-                      ))}
+                    {allOptions.length > 4 && (
+                      <Input placeholder="Rechercher une option…" value={newOptSearch} onChange={e => setNewOptSearch(e.target.value)} className="mb-1" />
+                    )}
+                    <div className="max-h-48 overflow-y-auto space-y-1 rounded-lg border border-border/50 p-2">
+                      {(() => {
+                        const filtered = allOptions.filter(opt => opt.name.toLowerCase().includes(newOptSearch.toLowerCase()));
+                        return filtered.length === 0 ? (
+                          <p className="text-sm text-muted-foreground text-center py-2">Aucun résultat</p>
+                        ) : filtered.map(opt => (
+                          <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-secondary/30 cursor-pointer transition-colors">
+                            <Checkbox
+                              checked={newSelectedOptionIds.includes(opt.id)}
+                              onCheckedChange={(checked) => {
+                                setNewSelectedOptionIds(prev =>
+                                  checked ? [...prev, opt.id] : prev.filter(id => id !== opt.id)
+                                );
+                              }}
+                            />
+                            <span className="text-sm font-medium flex-1">{opt.name}</span>
+                            <span className="text-sm text-muted-foreground">{opt.price}€</span>
+                          </label>
+                        ));
+                      })()}
                     </div>
                   </div>
                 )}
