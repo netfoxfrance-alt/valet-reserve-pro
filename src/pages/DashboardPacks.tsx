@@ -265,6 +265,7 @@ export default function DashboardPacks() {
   const [uploadingImage, setUploadingImage] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<Pack> & { price_variants?: PriceVariant[]; image_url?: string | null }>({});
   const [newSelectedOptionIds, setNewSelectedOptionIds] = useState<string[]>([]);
+  const [newOptSearch, setNewOptSearch] = useState('');
   const [newPack, setNewPack] = useState({
     name: '',
     description: '',
