@@ -73,17 +73,25 @@ function LocationTypeSelector({ value, onChange }: { value: LocationType; onChan
 
 function PackOptionsPicker({ packId, allOptions }: { packId: string; allOptions: { id: string; name: string; price: number }[] }) {
   const { optionIds, setOptions } = usePackOptions(packId);
+  const [search, setSearch] = useState('');
 
   if (allOptions.length === 0) return (
     <p className="text-sm text-muted-foreground italic">Aucune option créée. Ajoutez-en dans l'onglet Options.</p>
   );
 
+  const filtered = allOptions.filter(opt => opt.name.toLowerCase().includes(search.toLowerCase()));
+
   return (
     <div className="space-y-2">
       <Label>Options proposées</Label>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        {allOptions.map(opt => (
-          <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg border border-border/50 hover:bg-secondary/30 cursor-pointer transition-colors">
+      {allOptions.length > 4 && (
+        <Input placeholder="Rechercher une option…" value={search} onChange={e => setSearch(e.target.value)} className="mb-1" />
+      )}
+      <div className="max-h-48 overflow-y-auto space-y-1 rounded-lg border border-border/50 p-2">
+        {filtered.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-2">Aucun résultat</p>
+        ) : filtered.map(opt => (
+          <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-secondary/30 cursor-pointer transition-colors">
             <Checkbox
               checked={optionIds.includes(opt.id)}
               onCheckedChange={(checked) => {
