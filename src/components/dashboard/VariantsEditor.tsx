@@ -49,7 +49,7 @@ export function VariantsEditor({ variants, onAdd, onUpdate, onRemove, userId }: 
         </Button>
       </div>
       <p className="text-xs text-muted-foreground">
-        Ex: Citadine, Berline, SUV... ou Canapé 2 places, 3 places...
+        Ex: Citadine, Berline, SUV… / Canapé 2 places, 3 places… / Formule Argent, Formule Or…
       </p>
       {variants.length === 0 ? (
         <p className="text-sm text-muted-foreground italic">Aucune variante (prix unique)</p>

@@ -454,21 +454,29 @@ export default function DashboardPacks() {
                 {allOptions.length > 0 && (
                   <div className="space-y-2">
                     <Label>Options proposées</Label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {allOptions.map(opt => (
-                        <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg border border-border/50 hover:bg-secondary/30 cursor-pointer transition-colors">
-                          <Checkbox
-                            checked={newSelectedOptionIds.includes(opt.id)}
-                            onCheckedChange={(checked) => {
-                              setNewSelectedOptionIds(prev =>
-                                checked ? [...prev, opt.id] : prev.filter(id => id !== opt.id)
-                              );
-                            }}
-                          />
-                          <span className="text-sm font-medium flex-1">{opt.name}</span>
-                          <span className="text-sm text-muted-foreground">{opt.price}€</span>
-                        </label>
-                      ))}
+                    {allOptions.length > 4 && (
+                      <Input placeholder="Rechercher une option…" value={newOptSearch} onChange={e => setNewOptSearch(e.target.value)} className="mb-1" />
+                    )}
+                    <div className="max-h-48 overflow-y-auto space-y-1 rounded-lg border border-border/50 p-2">
+                      {(() => {
+                        const filtered = allOptions.filter(opt => opt.name.toLowerCase().includes(newOptSearch.toLowerCase()));
+                        return filtered.length === 0 ? (
+                          <p className="text-sm text-muted-foreground text-center py-2">Aucun résultat</p>
+                        ) : filtered.map(opt => (
+                          <label key={opt.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-secondary/30 cursor-pointer transition-colors">
+                            <Checkbox
+                              checked={newSelectedOptionIds.includes(opt.id)}
+                              onCheckedChange={(checked) => {
+                                setNewSelectedOptionIds(prev =>
+                                  checked ? [...prev, opt.id] : prev.filter(id => id !== opt.id)
+                                );
+                              }}
+                            />
+                            <span className="text-sm font-medium flex-1">{opt.name}</span>
+                            <span className="text-sm text-muted-foreground">{opt.price}€</span>
+                          </label>
+                        ));
+                      })()}
                     </div>
                   </div>
                 )}
