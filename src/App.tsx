@@ -40,6 +40,7 @@ const TermsOfSale = lazy(() => import("./pages/TermsOfSale"));
 const LegalNotices = lazy(() => import("./pages/LegalNotices"));
 const Presentation = lazy(() => import("./pages/Presentation"));
 const SitemapRedirect = lazy(() => import("./pages/SitemapRedirect"));
+const Detailing = lazy(() => import("./pages/Detailing"));
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
