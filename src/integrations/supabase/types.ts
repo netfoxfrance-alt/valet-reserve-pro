@@ -722,6 +722,7 @@ export type Database = {
           issue_date: string
           notes: string | null
           number: string
+          service_created: boolean
           status: string
           subtotal: number
           terms: string | null
@@ -747,6 +748,7 @@ export type Database = {
           issue_date?: string
           notes?: string | null
           number: string
+          service_created?: boolean
           status?: string
           subtotal?: number
           terms?: string | null
@@ -772,6 +774,7 @@ export type Database = {
           issue_date?: string
           notes?: string | null
           number?: string
+          service_created?: boolean
           status?: string
           subtotal?: number
           terms?: string | null
