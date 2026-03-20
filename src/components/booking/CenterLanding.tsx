@@ -162,6 +162,17 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
     secondary: customization.layout.dark_mode ? '#9ca3af' : (customization.colors.text_secondary || '#6b7280'),
   }), [customization]);
 
+  // Compute contrast text color for buttons with primary background
+  const btnTextColor = useMemo(() => {
+    const hex = customization.colors.primary.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    // Relative luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.6 ? '#000000' : '#ffffff';
+  }, [customization.colors.primary]);
+
   // Generate CSS variables for custom colors + font + background
   const fontFamily = customization.layout.font_family || 'system';
   const fontScale = customization.layout.font_size_scale || 1;
