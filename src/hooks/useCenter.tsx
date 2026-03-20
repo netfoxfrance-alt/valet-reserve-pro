@@ -120,6 +120,42 @@ export function useMyCenter() {
   return { center, loading, error, updateCenter };
 }
 
+export interface PriceVariant {
+  name: string;
+  price: number;
+  image_url?: string | null;
+  description?: string | null;
+}
+
+export type LocationType = 'on_site' | 'at_home' | 'both';
+
+export interface Pack {
+  id: string;
+  center_id: string;
+  name: string;
+  description: string | null;
+  duration: string | null;
+  price: number;
+  features: string[];
+  price_variants: PriceVariant[];
+  image_url: string | null;
+  sort_order: number;
+  active: boolean;
+  pricing_type: 'fixed' | 'quote';
+  location_type: LocationType;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Availability {
+  id: string;
+  center_id: string;
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+  enabled: boolean;
+}
+
 // Hook pour un centre public par slug
 export function useCenterBySlug(slug: string) {
   const [center, setCenter] = useState<Center | null>(null);
