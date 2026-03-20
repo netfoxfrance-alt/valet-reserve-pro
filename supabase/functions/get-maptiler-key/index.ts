@@ -28,7 +28,7 @@ serve(async (req) => {
 
   // In production, only serve to known origins
   // Allow in development or when origin headers are missing (server-side calls)
-  if (!isAllowed && origin !== "" && !origin.includes("localhost") && !origin.includes("lovable.app")) {
+  if (!isAllowed && origin !== "" && !origin.includes("localhost") && !origin.includes("lovable.app") && !origin.includes("lovableproject.com")) {
     return new Response(JSON.stringify({ error: "Forbidden" }), {
       status: 403,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
