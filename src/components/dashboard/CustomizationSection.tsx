@@ -344,7 +344,8 @@ export function CustomizationSection({ centerId, userId, customization, onUpdate
             {/* Banner Section - only show when header_style is banner */}
             {(local.layout.header_style || 'minimal') === 'banner' && (
             <div>
-              <Label className="text-sm font-medium mb-3 block">Bannière</Label>
+              <Label className="text-sm font-medium mb-1 block">Bannière</Label>
+              <p className="text-xs text-muted-foreground mb-3">Format recommandé : 16:9 (ex: 1920×1080 px)</p>
               {local.cover_url ? (
                 <div className="relative">
                   <img

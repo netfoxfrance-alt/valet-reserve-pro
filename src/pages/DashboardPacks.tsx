@@ -485,6 +485,7 @@ export default function DashboardPacks() {
                 {/* Image upload */}
                 <div className="space-y-2">
                   <Label>Image (optionnel)</Label>
+                  <p className="text-xs text-muted-foreground">Format recommandé : 4:3 (ex: 1200×900 px)</p>
                   <input ref={newImageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleImageUpload(file, 'new'); }} />
                   {newPack.image_url ? (
                     <div className="relative inline-block">
@@ -585,6 +586,7 @@ export default function DashboardPacks() {
                         {/* Image upload */}
                         <div className="space-y-2">
                           <Label>Image (optionnel)</Label>
+                          <p className="text-xs text-muted-foreground">Format recommandé : 4:3 (ex: 1200×900 px)</p>
                           <input ref={editImageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleImageUpload(file, 'edit'); }} />
                           {editForm.image_url ? (
                             <div className="relative inline-block">

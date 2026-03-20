@@ -302,6 +302,7 @@ export function SectionsEditor({ sections, onUpdate, userId }: SectionsEditorPro
               {/* Image gallery for gallery sections */}
               {isGallery && section.enabled && (
                 <div className="px-3 sm:px-4 pb-3 sm:pb-4">
+                  <p className="text-xs text-muted-foreground mb-2">Format recommandé : 4:3 (ex: 1200×900 px)</p>
                   <div className="grid grid-cols-4 gap-2">
                     {(section.images || []).map((url, imgIndex) => (
                       <div key={imgIndex} className="relative group aspect-square">
