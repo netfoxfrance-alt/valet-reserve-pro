@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
@@ -57,6 +58,68 @@ const parseCustomization = (data: unknown): CenterCustomization => {
   };
 };
 
+// Transform raw DB row to Center type
+const transformCenter = (data: any): Center => ({
+  ...data,
+  payments_mode: data.payments_mode as 'live' | 'test',
+  cancellation_policy: (data.cancellation_policy || 'no_refund') as 'no_refund' | 'no_refund_48h',
+  customization: parseCustomization(data.customization),
+});
+
+// Shared fetch function (used by the query)
+const fetchMyCenter = async (userId: string): Promise<Center | null> => {
+  const { data, error } = await supabase
+    .from('centers')
+    .select('*')
+    .eq('owner_id', userId)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+  return transformCenter(data);
+};
+
+// React Query cache key — shared across all hook instances
+export const MY_CENTER_QUERY_KEY = ['my-center'] as const;
+
+// Hook pour le centre du pro connecté — powered by React Query
+// All hooks and pages calling useMyCenter() share the SAME cached data.
+// Only ONE network request is made, no matter how many components use this hook.
+export function useMyCenter() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  const { data: center = null, isLoading: loading, error: queryError } = useQuery({
+    queryKey: MY_CENTER_QUERY_KEY,
+    queryFn: () => fetchMyCenter(user!.id),
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000, // Center data rarely changes — 5 min cache
+    gcTime: 30 * 60 * 1000,   // Keep in memory for 30 min
+  });
+
+  const error = queryError?.message ?? null;
+
+  const updateCenter = useCallback(async (updates: Partial<Center>) => {
+    if (!center) return { error: 'No center found' };
+    
+    // Convert customization for DB storage
+    const dbUpdates: Record<string, unknown> = { ...updates };
+    
+    const { error } = await supabase
+      .from('centers')
+      .update(dbUpdates)
+      .eq('id', center.id);
+
+    if (!error) {
+      // Optimistic update: instantly update cache without refetching
+      queryClient.setQueryData(MY_CENTER_QUERY_KEY, { ...center, ...updates });
+    }
+    return { error: error?.message || null };
+  }, [center, queryClient]);
+
+  return { center, loading, error, updateCenter };
+}
+
 export interface PriceVariant {
   name: string;
   price: number;
@@ -91,64 +154,6 @@ export interface Availability {
   start_time: string;
   end_time: string;
   enabled: boolean;
-}
-
-// Hook pour le centre du pro connecté
-export function useMyCenter() {
-  const { user } = useAuth();
-  const [center, setCenter] = useState<Center | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!user) {
-      setCenter(null);
-      setLoading(false);
-      return;
-    }
-
-    const fetchCenter = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('centers')
-        .select('*')
-        .eq('owner_id', user.id)
-        .maybeSingle();
-
-      if (error) {
-        setError(error.message);
-      } else if (data) {
-        setCenter({
-          ...data,
-          payments_mode: data.payments_mode as 'live' | 'test',
-          cancellation_policy: (data.cancellation_policy || 'no_refund') as 'no_refund' | 'no_refund_48h',
-          customization: parseCustomization(data.customization),
-        });
-      }
-      setLoading(false);
-    };
-
-    fetchCenter();
-  }, [user]);
-
-  const updateCenter = async (updates: Partial<Center>) => {
-    if (!center) return { error: 'No center found' };
-    
-    // Convert customization for DB storage
-    const dbUpdates: Record<string, unknown> = { ...updates };
-    
-    const { error } = await supabase
-      .from('centers')
-      .update(dbUpdates)
-      .eq('id', center.id);
-
-    if (!error) {
-      setCenter({ ...center, ...updates });
-    }
-    return { error: error?.message || null };
-  };
-
-  return { center, loading, error, updateCenter };
 }
 
 // Hook pour un centre public par slug
