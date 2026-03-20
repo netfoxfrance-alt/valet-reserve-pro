@@ -67,7 +67,23 @@ export default function DashboardMyPage() {
   };
 
   const handleTemplateSelect = (cust: CenterCustomization) => {
-    setCustomization(cust);
+    // Only apply visual theme (colors, fonts, layout style) — preserve existing content
+    setCustomization(prev => ({
+      ...prev,
+      colors: cust.colors,
+      layout: {
+        ...prev.layout,
+        dark_mode: cust.layout.dark_mode,
+        font_family: cust.layout.font_family,
+        header_style: cust.layout.header_style,
+      },
+      texts: {
+        ...prev.texts,
+        cta_button: cust.texts.cta_button,
+      },
+      // Only use template blocks if the page has no existing blocks
+      blocks: prev.blocks && prev.blocks.length > 0 ? prev.blocks : cust.blocks,
+    }));
     setShowTemplates(false);
     if (center) localStorage.setItem(`template_chosen_${center.id}`, '1');
   };
