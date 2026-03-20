@@ -4,41 +4,73 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { Suspense, lazy } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Eager-loaded (public-facing, first paint)
 import Index from "./pages/Index";
 import CenterBooking from "./pages/CenterBooking";
-import AcceptQuote from "./pages/AcceptQuote";
-import DepositPayment from "./pages/DepositPayment";
-import DepositSuccess from "./pages/DepositSuccess";
-import DepositCancel from "./pages/DepositCancel";
-import Booking from "./pages/Booking";
 import Auth from "./pages/Auth";
-import DashboardHome from "./pages/DashboardHome";
-import Dashboard from "./pages/Dashboard";
-import DashboardCalendar from "./pages/DashboardCalendar";
-import DashboardAvailability from "./pages/DashboardAvailability";
-import DashboardPacks from "./pages/DashboardPacks";
-import DashboardCustomServices from "./pages/DashboardCustomServices";
-import DashboardSettings from "./pages/DashboardSettings";
-import DashboardRequests from "./pages/DashboardRequests";
-import DashboardStats from "./pages/DashboardStats";
-import DashboardMyPage from "./pages/DashboardMyPage";
-import DashboardInvoices from "./pages/DashboardInvoices";
-import DashboardClients from "./pages/DashboardClients";
-import DashboardSupport from "./pages/DashboardSupport";
-import DashboardFormules from "./pages/DashboardFormules";
-import DashboardSales from "./pages/DashboardSales";
-
-import CompleteSignup from "./pages/CompleteSignup";
 import NotFound from "./pages/NotFound";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsOfSale from "./pages/TermsOfSale";
-import LegalNotices from "./pages/LegalNotices";
-import Presentation from "./pages/Presentation";
+
+// Lazy-loaded (dashboard + secondary pages — only loaded when needed)
+const AcceptQuote = lazy(() => import("./pages/AcceptQuote"));
+const DepositPayment = lazy(() => import("./pages/DepositPayment"));
+const DepositSuccess = lazy(() => import("./pages/DepositSuccess"));
+const DepositCancel = lazy(() => import("./pages/DepositCancel"));
+const Booking = lazy(() => import("./pages/Booking"));
+const DashboardHome = lazy(() => import("./pages/DashboardHome"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const DashboardCalendar = lazy(() => import("./pages/DashboardCalendar"));
+const DashboardAvailability = lazy(() => import("./pages/DashboardAvailability"));
+const DashboardPacks = lazy(() => import("./pages/DashboardPacks"));
+const DashboardCustomServices = lazy(() => import("./pages/DashboardCustomServices"));
+const DashboardSettings = lazy(() => import("./pages/DashboardSettings"));
+const DashboardRequests = lazy(() => import("./pages/DashboardRequests"));
+const DashboardStats = lazy(() => import("./pages/DashboardStats"));
+const DashboardMyPage = lazy(() => import("./pages/DashboardMyPage"));
+const DashboardInvoices = lazy(() => import("./pages/DashboardInvoices"));
+const DashboardClients = lazy(() => import("./pages/DashboardClients"));
+const DashboardSupport = lazy(() => import("./pages/DashboardSupport"));
+const DashboardFormules = lazy(() => import("./pages/DashboardFormules"));
+const DashboardSales = lazy(() => import("./pages/DashboardSales"));
+const CompleteSignup = lazy(() => import("./pages/CompleteSignup"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfSale = lazy(() => import("./pages/TermsOfSale"));
+const LegalNotices = lazy(() => import("./pages/LegalNotices"));
+const Presentation = lazy(() => import("./pages/Presentation"));
+const SitemapRedirect = lazy(() => import("./pages/SitemapRedirect"));
+
 import ProtectedRoute from "./components/ProtectedRoute";
-import SitemapRedirect from "./pages/SitemapRedirect";
 
+// Loading fallback for lazy-loaded pages
+const PageLoader = () => (
+  <div className="min-h-screen bg-background flex items-center justify-center">
+    <div className="space-y-4 w-64">
+      <Skeleton className="h-8 w-full" />
+      <Skeleton className="h-4 w-3/4" />
+      <Skeleton className="h-4 w-1/2" />
+    </div>
+  </div>
+);
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Data stays fresh for 2 minutes — no refetch on mount/focus within this window
+      staleTime: 2 * 60 * 1000,
+      // Keep unused data in cache for 10 minutes before garbage collection
+      gcTime: 10 * 60 * 1000,
+      // Retry failed requests up to 2 times with exponential backoff
+      retry: 2,
+      // Don't refetch every time the window regains focus (reduces unnecessary calls)
+      refetchOnWindowFocus: false,
+    },
+    mutations: {
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
