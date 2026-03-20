@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMyCenter } from '@/hooks/useCenter';
 import { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, format } from 'date-fns';
@@ -24,30 +25,40 @@ export interface Sale {
 
 export type PeriodFilter = 'day' | 'week' | 'month' | 'all';
 
+// Query key factory
+export const SALES_QUERY_KEY = (centerId: string) =>
+  ['sales', centerId] as const;
+
+const fetchSales = async (centerId: string): Promise<Sale[]> => {
+  const { data, error } = await supabase
+    .from('sales')
+    .select('*')
+    .eq('center_id', centerId)
+    .order('sale_date', { ascending: false })
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return (data as Sale[]) || [];
+};
+
 export function useSales() {
   const { center } = useMyCenter();
-  const [sales, setSales] = useState<Sale[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const fetchSales = async () => {
+  const queryKey = center ? SALES_QUERY_KEY(center.id) : ['sales-disabled'];
+
+  const { data: sales = [], isLoading: loading } = useQuery({
+    queryKey,
+    queryFn: () => fetchSales(center!.id),
+    enabled: !!center,
+    staleTime: 2 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+  });
+
+  const invalidate = useCallback(() => {
     if (!center) return;
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('sales')
-      .select('*')
-      .eq('center_id', center.id)
-      .order('sale_date', { ascending: false })
-      .order('created_at', { ascending: false });
-
-    if (!error && data) {
-      setSales(data as Sale[]);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchSales();
-  }, [center?.id]);
+    queryClient.invalidateQueries({ queryKey: SALES_QUERY_KEY(center.id) });
+  }, [center, queryClient]);
 
   const createSale = async (sale: Omit<Sale, 'id' | 'created_at'>) => {
     const { data, error } = await supabase
@@ -57,7 +68,7 @@ export function useSales() {
       .single();
 
     if (!error && data) {
-      setSales(prev => [data as Sale, ...prev]);
+      invalidate();
     }
     return { data: data as Sale | null, error: error?.message || null };
   };
@@ -127,5 +138,5 @@ export function useSales() {
     URL.revokeObjectURL(url);
   };
 
-  return { sales, loading, createSale, filterByPeriod, filterByDateRange, getKPIs, exportCSV, refetch: fetchSales };
+  return { sales, loading, createSale, filterByPeriod, filterByDateRange, getKPIs, exportCSV, refetch: invalidate };
 }
