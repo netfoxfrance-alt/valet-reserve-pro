@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMyCenter } from './useCenter';
 
@@ -14,30 +15,38 @@ export interface CustomService {
   updated_at: string;
 }
 
+// Query key factory
+export const CUSTOM_SERVICES_QUERY_KEY = (centerId: string) =>
+  ['custom-services', centerId] as const;
+
+const fetchCustomServices = async (centerId: string): Promise<CustomService[]> => {
+  const { data } = await supabase
+    .from('custom_services' as any)
+    .select('*')
+    .eq('center_id', centerId)
+    .order('name', { ascending: true });
+
+  return (data as unknown as CustomService[]) || [];
+};
+
 export function useMyCustomServices() {
   const { center } = useMyCenter();
-  const [services, setServices] = useState<CustomService[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (!center) {
-      setLoading(false);
-      return;
-    }
+  const queryKey = center ? CUSTOM_SERVICES_QUERY_KEY(center.id) : ['custom-services-disabled'];
 
-    const fetchServices = async () => {
-      const { data } = await supabase
-        .from('custom_services' as any)
-        .select('*')
-        .eq('center_id', center.id)
-        .order('name', { ascending: true });
+  const { data: services = [], isLoading: loading } = useQuery({
+    queryKey,
+    queryFn: () => fetchCustomServices(center!.id),
+    enabled: !!center,
+    staleTime: 3 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+  });
 
-      setServices((data as unknown as CustomService[]) || []);
-      setLoading(false);
-    };
-
-    fetchServices();
-  }, [center]);
+  const invalidate = useCallback(() => {
+    if (!center) return;
+    queryClient.invalidateQueries({ queryKey: CUSTOM_SERVICES_QUERY_KEY(center.id) });
+  }, [center, queryClient]);
 
   const createService = async (service: {
     name: string;
@@ -57,7 +66,7 @@ export function useMyCustomServices() {
       .single();
 
     if (!error && data) {
-      setServices([...services, data as unknown as CustomService].sort((a, b) => a.name.localeCompare(b.name)));
+      invalidate();
     }
     return { error: error?.message || null, data };
   };
@@ -69,9 +78,7 @@ export function useMyCustomServices() {
       .eq('id', id);
 
     if (!error) {
-      setServices(services.map(s => 
-        s.id === id ? { ...s, ...updates } : s
-      ).sort((a, b) => a.name.localeCompare(b.name)));
+      invalidate();
     }
     return { error: error?.message || null };
   };
@@ -83,7 +90,7 @@ export function useMyCustomServices() {
       .eq('id', id);
 
     if (!error) {
-      setServices(services.filter(s => s.id !== id));
+      invalidate();
     }
     return { error: error?.message || null };
   };

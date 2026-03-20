@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMyCenter } from './useCenter';
 
@@ -50,30 +51,42 @@ export interface VatRate {
   is_default: boolean;
 }
 
+// Query key factories
+export const INVOICES_QUERY_KEY = (centerId: string) =>
+  ['invoices', centerId] as const;
+
+export const VAT_RATES_QUERY_KEY = (centerId: string) =>
+  ['vat-rates', centerId] as const;
+
+const fetchInvoices = async (centerId: string): Promise<Invoice[]> => {
+  const { data, error } = await supabase
+    .from('invoices')
+    .select('*')
+    .eq('center_id', centerId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return (data as Invoice[]) || [];
+};
+
 export function useInvoices() {
   const { center } = useMyCenter();
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const fetchInvoices = async () => {
+  const queryKey = center ? INVOICES_QUERY_KEY(center.id) : ['invoices-disabled'];
+
+  const { data: invoices = [], isLoading: loading } = useQuery({
+    queryKey,
+    queryFn: () => fetchInvoices(center!.id),
+    enabled: !!center,
+    staleTime: 2 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+  });
+
+  const invalidate = useCallback(() => {
     if (!center) return;
-    
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('invoices')
-      .select('*')
-      .eq('center_id', center.id)
-      .order('created_at', { ascending: false });
-
-    if (!error && data) {
-      setInvoices(data as Invoice[]);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchInvoices();
-  }, [center?.id]);
+    queryClient.invalidateQueries({ queryKey: INVOICES_QUERY_KEY(center.id) });
+  }, [center, queryClient]);
 
   const generateNumber = async (type: 'invoice' | 'quote'): Promise<string> => {
     if (!center) return '';
@@ -81,7 +94,6 @@ export function useInvoices() {
     const year = new Date().getFullYear();
     const prefix = type === 'invoice' ? 'FAC' : 'DEV';
     
-    // Get the last number for this type and year
     const { data } = await supabase
       .from('invoices')
       .select('number')
@@ -111,7 +123,6 @@ export function useInvoices() {
 
     const number = invoice.number || await generateNumber(invoice.type);
 
-    // Calculate totals
     let subtotal = 0;
     let totalVat = 0;
     
@@ -119,22 +130,13 @@ export function useInvoices() {
       const itemSubtotal = item.quantity * item.unit_price;
       const itemVat = itemSubtotal * (item.vat_rate / 100);
       const itemTotal = itemSubtotal + itemVat;
-      
       subtotal += itemSubtotal;
       totalVat += itemVat;
-      
-      return {
-        ...item,
-        subtotal: itemSubtotal,
-        vat_amount: itemVat,
-        total: itemTotal,
-        sort_order: index,
-      };
+      return { ...item, subtotal: itemSubtotal, vat_amount: itemVat, total: itemTotal, sort_order: index };
     });
 
     const total = subtotal + totalVat;
 
-    // Insert invoice
     const { data: invoiceData, error: invoiceError } = await supabase
       .from('invoices')
       .insert({
@@ -165,7 +167,6 @@ export function useInvoices() {
       return { data: null, error: invoiceError.message };
     }
 
-    // Insert items
     if (calculatedItems.length > 0) {
       const { error: itemsError } = await supabase
         .from('invoice_items')
@@ -184,13 +185,12 @@ export function useInvoices() {
         );
 
       if (itemsError) {
-        // Rollback invoice
         await supabase.from('invoices').delete().eq('id', invoiceData.id);
         return { data: null, error: itemsError.message };
       }
     }
 
-    await fetchInvoices();
+    invalidate();
     return { data: invoiceData as Invoice, error: null };
   };
 
@@ -200,7 +200,6 @@ export function useInvoices() {
     items?: Omit<InvoiceItem, 'id' | 'invoice_id'>[]
   ): Promise<{ error: string | null }> => {
     if (items) {
-      // Recalculate totals
       let subtotal = 0;
       let totalVat = 0;
       
@@ -208,37 +207,20 @@ export function useInvoices() {
         const itemSubtotal = item.quantity * item.unit_price;
         const itemVat = itemSubtotal * (item.vat_rate / 100);
         const itemTotal = itemSubtotal + itemVat;
-        
         subtotal += itemSubtotal;
         totalVat += itemVat;
-        
-        return {
-          ...item,
-          subtotal: itemSubtotal,
-          vat_amount: itemVat,
-          total: itemTotal,
-          sort_order: index,
-        };
+        return { ...item, subtotal: itemSubtotal, vat_amount: itemVat, total: itemTotal, sort_order: index };
       });
 
       const total = subtotal + totalVat;
 
-      // Update invoice with new totals
       const { error: updateError } = await supabase
         .from('invoices')
-        .update({
-          ...invoice,
-          subtotal,
-          total_vat: totalVat,
-          total,
-        })
+        .update({ ...invoice, subtotal, total_vat: totalVat, total })
         .eq('id', id);
 
-      if (updateError) {
-        return { error: updateError.message };
-      }
+      if (updateError) return { error: updateError.message };
 
-      // Delete existing items and insert new ones
       await supabase.from('invoice_items').delete().eq('invoice_id', id);
       
       if (calculatedItems.length > 0) {
@@ -258,9 +240,7 @@ export function useInvoices() {
             }))
           );
 
-        if (itemsError) {
-          return { error: itemsError.message };
-        }
+        if (itemsError) return { error: itemsError.message };
       }
     } else {
       const { error } = await supabase
@@ -268,12 +248,10 @@ export function useInvoices() {
         .update(invoice)
         .eq('id', id);
 
-      if (error) {
-        return { error: error.message };
-      }
+      if (error) return { error: error.message };
     }
 
-    await fetchInvoices();
+    invalidate();
     return { error: null };
   };
 
@@ -283,11 +261,9 @@ export function useInvoices() {
       .delete()
       .eq('id', id);
 
-    if (error) {
-      return { error: error.message };
-    }
+    if (error) return { error: error.message };
 
-    await fetchInvoices();
+    invalidate();
     return { error: null };
   };
 
@@ -298,9 +274,7 @@ export function useInvoices() {
       .eq('id', id)
       .single();
 
-    if (invoiceError) {
-      return { data: null, error: invoiceError.message };
-    }
+    if (invoiceError) return { data: null, error: invoiceError.message };
 
     const { data: itemsData } = await supabase
       .from('invoice_items')
@@ -308,26 +282,15 @@ export function useInvoices() {
       .eq('invoice_id', id)
       .order('sort_order');
 
-    return {
-      data: {
-        ...invoiceData,
-        items: itemsData || [],
-      } as Invoice,
-      error: null,
-    };
+    return { data: { ...invoiceData, items: itemsData || [] } as Invoice, error: null };
   };
 
   const convertQuoteToInvoice = async (quoteId: string): Promise<{ data: Invoice | null; error: string | null }> => {
     const { data: quote, error: fetchError } = await getInvoiceWithItems(quoteId);
-    
-    if (fetchError || !quote) {
-      return { data: null, error: fetchError || 'Quote not found' };
-    }
+    if (fetchError || !quote) return { data: null, error: fetchError || 'Quote not found' };
 
-    // Mark quote as accepted
     await updateInvoice(quoteId, { status: 'accepted' });
 
-    // Create new invoice from quote
     const result = await createInvoice(
       {
         type: 'invoice',
@@ -346,7 +309,7 @@ export function useInvoices() {
         notes: quote.notes,
         terms: quote.terms,
         converted_from_quote_id: quoteId,
-        include_in_stats: false, // Invoices separate from appointments stats
+        include_in_stats: false,
       },
       (quote.items || []).map(item => ({
         description: item.description,
@@ -372,51 +335,50 @@ export function useInvoices() {
     getInvoiceWithItems,
     convertQuoteToInvoice,
     generateNextNumber: generateNumber,
-    refetch: fetchInvoices,
+    refetch: invalidate,
   };
 }
 
+const fetchVatRates = async (centerId: string): Promise<VatRate[]> => {
+  const { data, error } = await supabase
+    .from('vat_rates')
+    .select('*')
+    .eq('center_id', centerId)
+    .order('rate', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return (data as VatRate[]) || [];
+};
+
 export function useVatRates() {
   const { center } = useMyCenter();
-  const [vatRates, setVatRates] = useState<VatRate[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const fetchVatRates = async () => {
+  const queryKey = center ? VAT_RATES_QUERY_KEY(center.id) : ['vat-rates-disabled'];
+
+  const { data: vatRates = [], isLoading: loading } = useQuery({
+    queryKey,
+    queryFn: () => fetchVatRates(center!.id),
+    enabled: !!center,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+  });
+
+  const invalidate = useCallback(() => {
     if (!center) return;
-    
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('vat_rates')
-      .select('*')
-      .eq('center_id', center.id)
-      .order('rate', { ascending: false });
-
-    if (!error && data) {
-      setVatRates(data as VatRate[]);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchVatRates();
-  }, [center?.id]);
+    queryClient.invalidateQueries({ queryKey: VAT_RATES_QUERY_KEY(center.id) });
+  }, [center, queryClient]);
 
   const createVatRate = async (rate: number, label: string): Promise<{ error: string | null }> => {
     if (!center) return { error: 'No center found' };
 
     const { error } = await supabase
       .from('vat_rates')
-      .insert({
-        center_id: center.id,
-        rate,
-        label,
-      });
+      .insert({ center_id: center.id, rate, label });
 
-    if (error) {
-      return { error: error.message };
-    }
+    if (error) return { error: error.message };
 
-    await fetchVatRates();
+    invalidate();
     return { error: null };
   };
 
@@ -426,11 +388,9 @@ export function useVatRates() {
       .delete()
       .eq('id', id);
 
-    if (error) {
-      return { error: error.message };
-    }
+    if (error) return { error: error.message };
 
-    await fetchVatRates();
+    invalidate();
     return { error: null };
   };
 
@@ -439,6 +399,6 @@ export function useVatRates() {
     loading,
     createVatRate,
     deleteVatRate,
-    refetch: fetchVatRates,
+    refetch: invalidate,
   };
 }
