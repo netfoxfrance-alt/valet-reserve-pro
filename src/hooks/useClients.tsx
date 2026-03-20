@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMyCenter } from './useCenter';
 import { CustomService } from './useCustomServices';
@@ -20,7 +21,6 @@ export interface Client {
   company_name: string | null;
   created_at: string;
   updated_at: string;
-  // Joined data
   default_service?: CustomService | null;
 }
 
@@ -29,40 +29,52 @@ interface UseMyClientsOptions {
   pageSize?: number;
 }
 
+// Query key factory
+export const CLIENTS_QUERY_KEY = (centerId: string, page: number, pageSize: number) =>
+  ['clients', centerId, page, pageSize] as const;
+
+const fetchClients = async (centerId: string, page: number, pageSize: number) => {
+  const from = page * pageSize;
+  const to = from + pageSize - 1;
+
+  const { data, count } = await supabase
+    .from('clients' as any)
+    .select(`
+      *,
+      default_service:custom_services(*)
+    `, { count: 'exact' })
+    .eq('center_id', centerId)
+    .order('name', { ascending: true })
+    .range(from, to);
+
+  return {
+    clients: (data as unknown as Client[]) || [],
+    totalCount: count || 0,
+  };
+};
+
 export function useMyClients(options: UseMyClientsOptions = {}) {
-  const { page = 0, pageSize = 1000 } = options; // Default to 1000 for backwards compatibility
+  const { page = 0, pageSize = 1000 } = options;
   const { center } = useMyCenter();
-  const [clients, setClients] = useState<Client[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const fetchClients = useCallback(async () => {
-    if (!center) {
-      setLoading(false);
-      return;
-    }
+  const queryKey = center ? CLIENTS_QUERY_KEY(center.id, page, pageSize) : ['clients-disabled'];
 
-    const from = page * pageSize;
-    const to = from + pageSize - 1;
+  const { data, isLoading: loading } = useQuery({
+    queryKey,
+    queryFn: () => fetchClients(center!.id, page, pageSize),
+    enabled: !!center,
+    staleTime: 3 * 60 * 1000,   // 3 min
+    gcTime: 15 * 60 * 1000,
+  });
 
-    const { data, count } = await supabase
-      .from('clients' as any)
-      .select(`
-        *,
-        default_service:custom_services(*)
-      `, { count: 'exact' })
-      .eq('center_id', center.id)
-      .order('name', { ascending: true })
-      .range(from, to);
+  const clients = data?.clients || [];
+  const totalCount = data?.totalCount || 0;
 
-    setClients((data as unknown as Client[]) || []);
-    setTotalCount(count || 0);
-    setLoading(false);
-  }, [center, page, pageSize]);
-
-  useEffect(() => {
-    fetchClients();
-  }, [fetchClients]);
+  const invalidate = useCallback(() => {
+    if (!center) return;
+    queryClient.invalidateQueries({ queryKey: ['clients', center.id] });
+  }, [center, queryClient]);
 
   const createClient = async (client: {
     name: string;
@@ -75,11 +87,10 @@ export function useMyClients(options: UseMyClientsOptions = {}) {
     company_name?: string;
   }): Promise<{ error: string | null; data: any; isExisting?: boolean }> => {
     if (!center) return { error: 'Aucun centre trouvé', data: null };
-    
+
     const hasPhone = client.phone && client.phone.trim() !== '';
     const hasEmail = client.email && client.email.trim() !== '';
-    
-    // Use findOrCreateClient for deduplication when phone or email is provided
+
     if (hasPhone || hasEmail) {
       const result = await findOrCreateClient({
         center_id: center.id,
@@ -89,40 +100,38 @@ export function useMyClients(options: UseMyClientsOptions = {}) {
         address: client.address || null,
         source: 'manual',
       });
-      
+
       if (result.error) {
         return { error: result.error, data: null };
       }
-      
+
       if (result.clientId) {
-        // Update extra fields not handled by findOrCreateClient
         const extraUpdates: Record<string, any> = {};
         if (client.notes) extraUpdates.notes = client.notes;
         if (client.default_service_id) extraUpdates.default_service_id = client.default_service_id;
         if (client.client_type) extraUpdates.client_type = client.client_type;
         if (client.company_name) extraUpdates.company_name = client.company_name;
-        
+
         if (Object.keys(extraUpdates).length > 0) {
           await supabase.from('clients' as any).update(extraUpdates).eq('id', result.clientId);
         }
-        
-        // Fetch the full client with relations
+
         const { data: fullClient } = await supabase
           .from('clients' as any)
           .select(`*, default_service:custom_services(*)`)
           .eq('id', result.clientId)
           .single();
-        
+
         if (fullClient) {
-          await fetchClients();
+          invalidate();
         }
-        
+
         return { error: null, data: fullClient, isExisting: !result.isNew };
       }
     }
-    
-    // Fallback: direct insert (no phone/email to deduplicate on)
-    const { data, error } = await supabase
+
+    // Fallback: direct insert
+    const { data: newData, error } = await supabase
       .from('clients' as any)
       .insert({
         ...client,
@@ -131,24 +140,22 @@ export function useMyClients(options: UseMyClientsOptions = {}) {
       .select(`*, default_service:custom_services(*)`)
       .single();
 
-    if (!error && data) {
-      setClients([...clients, data as unknown as Client].sort((a, b) => a.name.localeCompare(b.name)));
+    if (!error && newData) {
+      invalidate();
     }
-    return { error: error?.message || null, data, isExisting: false };
+    return { error: error?.message || null, data: newData, isExisting: false };
   };
 
   const updateClient = async (id: string, updates: Partial<Client>) => {
-    // Remove joined data before update
     const { default_service, ...updateData } = updates;
-    
+
     const { error } = await supabase
       .from('clients' as any)
       .update(updateData)
       .eq('id', id);
 
     if (!error) {
-      // Refetch to get updated joined data
-      await fetchClients();
+      invalidate();
     }
     return { error: error?.message || null };
   };
@@ -160,21 +167,21 @@ export function useMyClients(options: UseMyClientsOptions = {}) {
       .eq('id', id);
 
     if (!error) {
-      setClients(clients.filter(c => c.id !== id));
+      invalidate();
     }
     return { error: error?.message || null };
   };
 
   const hasMore = totalCount > (page + 1) * pageSize;
 
-  return { 
-    clients, 
-    loading, 
+  return {
+    clients,
+    loading,
     totalCount,
     hasMore,
-    createClient, 
-    updateClient, 
-    deleteClient, 
-    refetch: fetchClients 
+    createClient,
+    updateClient,
+    deleteClient,
+    refetch: invalidate,
   };
 }
