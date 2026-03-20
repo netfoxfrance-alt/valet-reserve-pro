@@ -320,31 +320,37 @@ export function useMyPacks() {
   return { packs, loading, createPack, updatePack, deletePack };
 }
 
-// Hook pour les disponibilités du pro
+// Query key
+export const MY_AVAILABILITY_QUERY_KEY = (centerId: string) => ['my-availability', centerId] as const;
+
+const fetchMyAvailability = async (centerId: string): Promise<Availability[]> => {
+  const { data } = await supabase
+    .from('availability')
+    .select('*')
+    .eq('center_id', centerId)
+    .order('day_of_week');
+  return data || [];
+};
+
+// Hook pour les disponibilités du pro — React Query
 export function useMyAvailability() {
   const { center } = useMyCenter();
-  const [availability, setAvailability] = useState<Availability[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (!center) {
-      setLoading(false);
-      return;
-    }
+  const queryKey = center ? MY_AVAILABILITY_QUERY_KEY(center.id) : ['my-availability-disabled'];
 
-    const fetchAvailability = async () => {
-      const { data } = await supabase
-        .from('availability')
-        .select('*')
-        .eq('center_id', center.id)
-        .order('day_of_week');
+  const { data: availability = [], isLoading: loading } = useQuery({
+    queryKey,
+    queryFn: () => fetchMyAvailability(center!.id),
+    enabled: !!center,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+  });
 
-      setAvailability(data || []);
-      setLoading(false);
-    };
-
-    fetchAvailability();
-  }, [center]);
+  const invalidate = useCallback(() => {
+    if (!center) return;
+    queryClient.invalidateQueries({ queryKey: MY_AVAILABILITY_QUERY_KEY(center.id) });
+  }, [center, queryClient]);
 
   const upsertAvailability = async (day: number, start: string, end: string, enabled: boolean) => {
     if (!center) return { error: 'No center found' };
@@ -358,9 +364,7 @@ export function useMyAvailability() {
         .eq('id', existing.id);
 
       if (!error) {
-        setAvailability(availability.map(a => 
-          a.day_of_week === day ? { ...a, start_time: start, end_time: end, enabled } : a
-        ));
+        invalidate();
       }
       return { error: error?.message || null };
     } else {
@@ -371,7 +375,7 @@ export function useMyAvailability() {
         .single();
 
       if (!error && data) {
-        setAvailability([...availability, data]);
+        invalidate();
       }
       return { error: error?.message || null };
     }
