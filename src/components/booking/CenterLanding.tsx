@@ -605,8 +605,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
               <Button 
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-12 text-white font-medium rounded-xl transition-all duration-300 hover:shadow-lg"
-                style={{ backgroundColor: customization.colors.primary }}
+               className="w-full h-12 font-medium rounded-xl transition-all duration-300 hover:shadow-lg"
+                style={{ backgroundColor: customization.colors.primary, color: btnTextColor }}
               >
                 {isSubmitting ? 'Envoi...' : 'Envoyer ma demande'}
                 <Send className="w-4 h-4 ml-2" />
@@ -1360,8 +1360,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                   <Button
                     type="submit"
                     disabled={lookupLoading || !lookupEmail.trim()}
-                    className="h-11 px-5 rounded-xl text-white font-medium"
-                    style={{ backgroundColor: customization.colors.primary }}
+                    className="h-11 px-5 rounded-xl font-medium"
+                    style={{ backgroundColor: customization.colors.primary, color: btnTextColor }}
                   >
                     {lookupLoading ? '...' : 'Valider'}
                   </Button>
@@ -1447,8 +1447,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                   </div>
                   <Button
                     onClick={() => onRecognizedClient?.(recognizedClient)}
-                    className="w-full h-12 text-base font-semibold rounded-xl text-white"
-                    style={{ backgroundColor: customization.colors.primary }}
+                    className="w-full h-12 text-base font-semibold rounded-xl"
+                    style={{ backgroundColor: customization.colors.primary, color: btnTextColor }}
                   >
                     Choisir un créneau
                   </Button>
@@ -1463,8 +1463,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                       onRecognizedClient?.(recognizedClient);
                       onStartBooking();
                     }}
-                    className="w-full h-12 text-base font-semibold rounded-xl text-white"
-                    style={{ backgroundColor: customization.colors.primary }}
+                    className="w-full h-12 text-base font-semibold rounded-xl"
+                    style={{ backgroundColor: customization.colors.primary, color: btnTextColor }}
                   >
                     Voir les formules
                   </Button>
