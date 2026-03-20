@@ -55,7 +55,7 @@ export function SEOSection({ customization, centerName, onChange }: SEOSectionPr
 
       {/* Social Share Preview (iMessage / WhatsApp style) */}
       <Card variant="elevated" className="p-4 sm:p-6 mb-4 bg-card/50">
-        <p className="text-xs text-muted-foreground mb-3 font-medium">💬 Aperçu partage par message</p>
+        <p className="text-xs text-muted-foreground mb-3 font-medium">💬 Aperçu partage par message (iMessage, WhatsApp...)</p>
         <div className="rounded-xl overflow-hidden border border-border bg-muted/30 max-w-sm">
           {previewImage ? (
             <div className="w-full h-36 bg-muted overflow-hidden">
@@ -74,14 +74,14 @@ export function SEOSection({ customization, centerName, onChange }: SEOSectionPr
             </div>
           )}
           <div className="p-3 space-y-0.5">
-            <p className="text-xs text-muted-foreground uppercase tracking-wide">cleaningpage.com</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">{centerName}</p>
             <p className="text-sm font-semibold text-foreground line-clamp-1">{previewTitle}</p>
             <p className="text-xs text-muted-foreground line-clamp-2">{previewDescription}</p>
           </div>
         </div>
         {!previewImage && (
           <p className="text-xs text-amber-600 dark:text-amber-400 mt-3">
-            💡 Ajoutez une bannière dans la section "Apparence" pour que vos liens partagés aient une belle image.
+            💡 Ajoutez une bannière dans la section "Apparence" pour que votre lien partagé affiche votre image, pas une image générique.
           </p>
         )}
       </Card>
