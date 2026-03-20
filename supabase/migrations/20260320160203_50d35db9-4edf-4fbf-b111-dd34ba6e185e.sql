@@ -1,0 +1,1 @@
+ALTER TABLE public.invoices ADD COLUMN service_created boolean NOT NULL DEFAULT false;
