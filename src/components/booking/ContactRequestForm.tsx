@@ -89,13 +89,6 @@ export function ContactRequestForm({ onSubmit, isSubmitting, title, subtitle, su
       </div>
 
       <Card variant="elevated" className="p-6 md:p-8">
-        {precisionMessage && (
-          <div className="flex gap-3 p-4 mb-6 bg-primary/5 border border-primary/10 rounded-xl">
-            <Info className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-            <p className="text-sm text-foreground/80 whitespace-pre-wrap">{precisionMessage}</p>
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Client Type */}
           <div className="space-y-2">
@@ -218,6 +211,13 @@ export function ContactRequestForm({ onSubmit, isSubmitting, title, subtitle, su
               />
             </div>
           </div>
+
+          {precisionMessage && (
+            <div className="flex gap-3 p-4 bg-primary/5 border border-primary/10 rounded-xl">
+              <Info className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+              <p className="text-sm text-foreground/80 whitespace-pre-wrap">{precisionMessage}</p>
+            </div>
+          )}
 
           {/* Image upload section */}
           <div className="space-y-3">
