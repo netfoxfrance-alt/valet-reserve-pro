@@ -162,6 +162,17 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
     secondary: customization.layout.dark_mode ? '#9ca3af' : (customization.colors.text_secondary || '#6b7280'),
   }), [customization]);
 
+  // Compute contrast text color for buttons with primary background
+  const btnTextColor = useMemo(() => {
+    const hex = customization.colors.primary.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    // Relative luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.6 ? '#000000' : '#ffffff';
+  }, [customization.colors.primary]);
+
   // Generate CSS variables for custom colors + font + background
   const fontFamily = customization.layout.font_family || 'system';
   const fontScale = customization.layout.font_size_scale || 1;
@@ -594,8 +605,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
               <Button 
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-12 text-white font-medium rounded-xl transition-all duration-300 hover:shadow-lg"
-                style={{ backgroundColor: customization.colors.primary }}
+               className="w-full h-12 font-medium rounded-xl transition-all duration-300 hover:shadow-lg"
+                style={{ backgroundColor: customization.colors.primary, color: btnTextColor }}
               >
                 {isSubmitting ? 'Envoi...' : 'Envoyer ma demande'}
                 <Send className="w-4 h-4 ml-2" />
@@ -1349,8 +1360,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                   <Button
                     type="submit"
                     disabled={lookupLoading || !lookupEmail.trim()}
-                    className="h-11 px-5 rounded-xl text-white font-medium"
-                    style={{ backgroundColor: customization.colors.primary }}
+                    className="h-11 px-5 rounded-xl font-medium"
+                    style={{ backgroundColor: customization.colors.primary, color: btnTextColor }}
                   >
                     {lookupLoading ? '...' : 'Valider'}
                   </Button>
@@ -1436,8 +1447,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                   </div>
                   <Button
                     onClick={() => onRecognizedClient?.(recognizedClient)}
-                    className="w-full h-12 text-base font-semibold rounded-xl text-white"
-                    style={{ backgroundColor: customization.colors.primary }}
+                    className="w-full h-12 text-base font-semibold rounded-xl"
+                    style={{ backgroundColor: customization.colors.primary, color: btnTextColor }}
                   >
                     Choisir un créneau
                   </Button>
@@ -1452,8 +1463,8 @@ export function CenterLanding({ center, packs, onStartBooking, onSelectPack, onR
                       onRecognizedClient?.(recognizedClient);
                       onStartBooking();
                     }}
-                    className="w-full h-12 text-base font-semibold rounded-xl text-white"
-                    style={{ backgroundColor: customization.colors.primary }}
+                    className="w-full h-12 text-base font-semibold rounded-xl"
+                    style={{ backgroundColor: customization.colors.primary, color: btnTextColor }}
                   >
                     Voir les formules
                   </Button>
