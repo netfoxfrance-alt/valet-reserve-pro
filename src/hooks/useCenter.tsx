@@ -233,38 +233,44 @@ export function useCenterBySlug(slug: string) {
   return { center, packs, availability, loading, error };
 }
 
-// Hook pour les packs du centre du pro
+// Query keys
+export const MY_PACKS_QUERY_KEY = (centerId: string) => ['my-packs', centerId] as const;
+
+const transformPack = (p: any): Pack => ({
+  ...p,
+  price_variants: (p.price_variants as unknown as PriceVariant[]) || [],
+  pricing_type: ((p as any).pricing_type || 'fixed') as 'fixed' | 'quote',
+  location_type: ((p as any).location_type || 'on_site') as LocationType,
+});
+
+const fetchMyPacks = async (centerId: string): Promise<Pack[]> => {
+  const { data } = await supabase
+    .from('packs')
+    .select('*')
+    .eq('center_id', centerId)
+    .order('sort_order');
+  return (data || []).map(transformPack);
+};
+
+// Hook pour les packs du centre du pro — React Query
 export function useMyPacks() {
   const { center } = useMyCenter();
-  const [packs, setPacks] = useState<Pack[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (!center) {
-      setLoading(false);
-      return;
-    }
+  const queryKey = center ? MY_PACKS_QUERY_KEY(center.id) : ['my-packs-disabled'];
 
-    const fetchPacks = async () => {
-      const { data } = await supabase
-        .from('packs')
-        .select('*')
-        .eq('center_id', center.id)
-        .order('sort_order');
+  const { data: packs = [], isLoading: loading } = useQuery({
+    queryKey,
+    queryFn: () => fetchMyPacks(center!.id),
+    enabled: !!center,
+    staleTime: 3 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+  });
 
-      // Transform packs to ensure price_variants is properly typed
-      const transformedPacks: Pack[] = (data || []).map(p => ({
-        ...p,
-        price_variants: (p.price_variants as unknown as PriceVariant[]) || [],
-        pricing_type: ((p as any).pricing_type || 'fixed') as 'fixed' | 'quote',
-        location_type: ((p as any).location_type || 'on_site') as LocationType,
-      }));
-      setPacks(transformedPacks);
-      setLoading(false);
-    };
-
-    fetchPacks();
-  }, [center]);
+  const invalidate = useCallback(() => {
+    if (!center) return;
+    queryClient.invalidateQueries({ queryKey: MY_PACKS_QUERY_KEY(center.id) });
+  }, [center, queryClient]);
 
   const createPack = async (pack: Omit<Pack, 'id' | 'center_id' | 'created_at' | 'updated_at'>) => {
     if (!center) return { error: 'No center found' };
@@ -279,13 +285,7 @@ export function useMyPacks() {
       .single();
 
     if (!error && data) {
-      const transformedPack: Pack = {
-        ...data,
-        price_variants: (data.price_variants as unknown as PriceVariant[]) || [],
-        pricing_type: ((data as any).pricing_type || 'fixed') as 'fixed' | 'quote',
-        location_type: ((data as any).location_type || 'on_site') as LocationType,
-      };
-      setPacks([...packs, transformedPack]);
+      invalidate();
     }
     return { data, error: error?.message || null };
   };
@@ -300,7 +300,7 @@ export function useMyPacks() {
       .eq('id', id);
 
     if (!error) {
-      setPacks(packs.map(p => p.id === id ? { ...p, ...updates } : p));
+      invalidate();
     }
     return { error: error?.message || null };
   };
@@ -312,7 +312,7 @@ export function useMyPacks() {
       .eq('id', id);
 
     if (!error) {
-      setPacks(packs.filter(p => p.id !== id));
+      invalidate();
     }
     return { error: error?.message || null };
   };
@@ -320,31 +320,37 @@ export function useMyPacks() {
   return { packs, loading, createPack, updatePack, deletePack };
 }
 
-// Hook pour les disponibilités du pro
+// Query key
+export const MY_AVAILABILITY_QUERY_KEY = (centerId: string) => ['my-availability', centerId] as const;
+
+const fetchMyAvailability = async (centerId: string): Promise<Availability[]> => {
+  const { data } = await supabase
+    .from('availability')
+    .select('*')
+    .eq('center_id', centerId)
+    .order('day_of_week');
+  return data || [];
+};
+
+// Hook pour les disponibilités du pro — React Query
 export function useMyAvailability() {
   const { center } = useMyCenter();
-  const [availability, setAvailability] = useState<Availability[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (!center) {
-      setLoading(false);
-      return;
-    }
+  const queryKey = center ? MY_AVAILABILITY_QUERY_KEY(center.id) : ['my-availability-disabled'];
 
-    const fetchAvailability = async () => {
-      const { data } = await supabase
-        .from('availability')
-        .select('*')
-        .eq('center_id', center.id)
-        .order('day_of_week');
+  const { data: availability = [], isLoading: loading } = useQuery({
+    queryKey,
+    queryFn: () => fetchMyAvailability(center!.id),
+    enabled: !!center,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+  });
 
-      setAvailability(data || []);
-      setLoading(false);
-    };
-
-    fetchAvailability();
-  }, [center]);
+  const invalidate = useCallback(() => {
+    if (!center) return;
+    queryClient.invalidateQueries({ queryKey: MY_AVAILABILITY_QUERY_KEY(center.id) });
+  }, [center, queryClient]);
 
   const upsertAvailability = async (day: number, start: string, end: string, enabled: boolean) => {
     if (!center) return { error: 'No center found' };
@@ -358,9 +364,7 @@ export function useMyAvailability() {
         .eq('id', existing.id);
 
       if (!error) {
-        setAvailability(availability.map(a => 
-          a.day_of_week === day ? { ...a, start_time: start, end_time: end, enabled } : a
-        ));
+        invalidate();
       }
       return { error: error?.message || null };
     } else {
@@ -371,7 +375,7 @@ export function useMyAvailability() {
         .single();
 
       if (!error && data) {
-        setAvailability([...availability, data]);
+        invalidate();
       }
       return { error: error?.message || null };
     }
