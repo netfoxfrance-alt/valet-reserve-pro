@@ -322,11 +322,12 @@ export default function CenterBooking() {
         if (rpcResult && rpcResult.length > 0) {
           const row = rpcResult[0];
           setLastAppointmentId(row.appointment_id);
+          // Use already-known recognizedClient data (PII is no longer returned by the RPC)
           setClientData({
-            name: row.client_name || recognizedClient.client_name || '',
-            email: row.client_email || recognizedClient.client_email || '',
-            phone: row.client_phone || recognizedClient.client_phone || '',
-            address: row.client_address || recognizedClient.client_address || '',
+            name: recognizedClient.client_name || '',
+            email: recognizedClient.client_email || '',
+            phone: recognizedClient.client_phone || '',
+            address: recognizedClient.client_address || '',
             notes: '',
           });
 
@@ -339,9 +340,9 @@ export default function CenterBooking() {
               headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
               body: JSON.stringify({
                 center_id: center!.id,
-                client_name: row.client_name,
-                client_email: row.client_email,
-                client_phone: row.client_phone,
+                client_name: recognizedClient.client_name,
+                client_email: recognizedClient.client_email,
+                client_phone: recognizedClient.client_phone,
                 pack_name: row.service_name || recognizedClient.service_name || 'Prestation personnalisée',
                 price: row.service_price || recognizedClient.service_price || 0,
                 appointment_date: formattedDate,
