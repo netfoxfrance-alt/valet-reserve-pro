@@ -79,105 +79,107 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/booking" element={<Booking />} />
-            <Route path="/confidentialite" element={<PrivacyPolicy />} />
-            <Route path="/cgu" element={<TermsOfSale />} />
-            <Route path="/mentions-legales" element={<LegalNotices />} />
-            <Route path="/presentation" element={<Presentation />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/complete-signup" element={<CompleteSignup />} />
-            {/* All dashboard routes - Trial model (no restrictions) */}
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <DashboardHome />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/reservations" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/formules" element={
-              <ProtectedRoute>
-                <DashboardFormules />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/calendar" element={
-              <ProtectedRoute>
-                <DashboardCalendar />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/availability" element={
-              <ProtectedRoute>
-                <DashboardAvailability />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/packs" element={
-              <ProtectedRoute>
-                <DashboardPacks />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/custom-services" element={
-              <ProtectedRoute>
-                <DashboardCustomServices />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/stats" element={
-              <ProtectedRoute>
-                <DashboardStats />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/requests" element={
-              <ProtectedRoute>
-                <DashboardRequests />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/settings" element={
-              <ProtectedRoute>
-                <DashboardSettings />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/my-page" element={
-              <ProtectedRoute>
-                <DashboardMyPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/invoices" element={
-              <ProtectedRoute>
-                <DashboardInvoices />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/clients" element={
-              <ProtectedRoute>
-                <DashboardClients />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/support" element={
-              <ProtectedRoute>
-                <DashboardSupport />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard/sales" element={
-              <ProtectedRoute>
-                <DashboardSales />
-              </ProtectedRoute>
-            } />
-            
-            {/* Deposit payment pages */}
-            <Route path="/deposit-payment" element={<DepositPayment />} />
-            <Route path="/deposit-success" element={<DepositSuccess />} />
-            <Route path="/deposit-cancel" element={<DepositCancel />} />
-            <Route path="/accept-quote" element={<AcceptQuote />} />
-            {/* Sitemap redirect (reliable fallback without Cloudflare Worker) */}
-            <Route path="/sitemap.xml" element={<SitemapRedirect />} />
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/booking" element={<Booking />} />
+              <Route path="/confidentialite" element={<PrivacyPolicy />} />
+              <Route path="/cgu" element={<TermsOfSale />} />
+              <Route path="/mentions-legales" element={<LegalNotices />} />
+              <Route path="/presentation" element={<Presentation />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/complete-signup" element={<CompleteSignup />} />
+              {/* All dashboard routes - Trial model (no restrictions) */}
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <DashboardHome />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/reservations" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/formules" element={
+                <ProtectedRoute>
+                  <DashboardFormules />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/calendar" element={
+                <ProtectedRoute>
+                  <DashboardCalendar />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/availability" element={
+                <ProtectedRoute>
+                  <DashboardAvailability />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/packs" element={
+                <ProtectedRoute>
+                  <DashboardPacks />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/custom-services" element={
+                <ProtectedRoute>
+                  <DashboardCustomServices />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/stats" element={
+                <ProtectedRoute>
+                  <DashboardStats />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/requests" element={
+                <ProtectedRoute>
+                  <DashboardRequests />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/settings" element={
+                <ProtectedRoute>
+                  <DashboardSettings />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/my-page" element={
+                <ProtectedRoute>
+                  <DashboardMyPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/invoices" element={
+                <ProtectedRoute>
+                  <DashboardInvoices />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/clients" element={
+                <ProtectedRoute>
+                  <DashboardClients />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/support" element={
+                <ProtectedRoute>
+                  <DashboardSupport />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/sales" element={
+                <ProtectedRoute>
+                  <DashboardSales />
+                </ProtectedRoute>
+              } />
+              
+              {/* Deposit payment pages */}
+              <Route path="/deposit-payment" element={<DepositPayment />} />
+              <Route path="/deposit-success" element={<DepositSuccess />} />
+              <Route path="/deposit-cancel" element={<DepositCancel />} />
+              <Route path="/accept-quote" element={<AcceptQuote />} />
+              {/* Sitemap redirect (reliable fallback without Cloudflare Worker) */}
+              <Route path="/sitemap.xml" element={<SitemapRedirect />} />
 
-            {/* Public center page - must be last before catch-all to avoid conflicts */}
-            <Route path="/:slug" element={<CenterBooking />} />
-            
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              {/* Public center page - must be last before catch-all to avoid conflicts */}
+              <Route path="/:slug" element={<CenterBooking />} />
+              
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
