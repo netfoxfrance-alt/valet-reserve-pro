@@ -1,36 +1,36 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Allowed origins for the MapTiler key
+const allowedOrigins = [
+  "https://valet-reserve-pro.lovable.app",
+  "https://cleaningpage.com",
+  "https://www.cleaningpage.com",
+  "http://localhost:5173",
+  "http://localhost:8080",
+];
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Require authentication
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_ANON_KEY")!,
-    { global: { headers: { Authorization: authHeader } } }
+  // Basic origin check to reduce casual abuse
+  const origin = req.headers.get("origin") || "";
+  const referer = req.headers.get("referer") || "";
+  const isAllowed = allowedOrigins.some(
+    (o) => origin.startsWith(o) || referer.startsWith(o)
   );
 
-  const token = authHeader.replace("Bearer ", "");
-  const { data, error } = await supabase.auth.getClaims(token);
-  if (error || !data?.claims) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
+  // In production, only serve to known origins
+  // Allow in development or when origin headers are missing (server-side calls)
+  if (!isAllowed && origin !== "" && !origin.includes("localhost") && !origin.includes("lovable.app")) {
+    return new Response(JSON.stringify({ error: "Forbidden" }), {
+      status: 403,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
