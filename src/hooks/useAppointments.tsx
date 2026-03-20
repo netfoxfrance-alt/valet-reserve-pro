@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMyCenter } from './useCenter';
 import { findOrCreateClient } from '@/lib/clientService';
@@ -51,54 +52,75 @@ interface UseMyAppointmentsOptions {
   pageSize?: number;
 }
 
+// Shared query key factory
+export const APPOINTMENTS_QUERY_KEY = (centerId: string, page: number, pageSize: number) =>
+  ['appointments', centerId, page, pageSize] as const;
+
+// Fetch function extracted for React Query
+const fetchAppointments = async (centerId: string, page: number, pageSize: number) => {
+  const from = page * pageSize;
+  const to = from + pageSize - 1;
+
+  const { data, count } = await supabase
+    .from('appointments')
+    .select(`
+      *,
+      pack:packs(id, name, price, duration),
+      custom_service:custom_services(id, name, price, duration_minutes)
+    `, { count: 'exact' })
+    .eq('center_id', centerId)
+    .order('appointment_date', { ascending: true })
+    .order('appointment_time', { ascending: true })
+    .range(from, to);
+
+  return {
+    appointments: (data as Appointment[]) || [],
+    totalCount: count || 0,
+  };
+};
+
 export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
-  const { page = 0, pageSize = 1000 } = options; // Default to 1000 for backwards compatibility
+  const { page = 0, pageSize = 1000 } = options;
   const { center } = useMyCenter();
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const fetchAppointments = useCallback(async () => {
-    if (!center) {
-      setLoading(false);
-      return;
-    }
+  const queryKey = center ? APPOINTMENTS_QUERY_KEY(center.id, page, pageSize) : ['appointments-disabled'];
 
-    const from = page * pageSize;
-    const to = from + pageSize - 1;
+  const { data, isLoading: loading } = useQuery({
+    queryKey,
+    queryFn: () => fetchAppointments(center!.id, page, pageSize),
+    enabled: !!center,
+    staleTime: 2 * 60 * 1000,   // 2 min — appointments change more often
+    gcTime: 10 * 60 * 1000,
+  });
 
-    const { data, count } = await supabase
-      .from('appointments')
-      .select(`
-        *,
-        pack:packs(id, name, price, duration),
-        custom_service:custom_services(id, name, price, duration_minutes)
-      `, { count: 'exact' })
-      .eq('center_id', center.id)
-      .order('appointment_date', { ascending: true })
-      .order('appointment_time', { ascending: true })
-      .range(from, to);
+  const appointments = data?.appointments || [];
+  const totalCount = data?.totalCount || 0;
 
-    setAppointments((data as Appointment[]) || []);
-    setTotalCount(count || 0);
-    setLoading(false);
-  }, [center, page, pageSize]);
+  // Helper to optimistically update cache
+  const updateCache = useCallback((updater: (prev: Appointment[]) => Appointment[]) => {
+    if (!center) return;
+    queryClient.setQueryData(queryKey, (old: typeof data) => {
+      if (!old) return old;
+      return { ...old, appointments: updater(old.appointments) };
+    });
+  }, [center, queryClient, queryKey, data]);
 
-  useEffect(() => {
-    fetchAppointments();
-  }, [fetchAppointments]);
+  const invalidate = useCallback(() => {
+    if (!center) return;
+    queryClient.invalidateQueries({ queryKey: ['appointments', center.id] });
+  }, [center, queryClient]);
 
   const updateStatus = async (id: string, status: Appointment['status']) => {
+    const appointment = appointments.find(a => a.id === id);
+
     const { error } = await supabase
       .from('appointments')
       .update({ status })
       .eq('id', id);
 
     if (!error) {
-      const appointment = appointments.find(a => a.id === id);
-      setAppointments(appointments.map(a => 
-        a.id === id ? { ...a, status } : a
-      ));
+      updateCache(prev => prev.map(a => a.id === id ? { ...a, status } : a));
 
       // Auto-sync to Google Calendar when confirmed
       if (status === 'confirmed') {
@@ -145,7 +167,7 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
               body: { appointment_id: id },
             });
             if (!refundError) {
-              setAppointments(prev => prev.map(a => 
+              updateCache(prev => prev.map(a =>
                 a.id === id ? { ...a, status, deposit_refund_status: 'refunded' } : a
               ));
             }
@@ -172,13 +194,11 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
     custom_service_id?: string | null;
     custom_price?: number | null;
     duration_minutes?: number;
-    // For email sending
     service_name?: string;
     send_email?: boolean;
   }) => {
     if (!center) return { error: 'Aucun centre trouvé' };
-    
-    // Utiliser le service centralisé anti-doublon
+
     const { clientId } = await findOrCreateClient({
       center_id: center.id,
       name: data.client_name,
@@ -187,7 +207,7 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
       address: data.client_address,
       source: 'manual',
     });
-    
+
     const { data: newAppointment, error } = await supabase
       .from('appointments')
       .insert({
@@ -205,7 +225,7 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
         custom_service_id: data.custom_service_id || null,
         custom_price: data.custom_price || null,
         duration_minutes: data.duration_minutes || 60,
-        status: 'confirmed', // Pro-created appointments are auto-confirmed
+        status: 'confirmed',
       })
       .select(`
         *,
@@ -215,13 +235,10 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
       .single();
 
     if (!error && newAppointment) {
-      setAppointments([...appointments, newAppointment as Appointment].sort((a, b) => {
-        const dateCompare = a.appointment_date.localeCompare(b.appointment_date);
-        if (dateCompare !== 0) return dateCompare;
-        return a.appointment_time.localeCompare(b.appointment_time);
-      }));
+      // Invalidate to refetch sorted data
+      invalidate();
 
-      // Auto-sync to Google Calendar (pro-created = confirmed)
+      // Auto-sync to Google Calendar
       (async () => {
         try {
           const { data: sessionData } = await supabase.auth.getSession();
@@ -235,8 +252,8 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
           console.warn('[Google Calendar Sync] Error (non-blocking):', syncErr);
         }
       })();
-      
-      // Send confirmation email if requested (for custom services)
+
+      // Send confirmation email if requested
       if (data.send_email && data.service_name && data.custom_price !== undefined && data.client_email) {
         (async () => {
           try {
@@ -273,8 +290,8 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
 
   const deleteAppointment = async (id: string) => {
     const appointment = appointments.find(a => a.id === id);
-    
-    // Delete from Google Calendar first (before deleting from DB)
+
+    // Delete from Google Calendar first
     if (appointment?.google_calendar_event_id) {
       try {
         const { data: sessionData } = await supabase.auth.getSession();
@@ -296,7 +313,7 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
       .eq('id', id);
 
     if (!error) {
-      setAppointments(appointments.filter(a => a.id !== id));
+      updateCache(prev => prev.filter(a => a.id !== id));
     }
     return { error: error?.message || null };
   };
@@ -309,7 +326,7 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
       .update({ seen_at: new Date().toISOString() } as any)
       .eq('id', id);
     if (!error) {
-      setAppointments(prev => prev.map(a => a.id === id ? { ...a, seen_at: new Date().toISOString() } : a));
+      updateCache(prev => prev.map(a => a.id === id ? { ...a, seen_at: new Date().toISOString() } : a));
     }
   };
 
@@ -324,21 +341,21 @@ export function useMyAppointments(options: UseMyAppointmentsOptions = {}) {
       .eq('center_id', center.id)
       .is('seen_at' as any, null);
     if (!error) {
-      setAppointments(prev => prev.map(a => !a.seen_at ? { ...a, seen_at: now } : a));
+      updateCache(prev => prev.map(a => !a.seen_at ? { ...a, seen_at: now } : a));
     }
   };
 
-  return { 
-    appointments, 
-    loading, 
+  return {
+    appointments,
+    loading,
     totalCount,
     hasMore,
-    updateStatus, 
-    createAppointment, 
+    updateStatus,
+    createAppointment,
     deleteAppointment,
     markSeen,
     markAllSeen,
-    refetch: fetchAppointments 
+    refetch: invalidate,
   };
 }
 
@@ -347,7 +364,7 @@ function timeToMin(time: string): number {
   return h * 60 + (m || 0);
 }
 
-// Hook pour créer un rendez-vous (côté client)
+// Hook pour créer un rendez-vous (côté client — public)
 export function useCreateAppointment() {
   const [loading, setLoading] = useState(false);
 
@@ -397,27 +414,19 @@ export function useCreateAppointment() {
     setLoading(true);
 
     try {
-      // ── Pre-flight validation to prevent RLS violations ──
       const safeVehicleType = (data.vehicle_type && data.vehicle_type.trim()) || 'standard';
       const safeClientName = (data.client_name && data.client_name.trim()) || '';
       const safeClientEmail = (data.client_email && data.client_email.trim()) || '';
       const safeClientPhone = (data.client_phone && data.client_phone.trim()) || '';
 
       if (!safeClientName || !safeClientEmail || !safeClientPhone) {
-        console.error('[CreateAppointment] Missing required client fields:', { 
-          name: !!safeClientName, email: !!safeClientEmail, phone: !!safeClientPhone 
-        });
         return { error: 'Veuillez remplir tous les champs obligatoires (nom, email, téléphone).', appointmentId: null };
       }
 
       if (!data.center_id || !data.appointment_date || !data.appointment_time) {
-        console.error('[CreateAppointment] Missing booking fields:', { 
-          center_id: !!data.center_id, date: !!data.appointment_date, time: !!data.appointment_time 
-        });
         return { error: 'Données de réservation incomplètes. Veuillez réessayer.', appointmentId: null };
       }
 
-      // Convert duration string to minutes (e.g., "1h30" → 90, "2h" → 120)
       const parseDurationToMinutes = (duration?: string): number => {
         if (!duration) return 60;
         const hoursMatch = duration.match(/(\d+)h/);
@@ -457,20 +466,8 @@ export function useCreateAppointment() {
       }
 
       const finalPrice = data.price !== undefined ? data.price : null;
-      // Ensure pack_id is a valid reference or null
       const safePackId = data.pack_id && data.pack_id.length > 10 ? data.pack_id : null;
 
-      console.log('[CreateAppointment] Inserting:', {
-        center_id: data.center_id,
-        pack_id: safePackId,
-        vehicle_type: safeVehicleType,
-        appointment_date: data.appointment_date,
-        appointment_time: data.appointment_time,
-        duration_minutes,
-      });
-
-      // Generate ID client-side to avoid needing SELECT after INSERT
-      // (SELECT RLS policy requires owner, but public users can only INSERT)
       const generatedId = crypto.randomUUID();
 
       const { error } = await supabase
@@ -499,7 +496,7 @@ export function useCreateAppointment() {
         console.error('[CreateAppointment] DB error:', JSON.stringify(error));
       }
 
-      // Send "request received" email only when no deposit (deposit flow sends confirmation via webhook)
+      // Send email
       if (!error && data.pack_name && data.price !== undefined && !data.skip_email) {
         (async () => {
           try {
@@ -520,7 +517,7 @@ export function useCreateAppointment() {
                 appointment_date: data.appointment_date,
                 appointment_time: data.appointment_time,
                 notes: data.notes,
-                email_type: 'request_received', // New: demande en attente
+                email_type: 'request_received',
               }),
             });
 
