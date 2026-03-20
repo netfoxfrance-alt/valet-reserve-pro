@@ -40,6 +40,7 @@ const TermsOfSale = lazy(() => import("./pages/TermsOfSale"));
 const LegalNotices = lazy(() => import("./pages/LegalNotices"));
 const Presentation = lazy(() => import("./pages/Presentation"));
 const SitemapRedirect = lazy(() => import("./pages/SitemapRedirect"));
+const Detailing = lazy(() => import("./pages/Detailing"));
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -82,7 +83,7 @@ const App = () => (
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/detailing" element={<Index />} />
+              <Route path="/detailing" element={<Detailing />} />
               <Route path="/booking" element={<Booking />} />
               <Route path="/confidentialite" element={<PrivacyPolicy />} />
               <Route path="/cgu" element={<TermsOfSale />} />
