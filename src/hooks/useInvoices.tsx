@@ -36,6 +36,7 @@ export interface Invoice {
   terms: string | null;
   converted_from_quote_id: string | null;
   include_in_stats: boolean;
+  service_created: boolean;
   created_at: string;
   updated_at: string;
   items?: InvoiceItem[];

@@ -152,6 +152,9 @@ export default function DashboardInvoices() {
       ? items.map((item: any) => item.description).join(' + ')
       : `Devis ${invoice.number}`;
     
+    // Mark the quote as having a service created
+    await updateInvoice(invoice.id, { service_created: true } as any);
+    
     navigate('/dashboard/custom-services', {
       state: {
         prefillService: {
@@ -276,7 +279,7 @@ export default function DashboardInvoices() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-3">
-                      {quote.status === 'accepted' && (
+                      {quote.status === 'accepted' && !quote.service_created && (
                         <Button 
                           variant="outline" 
                           size="sm" 
