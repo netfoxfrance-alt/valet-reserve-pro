@@ -1442,10 +1442,6 @@ export type Database = {
         }
         Returns: {
           appointment_id: string
-          client_address: string
-          client_email: string
-          client_name: string
-          client_phone: string
           duration_minutes: number
           service_name: string
           service_price: number
