@@ -93,6 +93,24 @@ export function CalendarSyncSection({
           : 'Connectez votre Google Agenda pour synchroniser automatiquement vos rendez-vous.'
         }
       </p>
+
+      {!googleCalendarConnected && (
+        <div className="mb-4 sm:mb-6 border border-amber-500/30 bg-amber-500/5 rounded-xl p-4">
+          <p className="text-sm font-semibold text-amber-600 dark:text-amber-400 mb-2 flex items-center gap-2">
+            📖 À lire avant de connecter
+          </p>
+          <p className="text-sm text-muted-foreground mb-3">
+            La connexion Google Agenda étant une nouvelle fonctionnalité, Google affiche un message indiquant que la connexion n'est « pas sécurisée ». <strong className="text-foreground">Ne pas en tenir compte</strong>, il s'agit simplement de l'autorisation d'accès à votre agenda.
+          </p>
+          <p className="text-sm font-medium text-foreground mb-1.5">Pour connecter votre Google Agenda :</p>
+          <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
+            <li>Sélectionnez votre compte Google</li>
+            <li>Appuyez sur <strong className="text-foreground">« Paramètres avancés »</strong></li>
+            <li>Puis sur <strong className="text-foreground">« Accéder à obkafavlsimcqiohyigs.supabase.co (non sécurisé) »</strong></li>
+            <li>Autorisez l'accès à votre agenda</li>
+          </ol>
+        </div>
+      )}
       
       <Card variant="elevated" className="p-4 sm:p-6">
         <div className="space-y-5">
