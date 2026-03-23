@@ -94,8 +94,8 @@ export function CalendarSyncSection({
         }
       </p>
 
-      {!googleCalendarConnected && (
-      
+
+
       <Card variant="elevated" className="p-4 sm:p-6">
         <div className="space-y-5">
           {/* Google Calendar Connection */}
