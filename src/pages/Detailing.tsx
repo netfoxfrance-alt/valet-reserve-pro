@@ -323,82 +323,85 @@ export default function Detailing() {
         </div>
       </section>
 
-      {/* Section 02 — Agenda connecté — Planity card style (image 1 ref) */}
-      <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6">
+      {/* Section 02 — Agenda connecté — Planity style card layout */}
+      <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6 bg-muted/30">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-card rounded-[2.5rem] p-8 sm:p-12 lg:p-16 shadow-sm ring-1 ring-border/10">
-            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-              {/* Left: Text */}
-              <div className="opacity-0 animate-fade-in-up">
-                <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-8 leading-[1.08]">
-                  Un planning toujours à jour
-                </h2>
-                <ul className="space-y-5 mb-10">
-                  {[
-                    'Créneaux synchronisés automatiquement',
-                    'Accessible sur mobile et ordinateur',
-                    'Plus de double réservation',
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-3.5">
-                      <Check className="w-5 h-5 text-muted-foreground/40 flex-shrink-0 mt-0.5" strokeWidth={1.5} />
-                      <span className="text-muted-foreground text-base leading-relaxed">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-foreground text-base leading-relaxed mb-10">
-                  Vous gardez le contrôle, sans effort.
-                </p>
+          <div className="grid lg:grid-cols-2 gap-0 bg-card rounded-[2rem] overflow-hidden shadow-xl shadow-black/5 ring-1 ring-border/10">
+            {/* Left: Text */}
+            <div className="p-10 sm:p-12 lg:p-16 flex flex-col justify-center opacity-0 animate-fade-in-up">
+              <span className="text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-4 block">02 — Agenda connecté</span>
+              <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-8 leading-[1.08]">
+                Un planning toujours à jour
+              </h2>
+              <ul className="space-y-5 mb-10">
+                {[
+                  'Créneaux synchronisés automatiquement',
+                  'Accessible sur mobile et ordinateur',
+                  'Plus de double réservation',
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3.5">
+                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-1" strokeWidth={1.5} />
+                    <span className="text-muted-foreground text-[15px] leading-relaxed">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-foreground text-[15px] leading-relaxed mb-8">
+                Vous gardez le contrôle, sans effort.
+              </p>
+              <div>
                 <TrialButton />
               </div>
-              {/* Right: Premium lifestyle photo */}
-              <div className="opacity-0 animate-fade-in-up stagger-2 flex justify-center lg:justify-end">
-                <div className="rounded-2xl overflow-hidden max-w-[460px] w-full">
-                  <img
-                    src={agendaPremium}
-                    alt="Agenda sur smartphone tenu en main"
-                    className="w-full h-auto object-cover"
-                  />
-                </div>
-              </div>
+            </div>
+            {/* Right: Premium lifestyle photo */}
+            <div className="relative overflow-hidden min-h-[360px] lg:min-h-0 opacity-0 animate-fade-in-up stagger-2">
+              <img
+                src={agendaPremium}
+                alt="Agenda sur smartphone tenu en main"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Section 03 — Développez votre activité — Planity stats style (image 3 ref) */}
+      {/* Section 03 — Développez votre activité — Planity image 2 style */}
       <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Left: Lifestyle photo — full bleed, no rounded corners for editorial feel */}
+            {/* Left: Lifestyle photo */}
             <div className="opacity-0 animate-fade-in-up order-2 lg:order-1">
-              <img
-                src={statsPremium}
-                alt="Suivi statistiques sur ordinateur portable"
-                className="w-full h-auto object-cover"
-              />
+              <div className="rounded-3xl overflow-hidden shadow-xl shadow-black/5">
+                <img
+                  src={statsPremium}
+                  alt="Suivi statistiques sur ordinateur portable"
+                  className="w-full h-auto object-cover"
+                />
+              </div>
             </div>
             {/* Right: Text */}
             <div className="opacity-0 animate-fade-in-up stagger-2 order-1 lg:order-2">
+              <span className="text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-4 block">03 — Pilotage</span>
               <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-8 leading-[1.08]">
-                Suivi et statistiques pour mieux gérer votre activité
+                Plus qu'un outil, un levier de croissance
               </h2>
               <ul className="space-y-5 mb-10">
                 {[
                   'Toutes vos réservations et vos clients regroupés',
                   'Suivi de votre activité en temps réel',
                   'Données et statistiques accessibles simplement',
-                  'Prenez les meilleures décisions pour développer votre activité',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3.5">
-                    <Check className="w-5 h-5 text-muted-foreground/40 flex-shrink-0 mt-0.5" strokeWidth={1.5} />
-                    <span className="text-muted-foreground text-base leading-relaxed">{item}</span>
+                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-1" strokeWidth={1.5} />
+                    <span className="text-muted-foreground text-[15px] leading-relaxed">{item}</span>
                   </li>
                 ))}
               </ul>
-              <p className="text-foreground text-base leading-relaxed mb-10">
+              <p className="text-foreground text-[15px] leading-relaxed mb-8">
                 Votre logiciel detailing devient un véritable outil de pilotage et de rentabilité.
               </p>
-              <TrialButton />
+              <div>
+                <TrialButton />
+              </div>
             </div>
           </div>
         </div>
