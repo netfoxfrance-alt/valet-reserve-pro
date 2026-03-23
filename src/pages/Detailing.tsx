@@ -389,6 +389,7 @@ export default function Detailing() {
                 </div>
               </div>
             </div>
+          </div>
         </div>
       </section>
 
