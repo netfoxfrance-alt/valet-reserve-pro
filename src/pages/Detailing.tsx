@@ -52,6 +52,10 @@ import { trackEvent } from '@/lib/analytics';
 
 export default function Detailing() {
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
+  const [dashboardTab, setDashboardTab] = useState<'reservations' | 'calendar' | 'clients' | 'invoices' | 'stats' | 'mypage' | 'formules'>('stats');
+  const [showClientDetail, setShowClientDetail] = useState(false);
+  const [mockupTab, setMockupTab] = useState<'design' | 'formules' | 'elements' | 'seo'>('design');
+  const [mockupPageStyle, setMockupPageStyle] = useState<'banner' | 'minimal'>('minimal');
   const { toast } = useToast();
   const { t } = useTranslation();
 
