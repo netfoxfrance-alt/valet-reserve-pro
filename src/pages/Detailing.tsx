@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import mockupBanner from '@/assets/mockup-banner-v2.jpg';
+import sofaBanner from '@/assets/sofa-cleaning-banner.jpg';
 import heroDetailingPhoto from '@/assets/hero-detailing-pro.png';
 import gocleanLogo from '@/assets/gocleaning-logo.png';
 import mockupCarCleaning from '@/assets/mockup-car-cleaning.jpg';
@@ -122,78 +123,60 @@ export default function Detailing() {
         </div>
       </header>
 
-      {/* Hero Section - Same mockup, new text */}
-      <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            {/* Left: Text - Desktop */}
-            <div className="text-center lg:text-left hidden lg:block">
-              <h1 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-[1.08]">
-                La solution de réservation en ligne pour les professionnels du{' '}
-                <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">detailing auto</span>
-              </h1>
-
-              <div className="opacity-0 animate-fade-in-up stagger-2 max-w-lg mx-auto lg:mx-0 mb-8">
-                <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
-                  Offrez à vos clients une expérience simple, rapide et professionnelle et gérez votre activité en toute simplicité.
-                </p>
-              </div>
-
-              <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-8">
-                <TrialButton />
-              </div>
-
-              <div className="opacity-0 animate-fade-in-up stagger-4 flex items-center gap-6 justify-center lg:justify-start text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-500" />
-                  <span>{t('landing.free30days')}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-500" />
-                  <span>{t('landing.noCommitment')}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile: Text + CTA above mockup */}
-            <div className="text-center lg:hidden">
-              <h1 className="opacity-0 animate-fade-in-up text-3xl sm:text-4xl font-semibold text-foreground tracking-tight mb-4 leading-[1.08]">
+      {/* Hero Section - Planity style */}
+      <section className="relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative min-h-[70vh] lg:min-h-[80vh] flex items-center">
+            {/* Left: Text */}
+            <div className="relative z-10 w-full lg:w-1/2 py-16 sm:py-20 lg:py-28">
+              <h1 className="opacity-0 animate-fade-in-up text-[2.5rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[3.75rem] font-semibold text-foreground tracking-tight leading-[1.05] mb-8">
                 La solution de réservation en ligne pour les pros du{' '}
                 <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">detailing auto</span>
               </h1>
 
-              <div className="opacity-0 animate-fade-in-up stagger-1 max-w-sm mx-auto mb-6">
-                <p className="text-base text-muted-foreground leading-relaxed">
-                  Offrez à vos clients une expérience simple et professionnelle, et gérez votre activité en toute simplicité.
-                </p>
-              </div>
+              <ul className="opacity-0 animate-fade-in-up stagger-2 space-y-3 mb-10">
+                {[
+                  'Page de réservation dédiée à votre activité',
+                  'Prise de RDV en autonomie et sans commission',
+                  'Gestion complète de votre activité',
+                ].map((item) => (
+                  <li key={item} className="flex items-center gap-3">
+                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0" strokeWidth={1.5} />
+                    <span className="text-muted-foreground text-[15px]">{item}</span>
+                  </li>
+                ))}
+              </ul>
 
-              <TrialButton className="w-full mb-4" />
-
-              <div className="flex items-center gap-4 justify-center text-sm text-muted-foreground mb-8">
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-500" />
-                  <span>{t('landing.free30days')}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-500" />
-                  <span>{t('landing.noCommitment')}</span>
-                </div>
+              <div className="opacity-0 animate-fade-in-up stagger-3">
+                <TrialButton />
               </div>
             </div>
 
-            {/* Right: Arc circle image */}
-            <div className="flex justify-center lg:justify-end mt-8 lg:mt-0">
-              <div className="relative w-[320px] sm:w-[420px] md:w-[500px] lg:w-[560px] aspect-square">
-                <div className="w-full h-full rounded-full overflow-hidden">
-                  <img 
-                    src={heroDetailingPro} 
-                    alt="Professionnel du detailing automobile" 
-                    className="w-full h-full object-cover"
-                    width={1024}
-                    height={1024}
-                  />
-                </div>
+            {/* Right: Arc circle image — bleeds right */}
+            <div className="hidden lg:block absolute top-1/2 -translate-y-1/2 right-[-10%] xl:right-[-5%]">
+              <div 
+                className="w-[580px] xl:w-[650px] aspect-square rounded-full overflow-hidden"
+              >
+                <img 
+                  src={heroDetailingPhoto} 
+                  alt="Professionnel du detailing automobile" 
+                  className="w-full h-full object-cover object-center"
+                  width={1024}
+                  height={1024}
+                />
+              </div>
+            </div>
+
+            {/* Mobile: image below text */}
+            <div className="lg:hidden absolute top-0 right-0 w-[200px] sm:w-[280px] h-full opacity-20">
+              <div className="w-[300px] sm:w-[400px] aspect-square rounded-full overflow-hidden absolute -right-[100px] top-1/2 -translate-y-1/2">
+                <img 
+                  src={heroDetailingPhoto} 
+                  alt="Professionnel du detailing automobile" 
+                  className="w-full h-full object-cover object-center"
+                  width={1024}
+                  height={1024}
+                />
               </div>
             </div>
           </div>
