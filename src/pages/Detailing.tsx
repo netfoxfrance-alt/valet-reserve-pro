@@ -20,7 +20,7 @@ import mockupInterior from '@/assets/mockup-interior-cleaning.png';
 import mockupExterior from '@/assets/mockup-exterior-cleaning.png';
 import agendaMockup from '@/assets/detailing-agenda-mockup.jpg';
 import statsMockup from '@/assets/detailing-stats-mockup.jpg';
-import bookingPremium from '@/assets/detailing-booking-mockup.jpg';
+import bookingPremium from '@/assets/detailing-booking-mockup.png';
 import agendaPremium from '@/assets/detailing-agenda-premium.jpg';
 import statsPremium from '@/assets/detailing-stats-premium.jpg';
 
@@ -309,15 +309,13 @@ export default function Detailing() {
               </p>
               <TrialButton />
             </div>
-            {/* Right: Premium photo */}
+            {/* Right: Floating mockup */}
             <div className="opacity-0 animate-fade-in-up stagger-2 flex justify-center lg:justify-end">
-              <div className="rounded-3xl overflow-hidden shadow-2xl shadow-black/10 max-w-[500px] w-full">
-                <img
-                  src={bookingPremium}
-                  alt="Application de réservation detailing sur smartphone"
-                  className="w-full h-auto object-cover"
-                />
-              </div>
+              <img
+                src={bookingPremium}
+                alt="Application de réservation detailing sur smartphone"
+                className="max-w-[320px] sm:max-w-[360px] w-full h-auto drop-shadow-2xl"
+              />
             </div>
           </div>
         </div>
