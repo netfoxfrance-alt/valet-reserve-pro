@@ -81,7 +81,7 @@ serve(async (req) => {
 
     // Store refresh token securely in centers table via service_role
     const supabase = createClient(
-      supabaseUrl,
+      Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
       { auth: { persistSession: false } }
     );
