@@ -182,105 +182,20 @@ export default function Detailing() {
               </div>
             </div>
 
-            {/* Right: Same Two Mockup Cards */}
+            {/* Right: Arc circle image */}
             <div className="flex justify-center lg:justify-end mt-8 lg:mt-0">
-              <div className="relative w-[340px] sm:w-[440px] md:w-[560px] lg:w-[620px] h-[480px] sm:h-[500px] md:h-[520px]">
-                {/* Dashboard Mockup Card */}
-                <div className="absolute top-0 right-0 lg:top-2 lg:right-0 z-10">
-                  <div className="bg-card rounded-[2rem] overflow-hidden w-[220px] sm:w-[260px] lg:w-[300px] shadow-2xl shadow-black/15 ring-1 ring-border/40" style={{ transform: 'rotate(3deg)' }}>
-                    <div className="px-4 lg:px-5 pt-4 pb-3">
-                      <h3 className="text-sm lg:text-base font-bold text-foreground leading-tight mb-2">GOCLEANING</h3>
-                      <div className="flex items-center gap-2 bg-secondary/40 rounded-xl px-2.5 py-1.5">
-                        <Share2 className="w-3 h-3 text-muted-foreground" />
-                        <span className="text-[9px] lg:text-[10px] text-muted-foreground font-mono">/gocleaning</span>
-                        <div className="ml-auto w-4 h-4 lg:w-5 lg:h-5 rounded-md bg-background/80 flex items-center justify-center">
-                          <svg className="w-2.5 h-2.5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <rect x="9" y="9" width="13" height="13" rx="2" />
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="px-4 lg:px-5 pb-5 pt-2">
-                      <div className="grid grid-cols-3 gap-x-3 gap-y-4 lg:gap-x-4 lg:gap-y-5">
-                        {dashboardIcons.map((item) => (
-                          <div key={item.label} className="flex flex-col items-center gap-1.5">
-                            <img src={item.icon} alt={item.label} className="w-10 h-10 sm:w-11 sm:h-11 lg:w-14 lg:h-14 object-contain" />
-                            <span className="text-[8px] sm:text-[9px] lg:text-[10px] font-medium text-muted-foreground text-center leading-tight truncate max-w-[70px]">{item.label}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Main Page Card */}
-                <div className="absolute top-10 sm:top-8 left-0 lg:top-6 lg:left-4 z-20">
-                  <div className="bg-card rounded-[2rem] overflow-hidden w-[220px] sm:w-[250px] lg:w-[280px] shadow-2xl shadow-black/20 ring-1 ring-border/40" style={{ transform: 'rotate(-3deg)' }}>
-                    <div className="flex items-center justify-between px-3 lg:px-4 py-2.5">
-                      <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-xl overflow-hidden ring-1 ring-border/30">
-                        <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
-                      </div>
-                      <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-zinc-700 flex items-center justify-center">
-                        <Phone className="w-3.5 h-3.5 text-white" />
-                      </div>
-                    </div>
-                    <div className="border-t border-border/40" />
-                    <div className="px-3.5 lg:px-4 pb-3 pt-4 text-center">
-                      <h3 className="text-sm lg:text-base font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
-                      <p className="text-[8px] lg:text-[9px] text-muted-foreground mb-2">Expert du nettoyage automobile depuis 2018</p>
-                      <div className="flex justify-center items-center gap-2 mb-2">
-                        <span className="inline-flex items-center gap-1 text-[9px] border border-emerald-200 text-emerald-600 px-2 py-0.5 rounded-full font-semibold">
-                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                          {t('mockup.open')}
-                        </span>
-                        <span className="inline-flex items-center gap-0.5 text-[8px] text-muted-foreground">
-                          <Star className="w-2.5 h-2.5 text-amber-400 fill-amber-400" />
-                          <span className="font-semibold text-foreground/70">4.9</span>
-                        </span>
-                      </div>
-                      <div className="flex justify-center gap-2 mb-2.5">
-                        <div className="w-8 h-8 bg-secondary/30 rounded-full flex items-center justify-center border border-border/40">
-                          <Instagram className="w-3.5 h-3.5 text-foreground/70" />
-                        </div>
-                        <div className="w-8 h-8 bg-secondary/30 rounded-full flex items-center justify-center border border-border/40">
-                          <svg className="w-3.5 h-3.5 text-foreground/70" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.73a8.19 8.19 0 0 0 4.77 1.53V6.81a4.82 4.82 0 0 1-1-.12z"/></svg>
-                        </div>
-                      </div>
-                      <div className="mb-2.5">
-                        <p className="text-[11px] lg:text-xs font-bold text-foreground text-left mb-2">Nos formules</p>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="rounded-2xl overflow-hidden ring-1 ring-border/30">
-                            <div className="relative aspect-[4/3]">
-                              <img src={mockupExterior} alt="Lavage complet" className="w-full h-full object-cover" />
-                            </div>
-                            <div className="p-2 bg-card">
-                              <p className="text-[9px] lg:text-[10px] font-bold text-foreground leading-tight">Lavage complet</p>
-                              <div className="flex items-center justify-between mt-0.5">
-                                <span className="text-[10px] lg:text-[11px] font-bold text-emerald-600">dès 65€</span>
-                                <span className="text-[7px] text-muted-foreground flex items-center gap-0.5"><Clock className="w-2 h-2" />1h</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="rounded-2xl overflow-hidden ring-1 ring-border/30">
-                            <div className="relative aspect-[4/3]">
-                              <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-full object-cover" />
-                            </div>
-                            <div className="p-2 bg-card">
-                              <p className="text-[9px] lg:text-[10px] font-bold text-foreground leading-tight">Nettoyage intérieur</p>
-                              <div className="flex items-center justify-between mt-0.5">
-                                <span className="text-[10px] lg:text-[11px] font-bold text-emerald-600">dès 50€</span>
-                                <span className="text-[7px] text-muted-foreground flex items-center gap-0.5"><Clock className="w-2 h-2" />1h</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <button className="w-full bg-emerald-500 text-white rounded-xl py-2 text-[10px] font-semibold">Réserver</button>
-                    </div>
-                  </div>
+              <div className="relative w-[320px] sm:w-[420px] md:w-[500px] lg:w-[560px] aspect-square">
+                <div className="w-full h-full rounded-full overflow-hidden">
+                  <img 
+                    src={heroDetailingPro} 
+                    alt="Professionnel du detailing automobile" 
+                    className="w-full h-full object-cover"
+                    width={1024}
+                    height={1024}
+                  />
                 </div>
               </div>
+            </div>
             </div>
           </div>
         </div>
