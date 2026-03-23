@@ -105,16 +105,16 @@ export default function Detailing() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="w-full py-4 px-4 sm:px-6 border-b border-border/50 sticky top-0 bg-background/95 backdrop-blur-sm z-50">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
+      {/* Header - Dark integrated like Planity */}
+      <header className="w-full py-4 px-6 sm:px-8 border-b border-white/10 sticky top-0 bg-[#111111] z-50">
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center">
             <Logo size="lg" />
           </Link>
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-3">
             <LanguageSwitcher variant="ghost" />
             <Link to="/auth">
-              <Button size="sm" className="text-xs sm:text-sm px-3 sm:px-4">
+              <Button size="sm" variant="outline" className="text-xs sm:text-sm px-4 py-2 border-white/20 text-white hover:bg-white/10 bg-transparent rounded-lg">
                 {t('landing.login')}
               </Button>
             </Link>
@@ -122,45 +122,66 @@ export default function Detailing() {
         </div>
       </header>
 
-      {/* Hero Section - Planity-style dark */}
-      <section className="relative bg-foreground overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-0 items-center min-h-[85vh]">
-            {/* Left: Text */}
-            <div className="pt-16 pb-12 lg:py-24 lg:pr-12 z-10">
-              <h1 className="opacity-0 animate-fade-in-up text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-semibold text-background tracking-tight leading-[1.08] mb-8">
-                Le logiciel de réservation pour les professionnels du detailing
-              </h1>
+      {/* Hero - Planity exact style: dark bg, text left, huge circular photo right bleeding out */}
+      <section className="relative bg-[#111111] overflow-hidden">
+        <div className="relative max-w-[1400px] mx-auto px-6 sm:px-8 min-h-[calc(100vh-64px)] flex items-center">
+          {/* Left: Text content */}
+          <div className="relative z-10 w-full lg:w-[50%] py-20 lg:py-0">
+            <h1 className="opacity-0 animate-fade-in-up text-[2rem] sm:text-[2.5rem] md:text-[3rem] lg:text-[3.5rem] font-semibold text-white tracking-tight leading-[1.1] mb-8 max-w-[520px]">
+              Le logiciel de réservation pour les professionnels du detailing
+            </h1>
 
-              <ul className="opacity-0 animate-fade-in-up stagger-2 space-y-4 mb-10">
-                {[
-                  'Page de réservation dédiée à votre activité',
-                  'Prise de RDV en autonomie et sans commission',
-                  'Gestion complète de votre planning et vos clients',
-                ].map((item) => (
-                  <li key={item} className="flex items-center gap-3">
-                    <Check className="w-4 h-4 text-background/50 flex-shrink-0" strokeWidth={1.5} />
-                    <span className="text-background/60 text-[15px] leading-relaxed">{item}</span>
-                  </li>
-                ))}
-              </ul>
+            <ul className="opacity-0 animate-fade-in-up stagger-2 space-y-3.5 mb-10">
+              {[
+                'Page de réservation dédiée à votre activité',
+                'Prise de RDV en autonomie et sans commission',
+                'Gestion complète de votre planning et vos clients',
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-3">
+                  <Check className="w-[18px] h-[18px] text-white/35 flex-shrink-0" strokeWidth={1.5} />
+                  <span className="text-white/50 text-[15px] sm:text-base leading-relaxed">{item}</span>
+                </li>
+              ))}
+            </ul>
 
-              <div className="opacity-0 animate-fade-in-up stagger-3">
-                <TrialButton />
-              </div>
+            <div className="opacity-0 animate-fade-in-up stagger-3">
+              <Button
+                size="lg"
+                className="text-sm px-6 py-3 h-auto rounded-lg bg-white text-[#111111] hover:bg-white/90 font-medium shadow-none"
+                onClick={handleStartTrial}
+                disabled={isCheckoutLoading}
+              >
+                {isCheckoutLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    {t('mockup.loading')}
+                  </>
+                ) : (
+                  'Découvrir la solution'
+                )}
+              </Button>
             </div>
+          </div>
 
-            {/* Right: Circular photo */}
-            <div className="relative flex justify-center lg:justify-end items-center pb-12 lg:pb-0">
-              <div className="opacity-0 animate-fade-in-up stagger-2 relative w-[320px] h-[320px] sm:w-[420px] sm:h-[420px] lg:w-[520px] lg:h-[520px] xl:w-[580px] xl:h-[580px]">
-                <div className="absolute inset-0 rounded-full overflow-hidden ring-1 ring-background/10">
-                  <img 
-                    src={detailingHero} 
-                    alt="Professionnel du detailing utilisant CleaningPage" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
+          {/* Right: Large circular photo - positioned like Planity, bleeding to the right */}
+          <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-[10%] xl:translate-x-[5%]">
+            <div className="opacity-0 animate-fade-in-up stagger-2 w-[550px] h-[550px] xl:w-[650px] xl:h-[650px] 2xl:w-[720px] 2xl:h-[720px] rounded-full overflow-hidden">
+              <img 
+                src={detailingHero} 
+                alt="Professionnel du detailing utilisant CleaningPage" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+
+          {/* Mobile: photo below text */}
+          <div className="lg:hidden absolute bottom-0 right-0 translate-x-[20%] translate-y-[10%]">
+            <div className="opacity-0 animate-fade-in-up stagger-2 w-[300px] h-[300px] sm:w-[380px] sm:h-[380px] rounded-full overflow-hidden">
+              <img 
+                src={detailingHero} 
+                alt="Professionnel du detailing utilisant CleaningPage" 
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         </div>
