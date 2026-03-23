@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, Check, ExternalLink, Unplug, Loader2, Mail } from 'lucide-react';
+import { Calendar, Check, ExternalLink, Unplug, Loader2, Mail, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useSearchParams } from 'react-router-dom';
