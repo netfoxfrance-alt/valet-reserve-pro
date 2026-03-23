@@ -69,10 +69,27 @@ function isLikelyBot(request) {
   return false;
 }
 
+const SUPABASE_CALLBACK_URL = 'https://obkafavlsimcqiohyigs.supabase.co/functions/v1/google-calendar-callback';
+
 export default {
   async fetch(request) {
     const url = new URL(request.url);
     const pathname = url.pathname;
+
+    // Proxy Google OAuth callback to Supabase edge function
+    if (pathname === '/api/google/callback') {
+      const targetUrl = `${SUPABASE_CALLBACK_URL}${url.search}`;
+      const res = await fetch(targetUrl, {
+        method: request.method,
+        headers: request.headers,
+        redirect: 'manual',
+      });
+      // Forward the redirect response from Supabase
+      return new Response(res.body, {
+        status: res.status,
+        headers: res.headers,
+      });
+    }
 
     // Never prerender static assets, dashboard, auth, etc.
     if (BYPASS_PATTERNS.some(p => pathname.includes(p))) return fetch(request);

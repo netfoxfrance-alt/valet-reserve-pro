@@ -100,13 +100,13 @@ export function CalendarSyncSection({
             📖 À lire avant de connecter
           </p>
           <p className="text-sm text-muted-foreground mb-3">
-            La connexion Google Agenda étant une nouvelle fonctionnalité, Google affiche un message indiquant que la connexion n'est « pas sécurisée ». <strong className="text-foreground">Ne pas en tenir compte</strong>, il s'agit simplement de l'autorisation d'accès à votre agenda.
+            La connexion Google Agenda étant une nouvelle fonctionnalité, Google peut afficher un message indiquant que l'application n'est pas encore vérifiée. <strong className="text-foreground">Ne pas en tenir compte</strong>, il s'agit simplement de l'autorisation d'accès à votre agenda.
           </p>
           <p className="text-sm font-medium text-foreground mb-1.5">Pour connecter votre Google Agenda :</p>
           <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
             <li>Sélectionnez votre compte Google</li>
-            <li>Appuyez sur <strong className="text-foreground">« Paramètres avancés »</strong></li>
-            <li>Puis sur <strong className="text-foreground">« Accéder à obkafavlsimcqiohyigs.supabase.co (non sécurisé) »</strong></li>
+            <li>Si un avertissement apparaît, appuyez sur <strong className="text-foreground">« Paramètres avancés »</strong></li>
+            <li>Puis sur <strong className="text-foreground">« Accéder à CleaningPage (non sécurisé) »</strong></li>
             <li>Autorisez l'accès à votre agenda</li>
           </ol>
         </div>
