@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import mockupBanner from '@/assets/mockup-banner-v2.jpg';
-import sofaBanner from '@/assets/sofa-cleaning-banner.jpg';
+import heroDetailingPhoto from '@/assets/hero-detailing-pro.png';
 import gocleanLogo from '@/assets/gocleaning-logo.png';
 import mockupCarCleaning from '@/assets/mockup-car-cleaning.jpg';
 import mockupLogoClean from '@/assets/mockup-logo-cleaning.png';
