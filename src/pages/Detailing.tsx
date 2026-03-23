@@ -20,6 +20,9 @@ import mockupInterior from '@/assets/mockup-interior-cleaning.png';
 import mockupExterior from '@/assets/mockup-exterior-cleaning.png';
 import agendaMockup from '@/assets/detailing-agenda-mockup.jpg';
 import statsMockup from '@/assets/detailing-stats-mockup.jpg';
+import bookingPremium from '@/assets/detailing-booking-mockup.jpg';
+import agendaPremium from '@/assets/detailing-agenda-premium.jpg';
+import statsPremium from '@/assets/detailing-stats-premium.jpg';
 
 import iconReservations from '@/assets/icons/icon-reservations.png';
 import iconAgenda from '@/assets/icons/icon-agenda.png';
