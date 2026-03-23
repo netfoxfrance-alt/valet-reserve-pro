@@ -480,8 +480,12 @@ export default function DashboardCalendar() {
 
   // Handle create appointment
   const handleCreateAppointment = async () => {
-    if (!createForm.client_name || !createForm.client_phone || !createForm.appointment_date || !createForm.appointment_time) {
+    if (!createForm.client_name || !createForm.appointment_date || !createForm.appointment_time) {
       toast.error('Veuillez remplir les champs obligatoires');
+      return;
+    }
+    if (!selectedClientId && !createForm.client_phone) {
+      toast.error('Veuillez remplir le numéro de téléphone');
       return;
     }
 
