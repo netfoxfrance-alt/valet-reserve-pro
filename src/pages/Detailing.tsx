@@ -22,6 +22,7 @@ import agendaMockup from '@/assets/detailing-agenda-mockup.jpg';
 import statsMockup from '@/assets/detailing-stats-mockup.jpg';
 import bookingPremium from '@/assets/detailing-booking-mockup.png';
 import agendaPremium from '@/assets/detailing-agenda-premium.jpg';
+import detailingHero from '@/assets/detailing-hero.png';
 import statsPremium from '@/assets/detailing-stats-premium.jpg';
 
 import iconReservations from '@/assets/icons/icon-reservations.png';
