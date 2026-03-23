@@ -95,22 +95,6 @@ export function CalendarSyncSection({
       </p>
 
       {!googleCalendarConnected && (
-        <div className="mb-4 sm:mb-6 border border-amber-500/30 bg-amber-500/5 rounded-xl p-4">
-          <p className="text-sm font-semibold text-amber-600 dark:text-amber-400 mb-2 flex items-center gap-2">
-            📖 À lire avant de connecter
-          </p>
-          <p className="text-sm text-muted-foreground mb-3">
-            La connexion Google Agenda étant une nouvelle fonctionnalité, Google peut afficher un message indiquant que l'application n'est pas encore vérifiée. <strong className="text-foreground">Ne pas en tenir compte</strong>, il s'agit simplement de l'autorisation d'accès à votre agenda.
-          </p>
-          <p className="text-sm font-medium text-foreground mb-1.5">Pour connecter votre Google Agenda :</p>
-          <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
-            <li>Sélectionnez votre compte Google</li>
-            <li>Si un avertissement apparaît, appuyez sur <strong className="text-foreground">« Paramètres avancés »</strong></li>
-            <li>Puis sur <strong className="text-foreground">« Accéder à CleaningPage (non sécurisé) »</strong></li>
-            <li>Autorisez l'accès à votre agenda</li>
-          </ol>
-        </div>
-      )}
       
       <Card variant="elevated" className="p-4 sm:p-6">
         <div className="space-y-5">
@@ -184,14 +168,27 @@ export function CalendarSyncSection({
 
           {/* Info box */}
           {!googleCalendarConnected && (
-            <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 rounded-lg p-3">
-              <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                <span className="text-primary text-[10px] font-medium">💡</span>
+            <details className="group bg-muted/50 rounded-xl p-3">
+              <summary className="flex items-center gap-2.5 text-xs cursor-pointer select-none text-muted-foreground hover:text-foreground transition-colors list-none [&::-webkit-details-marker]:hidden">
+                <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <span className="text-primary text-[10px] font-bold">i</span>
+                </div>
+                <span className="font-medium">À lire avant de connecter</span>
+                <ChevronRight className="w-3.5 h-3.5 ml-auto transition-transform duration-200 group-open:rotate-90 text-muted-foreground/50" />
+              </summary>
+              <div className="mt-3 pl-[30px] space-y-2.5 text-xs text-muted-foreground">
+                <p>
+                  Google peut afficher un avertissement indiquant que l'application n'est pas vérifiée. <strong className="text-foreground">Ignorez-le</strong>, il s'agit simplement de l'autorisation d'accès à votre agenda.
+                </p>
+                <p className="font-medium text-foreground text-[11px] tracking-wide uppercase">Étapes de connexion</p>
+                <ol className="space-y-1.5 list-decimal list-inside leading-relaxed">
+                  <li>Sélectionnez votre compte Google</li>
+                  <li>Appuyez sur <strong className="text-foreground">« Paramètres avancés »</strong></li>
+                  <li>Puis sur <strong className="text-foreground">« Accéder à CleaningPage »</strong></li>
+                  <li>Autorisez l'accès à votre agenda</li>
+                </ol>
               </div>
-              <p>
-                En attendant, vous pouvez utiliser le bouton 📅 à côté de chaque rendez-vous pour l'ajouter manuellement.
-              </p>
-            </div>
+            </details>
           )}
 
         </div>
