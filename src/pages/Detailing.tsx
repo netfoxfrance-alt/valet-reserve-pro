@@ -309,13 +309,71 @@ export default function Detailing() {
               </p>
               <TrialButton />
             </div>
-            {/* Right: Floating mockup */}
+            {/* Right: Coded mockup card like hero */}
             <div className="opacity-0 animate-fade-in-up stagger-2 flex justify-center lg:justify-end">
-              <img
-                src={bookingPremium}
-                alt="Application de réservation detailing sur smartphone"
-                className="max-w-[320px] sm:max-w-[360px] w-full h-auto drop-shadow-2xl"
-              />
+              <div className="bg-card rounded-[2rem] overflow-hidden w-[260px] sm:w-[280px] lg:w-[300px] shadow-2xl shadow-black/20 ring-1 ring-border/40" style={{ transform: 'rotate(-2deg)' }}>
+                <div className="flex items-center justify-between px-3.5 lg:px-4 py-2.5">
+                  <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-xl overflow-hidden ring-1 ring-border/30">
+                    <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-zinc-700 flex items-center justify-center">
+                    <Phone className="w-3.5 h-3.5 text-white" />
+                  </div>
+                </div>
+                <div className="border-t border-border/40" />
+                <div className="px-3.5 lg:px-4 pb-4 pt-4 text-center">
+                  <h3 className="text-sm lg:text-base font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
+                  <p className="text-[8px] lg:text-[9px] text-muted-foreground mb-2">Expert du nettoyage automobile depuis 2018</p>
+                  <div className="flex justify-center items-center gap-2 mb-2">
+                    <span className="inline-flex items-center gap-1 text-[9px] border border-emerald-200 text-emerald-600 px-2 py-0.5 rounded-full font-semibold">
+                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                      {t('mockup.open')}
+                    </span>
+                    <span className="inline-flex items-center gap-0.5 text-[8px] text-muted-foreground">
+                      <Star className="w-2.5 h-2.5 text-amber-400 fill-amber-400" />
+                      <span className="font-semibold text-foreground/70">4.9</span>
+                    </span>
+                  </div>
+                  <div className="flex justify-center gap-2 mb-2.5">
+                    <div className="w-8 h-8 bg-secondary/30 rounded-full flex items-center justify-center border border-border/40">
+                      <Instagram className="w-3.5 h-3.5 text-foreground/70" />
+                    </div>
+                    <div className="w-8 h-8 bg-secondary/30 rounded-full flex items-center justify-center border border-border/40">
+                      <svg className="w-3.5 h-3.5 text-foreground/70" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.73a8.19 8.19 0 0 0 4.77 1.53V6.81a4.82 4.82 0 0 1-1-.12z"/></svg>
+                    </div>
+                  </div>
+                  <div className="mb-3">
+                    <p className="text-[11px] lg:text-xs font-bold text-foreground text-left mb-2">Nos formules</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="rounded-2xl overflow-hidden ring-1 ring-border/30">
+                        <div className="relative aspect-[4/3]">
+                          <img src={mockupExterior} alt="Lavage complet" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="p-2 bg-card">
+                          <p className="text-[9px] lg:text-[10px] font-bold text-foreground leading-tight">Lavage complet</p>
+                          <div className="flex items-center justify-between mt-0.5">
+                            <span className="text-[10px] lg:text-[11px] font-bold text-emerald-600">dès 65€</span>
+                            <span className="text-[7px] text-muted-foreground flex items-center gap-0.5"><Clock className="w-2 h-2" />1h</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="rounded-2xl overflow-hidden ring-1 ring-border/30">
+                        <div className="relative aspect-[4/3]">
+                          <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="p-2 bg-card">
+                          <p className="text-[9px] lg:text-[10px] font-bold text-foreground leading-tight">Nettoyage intérieur</p>
+                          <div className="flex items-center justify-between mt-0.5">
+                            <span className="text-[10px] lg:text-[11px] font-bold text-emerald-600">dès 50€</span>
+                            <span className="text-[7px] text-muted-foreground flex items-center gap-0.5"><Clock className="w-2 h-2" />1h</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button className="w-full bg-emerald-500 text-white rounded-xl py-2 text-[10px] font-semibold">Réserver</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
