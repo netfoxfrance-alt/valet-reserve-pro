@@ -18,6 +18,7 @@ import mockupCarCleaning from '@/assets/mockup-car-cleaning.jpg';
 import mockupLogoClean from '@/assets/mockup-logo-cleaning.png';
 import mockupInterior from '@/assets/mockup-interior-cleaning.png';
 import mockupExterior from '@/assets/mockup-exterior-cleaning.png';
+import heroDetailingPro from '@/assets/hero-detailing-pro.jpg';
 import agendaMockup from '@/assets/detailing-agenda-mockup.jpg';
 import statsMockup from '@/assets/detailing-stats-mockup.jpg';
 import bookingPremium from '@/assets/detailing-booking-mockup.png';
