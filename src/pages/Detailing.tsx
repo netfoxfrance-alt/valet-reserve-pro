@@ -22,7 +22,6 @@ import agendaMockup from '@/assets/detailing-agenda-mockup.jpg';
 import statsMockup from '@/assets/detailing-stats-mockup.jpg';
 import bookingPremium from '@/assets/detailing-booking-mockup.png';
 import agendaPremium from '@/assets/detailing-agenda-premium.jpg';
-import detailingHero from '@/assets/detailing-hero.png';
 import statsPremium from '@/assets/detailing-stats-premium.jpg';
 
 import iconReservations from '@/assets/icons/icon-reservations.png';
@@ -105,16 +104,16 @@ export default function Detailing() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header - Dark integrated like Planity */}
-      <header className="w-full py-4 px-6 sm:px-8 border-b border-white/10 sticky top-0 bg-[#111111] z-50">
-        <div className="max-w-[1400px] mx-auto flex items-center justify-between">
+      {/* Header */}
+      <header className="w-full py-4 px-4 sm:px-6 border-b border-border/50 sticky top-0 bg-background/95 backdrop-blur-sm z-50">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center">
             <Logo size="lg" />
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <LanguageSwitcher variant="ghost" />
             <Link to="/auth">
-              <Button size="sm" variant="outline" className="text-xs sm:text-sm px-4 py-2 border-white/20 text-white hover:bg-white/10 bg-transparent rounded-lg">
+              <Button size="sm" className="text-xs sm:text-sm px-3 sm:px-4">
                 {t('landing.login')}
               </Button>
             </Link>
@@ -122,66 +121,165 @@ export default function Detailing() {
         </div>
       </header>
 
-      {/* Hero - Planity exact style: dark bg, text left, huge circular photo right bleeding out */}
-      <section className="relative bg-[#111111] overflow-hidden">
-        <div className="relative max-w-[1400px] mx-auto px-6 sm:px-8 min-h-[calc(100vh-64px)] flex items-center">
-          {/* Left: Text content */}
-          <div className="relative z-10 w-full lg:w-[50%] py-20 lg:py-0">
-            <h1 className="opacity-0 animate-fade-in-up text-[2rem] sm:text-[2.5rem] md:text-[3rem] lg:text-[3.5rem] font-semibold text-white tracking-tight leading-[1.1] mb-8 max-w-[520px]">
-              Le logiciel de réservation pour les professionnels du detailing
-            </h1>
+      {/* Hero Section - Same mockup, new text */}
+      <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Left: Text - Desktop */}
+            <div className="text-center lg:text-left hidden lg:block">
+              <h1 className="opacity-0 animate-fade-in-up stagger-1 text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-semibold text-foreground tracking-tight mb-4 sm:mb-6 leading-[1.08]">
+                La solution de réservation en ligne pour les professionnels du{' '}
+                <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">detailing auto</span>
+              </h1>
 
-            <ul className="opacity-0 animate-fade-in-up stagger-2 space-y-3.5 mb-10">
-              {[
-                'Page de réservation dédiée à votre activité',
-                'Prise de RDV en autonomie et sans commission',
-                'Gestion complète de votre planning et vos clients',
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-3">
-                  <Check className="w-[18px] h-[18px] text-white/35 flex-shrink-0" strokeWidth={1.5} />
-                  <span className="text-white/50 text-[15px] sm:text-base leading-relaxed">{item}</span>
-                </li>
-              ))}
-            </ul>
+              <div className="opacity-0 animate-fade-in-up stagger-2 max-w-lg mx-auto lg:mx-0 mb-8">
+                <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
+                  Offrez à vos clients une expérience simple, rapide et professionnelle et gérez votre activité en toute simplicité.
+                </p>
+              </div>
 
-            <div className="opacity-0 animate-fade-in-up stagger-3">
-              <Button
-                size="lg"
-                className="text-sm px-6 py-3 h-auto rounded-lg bg-white text-[#111111] hover:bg-white/90 font-medium shadow-none"
-                onClick={handleStartTrial}
-                disabled={isCheckoutLoading}
-              >
-                {isCheckoutLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    {t('mockup.loading')}
-                  </>
-                ) : (
-                  'Découvrir la solution'
-                )}
-              </Button>
+              <div className="opacity-0 animate-fade-in-up stagger-3 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-8">
+                <TrialButton />
+              </div>
+
+              <div className="opacity-0 animate-fade-in-up stagger-4 flex items-center gap-6 justify-center lg:justify-start text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span>{t('landing.free30days')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span>{t('landing.noCommitment')}</span>
+                </div>
+              </div>
             </div>
-          </div>
 
-          {/* Right: Large circular photo - positioned like Planity, bleeding to the right */}
-          <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-[10%] xl:translate-x-[5%]">
-            <div className="opacity-0 animate-fade-in-up stagger-2 w-[550px] h-[550px] xl:w-[650px] xl:h-[650px] 2xl:w-[720px] 2xl:h-[720px] rounded-full overflow-hidden">
-              <img 
-                src={detailingHero} 
-                alt="Professionnel du detailing utilisant CleaningPage" 
-                className="w-full h-full object-cover"
-              />
+            {/* Mobile: Text + CTA above mockup */}
+            <div className="text-center lg:hidden">
+              <h1 className="opacity-0 animate-fade-in-up text-3xl sm:text-4xl font-semibold text-foreground tracking-tight mb-4 leading-[1.08]">
+                La solution de réservation en ligne pour les pros du{' '}
+                <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">detailing auto</span>
+              </h1>
+
+              <div className="opacity-0 animate-fade-in-up stagger-1 max-w-sm mx-auto mb-6">
+                <p className="text-base text-muted-foreground leading-relaxed">
+                  Offrez à vos clients une expérience simple et professionnelle, et gérez votre activité en toute simplicité.
+                </p>
+              </div>
+
+              <TrialButton className="w-full mb-4" />
+
+              <div className="flex items-center gap-4 justify-center text-sm text-muted-foreground mb-8">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span>{t('landing.free30days')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span>{t('landing.noCommitment')}</span>
+                </div>
+              </div>
             </div>
-          </div>
 
-          {/* Mobile: photo below text */}
-          <div className="lg:hidden absolute bottom-0 right-0 translate-x-[20%] translate-y-[10%]">
-            <div className="opacity-0 animate-fade-in-up stagger-2 w-[300px] h-[300px] sm:w-[380px] sm:h-[380px] rounded-full overflow-hidden">
-              <img 
-                src={detailingHero} 
-                alt="Professionnel du detailing utilisant CleaningPage" 
-                className="w-full h-full object-cover"
-              />
+            {/* Right: Same Two Mockup Cards */}
+            <div className="flex justify-center lg:justify-end mt-8 lg:mt-0">
+              <div className="relative w-[340px] sm:w-[440px] md:w-[560px] lg:w-[620px] h-[480px] sm:h-[500px] md:h-[520px]">
+                {/* Dashboard Mockup Card */}
+                <div className="absolute top-0 right-0 lg:top-2 lg:right-0 z-10">
+                  <div className="bg-card rounded-[2rem] overflow-hidden w-[220px] sm:w-[260px] lg:w-[300px] shadow-2xl shadow-black/15 ring-1 ring-border/40" style={{ transform: 'rotate(3deg)' }}>
+                    <div className="px-4 lg:px-5 pt-4 pb-3">
+                      <h3 className="text-sm lg:text-base font-bold text-foreground leading-tight mb-2">GOCLEANING</h3>
+                      <div className="flex items-center gap-2 bg-secondary/40 rounded-xl px-2.5 py-1.5">
+                        <Share2 className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-[9px] lg:text-[10px] text-muted-foreground font-mono">/gocleaning</span>
+                        <div className="ml-auto w-4 h-4 lg:w-5 lg:h-5 rounded-md bg-background/80 flex items-center justify-center">
+                          <svg className="w-2.5 h-2.5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <rect x="9" y="9" width="13" height="13" rx="2" />
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="px-4 lg:px-5 pb-5 pt-2">
+                      <div className="grid grid-cols-3 gap-x-3 gap-y-4 lg:gap-x-4 lg:gap-y-5">
+                        {dashboardIcons.map((item) => (
+                          <div key={item.label} className="flex flex-col items-center gap-1.5">
+                            <img src={item.icon} alt={item.label} className="w-10 h-10 sm:w-11 sm:h-11 lg:w-14 lg:h-14 object-contain" />
+                            <span className="text-[8px] sm:text-[9px] lg:text-[10px] font-medium text-muted-foreground text-center leading-tight truncate max-w-[70px]">{item.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Main Page Card */}
+                <div className="absolute top-10 sm:top-8 left-0 lg:top-6 lg:left-4 z-20">
+                  <div className="bg-card rounded-[2rem] overflow-hidden w-[220px] sm:w-[250px] lg:w-[280px] shadow-2xl shadow-black/20 ring-1 ring-border/40" style={{ transform: 'rotate(-3deg)' }}>
+                    <div className="flex items-center justify-between px-3 lg:px-4 py-2.5">
+                      <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-xl overflow-hidden ring-1 ring-border/30">
+                        <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-zinc-700 flex items-center justify-center">
+                        <Phone className="w-3.5 h-3.5 text-white" />
+                      </div>
+                    </div>
+                    <div className="border-t border-border/40" />
+                    <div className="px-3.5 lg:px-4 pb-3 pt-4 text-center">
+                      <h3 className="text-sm lg:text-base font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
+                      <p className="text-[8px] lg:text-[9px] text-muted-foreground mb-2">Expert du nettoyage automobile depuis 2018</p>
+                      <div className="flex justify-center items-center gap-2 mb-2">
+                        <span className="inline-flex items-center gap-1 text-[9px] border border-emerald-200 text-emerald-600 px-2 py-0.5 rounded-full font-semibold">
+                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                          {t('mockup.open')}
+                        </span>
+                        <span className="inline-flex items-center gap-0.5 text-[8px] text-muted-foreground">
+                          <Star className="w-2.5 h-2.5 text-amber-400 fill-amber-400" />
+                          <span className="font-semibold text-foreground/70">4.9</span>
+                        </span>
+                      </div>
+                      <div className="flex justify-center gap-2 mb-2.5">
+                        <div className="w-8 h-8 bg-secondary/30 rounded-full flex items-center justify-center border border-border/40">
+                          <Instagram className="w-3.5 h-3.5 text-foreground/70" />
+                        </div>
+                        <div className="w-8 h-8 bg-secondary/30 rounded-full flex items-center justify-center border border-border/40">
+                          <svg className="w-3.5 h-3.5 text-foreground/70" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.73a8.19 8.19 0 0 0 4.77 1.53V6.81a4.82 4.82 0 0 1-1-.12z"/></svg>
+                        </div>
+                      </div>
+                      <div className="mb-2.5">
+                        <p className="text-[11px] lg:text-xs font-bold text-foreground text-left mb-2">Nos formules</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="rounded-2xl overflow-hidden ring-1 ring-border/30">
+                            <div className="relative aspect-[4/3]">
+                              <img src={mockupExterior} alt="Lavage complet" className="w-full h-full object-cover" />
+                            </div>
+                            <div className="p-2 bg-card">
+                              <p className="text-[9px] lg:text-[10px] font-bold text-foreground leading-tight">Lavage complet</p>
+                              <div className="flex items-center justify-between mt-0.5">
+                                <span className="text-[10px] lg:text-[11px] font-bold text-emerald-600">dès 65€</span>
+                                <span className="text-[7px] text-muted-foreground flex items-center gap-0.5"><Clock className="w-2 h-2" />1h</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="rounded-2xl overflow-hidden ring-1 ring-border/30">
+                            <div className="relative aspect-[4/3]">
+                              <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-full object-cover" />
+                            </div>
+                            <div className="p-2 bg-card">
+                              <p className="text-[9px] lg:text-[10px] font-bold text-foreground leading-tight">Nettoyage intérieur</p>
+                              <div className="flex items-center justify-between mt-0.5">
+                                <span className="text-[10px] lg:text-[11px] font-bold text-emerald-600">dès 50€</span>
+                                <span className="text-[7px] text-muted-foreground flex items-center gap-0.5"><Clock className="w-2 h-2" />1h</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <button className="w-full bg-emerald-500 text-white rounded-xl py-2 text-[10px] font-semibold">Réserver</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
