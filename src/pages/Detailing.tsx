@@ -438,48 +438,7 @@ export default function Detailing() {
         </div>
       </section>
 
-      {/* Section 03 — Développez votre activité — Planity image 2 style */}
-      <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Left: Lifestyle photo */}
-            <div className="opacity-0 animate-fade-in-up order-2 lg:order-1">
-              <div className="rounded-3xl overflow-hidden shadow-xl shadow-black/5">
-                <img
-                  src={statsPremium}
-                  alt="Suivi statistiques sur ordinateur portable"
-                  className="w-full h-auto object-cover"
-                />
-              </div>
-            </div>
-            {/* Right: Text */}
-            <div className="opacity-0 animate-fade-in-up stagger-2 order-1 lg:order-2">
-              <span className="text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-4 block">03 — Pilotage</span>
-              <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-8 leading-[1.08]">
-                Plus qu'un outil, un levier de croissance
-              </h2>
-              <ul className="space-y-5 mb-10">
-                {[
-                  'Toutes vos réservations et vos clients regroupés',
-                  'Suivi de votre activité en temps réel',
-                  'Données et statistiques accessibles simplement',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3.5">
-                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-1" strokeWidth={1.5} />
-                    <span className="text-muted-foreground text-[15px] leading-relaxed">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="text-foreground text-[15px] leading-relaxed mb-8">
-                Votre logiciel detailing devient un véritable outil de pilotage et de rentabilité.
-              </p>
-              <div>
-                <TrialButton />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* Section 4: Gérez votre activité */}
       <section className="py-16 sm:py-24 px-4 sm:px-6">
