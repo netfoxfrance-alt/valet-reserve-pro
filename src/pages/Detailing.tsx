@@ -491,10 +491,10 @@ export default function Detailing() {
           </div>
           
           <h2 className="opacity-0 animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
-            {t('landing.section2Title')}
+            Pilotez toute votre activité depuis un seul tableau de bord.
           </h2>
           <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-base sm:text-lg mb-8 max-w-2xl leading-relaxed">
-            {t('landing.section2Desc')}
+            Visualisez, analysez et optimisez en temps réel.
           </p>
 
           {/* Dashboard Tabs Preview - Interactive Icons with progress bar */}
