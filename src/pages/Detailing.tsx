@@ -497,42 +497,64 @@ export default function Detailing() {
             {t('landing.section2Desc')}
           </p>
 
-          {/* Dashboard Tabs Preview - Interactive Icons */}
-          <div className="opacity-0 animate-fade-in-up stagger-3 flex items-center justify-center gap-3 sm:gap-4 mb-2">
-            {[
-               { img: iconStatistiques, label: t('mockup.statistics'), tab: 'stats' as const },
-               { img: iconReservations, label: t('mockup.reservations'), tab: 'reservations' as const },
-               { img: iconAgenda, label: t('mockup.calendar'), tab: 'calendar' as const },
-               { img: iconClients, label: t('mockup.clients'), tab: 'clients' as const },
-               { img: iconFactures, label: t('mockup.invoices'), tab: 'invoices' as const },
-               { img: iconMaPage, label: t('mockup.myPage'), tab: 'mypage' as const },
-               { img: iconFormules, label: t('mockup.formulas'), tab: 'formules' as const },
-            ].map((item) => (
-              <button 
-                key={item.label}
-                onClick={() => { setDashboardTab(item.tab); setShowClientDetail(false); }}
-                className="group flex flex-col items-center gap-1 cursor-pointer transition-all duration-300"
-                title={item.label}
-              >
-                <div className={`relative rounded-[22%] transition-all duration-300 ${
-                  dashboardTab === item.tab 
-                    ? 'scale-110 shadow-lg ring-2 ring-foreground/20 ring-offset-2 ring-offset-background' 
-                    : 'hover:scale-105 hover:shadow-md'
-                }`}>
-                  <img 
-                    src={item.img} 
-                    alt={item.label} 
-                    className="w-12 h-12 sm:w-14 sm:h-14 object-contain"
-                  />
+          {/* Dashboard Tabs Preview - Interactive Icons with progress bar */}
+          {(() => {
+            const tabs = [
+              { img: iconStatistiques, label: t('mockup.statistics'), tab: 'stats' as const },
+              { img: iconReservations, label: t('mockup.reservations'), tab: 'reservations' as const },
+              { img: iconAgenda, label: t('mockup.calendar'), tab: 'calendar' as const },
+              { img: iconClients, label: t('mockup.clients'), tab: 'clients' as const },
+              { img: iconFactures, label: t('mockup.invoices'), tab: 'invoices' as const },
+              { img: iconMaPage, label: t('mockup.myPage'), tab: 'mypage' as const },
+              { img: iconFormules, label: t('mockup.formulas'), tab: 'formules' as const },
+            ];
+            const activeIndex = tabs.findIndex(t => t.tab === dashboardTab);
+            return (
+              <div className="opacity-0 animate-fade-in-up stagger-3 mb-10">
+                {/* Progress bar */}
+                <div className="flex max-w-5xl mx-auto mb-6">
+                  {tabs.map((item, i) => (
+                    <button
+                      key={item.tab}
+                      onClick={() => { setDashboardTab(item.tab); setShowClientDetail(false); }}
+                      className="flex-1 group cursor-pointer"
+                    >
+                      <div className={`h-[3px] w-full rounded-full transition-all duration-500 ${
+                        i === activeIndex ? 'bg-foreground' : i < activeIndex ? 'bg-foreground/25' : 'bg-border'
+                      }`} />
+                    </button>
+                  ))}
                 </div>
-              </button>
-            ))}
-          </div>
-          <div className="text-center mb-8 mt-3">
-             <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-               👆 {t('mockup.clickIconDiscover', { defaultValue: 'Cliquez sur les icônes pour voir les aperçus' })}
-            </p>
-          </div>
+                {/* Icons + labels */}
+                <div className="flex items-start justify-center gap-2 sm:gap-4 md:gap-6">
+                  {tabs.map((item, i) => (
+                    <button
+                      key={item.tab}
+                      onClick={() => { setDashboardTab(item.tab); setShowClientDetail(false); }}
+                      className="group flex flex-col items-center gap-2 cursor-pointer transition-all duration-300"
+                    >
+                      <div className={`relative rounded-[22%] transition-all duration-300 ${
+                        i === activeIndex
+                          ? 'scale-110 shadow-lg ring-2 ring-foreground/20 ring-offset-2 ring-offset-background'
+                          : 'opacity-60 hover:opacity-100 hover:scale-105 hover:shadow-md'
+                      }`}>
+                        <img
+                          src={item.img}
+                          alt={item.label}
+                          className="w-11 h-11 sm:w-14 sm:h-14 object-contain"
+                        />
+                      </div>
+                      <span className={`text-[10px] sm:text-xs font-medium transition-colors duration-300 text-center leading-tight max-w-[60px] sm:max-w-[80px] ${
+                        i === activeIndex ? 'text-foreground' : 'text-muted-foreground/60'
+                      }`}>
+                        {item.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Dashboard Browser Mockup */}
           <div className="opacity-0 animate-fade-in-up stagger-4">
