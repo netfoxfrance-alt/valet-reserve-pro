@@ -25,8 +25,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Google Calendar not configured' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const redirectUri = `${supabaseUrl}/functions/v1/google-calendar-callback`;
+    const redirectUri = 'https://www.cleaningpage.com/api/google/callback';
     const scope = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/userinfo.email';
 
     const params = new URLSearchParams({

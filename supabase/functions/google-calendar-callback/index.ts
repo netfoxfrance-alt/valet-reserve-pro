@@ -40,8 +40,7 @@ serve(async (req) => {
       return Response.redirect(`${redirectBase}/dashboard/settings?google=error&reason=config`, 302);
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const redirectUri = `${supabaseUrl}/functions/v1/google-calendar-callback`;
+    const redirectUri = 'https://www.cleaningpage.com/api/google/callback';
 
     // Exchange authorization code for tokens
     log('Exchanging code for tokens');
@@ -82,7 +81,7 @@ serve(async (req) => {
 
     // Store refresh token securely in centers table via service_role
     const supabase = createClient(
-      supabaseUrl,
+      Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
       { auth: { persistSession: false } }
     );
