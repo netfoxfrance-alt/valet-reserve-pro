@@ -282,122 +282,40 @@ export default function Detailing() {
       </section>
 
       {/* Section 01 — Page de réservation en ligne */}
-      <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 border-t border-border/30">
-        <div className="max-w-5xl mx-auto">
-          <div className="opacity-0 animate-fade-in-up">
-            <span className="text-xs font-medium text-muted-foreground tracking-widest uppercase mb-6 block">01 — Page de réservation en ligne</span>
-          </div>
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            <div className="opacity-0 animate-fade-in-up stagger-1">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-6 leading-[1.1]">
-                Vos clients réservent sans vous
+      <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            {/* Left: Text */}
+            <div className="opacity-0 animate-fade-in-up">
+              <span className="text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-4 block">01 — Réservation en ligne</span>
+              <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-8 leading-[1.08]">
+                Vos clients réservent<br />sans vous
               </h2>
-              <ul className="space-y-4 mb-8">
+              <ul className="space-y-5 mb-10">
                 {[
                   'Réservation 24h/24, sans appel',
-                  'Parcours simple : choix → créneau → paiement',
+                  'Parcours simple : choix, créneau, paiement',
                   'Acompte et paiement en ligne intégrés',
                   'Confirmation et rappels automatiques',
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <div className="w-5 h-5 bg-emerald-500/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="w-3 h-3 text-emerald-600" />
-                    </div>
-                    <span className="text-muted-foreground text-sm sm:text-base leading-relaxed">{item}</span>
+                  <li key={item} className="flex items-start gap-3.5">
+                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-1" strokeWidth={1.5} />
+                    <span className="text-muted-foreground text-[15px] leading-relaxed">{item}</span>
                   </li>
                 ))}
               </ul>
-              <p className="text-foreground font-medium text-sm sm:text-base">
-                👉 Une expérience fluide pour vos clients, zéro gestion pour vous.
+              <p className="text-foreground text-[15px] leading-relaxed mb-8">
+                Une expérience fluide pour vos clients, zéro gestion pour vous.
               </p>
+              <TrialButton />
             </div>
-            {/* Right: Visual — phone mockup card showing the booking page */}
+            {/* Right: Premium photo */}
             <div className="opacity-0 animate-fade-in-up stagger-2 flex justify-center lg:justify-end">
-              <div className="bg-card rounded-[2rem] overflow-hidden w-[260px] sm:w-[280px] shadow-2xl ring-1 ring-border/20">
-                <div className="flex items-center justify-between px-4 py-3">
-                  <div className="w-8 h-8 rounded-xl overflow-hidden ring-1 ring-border/30">
-                    <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center">
-                    <Phone className="w-3.5 h-3.5 text-white" />
-                  </div>
-                </div>
-                <div className="border-t border-border/40" />
-                <div className="px-5 pb-5 pt-4 text-center">
-                  <h3 className="text-sm font-extrabold text-foreground tracking-wide mb-0.5">GO CLEANING</h3>
-                  <p className="text-[9px] text-muted-foreground mb-3">Expert du detailing automobile</p>
-                  <div className="flex justify-center mb-3">
-                    <span className="inline-flex items-center gap-1.5 text-[9px] border border-emerald-200 text-emerald-600 px-2.5 py-1 rounded-full font-semibold">
-                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                      Disponible
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 mb-3">
-                    {[
-                      { name: 'Lavage complet', price: 'dès 65€', img: mockupExterior },
-                      { name: 'Nettoyage intérieur', price: 'dès 50€', img: mockupInterior },
-                    ].map((f) => (
-                      <div key={f.name} className="rounded-xl overflow-hidden ring-1 ring-border/20">
-                        <div className="aspect-[4/3]">
-                          <img src={f.img} alt={f.name} className="w-full h-full object-cover" />
-                        </div>
-                        <div className="p-1.5">
-                          <p className="text-[8px] font-bold text-foreground leading-tight">{f.name}</p>
-                          <p className="text-[9px] font-bold text-emerald-600">{f.price}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <button className="w-full bg-emerald-500 text-white rounded-xl py-2.5 text-[11px] font-semibold">
-                    Réserver maintenant
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 02 — Agenda connecté (style image 1: text left, image right in rounded card) */}
-      <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 bg-secondary/20">
-        <div className="max-w-5xl mx-auto">
-          <div className="opacity-0 animate-fade-in-up">
-            <span className="text-xs font-medium text-muted-foreground tracking-widest uppercase mb-6 block">02 — Agenda connecté</span>
-          </div>
-          <div className="bg-card rounded-3xl overflow-hidden shadow-lg ring-1 ring-border/20">
-            <div className="grid lg:grid-cols-2 gap-0">
-              {/* Left: Text */}
-              <div className="p-8 sm:p-10 lg:p-12 flex flex-col justify-center opacity-0 animate-fade-in-up stagger-1">
-                <h2 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight mb-6 leading-[1.1]">
-                  Un planning toujours à jour
-                </h2>
-                <ul className="space-y-4 mb-8">
-                  {[
-                    'Créneaux synchronisés automatiquement',
-                    'Accessible sur mobile et ordinateur',
-                    'Plus de double réservation',
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <div className="w-5 h-5 bg-emerald-500/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Check className="w-3 h-3 text-emerald-600" />
-                      </div>
-                      <span className="text-muted-foreground text-sm sm:text-base leading-relaxed">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-foreground font-medium text-sm sm:text-base mb-6">
-                  👉 Vous gardez le contrôle, sans effort.
-                </p>
-                <div>
-                  <TrialButton />
-                </div>
-              </div>
-              {/* Right: Image */}
-              <div className="relative overflow-hidden min-h-[300px] lg:min-h-0 opacity-0 animate-fade-in-up stagger-2">
+              <div className="rounded-3xl overflow-hidden shadow-2xl shadow-black/10 max-w-[500px] w-full">
                 <img
-                  src={agendaMockup}
-                  alt="Agenda connecté sur mobile"
-                  className="w-full h-full object-cover"
+                  src={bookingPremium}
+                  alt="Application de réservation detailing sur smartphone"
+                  className="w-full h-auto object-cover"
                 />
               </div>
             </div>
@@ -405,44 +323,81 @@ export default function Detailing() {
         </div>
       </section>
 
-      {/* Section 03 — Développez votre activité (style image 2: image left, text right) */}
-      <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="opacity-0 animate-fade-in-up">
-            <span className="text-xs font-medium text-muted-foreground tracking-widest uppercase mb-6 block">03 — Développez votre activité</span>
+      {/* Section 02 — Agenda connecté — Planity style card layout */}
+      <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6 bg-muted/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-0 bg-card rounded-[2rem] overflow-hidden shadow-xl shadow-black/5 ring-1 ring-border/10">
+            {/* Left: Text */}
+            <div className="p-10 sm:p-12 lg:p-16 flex flex-col justify-center opacity-0 animate-fade-in-up">
+              <span className="text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-4 block">02 — Agenda connecté</span>
+              <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-8 leading-[1.08]">
+                Un planning toujours à jour
+              </h2>
+              <ul className="space-y-5 mb-10">
+                {[
+                  'Créneaux synchronisés automatiquement',
+                  'Accessible sur mobile et ordinateur',
+                  'Plus de double réservation',
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3.5">
+                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-1" strokeWidth={1.5} />
+                    <span className="text-muted-foreground text-[15px] leading-relaxed">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-foreground text-[15px] leading-relaxed mb-8">
+                Vous gardez le contrôle, sans effort.
+              </p>
+              <div>
+                <TrialButton />
+              </div>
+            </div>
+            {/* Right: Premium lifestyle photo */}
+            <div className="relative overflow-hidden min-h-[360px] lg:min-h-0 opacity-0 animate-fade-in-up stagger-2">
+              <img
+                src={agendaPremium}
+                alt="Agenda sur smartphone tenu en main"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left: Image */}
-            <div className="opacity-0 animate-fade-in-up stagger-1 order-2 lg:order-1">
-              <div className="rounded-3xl overflow-hidden shadow-lg ring-1 ring-border/20">
+        </div>
+      </section>
+
+      {/* Section 03 — Développez votre activité — Planity image 2 style */}
+      <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            {/* Left: Lifestyle photo */}
+            <div className="opacity-0 animate-fade-in-up order-2 lg:order-1">
+              <div className="rounded-3xl overflow-hidden shadow-xl shadow-black/5">
                 <img
-                  src={statsMockup}
-                  alt="Suivi statistiques sur ordinateur"
+                  src={statsPremium}
+                  alt="Suivi statistiques sur ordinateur portable"
                   className="w-full h-auto object-cover"
                 />
               </div>
             </div>
             {/* Right: Text */}
             <div className="opacity-0 animate-fade-in-up stagger-2 order-1 lg:order-2">
-              <h2 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight mb-6 leading-[1.1]">
+              <span className="text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-4 block">03 — Pilotage</span>
+              <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-8 leading-[1.08]">
                 Plus qu'un outil, un levier de croissance
               </h2>
-              <ul className="space-y-4 mb-8">
+              <ul className="space-y-5 mb-10">
                 {[
                   'Toutes vos réservations et vos clients regroupés',
                   'Suivi de votre activité en temps réel',
                   'Données et statistiques accessibles simplement',
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <div className="w-5 h-5 bg-emerald-500/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="w-3 h-3 text-emerald-600" />
-                    </div>
-                    <span className="text-muted-foreground text-sm sm:text-base leading-relaxed">{item}</span>
+                  <li key={item} className="flex items-start gap-3.5">
+                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-1" strokeWidth={1.5} />
+                    <span className="text-muted-foreground text-[15px] leading-relaxed">{item}</span>
                   </li>
                 ))}
               </ul>
-              <p className="text-foreground font-medium text-sm sm:text-base mb-6">
-                👉 Vous gagnez en visibilité et en chiffre d'affaires.
+              <p className="text-foreground text-[15px] leading-relaxed mb-8">
+                Votre logiciel detailing devient un véritable outil de pilotage et de rentabilité.
               </p>
               <div>
                 <TrialButton />
