@@ -80,7 +80,7 @@ export default function Detailing() {
   const TrialButton = ({ className = '' }: { className?: string }) => (
     <Button
       size="lg"
-      className={`text-base px-8 shadow-lg shadow-black/10 bg-foreground hover:bg-foreground/90 text-background ${className}`}
+      className={`text-base px-8 shadow-lg shadow-emerald-500/25 bg-emerald-500 hover:bg-emerald-600 ${className}`}
       onClick={handleStartTrial}
       disabled={isCheckoutLoading}
     >
@@ -91,7 +91,7 @@ export default function Detailing() {
         </>
       ) : (
         <>
-          Découvrir gratuitement
+          {t('landing.tryFree30')}
           <ArrowRight className="ml-2 h-5 w-5" />
         </>
       )}
@@ -289,7 +289,7 @@ export default function Detailing() {
             <div className="opacity-0 animate-fade-in-up">
               <span className="text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-4 block">01 — Réservation en ligne</span>
               <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-8 leading-[1.08]">
-                Votre page de réservation<br />dédiée à votre activité
+                Vos clients réservent<br />sans vous
               </h2>
               <ul className="space-y-5 mb-10">
                 {[
@@ -514,7 +514,7 @@ export default function Detailing() {
               </ul>
               <Button
                 size="lg"
-                className="w-full rounded-full text-sm bg-foreground hover:bg-foreground/90 text-background"
+                className="w-full rounded-full text-sm bg-emerald-500 hover:bg-emerald-600"
                 onClick={handleStartTrial}
                 disabled={isCheckoutLoading}
               >
@@ -525,7 +525,7 @@ export default function Detailing() {
                   </>
                 ) : (
                   <>
-                    Découvrir gratuitement
+                    {t('landing.tryFree30')}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </>
                 )}
