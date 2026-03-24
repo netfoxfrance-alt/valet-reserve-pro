@@ -142,123 +142,192 @@ export default function Detailing() {
       </header>
 
       {/* Hero Section — taap.it / Apple inspired with floating widgets */}
-      <section className="relative overflow-hidden bg-background min-h-[85vh] flex items-center">
-        {/* Floating widgets — LEFT side */}
-        <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-[280px] xl:w-[340px]">
-          {/* Widget 1: Mini agenda card */}
-          <div 
-            className="absolute top-[15%] left-[10%] xl:left-[15%] w-[220px] opacity-0"
-            style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s forwards', transform: 'rotate(-6deg)' }}
-          >
-            <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-xl overflow-hidden"><img src={appIconAgenda} alt="" className="w-full h-full" /></div>
-                <span className="text-xs font-semibold text-foreground">Agenda</span>
+      <section className="relative overflow-hidden bg-background">
+        <div className="relative min-h-[88vh] flex items-center">
+          {/* Floating widgets — LEFT side */}
+          <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-[280px] xl:w-[340px]">
+            {/* Widget 1: Mini agenda card */}
+            <div 
+              className="absolute top-[15%] left-[10%] xl:left-[15%] w-[220px] opacity-0"
+              style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s forwards', transform: 'rotate(-6deg)' }}
+            >
+              <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-xl overflow-hidden"><img src={appIconAgenda} alt="" className="w-full h-full" /></div>
+                  <span className="text-xs font-semibold text-foreground">Agenda</span>
+                </div>
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2 text-[10px]">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span className="text-muted-foreground">10:00 — Lavage complet</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px]">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                    <span className="text-muted-foreground">14:00 — Polish carrosserie</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px]">
+                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                    <span className="text-muted-foreground">16:30 — Detailing intérieur</span>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2 text-[10px]">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span className="text-muted-foreground">10:00 — Lavage complet</span>
+            </div>
+
+            {/* Widget 2: Client card */}
+            <div 
+              className="absolute bottom-[25%] left-[5%] xl:left-[8%] w-[200px] opacity-0"
+              style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.65s forwards', transform: 'rotate(3deg)' }}
+            >
+              <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-xl overflow-hidden"><img src={appIconClients} alt="" className="w-full h-full" /></div>
+                  <div>
+                    <span className="text-[11px] font-semibold text-foreground block">Marc D.</span>
+                    <span className="text-[9px] text-muted-foreground">Client fidèle · 12 RDV</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-[10px]">
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                  <span className="text-muted-foreground">14:00 — Polish carrosserie</span>
-                </div>
-                <div className="flex items-center gap-2 text-[10px]">
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                  <span className="text-muted-foreground">16:30 — Detailing intérieur</span>
+                <div className="flex gap-1 mt-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                  ))}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Widget 2: Client card */}
-          <div 
-            className="absolute bottom-[18%] left-[5%] xl:left-[8%] w-[200px] opacity-0"
-            style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.65s forwards', transform: 'rotate(3deg)' }}
-          >
-            <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-xl overflow-hidden"><img src={appIconClients} alt="" className="w-full h-full" /></div>
-                <div>
-                  <span className="text-[11px] font-semibold text-foreground block">Marc D.</span>
-                  <span className="text-[9px] text-muted-foreground">Client fidèle · 12 RDV</span>
+          {/* Floating widgets — RIGHT side */}
+          <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-[280px] xl:w-[340px]">
+            {/* Widget 3: Stats card */}
+            <div 
+              className="absolute top-[12%] right-[8%] xl:right-[12%] w-[210px] opacity-0"
+              style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards', transform: 'rotate(5deg)' }}
+            >
+              <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-xl overflow-hidden"><img src={appIconStats} alt="" className="w-full h-full" /></div>
+                  <span className="text-xs font-semibold text-foreground">Ce mois</span>
+                </div>
+                <div className="text-2xl font-bold text-foreground mb-0.5">4 280 €</div>
+                <div className="flex items-center gap-1 text-[10px] text-emerald-600">
+                  <ArrowRight className="w-3 h-3 rotate-[-45deg]" />
+                  <span>+23% vs mois dernier</span>
                 </div>
               </div>
-              <div className="flex gap-1 mt-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
-                ))}
+            </div>
+
+            {/* Widget 4: Invoice mini */}
+            <div 
+              className="absolute bottom-[28%] right-[12%] xl:right-[18%] w-[190px] opacity-0"
+              style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.75s forwards', transform: 'rotate(-4deg)' }}
+            >
+              <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-xl overflow-hidden"><img src={appIconInvoices} alt="" className="w-full h-full" /></div>
+                  <span className="text-xs font-semibold text-foreground">Facture</span>
+                </div>
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="text-muted-foreground">FA-2024-047</span>
+                  <span className="text-emerald-600 font-medium bg-emerald-500/10 px-1.5 py-0.5 rounded-full">Payée</span>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Floating widgets — RIGHT side */}
-        <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-[280px] xl:w-[340px]">
-          {/* Widget 3: Stats card */}
-          <div 
-            className="absolute top-[12%] right-[8%] xl:right-[12%] w-[210px] opacity-0"
-            style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards', transform: 'rotate(5deg)' }}
-          >
-            <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-xl overflow-hidden"><img src={appIconStats} alt="" className="w-full h-full" /></div>
-                <span className="text-xs font-semibold text-foreground">Ce mois</span>
-              </div>
-              <div className="text-2xl font-bold text-foreground mb-0.5">4 280 €</div>
-              <div className="flex items-center gap-1 text-[10px] text-emerald-600">
-                <ArrowRight className="w-3 h-3 rotate-[-45deg]" />
-                <span>+23% vs mois dernier</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Widget 4: Invoice mini */}
-          <div 
-            className="absolute bottom-[22%] right-[12%] xl:right-[18%] w-[190px] opacity-0"
-            style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.75s forwards', transform: 'rotate(-4deg)' }}
-          >
-            <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-xl overflow-hidden"><img src={appIconInvoices} alt="" className="w-full h-full" /></div>
-                <span className="text-xs font-semibold text-foreground">Facture</span>
-              </div>
-              <div className="flex items-center justify-between text-[10px]">
-                <span className="text-muted-foreground">FA-2024-047</span>
-                <span className="text-emerald-600 font-medium bg-emerald-500/10 px-1.5 py-0.5 rounded-full">Payée</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Widget 5: Ma Page mini */}
-          <div 
-            className="absolute top-[48%] right-[2%] xl:right-[5%] w-[170px] opacity-0"
-            style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s forwards', transform: 'rotate(2deg)' }}
-          >
-            <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg overflow-hidden"><img src={appIconMaPage} alt="" className="w-full h-full" /></div>
-                <div>
-                  <span className="text-[10px] font-semibold text-foreground block">Ma Page</span>
-                  <span className="text-[9px] text-muted-foreground">En ligne ✓</span>
+            {/* Widget 5: Ma Page mini */}
+            <div 
+              className="absolute top-[48%] right-[2%] xl:right-[5%] w-[170px] opacity-0"
+              style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s forwards', transform: 'rotate(2deg)' }}
+            >
+              <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg overflow-hidden"><img src={appIconMaPage} alt="" className="w-full h-full" /></div>
+                  <div>
+                    <span className="text-[10px] font-semibold text-foreground block">Ma Page</span>
+                    <span className="text-[9px] text-muted-foreground">En ligne ✓</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Center: Text + CTA */}
-        <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 text-center py-16 sm:py-20">
-          <h1 className="opacity-0 animate-fade-in-up text-[2.2rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[3.75rem] font-bold text-foreground tracking-[-0.03em] leading-[1.06] mb-6">
-            Le logiciel pour les pros du{' '}
-            <span className="text-emerald-500">detailing auto</span>
-          </h1>
-          <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-base sm:text-lg leading-relaxed max-w-lg mx-auto mb-10">
-            Réservation en ligne, gestion clients, facturation — tout ce qu'il vous faut pour piloter votre activité.
-          </p>
-          <div className="opacity-0 animate-fade-in-up stagger-2">
-            <TrialButton />
+          {/* Center: Text + CTA */}
+          <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 text-center pt-16 sm:pt-20 pb-40 sm:pb-52 lg:pb-56">
+            <h1 className="opacity-0 animate-fade-in-up text-[2.2rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[3.75rem] font-bold text-foreground tracking-[-0.03em] leading-[1.06] mb-6">
+              Le logiciel pour les pros du{' '}
+              <span className="text-emerald-500">detailing auto</span>
+            </h1>
+            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-base sm:text-lg leading-relaxed max-w-lg mx-auto mb-10">
+              Réservation en ligne, gestion clients, facturation — tout ce qu'il vous faut pour piloter votre activité.
+            </p>
+            <div className="opacity-0 animate-fade-in-up stagger-2">
+              <TrialButton />
+            </div>
+          </div>
+
+          {/* Bottom: Horizontal bar with phone mockup peeking */}
+          <div className="absolute bottom-0 left-0 right-0">
+            {/* Subtle horizontal divider bar */}
+            <div className="w-full h-px bg-border/60" />
+            <div className="w-full bg-secondary/30 h-16 sm:h-20" />
+            
+            {/* Phone mockup — centered, peeking above the bar */}
+            <div 
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 opacity-0"
+              style={{ animation: 'hero-float-up 1s cubic-bezier(0.16,1,0.3,1) 0.6s forwards' }}
+            >
+              <div className="relative">
+                {/* Phone shell */}
+                <div className="bg-[hsl(var(--border))] rounded-t-[2.2rem] sm:rounded-t-[2.5rem] p-[5px] shadow-2xl shadow-foreground/10">
+                  <div className="bg-card rounded-t-[2rem] sm:rounded-t-[2.2rem] overflow-hidden w-[200px] sm:w-[240px] md:w-[260px]">
+                    {/* Notch */}
+                    <div className="flex justify-center pt-2 pb-1">
+                      <div className="w-20 h-4 bg-secondary rounded-full" />
+                    </div>
+                    {/* Mini app content */}
+                    <div className="px-3 pb-0">
+                      {/* Header */}
+                      <div className="flex items-center justify-between py-2">
+                        <div className="w-7 h-7 rounded-full overflow-hidden bg-foreground">
+                          <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex items-center gap-1 bg-foreground text-background rounded-full px-2.5 py-1 text-[8px] font-medium">
+                          <Phone className="w-2.5 h-2.5" />
+                          Appeler
+                        </div>
+                      </div>
+                      {/* Profile */}
+                      <div className="pt-2 pb-1.5 text-center">
+                        <h3 className="text-[11px] sm:text-xs font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
+                        <p className="text-[7px] sm:text-[8px] text-muted-foreground mt-0.5">Expert nettoyage auto depuis 2018</p>
+                      </div>
+                      {/* Social */}
+                      <div className="flex justify-center gap-2 mb-2">
+                        <div className="w-6 h-6 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
+                          <Instagram className="w-3 h-3 text-muted-foreground" />
+                        </div>
+                        <div className="w-6 h-6 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
+                          <Facebook className="w-3 h-3 text-muted-foreground" />
+                        </div>
+                      </div>
+                      {/* Service cards peek */}
+                      <div className="space-y-1.5 pb-1">
+                        <div className="bg-secondary/30 rounded-xl p-2 border border-border/20">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[8px] font-semibold text-foreground">Lavage Premium</span>
+                            <span className="text-[8px] font-bold text-foreground">89€</span>
+                          </div>
+                        </div>
+                        <div className="bg-secondary/30 rounded-xl p-2 border border-border/20">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[8px] font-semibold text-foreground">Polish + Céramique</span>
+                            <span className="text-[8px] font-bold text-foreground">249€</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
