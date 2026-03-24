@@ -282,3 +282,14 @@
     transform: translateX(0) rotate(var(--tw-rotate, 0deg));
   }
 }
+
+@keyframes hero-float-up {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
