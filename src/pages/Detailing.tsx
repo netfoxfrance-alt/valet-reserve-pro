@@ -143,7 +143,7 @@ export default function Detailing() {
 
       {/* Hero Section — taap.it inspired */}
       <section className="relative overflow-hidden bg-background">
-        <div className="relative min-h-[92vh] sm:min-h-[88vh]">
+        <div className="relative min-h-[90vh] sm:min-h-[88vh]">
           
           {/* Floating widgets — LEFT side (desktop only) */}
           <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-[300px] xl:w-[360px] z-10">
@@ -194,7 +194,7 @@ export default function Detailing() {
             </div>
           </div>
 
-          {/* Floating widgets — RIGHT side (desktop only) */}
+          {/* Floating widgets — RIGHT side (desktop only) — Stats card only */}
           <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-[300px] xl:w-[360px] z-10">
             <div 
               className="absolute top-[14%] right-[6%] xl:right-[10%] w-[210px] opacity-0"
@@ -209,37 +209,6 @@ export default function Detailing() {
                 <div className="flex items-center gap-1 text-[10px] text-emerald-600">
                   <ArrowRight className="w-3 h-3 rotate-[-45deg]" />
                   <span>+23% vs mois dernier</span>
-                </div>
-              </div>
-            </div>
-
-            <div 
-              className="absolute bottom-[26%] right-[10%] xl:right-[14%] w-[190px] opacity-0"
-              style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.8s forwards', transform: 'rotate(-4deg)' }}
-            >
-              <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-xl overflow-hidden"><img src={appIconInvoices} alt="" className="w-full h-full" /></div>
-                  <span className="text-xs font-semibold text-foreground">Facture</span>
-                </div>
-                <div className="flex items-center justify-between text-[10px]">
-                  <span className="text-muted-foreground">FA-2024-047</span>
-                  <span className="text-emerald-600 font-medium bg-emerald-500/10 px-1.5 py-0.5 rounded-full">Payée</span>
-                </div>
-              </div>
-            </div>
-
-            <div 
-              className="absolute top-[46%] right-[1%] xl:right-[3%] w-[170px] opacity-0"
-              style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.95s forwards', transform: 'rotate(2deg)' }}
-            >
-              <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg overflow-hidden"><img src={appIconMaPage} alt="" className="w-full h-full" /></div>
-                  <div>
-                    <span className="text-[10px] font-semibold text-foreground block">Ma Page</span>
-                    <span className="text-[9px] text-muted-foreground">En ligne ✓</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -259,11 +228,10 @@ export default function Detailing() {
             </div>
           </div>
 
-          {/* Mobile: Widgets below CTA, overflow cropped by divider */}
-          <div className="lg:hidden relative mt-8 sm:mt-12 h-[280px] sm:h-[320px] overflow-hidden">
-            {/* Left widget */}
+          {/* Mobile: Widgets below CTA */}
+          <div className="lg:hidden relative mt-8 h-[240px] sm:h-[280px] overflow-hidden">
             <div 
-              className="absolute left-[-20px] sm:left-[2%] top-[10%] w-[180px] sm:w-[200px] opacity-0"
+              className="absolute left-[-15px] sm:left-[3%] top-[8%] w-[170px] sm:w-[190px] opacity-0"
               style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards', transform: 'rotate(-5deg)' }}
             >
               <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
@@ -284,9 +252,8 @@ export default function Detailing() {
               </div>
             </div>
 
-            {/* Right widget */}
             <div 
-              className="absolute right-[-10px] sm:right-[2%] top-[5%] w-[175px] sm:w-[195px] opacity-0"
+              className="absolute right-[-10px] sm:right-[3%] top-[3%] w-[165px] sm:w-[185px] opacity-0"
               style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.6s forwards', transform: 'rotate(4deg)' }}
             >
               <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
@@ -302,9 +269,9 @@ export default function Detailing() {
               </div>
             </div>
 
-            {/* Bottom-left widget — gets cropped by divider */}
+            {/* Bottom-left — cropped by overflow */}
             <div 
-              className="absolute left-[8%] sm:left-[12%] bottom-[-20px] w-[165px] sm:w-[180px] opacity-0"
+              className="absolute left-[5%] bottom-[-25px] w-[155px] sm:w-[170px] opacity-0"
               style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.75s forwards', transform: 'rotate(2deg)' }}
             >
               <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
@@ -318,69 +285,91 @@ export default function Detailing() {
               </div>
             </div>
 
-            {/* Bottom-right widget — gets cropped */}
+            {/* Bottom-right — cropped */}
             <div 
-              className="absolute right-[5%] sm:right-[10%] bottom-[-30px] w-[160px] sm:w-[175px] opacity-0"
+              className="absolute right-[3%] bottom-[-30px] w-[150px] sm:w-[165px] opacity-0"
               style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.85s forwards', transform: 'rotate(-3deg)' }}
             >
               <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-xl overflow-hidden"><img src={appIconInvoices} alt="" className="w-full h-full" /></div>
-                  <span className="text-[10px] font-semibold text-foreground">FA-2024-047</span>
+                  <div className="w-7 h-7 rounded-lg overflow-hidden"><img src={appIconMaPage} alt="" className="w-full h-full" /></div>
+                  <div>
+                    <span className="text-[10px] font-semibold text-foreground block">Ma Page</span>
+                    <span className="text-[8px] text-muted-foreground">En ligne ✓</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Divider — single subtle line, widgets rest on it */}
+          {/* Divider line */}
           <div className="absolute bottom-0 left-0 right-0 z-30">
             <div className="w-full h-px bg-border/40" />
           </div>
 
-          {/* Phone mockup — peeking from bottom center, resting on the line */}
+          {/* Phone mockup — RIGHT side like MrBeast card on taap.it, with "Ma Page" widget overlapping */}
           <div 
-            className="absolute bottom-0 left-1/2 z-20 opacity-0 hidden sm:block"
-            style={{ animation: 'hero-float-up 1s cubic-bezier(0.16,1,0.3,1) 0.7s forwards', transform: 'translateX(-50%)' }}
+            className="hidden lg:block absolute bottom-0 right-[8%] xl:right-[12%] z-20 opacity-0"
+            style={{ animation: 'hero-float-in-right 1s cubic-bezier(0.16,1,0.3,1) 0.6s forwards', transform: 'rotate(2deg)' }}
           >
-            <div className="bg-[hsl(var(--border))] rounded-t-[2rem] md:rounded-t-[2.5rem] p-[5px] shadow-xl shadow-foreground/8">
-              <div className="bg-card rounded-t-[1.75rem] md:rounded-t-[2.2rem] overflow-hidden w-[180px] sm:w-[220px] md:w-[260px]">
-                <div className="flex justify-center pt-2 pb-1">
-                  <div className="w-16 sm:w-20 h-3.5 sm:h-4 bg-secondary rounded-full" />
+            <div className="relative">
+              {/* Phone shell */}
+              <div className="bg-[hsl(var(--border))] rounded-t-[2.5rem] p-[5px] shadow-2xl shadow-foreground/10">
+                <div className="bg-card rounded-t-[2.2rem] overflow-hidden w-[240px] xl:w-[270px]">
+                  <div className="flex justify-center pt-2 pb-1">
+                    <div className="w-20 h-4 bg-secondary rounded-full" />
+                  </div>
+                  <div className="px-3">
+                    <div className="flex items-center justify-between py-2">
+                      <div className="w-7 h-7 rounded-full overflow-hidden bg-foreground">
+                        <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex items-center gap-1 bg-foreground text-background rounded-full px-2.5 py-1 text-[8px] font-medium">
+                        <Phone className="w-2.5 h-2.5" />
+                        Appeler
+                      </div>
+                    </div>
+                    <div className="pt-2 pb-1.5 text-center">
+                      <h3 className="text-[11px] font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
+                      <p className="text-[7px] text-muted-foreground mt-0.5">Expert nettoyage auto depuis 2018</p>
+                    </div>
+                    <div className="flex justify-center gap-2 mb-2">
+                      <div className="w-6 h-6 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
+                        <Instagram className="w-3 h-3 text-muted-foreground" />
+                      </div>
+                      <div className="w-6 h-6 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
+                        <Facebook className="w-3 h-3 text-muted-foreground" />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5 pb-1">
+                      <div className="bg-secondary/30 rounded-xl p-2 border border-border/20">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[8px] font-semibold text-foreground">Lavage Premium</span>
+                          <span className="text-[8px] font-bold text-foreground">89€</span>
+                        </div>
+                      </div>
+                      <div className="bg-secondary/30 rounded-xl p-2 border border-border/20">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[8px] font-semibold text-foreground">Polish + Céramique</span>
+                          <span className="text-[8px] font-bold text-foreground">249€</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="px-2.5 sm:px-3">
-                  <div className="flex items-center justify-between py-1.5 sm:py-2">
-                    <div className="w-6 sm:w-7 h-6 sm:h-7 rounded-full overflow-hidden bg-foreground">
-                      <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
-                    </div>
-                    <div className="flex items-center gap-1 bg-foreground text-background rounded-full px-2 py-0.5 sm:py-1 text-[7px] sm:text-[8px] font-medium">
-                      <Phone className="w-2 sm:w-2.5 h-2 sm:h-2.5" />
-                      Appeler
-                    </div>
-                  </div>
-                  <div className="pt-1.5 pb-1 text-center">
-                    <h3 className="text-[10px] sm:text-[11px] font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
-                    <p className="text-[7px] text-muted-foreground mt-0.5">Expert nettoyage auto</p>
-                  </div>
-                  <div className="flex justify-center gap-1.5 mb-1.5 sm:mb-2">
-                    <div className="w-5 sm:w-6 h-5 sm:h-6 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
-                      <Instagram className="w-2.5 sm:w-3 h-2.5 sm:h-3 text-muted-foreground" />
-                    </div>
-                    <div className="w-5 sm:w-6 h-5 sm:h-6 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
-                      <Facebook className="w-2.5 sm:w-3 h-2.5 sm:h-3 text-muted-foreground" />
-                    </div>
-                  </div>
-                  <div className="space-y-1 pb-0.5">
-                    <div className="bg-secondary/30 rounded-lg p-1.5 sm:p-2 border border-border/20">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[7px] sm:text-[8px] font-semibold text-foreground">Lavage Premium</span>
-                        <span className="text-[7px] sm:text-[8px] font-bold text-foreground">89€</span>
-                      </div>
-                    </div>
-                    <div className="bg-secondary/30 rounded-lg p-1.5 sm:p-2 border border-border/20">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[7px] sm:text-[8px] font-semibold text-foreground">Polish + Céramique</span>
-                        <span className="text-[7px] sm:text-[8px] font-bold text-foreground">249€</span>
-                      </div>
+              </div>
+
+              {/* "Ma Page" widget overlapping the phone mockup — top-left */}
+              <div 
+                className="absolute -left-[100px] xl:-left-[110px] top-[30%] w-[150px] opacity-0"
+                style={{ animation: 'hero-float-in-left 0.7s cubic-bezier(0.16,1,0.3,1) 1.1s forwards', transform: 'rotate(-3deg)' }}
+              >
+                <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg overflow-hidden"><img src={appIconMaPage} alt="" className="w-full h-full" /></div>
+                    <div>
+                      <span className="text-[10px] font-semibold text-foreground block">Ma Page</span>
+                      <span className="text-[9px] text-muted-foreground">En ligne ✓</span>
                     </div>
                   </div>
                 </div>
