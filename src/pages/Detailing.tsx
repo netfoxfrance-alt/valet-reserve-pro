@@ -123,61 +123,53 @@ export default function Detailing() {
         </div>
       </header>
 
-      {/* Hero Section - Planity style */}
-      <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative min-h-[70vh] lg:min-h-[80vh] flex items-center">
-            {/* Left: Text */}
-            <div className="relative z-10 w-full lg:w-1/2 py-16 sm:py-20 lg:py-28">
-              <h1 className="opacity-0 animate-fade-in-up text-[2.5rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[3.75rem] font-semibold text-foreground tracking-tight leading-[1.05] mb-8">
-                La solution de réservation en ligne pour les pros du{' '}
-                <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">detailing auto</span>
-              </h1>
-
-              <ul className="opacity-0 animate-fade-in-up stagger-2 space-y-3 mb-10">
-                {[
-                  'Page de réservation dédiée à votre activité',
-                  'Prise de RDV en autonomie et sans commission',
-                  'Gestion complète de votre activité',
-                ].map((item) => (
-                  <li key={item} className="flex items-center gap-3">
-                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0" strokeWidth={1.5} />
-                    <span className="text-muted-foreground text-[15px]">{item}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="opacity-0 animate-fade-in-up stagger-3">
-                <TrialButton />
-              </div>
+      {/* Hero Section — Apple-grade */}
+      <section className="relative overflow-hidden bg-background">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 lg:pt-32 pb-12 sm:pb-16">
+          {/* Centered headline */}
+          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+            <h1 className="opacity-0 animate-fade-in-up text-[2.2rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[4rem] font-bold text-foreground tracking-[-0.03em] leading-[1.06] mb-6">
+              Le logiciel pour les pros du detailing auto
+            </h1>
+            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-base sm:text-lg leading-relaxed max-w-xl mx-auto mb-8">
+              Réservation en ligne, gestion clients, facturation — tout ce qu'il vous faut pour piloter votre activité.
+            </p>
+            <div className="opacity-0 animate-fade-in-up stagger-2">
+              <TrialButton />
             </div>
+          </div>
 
-            {/* Right: Arc circle image — bleeds right */}
-            <div className="hidden lg:block absolute top-1/2 -translate-y-1/2 right-[-10%] xl:right-[-5%]">
-              <div 
-                className="w-[580px] xl:w-[650px] aspect-square rounded-full overflow-hidden"
-              >
-                <img 
-                  src={heroDetailingPhoto} 
-                  alt="Professionnel du detailing automobile" 
-                  className="w-full h-full object-cover object-center"
-                  width={1024}
-                  height={1024}
-                />
+          {/* Tool icons strip — outline style */}
+          <div className="opacity-0 animate-fade-in-up stagger-3 flex items-center justify-center gap-6 sm:gap-10 mb-14 sm:mb-20">
+            {[
+              { icon: Calendar, label: 'Agenda' },
+              { icon: Users, label: 'Clients' },
+              { icon: BarChart3, label: 'Statistiques' },
+              { icon: Tag, label: 'Formules' },
+              { icon: Mail, label: 'Devis' },
+              { icon: Palette, label: 'Ma Page' },
+            ].map(({ icon: Icon, label }) => (
+              <div key={label} className="flex flex-col items-center gap-2">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl border border-border flex items-center justify-center transition-all hover:border-foreground/30 hover:shadow-md">
+                  <Icon className="w-5 h-5 text-muted-foreground" strokeWidth={1.4} />
+                </div>
+                <span className="text-[10px] sm:text-[11px] text-muted-foreground/70 font-medium tracking-wide">{label}</span>
               </div>
-            </div>
+            ))}
+          </div>
 
-            {/* Mobile: image below text */}
-            <div className="lg:hidden absolute top-0 right-0 w-[200px] sm:w-[280px] h-full opacity-20">
-              <div className="w-[300px] sm:w-[400px] aspect-square rounded-full overflow-hidden absolute -right-[100px] top-1/2 -translate-y-1/2">
-                <img 
-                  src={heroDetailingPhoto} 
-                  alt="Professionnel du detailing automobile" 
-                  className="w-full h-full object-cover object-center"
-                  width={1024}
-                  height={1024}
-                />
-              </div>
+          {/* Hero image — premium arch container */}
+          <div className="opacity-0 animate-fade-in-up stagger-4 relative mx-auto max-w-4xl">
+            <div className="rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden aspect-[16/9] shadow-2xl shadow-black/10">
+              <img 
+                src={heroDetailingPhoto} 
+                alt="Professionnel du detailing automobile" 
+                className="w-full h-full object-cover"
+                width={1920}
+                height={1080}
+              />
+              {/* Subtle gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
             </div>
           </div>
         </div>
