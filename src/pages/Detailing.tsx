@@ -141,57 +141,124 @@ export default function Detailing() {
         </div>
       </header>
 
-      {/* Hero Section — Apple-grade */}
-      <section className="relative overflow-hidden bg-background">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 lg:pt-32 pb-12 sm:pb-16">
-          {/* Centered headline */}
-          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-            <h1 className="opacity-0 animate-fade-in-up text-[2.2rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[4rem] font-bold text-foreground tracking-[-0.03em] leading-[1.06] mb-6">
-              Le logiciel pour les pros du detailing auto
-            </h1>
-            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-base sm:text-lg leading-relaxed max-w-xl mx-auto mb-8">
-              Réservation en ligne, gestion clients, facturation — tout ce qu'il vous faut pour piloter votre activité.
-            </p>
-            <div className="opacity-0 animate-fade-in-up stagger-2">
-              <TrialButton />
-            </div>
-          </div>
-
-          {/* Apple-style app icons strip with staggered pop-in */}
-          <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8 mb-14 sm:mb-20">
-            {heroAppIcons.map(({ src, label }, i) => (
-              <div 
-                key={label} 
-                className="flex flex-col items-center gap-2 opacity-0 animate-scale-in"
-                style={{ animationDelay: `${0.3 + i * 0.08}s`, animationFillMode: 'forwards' }}
-              >
-                <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-[22%] overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 cursor-default">
-                  <img src={src} alt={label} className="w-full h-full object-cover" />
-                </div>
-                <span className="text-[10px] sm:text-[11px] text-muted-foreground/60 font-medium">{label}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Hero image — glassy Apple container */}
+      {/* Hero Section — taap.it / Apple inspired with floating widgets */}
+      <section className="relative overflow-hidden bg-background min-h-[85vh] flex items-center">
+        {/* Floating widgets — LEFT side */}
+        <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-[280px] xl:w-[340px]">
+          {/* Widget 1: Mini agenda card */}
           <div 
-            className="relative mx-auto max-w-4xl opacity-0 animate-fade-in-up"
-            style={{ animationDelay: '0.9s', animationFillMode: 'forwards' }}
+            className="absolute top-[15%] left-[10%] xl:left-[15%] w-[220px] opacity-0"
+            style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s forwards', transform: 'rotate(-6deg)' }}
           >
-            {/* Glassy border frame */}
-            <div className="p-[6px] sm:p-2 rounded-[1.75rem] sm:rounded-[2.5rem] bg-gradient-to-br from-white/80 via-white/40 to-white/10 dark:from-white/20 dark:via-white/10 dark:to-white/5 shadow-[0_8px_60px_-12px_hsl(0_0%_0%/0.15),0_0_0_1px_hsl(0_0%_0%/0.05)] backdrop-blur-sm">
-              <div className="rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden aspect-[16/9]">
-                <img 
-                  src={heroDetailingPhoto} 
-                  alt="Professionnel du detailing automobile" 
-                  className="w-full h-full object-cover"
-                  width={1920}
-                  height={1080}
-                />
+            <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-xl overflow-hidden"><img src={appIconAgenda} alt="" className="w-full h-full" /></div>
+                <span className="text-xs font-semibold text-foreground">Agenda</span>
+              </div>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 text-[10px]">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  <span className="text-muted-foreground">10:00 — Lavage complet</span>
+                </div>
+                <div className="flex items-center gap-2 text-[10px]">
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                  <span className="text-muted-foreground">14:00 — Polish carrosserie</span>
+                </div>
+                <div className="flex items-center gap-2 text-[10px]">
+                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                  <span className="text-muted-foreground">16:30 — Detailing intérieur</span>
+                </div>
               </div>
             </div>
-            {/* Ambient glow behind */}
-            <div className="absolute -inset-4 sm:-inset-8 rounded-[3rem] bg-gradient-to-br from-emerald-500/5 via-blue-500/5 to-purple-500/5 blur-3xl -z-10" />
+          </div>
+
+          {/* Widget 2: Client card */}
+          <div 
+            className="absolute bottom-[18%] left-[5%] xl:left-[8%] w-[200px] opacity-0"
+            style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.65s forwards', transform: 'rotate(3deg)' }}
+          >
+            <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-xl overflow-hidden"><img src={appIconClients} alt="" className="w-full h-full" /></div>
+                <div>
+                  <span className="text-[11px] font-semibold text-foreground block">Marc D.</span>
+                  <span className="text-[9px] text-muted-foreground">Client fidèle · 12 RDV</span>
+                </div>
+              </div>
+              <div className="flex gap-1 mt-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Floating widgets — RIGHT side */}
+        <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-[280px] xl:w-[340px]">
+          {/* Widget 3: Stats card */}
+          <div 
+            className="absolute top-[12%] right-[8%] xl:right-[12%] w-[210px] opacity-0"
+            style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards', transform: 'rotate(5deg)' }}
+          >
+            <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-xl overflow-hidden"><img src={appIconStats} alt="" className="w-full h-full" /></div>
+                <span className="text-xs font-semibold text-foreground">Ce mois</span>
+              </div>
+              <div className="text-2xl font-bold text-foreground mb-0.5">4 280 €</div>
+              <div className="flex items-center gap-1 text-[10px] text-emerald-600">
+                <ArrowRight className="w-3 h-3 rotate-[-45deg]" />
+                <span>+23% vs mois dernier</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Widget 4: Invoice mini */}
+          <div 
+            className="absolute bottom-[22%] right-[12%] xl:right-[18%] w-[190px] opacity-0"
+            style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.75s forwards', transform: 'rotate(-4deg)' }}
+          >
+            <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-xl overflow-hidden"><img src={appIconInvoices} alt="" className="w-full h-full" /></div>
+                <span className="text-xs font-semibold text-foreground">Facture</span>
+              </div>
+              <div className="flex items-center justify-between text-[10px]">
+                <span className="text-muted-foreground">FA-2024-047</span>
+                <span className="text-emerald-600 font-medium bg-emerald-500/10 px-1.5 py-0.5 rounded-full">Payée</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Widget 5: Ma Page mini */}
+          <div 
+            className="absolute top-[48%] right-[2%] xl:right-[5%] w-[170px] opacity-0"
+            style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s forwards', transform: 'rotate(2deg)' }}
+          >
+            <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg overflow-hidden"><img src={appIconMaPage} alt="" className="w-full h-full" /></div>
+                <div>
+                  <span className="text-[10px] font-semibold text-foreground block">Ma Page</span>
+                  <span className="text-[9px] text-muted-foreground">En ligne ✓</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Center: Text + CTA */}
+        <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 text-center py-16 sm:py-20">
+          <h1 className="opacity-0 animate-fade-in-up text-[2.2rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[3.75rem] font-bold text-foreground tracking-[-0.03em] leading-[1.06] mb-6">
+            Le logiciel pour les pros du{' '}
+            <span className="text-emerald-500">detailing auto</span>
+          </h1>
+          <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-base sm:text-lg leading-relaxed max-w-lg mx-auto mb-10">
+            Réservation en ligne, gestion clients, facturation — tout ce qu'il vous faut pour piloter votre activité.
+          </p>
+          <div className="opacity-0 animate-fade-in-up stagger-2">
+            <TrialButton />
           </div>
         </div>
       </section>
