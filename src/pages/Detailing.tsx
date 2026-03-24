@@ -141,14 +141,14 @@ export default function Detailing() {
         </div>
       </header>
 
-      {/* Hero Section — taap.it / Apple inspired with floating widgets */}
+      {/* Hero Section — taap.it inspired */}
       <section className="relative overflow-hidden bg-background">
-        <div className="relative min-h-[88vh] flex items-center">
-          {/* Floating widgets — LEFT side */}
-          <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-[280px] xl:w-[340px]">
-            {/* Widget 1: Mini agenda card */}
+        <div className="relative min-h-[92vh] sm:min-h-[88vh]">
+          
+          {/* Floating widgets — LEFT side (desktop only) */}
+          <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-[300px] xl:w-[360px] z-10">
             <div 
-              className="absolute top-[15%] left-[10%] xl:left-[15%] w-[220px] opacity-0"
+              className="absolute top-[18%] left-[8%] xl:left-[12%] w-[220px] opacity-0"
               style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s forwards', transform: 'rotate(-6deg)' }}
             >
               <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
@@ -173,10 +173,9 @@ export default function Detailing() {
               </div>
             </div>
 
-            {/* Widget 2: Client card */}
             <div 
-              className="absolute bottom-[25%] left-[5%] xl:left-[8%] w-[200px] opacity-0"
-              style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.65s forwards', transform: 'rotate(3deg)' }}
+              className="absolute bottom-[22%] left-[3%] xl:left-[6%] w-[200px] opacity-0"
+              style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.7s forwards', transform: 'rotate(3deg)' }}
             >
               <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
                 <div className="flex items-center gap-2 mb-2">
@@ -195,11 +194,10 @@ export default function Detailing() {
             </div>
           </div>
 
-          {/* Floating widgets — RIGHT side */}
-          <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-[280px] xl:w-[340px]">
-            {/* Widget 3: Stats card */}
+          {/* Floating widgets — RIGHT side (desktop only) */}
+          <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-[300px] xl:w-[360px] z-10">
             <div 
-              className="absolute top-[12%] right-[8%] xl:right-[12%] w-[210px] opacity-0"
+              className="absolute top-[14%] right-[6%] xl:right-[10%] w-[210px] opacity-0"
               style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards', transform: 'rotate(5deg)' }}
             >
               <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
@@ -215,10 +213,9 @@ export default function Detailing() {
               </div>
             </div>
 
-            {/* Widget 4: Invoice mini */}
             <div 
-              className="absolute bottom-[28%] right-[12%] xl:right-[18%] w-[190px] opacity-0"
-              style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.75s forwards', transform: 'rotate(-4deg)' }}
+              className="absolute bottom-[26%] right-[10%] xl:right-[14%] w-[190px] opacity-0"
+              style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.8s forwards', transform: 'rotate(-4deg)' }}
             >
               <div className="bg-card rounded-2xl shadow-card p-4 border border-border/50">
                 <div className="flex items-center gap-2 mb-2">
@@ -232,10 +229,9 @@ export default function Detailing() {
               </div>
             </div>
 
-            {/* Widget 5: Ma Page mini */}
             <div 
-              className="absolute top-[48%] right-[2%] xl:right-[5%] w-[170px] opacity-0"
-              style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s forwards', transform: 'rotate(2deg)' }}
+              className="absolute top-[46%] right-[1%] xl:right-[3%] w-[170px] opacity-0"
+              style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.95s forwards', transform: 'rotate(2deg)' }}
             >
               <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
                 <div className="flex items-center gap-2">
@@ -250,12 +246,12 @@ export default function Detailing() {
           </div>
 
           {/* Center: Text + CTA */}
-          <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 text-center pt-16 sm:pt-20 pb-40 sm:pb-52 lg:pb-56">
-            <h1 className="opacity-0 animate-fade-in-up text-[2.2rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[3.75rem] font-bold text-foreground tracking-[-0.03em] leading-[1.06] mb-6">
+          <div className="relative z-20 max-w-2xl mx-auto px-4 sm:px-6 text-center pt-14 sm:pt-20 lg:pt-24">
+            <h1 className="opacity-0 animate-fade-in-up text-[2rem] sm:text-[2.75rem] md:text-[3.25rem] lg:text-[3.75rem] font-bold text-foreground tracking-[-0.03em] leading-[1.06] mb-5 sm:mb-6">
               Le logiciel pour les pros du{' '}
               <span className="text-emerald-500">detailing auto</span>
             </h1>
-            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-base sm:text-lg leading-relaxed max-w-lg mx-auto mb-10">
+            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-[15px] sm:text-base sm:leading-relaxed max-w-md mx-auto mb-8 sm:mb-10">
               Réservation en ligne, gestion clients, facturation — tout ce qu'il vous faut pour piloter votre activité.
             </p>
             <div className="opacity-0 animate-fade-in-up stagger-2">
@@ -263,65 +259,127 @@ export default function Detailing() {
             </div>
           </div>
 
-          {/* Bottom: Horizontal bar with phone mockup peeking */}
-          <div className="absolute bottom-0 left-0 right-0">
-            {/* Subtle horizontal divider bar */}
-            <div className="w-full h-px bg-border/60" />
-            <div className="w-full bg-secondary/30 h-16 sm:h-20" />
-            
-            {/* Phone mockup — centered, peeking above the bar */}
+          {/* Mobile: Widgets below CTA, overflow cropped by divider */}
+          <div className="lg:hidden relative mt-8 sm:mt-12 h-[280px] sm:h-[320px] overflow-hidden">
+            {/* Left widget */}
             <div 
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 opacity-0"
-              style={{ animation: 'hero-float-up 1s cubic-bezier(0.16,1,0.3,1) 0.6s forwards' }}
+              className="absolute left-[-20px] sm:left-[2%] top-[10%] w-[180px] sm:w-[200px] opacity-0"
+              style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards', transform: 'rotate(-5deg)' }}
             >
-              <div className="relative">
-                {/* Phone shell */}
-                <div className="bg-[hsl(var(--border))] rounded-t-[2.2rem] sm:rounded-t-[2.5rem] p-[5px] shadow-2xl shadow-foreground/10">
-                  <div className="bg-card rounded-t-[2rem] sm:rounded-t-[2.2rem] overflow-hidden w-[200px] sm:w-[240px] md:w-[260px]">
-                    {/* Notch */}
-                    <div className="flex justify-center pt-2 pb-1">
-                      <div className="w-20 h-4 bg-secondary rounded-full" />
+              <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-7 h-7 rounded-xl overflow-hidden"><img src={appIconAgenda} alt="" className="w-full h-full" /></div>
+                  <span className="text-[10px] font-semibold text-foreground">Agenda</span>
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-[9px]">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span className="text-muted-foreground">10:00 — Lavage complet</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[9px]">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                    <span className="text-muted-foreground">14:00 — Polish</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right widget */}
+            <div 
+              className="absolute right-[-10px] sm:right-[2%] top-[5%] w-[175px] sm:w-[195px] opacity-0"
+              style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.6s forwards', transform: 'rotate(4deg)' }}
+            >
+              <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-7 h-7 rounded-xl overflow-hidden"><img src={appIconStats} alt="" className="w-full h-full" /></div>
+                  <span className="text-[10px] font-semibold text-foreground">Ce mois</span>
+                </div>
+                <div className="text-lg font-bold text-foreground">4 280 €</div>
+                <div className="flex items-center gap-1 text-[9px] text-emerald-600">
+                  <ArrowRight className="w-2.5 h-2.5 rotate-[-45deg]" />
+                  <span>+23%</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom-left widget — gets cropped by divider */}
+            <div 
+              className="absolute left-[8%] sm:left-[12%] bottom-[-20px] w-[165px] sm:w-[180px] opacity-0"
+              style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.75s forwards', transform: 'rotate(2deg)' }}
+            >
+              <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-xl overflow-hidden"><img src={appIconClients} alt="" className="w-full h-full" /></div>
+                  <div>
+                    <span className="text-[10px] font-semibold text-foreground block">Marc D.</span>
+                    <span className="text-[8px] text-muted-foreground">Client fidèle</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom-right widget — gets cropped */}
+            <div 
+              className="absolute right-[5%] sm:right-[10%] bottom-[-30px] w-[160px] sm:w-[175px] opacity-0"
+              style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.85s forwards', transform: 'rotate(-3deg)' }}
+            >
+              <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-xl overflow-hidden"><img src={appIconInvoices} alt="" className="w-full h-full" /></div>
+                  <span className="text-[10px] font-semibold text-foreground">FA-2024-047</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Divider — single subtle line, widgets rest on it */}
+          <div className="absolute bottom-0 left-0 right-0 z-30">
+            <div className="w-full h-px bg-border/40" />
+          </div>
+
+          {/* Phone mockup — peeking from bottom center, resting on the line */}
+          <div 
+            className="absolute bottom-0 left-1/2 z-20 opacity-0 hidden sm:block"
+            style={{ animation: 'hero-float-up 1s cubic-bezier(0.16,1,0.3,1) 0.7s forwards', transform: 'translateX(-50%)' }}
+          >
+            <div className="bg-[hsl(var(--border))] rounded-t-[2rem] md:rounded-t-[2.5rem] p-[5px] shadow-xl shadow-foreground/8">
+              <div className="bg-card rounded-t-[1.75rem] md:rounded-t-[2.2rem] overflow-hidden w-[180px] sm:w-[220px] md:w-[260px]">
+                <div className="flex justify-center pt-2 pb-1">
+                  <div className="w-16 sm:w-20 h-3.5 sm:h-4 bg-secondary rounded-full" />
+                </div>
+                <div className="px-2.5 sm:px-3">
+                  <div className="flex items-center justify-between py-1.5 sm:py-2">
+                    <div className="w-6 sm:w-7 h-6 sm:h-7 rounded-full overflow-hidden bg-foreground">
+                      <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
                     </div>
-                    {/* Mini app content */}
-                    <div className="px-3 pb-0">
-                      {/* Header */}
-                      <div className="flex items-center justify-between py-2">
-                        <div className="w-7 h-7 rounded-full overflow-hidden bg-foreground">
-                          <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
-                        </div>
-                        <div className="flex items-center gap-1 bg-foreground text-background rounded-full px-2.5 py-1 text-[8px] font-medium">
-                          <Phone className="w-2.5 h-2.5" />
-                          Appeler
-                        </div>
+                    <div className="flex items-center gap-1 bg-foreground text-background rounded-full px-2 py-0.5 sm:py-1 text-[7px] sm:text-[8px] font-medium">
+                      <Phone className="w-2 sm:w-2.5 h-2 sm:h-2.5" />
+                      Appeler
+                    </div>
+                  </div>
+                  <div className="pt-1.5 pb-1 text-center">
+                    <h3 className="text-[10px] sm:text-[11px] font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
+                    <p className="text-[7px] text-muted-foreground mt-0.5">Expert nettoyage auto</p>
+                  </div>
+                  <div className="flex justify-center gap-1.5 mb-1.5 sm:mb-2">
+                    <div className="w-5 sm:w-6 h-5 sm:h-6 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
+                      <Instagram className="w-2.5 sm:w-3 h-2.5 sm:h-3 text-muted-foreground" />
+                    </div>
+                    <div className="w-5 sm:w-6 h-5 sm:h-6 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
+                      <Facebook className="w-2.5 sm:w-3 h-2.5 sm:h-3 text-muted-foreground" />
+                    </div>
+                  </div>
+                  <div className="space-y-1 pb-0.5">
+                    <div className="bg-secondary/30 rounded-lg p-1.5 sm:p-2 border border-border/20">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[7px] sm:text-[8px] font-semibold text-foreground">Lavage Premium</span>
+                        <span className="text-[7px] sm:text-[8px] font-bold text-foreground">89€</span>
                       </div>
-                      {/* Profile */}
-                      <div className="pt-2 pb-1.5 text-center">
-                        <h3 className="text-[11px] sm:text-xs font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
-                        <p className="text-[7px] sm:text-[8px] text-muted-foreground mt-0.5">Expert nettoyage auto depuis 2018</p>
-                      </div>
-                      {/* Social */}
-                      <div className="flex justify-center gap-2 mb-2">
-                        <div className="w-6 h-6 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
-                          <Instagram className="w-3 h-3 text-muted-foreground" />
-                        </div>
-                        <div className="w-6 h-6 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
-                          <Facebook className="w-3 h-3 text-muted-foreground" />
-                        </div>
-                      </div>
-                      {/* Service cards peek */}
-                      <div className="space-y-1.5 pb-1">
-                        <div className="bg-secondary/30 rounded-xl p-2 border border-border/20">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[8px] font-semibold text-foreground">Lavage Premium</span>
-                            <span className="text-[8px] font-bold text-foreground">89€</span>
-                          </div>
-                        </div>
-                        <div className="bg-secondary/30 rounded-xl p-2 border border-border/20">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[8px] font-semibold text-foreground">Polish + Céramique</span>
-                            <span className="text-[8px] font-bold text-foreground">249€</span>
-                          </div>
-                        </div>
+                    </div>
+                    <div className="bg-secondary/30 rounded-lg p-1.5 sm:p-2 border border-border/20">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[7px] sm:text-[8px] font-semibold text-foreground">Polish + Céramique</span>
+                        <span className="text-[7px] sm:text-[8px] font-bold text-foreground">249€</span>
                       </div>
                     </div>
                   </div>
@@ -329,6 +387,7 @@ export default function Detailing() {
               </div>
             </div>
           </div>
+
         </div>
       </section>
 
