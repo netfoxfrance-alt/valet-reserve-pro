@@ -35,6 +35,24 @@ import iconFormules from '@/assets/icons/icon-formules.png';
 import iconDemandes from '@/assets/icons/icon-demandes.png';
 import iconStatistiques from '@/assets/icons/icon-statistiques.png';
 
+import appIconStats from '@/assets/icons/app-stats.png';
+import appIconReservations from '@/assets/icons/app-reservations.png';
+import appIconAgenda from '@/assets/icons/app-agenda.png';
+import appIconClients from '@/assets/icons/app-clients.png';
+import appIconInvoices from '@/assets/icons/app-invoices.png';
+import appIconMaPage from '@/assets/icons/app-mapage.png';
+import appIconFormules from '@/assets/icons/app-formules.png';
+
+const heroAppIcons = [
+  { src: appIconAgenda, label: 'Agenda' },
+  { src: appIconReservations, label: 'Réservations' },
+  { src: appIconClients, label: 'Clients' },
+  { src: appIconInvoices, label: 'Factures' },
+  { src: appIconStats, label: 'Statistiques' },
+  { src: appIconMaPage, label: 'Ma Page' },
+  { src: appIconFormules, label: 'Formules' },
+];
+
 const dashboardIcons = [
   { icon: iconReservations, label: 'Réservations' },
   { icon: iconAgenda, label: 'Agenda' },
@@ -127,7 +145,7 @@ export default function Detailing() {
       <section className="relative overflow-hidden bg-background">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 lg:pt-32 pb-12 sm:pb-16">
           {/* Centered headline */}
-          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
             <h1 className="opacity-0 animate-fade-in-up text-[2.2rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[4rem] font-bold text-foreground tracking-[-0.03em] leading-[1.06] mb-6">
               Le logiciel pour les pros du detailing auto
             </h1>
@@ -139,38 +157,41 @@ export default function Detailing() {
             </div>
           </div>
 
-          {/* Tool icons strip — outline style */}
-          <div className="opacity-0 animate-fade-in-up stagger-3 flex items-center justify-center gap-6 sm:gap-10 mb-14 sm:mb-20">
-            {[
-              { icon: Calendar, label: 'Agenda' },
-              { icon: Users, label: 'Clients' },
-              { icon: BarChart3, label: 'Statistiques' },
-              { icon: Tag, label: 'Formules' },
-              { icon: Mail, label: 'Devis' },
-              { icon: Palette, label: 'Ma Page' },
-            ].map(({ icon: Icon, label }) => (
-              <div key={label} className="flex flex-col items-center gap-2">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl border border-border flex items-center justify-center transition-all hover:border-foreground/30 hover:shadow-md">
-                  <Icon className="w-5 h-5 text-muted-foreground" strokeWidth={1.4} />
+          {/* Apple-style app icons strip with staggered pop-in */}
+          <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8 mb-14 sm:mb-20">
+            {heroAppIcons.map(({ src, label }, i) => (
+              <div 
+                key={label} 
+                className="flex flex-col items-center gap-2 opacity-0 animate-scale-in"
+                style={{ animationDelay: `${0.3 + i * 0.08}s`, animationFillMode: 'forwards' }}
+              >
+                <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-[22%] overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 cursor-default">
+                  <img src={src} alt={label} className="w-full h-full object-cover" />
                 </div>
-                <span className="text-[10px] sm:text-[11px] text-muted-foreground/70 font-medium tracking-wide">{label}</span>
+                <span className="text-[10px] sm:text-[11px] text-muted-foreground/60 font-medium">{label}</span>
               </div>
             ))}
           </div>
 
-          {/* Hero image — premium arch container */}
-          <div className="opacity-0 animate-fade-in-up stagger-4 relative mx-auto max-w-4xl">
-            <div className="rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden aspect-[16/9] shadow-2xl shadow-black/10">
-              <img 
-                src={heroDetailingPhoto} 
-                alt="Professionnel du detailing automobile" 
-                className="w-full h-full object-cover"
-                width={1920}
-                height={1080}
-              />
-              {/* Subtle gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+          {/* Hero image — glassy Apple container */}
+          <div 
+            className="relative mx-auto max-w-4xl opacity-0 animate-fade-in-up"
+            style={{ animationDelay: '0.9s', animationFillMode: 'forwards' }}
+          >
+            {/* Glassy border frame */}
+            <div className="p-[6px] sm:p-2 rounded-[1.75rem] sm:rounded-[2.5rem] bg-gradient-to-br from-white/80 via-white/40 to-white/10 dark:from-white/20 dark:via-white/10 dark:to-white/5 shadow-[0_8px_60px_-12px_hsl(0_0%_0%/0.15),0_0_0_1px_hsl(0_0%_0%/0.05)] backdrop-blur-sm">
+              <div className="rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden aspect-[16/9]">
+                <img 
+                  src={heroDetailingPhoto} 
+                  alt="Professionnel du detailing automobile" 
+                  className="w-full h-full object-cover"
+                  width={1920}
+                  height={1080}
+                />
+              </div>
             </div>
+            {/* Ambient glow behind */}
+            <div className="absolute -inset-4 sm:-inset-8 rounded-[3rem] bg-gradient-to-br from-emerald-500/5 via-blue-500/5 to-purple-500/5 blur-3xl -z-10" />
           </div>
         </div>
       </section>
