@@ -232,12 +232,11 @@ export default function Detailing() {
             </div>
           </div>
 
-          {/* Mobile: Compact widgets + phone mockup */}
-          <div className="lg:hidden relative mt-6 pb-4 overflow-hidden">
-            {/* taap.it style: scattered widgets + phone in bottom-right */}
-            <div className="relative min-h-[280px] sm:min-h-[320px]">
+          {/* Mobile: Widgets + phone mockup on divider line */}
+          <div className="lg:hidden relative mt-4 pb-0">
+            <div className="relative min-h-[220px] sm:min-h-[260px]">
               
-              {/* Top-left: Agenda widget */}
+              {/* Left: Agenda widget */}
               <div 
                 className="absolute top-0 left-4 opacity-0"
                 style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s forwards', transform: 'rotate(-4deg)' }}
@@ -260,9 +259,9 @@ export default function Detailing() {
                 </div>
               </div>
 
-              {/* Middle-left: Stats widget */}
+              {/* Left: Stats widget */}
               <div 
-                className="absolute top-[110px] left-2 opacity-0"
+                className="absolute top-[90px] left-2 opacity-0"
                 style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.7s forwards', transform: 'rotate(3deg)' }}
               >
                 <div className="bg-card rounded-xl shadow-card p-2.5 border border-border/50 w-[120px]">
@@ -278,9 +277,9 @@ export default function Detailing() {
                 </div>
               </div>
 
-              {/* Bottom-left: Client widget */}
+              {/* Left: Client widget */}
               <div 
-                className="absolute bottom-2 left-8 opacity-0"
+                className="absolute bottom-6 left-8 opacity-0"
                 style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s forwards', transform: 'rotate(-2deg)' }}
               >
                 <div className="bg-card rounded-xl shadow-card p-2.5 border border-border/50 w-[125px]">
@@ -294,13 +293,13 @@ export default function Detailing() {
                 </div>
               </div>
 
-              {/* Right: Phone mockup — anchored bottom-right like taap.it */}
+              {/* Phone mockup — bottom-right, crossing the divider line like desktop */}
               <div 
-                className="absolute right-2 bottom-0 opacity-0"
-                style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards', transform: 'rotate(3deg)' }}
+                className="absolute -right-3 -bottom-12 opacity-0"
+                style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards', transform: 'rotate(4deg)' }}
               >
-                <div className="bg-[hsl(var(--border))] rounded-[1.5rem] p-[3px] shadow-xl">
-                  <div className="bg-card rounded-[1.3rem] overflow-hidden w-[155px] sm:w-[175px]">
+                <div className="bg-[hsl(var(--border))] rounded-[1.5rem] p-[3px] shadow-2xl">
+                  <div className="bg-card rounded-[1.3rem] overflow-hidden w-[160px] sm:w-[180px]">
                     <div className="flex justify-center pt-1.5 pb-0.5">
                       <div className="w-12 h-2.5 bg-secondary rounded-full" />
                     </div>
@@ -355,8 +354,8 @@ export default function Detailing() {
             </div>
           </div>
 
-          {/* Divider line */}
-          <div className="absolute bottom-0 left-0 right-0 z-30">
+          {/* Divider line — crosses behind phone on both mobile & desktop */}
+          <div className="absolute bottom-12 lg:bottom-0 left-0 right-0 z-10">
             <div className="w-full h-px bg-border/40" />
           </div>
 
