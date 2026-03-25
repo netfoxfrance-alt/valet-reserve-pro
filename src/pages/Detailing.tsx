@@ -536,6 +536,39 @@ export default function Detailing() {
                     </div>
                   </div>
                 </div>
+
+                {/* Confirmation widget — positioned to the right, behind phone */}
+                <div className="relative z-0 mt-16 lg:mt-24 -ml-4" style={{ transform: 'rotate(3deg)' }}>
+                  <div className="bg-card rounded-2xl shadow-xl shadow-foreground/10 border border-border/50 p-3.5 w-[190px] sm:w-[210px]">
+                    <div className="flex items-center gap-2 mb-2.5">
+                      <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+                        <Check className="w-3.5 h-3.5 text-white" />
+                      </div>
+                      <span className="text-[11px] font-bold text-foreground">Réservation confirmée</span>
+                    </div>
+                    <div className="bg-secondary/30 rounded-xl p-2.5 space-y-1.5 mb-2.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[8px] text-muted-foreground">Formule</span>
+                        <span className="text-[9px] font-semibold text-foreground">Lavage Complet</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[8px] text-muted-foreground">Créneau</span>
+                        <span className="text-[9px] font-semibold text-foreground">Mer. 15 juin, 14h</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[8px] text-muted-foreground">Total</span>
+                        <span className="text-[9px] font-bold text-foreground">89,00 €</span>
+                      </div>
+                    </div>
+                    <div className="bg-emerald-500/10 rounded-lg px-2.5 py-2 flex items-center gap-2 border border-emerald-500/20">
+                      <Shield className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+                      <div>
+                        <span className="text-[8px] font-semibold text-emerald-700 block">Acompte payé — 20,00 €</span>
+                        <span className="text-[7px] text-emerald-600/70">Reste sur place : 69,00 €</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
