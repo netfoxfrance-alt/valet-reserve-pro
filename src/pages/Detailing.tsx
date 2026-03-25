@@ -8,7 +8,8 @@ import {
   Shield, Clock, Check, X, Car, Droplets, MapPin, Phone,
   Star, Settings, LogOut, ChevronRight, ChevronLeft, Globe, Palette, Eye,
   Instagram, MessageCircle, Share2, ExternalLink, Sparkles, Mail, Loader2,
-  Zap, Crown, ImagePlus, Upload, Tag, CalendarDays, Plus, Facebook, Type, MousePointer2
+  Zap, Crown, ImagePlus, Upload, Tag, CalendarDays, Plus, Facebook, Type, MousePointer2,
+  Music, ChevronDown, Clock
 } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import mockupBanner from '@/assets/mockup-banner-v2.jpg';
