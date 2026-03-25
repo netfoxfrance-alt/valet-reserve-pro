@@ -457,11 +457,11 @@ export default function Detailing() {
               <TrialButton />
             </div>
             {/* Right: Phone mockup with calendar card behind */}
-            <div className="opacity-0 animate-fade-in-up stagger-2 flex justify-center lg:justify-start">
+            <div className="opacity-0 animate-fade-in-up stagger-2 flex justify-center">
               <div className="relative">
                 {/* BACK phone — slot selection + deposit — peeking behind right */}
                 <div 
-                  className="absolute top-4 left-[58%] sm:left-[55%] lg:left-[52%] z-0 hidden sm:block"
+                  className="absolute top-4 left-[60%] sm:left-[58%] lg:left-[55%] z-0 hidden sm:block"
                   style={{ transform: 'rotate(4deg)' }}
                 >
                   <div className="bg-[hsl(var(--border))] rounded-[2.5rem] p-[5px] shadow-xl shadow-foreground/5">
