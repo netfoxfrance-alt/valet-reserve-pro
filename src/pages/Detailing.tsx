@@ -350,34 +350,45 @@ export default function Detailing() {
                   <div className="flex justify-center pt-2 pb-1">
                     <div className="w-20 h-4 bg-secondary rounded-full" />
                   </div>
-                  {/* Header bar */}
-                  <div className="mx-3 mt-1 bg-secondary/40 rounded-xl px-3 py-1.5 flex items-center justify-between border border-border/20">
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-5 h-5 rounded-full overflow-hidden bg-white flex items-center justify-center">
-                        <img src={sfAutoLogo} alt="" className="w-4 h-4 object-contain" />
-                      </div>
-                      <span className="text-[9px] font-bold text-foreground">SF AUTO</span>
+                  {/* Header bar — logo prominent + call button */}
+                  <div className="mx-3 mt-1 flex items-center justify-between">
+                    <div className="w-9 h-9 rounded-xl overflow-hidden bg-white flex items-center justify-center shadow-sm border border-border/20">
+                      <img src={sfAutoLogo} alt="" className="w-7 h-7 object-contain" />
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Phone className="w-3 h-3 text-muted-foreground" />
-                      <MapPin className="w-3 h-3 text-muted-foreground" />
+                    <div className="flex items-center gap-1 bg-foreground text-background rounded-full px-2.5 py-1 text-[8px] font-medium">
+                      <Phone className="w-2.5 h-2.5" />
+                      Appeler
                     </div>
                   </div>
                   <div className="px-3 pt-3 pb-2">
-                    {/* Business name + stars */}
-                    <div className="text-center mb-3">
-                      <h3 className="text-[12px] font-extrabold text-foreground tracking-wide">SF AUTO</h3>
-                      <div className="flex justify-center items-center gap-[2px] mt-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                        ))}
-                        <span className="text-[8px] text-muted-foreground ml-1">4.9 (127 avis)</span>
-                      </div>
-                      <p className="text-[7px] text-muted-foreground mt-1">Detailing premium · Lyon 3ème</p>
+                    {/* Name + stars row */}
+                    <div className="text-center mb-1">
+                      <h3 className="text-[13px] font-extrabold text-foreground tracking-tight">SF AUTO</h3>
                     </div>
+                    <div className="flex justify-center items-center gap-[2px] mb-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                      ))}
+                      <span className="text-[7px] text-muted-foreground ml-1">4.9 (127)</span>
+                    </div>
+                    <p className="text-[7px] text-muted-foreground text-center mb-2">Detailing premium · Lyon 3ème</p>
+                    {/* Social icons */}
+                    <div className="flex justify-center gap-1.5 mb-3">
+                      <div className="w-5 h-5 bg-secondary/50 rounded-full flex items-center justify-center">
+                        <Instagram className="w-2.5 h-2.5 text-muted-foreground" />
+                      </div>
+                      <div className="w-5 h-5 bg-secondary/50 rounded-full flex items-center justify-center">
+                        <Facebook className="w-2.5 h-2.5 text-muted-foreground" />
+                      </div>
+                      <div className="w-5 h-5 bg-secondary/50 rounded-full flex items-center justify-center">
+                        <Globe className="w-2.5 h-2.5 text-muted-foreground" />
+                      </div>
+                    </div>
+                    {/* Separator */}
+                    <div className="w-full h-px bg-border/30 mb-2.5" />
                     {/* Section title */}
                     <p className="text-[9px] text-foreground font-semibold mb-2">Que voulez-vous laver ?</p>
-                    {/* Vehicle grid — 3 square cards side by side */}
+                    {/* Vehicle grid — 3 square cards */}
                     <div className="grid grid-cols-3 gap-1.5">
                       {[
                         { name: 'Citadine', img: citadineImg },
