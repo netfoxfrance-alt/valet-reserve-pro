@@ -8,8 +8,7 @@ import {
   Shield, Clock, Check, X, Car, Droplets, MapPin, Phone,
   Star, Settings, LogOut, ChevronRight, ChevronLeft, Globe, Palette, Eye,
   Instagram, MessageCircle, Share2, ExternalLink, Sparkles, Mail, Loader2,
-  Zap, Crown, ImagePlus, Upload, Tag, CalendarDays, Plus, Facebook, Type, MousePointer2,
-  Music, ChevronDown
+  Zap, Crown, ImagePlus, Upload, Tag, CalendarDays, Plus, Facebook, Type, MousePointer2
 } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import mockupBanner from '@/assets/mockup-banner-v2.jpg';
@@ -1272,61 +1271,61 @@ export default function Detailing() {
                                 
                                 <div className="rounded-[2.2rem] overflow-hidden bg-card" style={{ aspectRatio: '9/19.5', scrollbarWidth: 'none' }}>
                                   <div className="h-full overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
-                                    {/* Minimal header — logo + Appeler button */}
                                     <div className="flex items-center justify-between px-4 pt-10 pb-3">
                                       <div className="flex items-center gap-2">
                                         <div className="w-8 h-8 rounded-xl overflow-hidden shadow-sm ring-1 ring-border/20">
                                           <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
                                         </div>
+                                        <span className="text-[11px] font-bold text-foreground tracking-tight">GOCLEANING</span>
                                       </div>
-                                      <div className="bg-foreground text-background rounded-full px-3.5 py-1.5 flex items-center gap-1.5">
-                                        <Phone className="w-3 h-3" />
-                                        <span className="text-[9px] font-semibold">Appeler</span>
+                                      <div className="w-8 h-8 rounded-full bg-foreground flex items-center justify-center">
+                                        <Phone className="w-3.5 h-3.5 text-background" />
                                       </div>
                                     </div>
-                                    <div className="w-full h-px bg-border/10" />
+                                    <div className="w-full h-px bg-border/15" />
                                     
-                                    <div className="px-5 pt-6 pb-6 text-center">
-                                      <h3 className="text-[17px] font-bold text-foreground mb-1 tracking-tight leading-tight">GO CLEANING</h3>
-                                      <p className="text-[10px] text-muted-foreground mb-4 leading-relaxed">Expert du nettoyage automobile depuis 2018</p>
+                                    <div className="px-5 pt-5 pb-6">
+                                      <h3 className="text-[17px] font-bold text-foreground mb-0.5 tracking-tight leading-tight">GOCLEANING</h3>
+                                      <p className="text-[10px] text-muted-foreground mb-2.5 leading-relaxed">{t('mockup.premiumAutoFull')}</p>
                                       
-                                      {/* Social icons */}
-                                      <div className="flex justify-center gap-2.5 mb-4">
-                                        {[Instagram, Music].map((Icon, i) => (
+                                      <div className="flex items-center gap-3 mb-1.5">
+                                        <span className="inline-flex items-center gap-1 text-[9px] text-emerald-600 font-semibold">
+                                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                                          {t('mockup.open')}
+                                        </span>
+                                        <span className="text-[9px] text-muted-foreground">· {t('mockup.closesAt')}</span>
+                                      </div>
+                                      
+                                      <div className="flex items-center gap-1 mb-4">
+                                        {[...Array(5)].map((_, i) => <Star key={i} className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />)}
+                                        <span className="text-[9px] text-muted-foreground ml-1 font-medium">4.9 (122 {t('mockup.reviews')})</span>
+                                      </div>
+
+                                      <div className="flex gap-2.5 mb-5">
+                                        {[Instagram, Facebook, Globe].map((Icon, i) => (
                                           <div key={i} className="w-8 h-8 rounded-xl bg-secondary/30 flex items-center justify-center border border-border/10">
                                             <Icon className="w-3.5 h-3.5 text-muted-foreground" />
                                           </div>
                                         ))}
                                       </div>
-
-                                      {/* Formule personnalisée CTA */}
-                                      <div className="flex items-center justify-center gap-2 bg-secondary/20 rounded-2xl py-2.5 px-4 mb-5 border border-border/10">
-                                        <Mail className="w-3.5 h-3.5 text-muted-foreground" />
-                                        <span className="text-[10px] text-muted-foreground font-medium">Formule personnalisée ? Identifiez-vous</span>
-                                      </div>
                                       
-                                      {/* Ouvert badge */}
-                                      <div className="flex items-center justify-center gap-2 mb-5">
-                                        <Clock className="w-3.5 h-3.5 text-muted-foreground" />
-                                        <span className="text-[9px] text-emerald-600 font-semibold">Ouvert</span>
-                                        <span className="text-[9px] text-muted-foreground">· Ferme à 19h00</span>
-                                        <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                                      </div>
-                                    </div>
-
-                                    <div className="px-5 pb-6">
-                                      <p className="text-[11px] font-semibold text-foreground mb-2.5 tracking-tight text-left">{t('mockup.ourPackages')}</p>
+                                      <p className="text-[11px] font-semibold text-foreground mb-2.5 tracking-tight">{t('mockup.ourPackages')}</p>
                                       <div className="grid grid-cols-2 gap-2 mb-3">
                                         {[
-                                          { name: 'LAVAGE COMPLET', price: 'dès 65€', img: mockupCarCleaning },
-                                          { name: 'Nettoyage intérieur', price: 'dès 50€', img: mockupInterior },
+                                          { name: 'Express', desc: 'Extérieur', price: '35€', img: mockupExterior },
+                                          { name: 'Complet', desc: 'Int. + Ext.', price: '89€', img: mockupCarCleaning },
+                                          { name: 'Premium', desc: 'Rénovation', price: '159€', img: mockupInterior },
+                                          { name: 'Canapé', desc: 'Textile', price: '79€', img: sofaBanner },
                                         ].map((f, i) => (
-                                          <div key={i} className="rounded-2xl overflow-hidden relative h-[90px] shadow-sm group cursor-pointer">
+                                          <div key={i} className="rounded-2xl overflow-hidden relative h-[80px] shadow-sm group cursor-pointer">
                                             <img src={f.img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
                                             <div className="absolute bottom-2 left-2.5 right-2.5">
-                                              <p className="text-[10px] text-white font-bold leading-tight">{f.name}</p>
-                                              <p className="text-[9px] text-white/80 font-medium">{f.price}</p>
+                                              <p className="text-[8px] text-white/70 font-medium">{f.desc}</p>
+                                              <div className="flex items-baseline justify-between">
+                                                <p className="text-[10px] text-white font-semibold">{f.name}</p>
+                                                <p className="text-[11px] text-white font-bold">{f.price}</p>
+                                              </div>
                                             </div>
                                           </div>
                                         ))}
