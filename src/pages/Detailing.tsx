@@ -457,7 +457,7 @@ export default function Detailing() {
               <TrialButton />
             </div>
             {/* Right: Phone mockup with calendar card behind */}
-            <div className="opacity-0 animate-fade-in-up stagger-2 flex justify-center">
+            <div className="opacity-0 animate-fade-in-up stagger-2 flex justify-center overflow-hidden">
               <div className="relative">
                 {/* BACK phone — slot selection + deposit — peeking behind right */}
                 <div 
