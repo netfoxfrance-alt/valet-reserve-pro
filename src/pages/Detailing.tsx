@@ -458,48 +458,9 @@ export default function Detailing() {
             </div>
             {/* Right: Phone mockup with calendar card behind */}
             <div className="opacity-0 animate-fade-in-up stagger-2 flex justify-center lg:justify-end">
-              <div className="relative">
-                {/* Confirmation widget — floating over bottom-right of phone */}
-                <div 
-                  className="absolute -bottom-6 -right-10 sm:-right-16 lg:-right-20 z-20 w-[200px] sm:w-[220px]"
-                  style={{ transform: 'rotate(2deg)' }}
-                >
-                  <div className="bg-card rounded-2xl shadow-xl shadow-foreground/10 border border-border/50 p-3.5">
-                    {/* Header */}
-                    <div className="flex items-center gap-2 mb-2.5">
-                      <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
-                        <Check className="w-3.5 h-3.5 text-white" />
-                      </div>
-                      <span className="text-[11px] font-bold text-foreground">Réservation confirmée</span>
-                    </div>
-                    {/* Recap */}
-                    <div className="bg-secondary/30 rounded-xl p-2.5 space-y-1.5 mb-2.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[8px] text-muted-foreground">Formule</span>
-                        <span className="text-[9px] font-semibold text-foreground">Lavage Complet</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[8px] text-muted-foreground">Créneau</span>
-                        <span className="text-[9px] font-semibold text-foreground">Mer. 15 juin, 14h</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[8px] text-muted-foreground">Total</span>
-                        <span className="text-[9px] font-bold text-foreground">89,00 €</span>
-                      </div>
-                    </div>
-                    {/* Deposit paid */}
-                    <div className="bg-emerald-500/10 rounded-lg px-2.5 py-2 flex items-center gap-2 border border-emerald-500/20">
-                      <Shield className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-                      <div>
-                        <span className="text-[8px] font-semibold text-emerald-700 block">Acompte payé — 20,00 €</span>
-                        <span className="text-[7px] text-emerald-600/70">Reste sur place : 69,00 €</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* FRONT card — Main booking page mockup */}
-                <div className="relative z-10" style={{ transform: 'rotate(-2deg)' }}>
+              <div className="relative flex items-start gap-0">
+                {/* FRONT card — Main booking page mockup — shifted left */}
+                <div className="relative z-10 -mr-8 lg:-mr-12" style={{ transform: 'rotate(-2deg)' }}>
                   <div className="bg-[hsl(var(--border))] rounded-[2.5rem] p-[6px] shadow-2xl shadow-foreground/15">
                     {/* Side button right */}
                     <div className="absolute right-[-3px] top-28 w-[3px] h-8 bg-border rounded-r-sm" />
@@ -571,6 +532,39 @@ export default function Detailing() {
                         </div>
                         {/* CTA */}
                         <button className="w-full bg-emerald-500 text-white rounded-2xl py-3 text-[12px] font-semibold tracking-wide mb-4">Réserver</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Confirmation widget — positioned to the right, behind phone */}
+                <div className="relative z-0 mt-16 lg:mt-24 -ml-4" style={{ transform: 'rotate(3deg)' }}>
+                  <div className="bg-card rounded-2xl shadow-xl shadow-foreground/10 border border-border/50 p-3.5 w-[190px] sm:w-[210px]">
+                    <div className="flex items-center gap-2 mb-2.5">
+                      <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+                        <Check className="w-3.5 h-3.5 text-white" />
+                      </div>
+                      <span className="text-[11px] font-bold text-foreground">Réservation confirmée</span>
+                    </div>
+                    <div className="bg-secondary/30 rounded-xl p-2.5 space-y-1.5 mb-2.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[8px] text-muted-foreground">Formule</span>
+                        <span className="text-[9px] font-semibold text-foreground">Lavage Complet</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[8px] text-muted-foreground">Créneau</span>
+                        <span className="text-[9px] font-semibold text-foreground">Mer. 15 juin, 14h</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[8px] text-muted-foreground">Total</span>
+                        <span className="text-[9px] font-bold text-foreground">89,00 €</span>
+                      </div>
+                    </div>
+                    <div className="bg-emerald-500/10 rounded-lg px-2.5 py-2 flex items-center gap-2 border border-emerald-500/20">
+                      <Shield className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+                      <div>
+                        <span className="text-[8px] font-semibold text-emerald-700 block">Acompte payé — 20,00 €</span>
+                        <span className="text-[7px] text-emerald-600/70">Reste sur place : 69,00 €</span>
                       </div>
                     </div>
                   </div>
