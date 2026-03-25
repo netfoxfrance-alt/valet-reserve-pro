@@ -757,21 +757,21 @@ export default function Detailing() {
                       </div>
 
                       {/* KPI row */}
-                      <div className="grid grid-cols-3 gap-3 mb-6">
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
+                        <div className="rounded-xl sm:rounded-2xl p-3 sm:p-4 bg-card border border-border/30 shadow-sm">
                            <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.today')}</p>
-                           <p className="text-3xl font-bold tracking-tight leading-none text-foreground">5</p>
+                           <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">5</p>
                            <div className="flex items-center gap-1.5 mt-2">
                              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                              <p className="text-[10px] text-muted-foreground font-medium">2 {t('mockup.pendingCount')}</p>
                            </div>
                          </div>
-                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                         <div className="rounded-xl sm:rounded-2xl p-3 sm:p-4 bg-card border border-border/30 shadow-sm">
                            <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.thisWeek')}</p>
-                           <p className="text-3xl font-bold tracking-tight leading-none text-foreground">23</p>
+                           <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">23</p>
                            <p className="text-[10px] text-muted-foreground mt-2">{t('mockup.includingRequests', { count: 4 })}</p>
                          </div>
-                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                         <div className="rounded-xl sm:rounded-2xl p-3 sm:p-4 bg-card border border-border/30 shadow-sm hidden sm:block">
                            <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.dailyRevenue')}</p>
                            <p className="text-3xl font-bold tracking-tight leading-none text-foreground">340€</p>
                            <p className="text-[10px] text-emerald-600 font-semibold mt-2">↑ 15%</p>
