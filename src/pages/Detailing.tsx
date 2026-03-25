@@ -456,81 +456,132 @@ export default function Detailing() {
               </p>
               <TrialButton />
             </div>
-            {/* Right: Phone mockup frame */}
+            {/* Right: Phone mockup with calendar card behind */}
             <div className="opacity-0 animate-fade-in-up stagger-2 flex justify-center lg:justify-end">
-              <div className="relative" style={{ transform: 'rotate(-2deg)' }}>
-                {/* Phone frame */}
-                <div className="bg-[#e8e8e8] rounded-[2.5rem] p-[6px] shadow-2xl shadow-black/25">
-                  {/* Side button right */}
-                  <div className="absolute right-[-3px] top-28 w-[3px] h-8 bg-[#d0d0d0] rounded-r-sm" />
-                  <div className="bg-white rounded-[2.2rem] overflow-hidden w-[260px] sm:w-[280px] lg:w-[300px]">
-                    {/* Notch */}
-                    <div className="flex justify-center pt-2 pb-1">
-                      <div className="w-24 h-5 bg-[#e8e8e8] rounded-full" />
+              <div className="relative">
+                {/* BACK card — Calendar/time slot selection — slightly offset */}
+                <div 
+                  className="absolute top-6 -right-8 sm:-right-12 lg:-right-16 z-0"
+                  style={{ transform: 'rotate(4deg)' }}
+                >
+                  <div className="bg-[hsl(var(--border))] rounded-[2rem] p-[5px] shadow-xl shadow-foreground/5">
+                    <div className="bg-card rounded-[1.7rem] overflow-hidden w-[220px] sm:w-[240px] lg:w-[260px]">
+                      <div className="flex justify-center pt-2 pb-1">
+                        <div className="w-20 h-4 bg-secondary rounded-full" />
+                      </div>
+                      <div className="px-4 pt-3 pb-6">
+                        <p className="text-[11px] font-bold text-foreground mb-3">Choisissez un créneau</p>
+                        {/* Mini calendar */}
+                        <div className="bg-secondary/20 rounded-xl p-2.5 border border-border/15 mb-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <ChevronLeft className="w-3 h-3 text-muted-foreground" />
+                            <span className="text-[9px] font-semibold text-foreground">Juin 2025</span>
+                            <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                          </div>
+                          <div className="grid grid-cols-7 gap-0.5 text-center">
+                            {['L','M','M','J','V','S','D'].map((d, i) => (
+                              <span key={i} className="text-[7px] text-muted-foreground font-medium">{d}</span>
+                            ))}
+                            {[...Array(30)].map((_, i) => (
+                              <div key={i} className={`text-[7px] w-5 h-5 flex items-center justify-center rounded-full ${
+                                i === 14 ? 'bg-foreground text-background font-bold' : 
+                                i === 15 || i === 16 ? 'text-foreground' : 'text-muted-foreground/60'
+                              }`}>
+                                {i + 1}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        {/* Time slots */}
+                        <p className="text-[9px] font-semibold text-foreground mb-2">Créneaux disponibles</p>
+                        <div className="grid grid-cols-3 gap-1.5">
+                          {['09:00', '10:30', '14:00', '15:30', '17:00'].map((t, i) => (
+                            <div key={t} className={`text-[8px] text-center py-1.5 rounded-lg border font-medium ${
+                              i === 2 ? 'bg-foreground text-background border-foreground' : 'border-border/30 text-foreground'
+                            }`}>
+                              {t}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                    {/* App content */}
-                    <div className="px-3.5 lg:px-4">
-                      {/* Header */}
-                      <div className="flex items-center justify-between py-2">
-                        <div className="w-9 h-9 rounded-full overflow-hidden ring-1 ring-border/30 bg-black">
-                          <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+
+                {/* FRONT card — Main booking page mockup */}
+                <div className="relative z-10" style={{ transform: 'rotate(-2deg)' }}>
+                  <div className="bg-[hsl(var(--border))] rounded-[2.5rem] p-[6px] shadow-2xl shadow-foreground/15">
+                    {/* Side button right */}
+                    <div className="absolute right-[-3px] top-28 w-[3px] h-8 bg-border rounded-r-sm" />
+                    <div className="bg-card rounded-[2.2rem] overflow-hidden w-[260px] sm:w-[280px] lg:w-[300px]">
+                      {/* Notch */}
+                      <div className="flex justify-center pt-2 pb-1">
+                        <div className="w-24 h-5 bg-secondary rounded-full" />
+                      </div>
+                      {/* App content */}
+                      <div className="px-3.5 lg:px-4">
+                        {/* Header */}
+                        <div className="flex items-center justify-between py-2">
+                          <div className="w-9 h-9 rounded-full overflow-hidden ring-1 ring-border/30 bg-black">
+                            <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
+                          </div>
+                          <button className="flex items-center gap-1.5 bg-zinc-600 text-white rounded-full px-3 py-1.5 text-[9px] font-medium">
+                            <Phone className="w-3 h-3" />
+                            Appeler
+                          </button>
                         </div>
-                        <button className="flex items-center gap-1.5 bg-zinc-600 text-white rounded-full px-3 py-1.5 text-[9px] font-medium">
-                          <Phone className="w-3 h-3" />
-                          Appeler
-                        </button>
-                      </div>
-                      <div className="border-t border-border/20" />
-                      {/* Profile */}
-                      <div className="pt-4 pb-2 text-center">
-                        <h3 className="text-base lg:text-lg font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
-                        <p className="text-[9px] lg:text-[10px] text-muted-foreground mt-0.5">Expert du nettoyage automobile depuis 2018</p>
-                      </div>
-                      {/* Social */}
-                      <div className="flex justify-center gap-3 mb-3">
-                        <div className="w-9 h-9 bg-secondary/20 rounded-full flex items-center justify-center border border-border/30">
-                          <Instagram className="w-4 h-4 text-foreground/60" />
+                        <div className="border-t border-border/20" />
+                        {/* Profile */}
+                        <div className="pt-4 pb-2 text-center">
+                          <h3 className="text-base lg:text-lg font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
+                          <p className="text-[9px] lg:text-[10px] text-muted-foreground mt-0.5">Expert du nettoyage automobile depuis 2018</p>
                         </div>
-                        <div className="w-9 h-9 bg-secondary/20 rounded-full flex items-center justify-center border border-border/30">
-                          <svg className="w-4 h-4 text-foreground/60" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.73a8.19 8.19 0 0 0 4.77 1.53V6.81a4.82 4.82 0 0 1-1-.12z"/></svg>
-                        </div>
-                      </div>
-                      {/* Contact bar */}
-                      <div className="bg-muted/20 rounded-2xl px-3.5 py-2.5 mb-3 flex items-center gap-2 border border-border/20">
-                        <Mail className="w-3.5 h-3.5 text-muted-foreground/60" />
-                        <span className="text-[10px] text-muted-foreground">Formule personnalisée ? Identifiez-vous</span>
-                      </div>
-                      {/* Hours */}
-                      <div className="flex items-center justify-between mb-4 px-0.5">
-                        <div className="flex items-center gap-2">
-                          <Clock className="w-3.5 h-3.5 text-muted-foreground/50" />
-                          <span className="text-[10px] text-emerald-600 font-semibold">Ouvert</span>
-                          <span className="text-[10px] text-muted-foreground">· Ferme à 19h00</span>
-                        </div>
-                        <ChevronRight className="w-3 h-3 text-muted-foreground/40 rotate-90" />
-                      </div>
-                      {/* Formules */}
-                      <p className="text-sm font-bold text-foreground mb-2.5">Nos formules</p>
-                      <div className="grid grid-cols-2 gap-2.5 mb-4">
-                        <div className="rounded-2xl overflow-hidden relative aspect-square">
-                          <img src={mockupExterior} alt="Lavage complet" className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                          <div className="absolute bottom-0 left-0 p-2.5">
-                            <p className="text-[11px] font-bold text-white leading-tight uppercase">Lavage complet</p>
-                            <span className="text-[12px] font-bold text-white">dès 65€</span>
+                        {/* Social */}
+                        <div className="flex justify-center gap-3 mb-3">
+                          <div className="w-9 h-9 bg-secondary/20 rounded-full flex items-center justify-center border border-border/30">
+                            <Instagram className="w-4 h-4 text-foreground/60" />
+                          </div>
+                          <div className="w-9 h-9 bg-secondary/20 rounded-full flex items-center justify-center border border-border/30">
+                            <svg className="w-4 h-4 text-foreground/60" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.73a8.19 8.19 0 0 0 4.77 1.53V6.81a4.82 4.82 0 0 1-1-.12z"/></svg>
                           </div>
                         </div>
-                        <div className="rounded-2xl overflow-hidden relative aspect-square">
-                          <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                          <div className="absolute bottom-0 left-0 p-2.5">
-                            <p className="text-[11px] font-bold text-white leading-tight">Nettoyage intérieur</p>
-                            <span className="text-[12px] font-bold text-white">dès 50€</span>
+                        {/* Contact bar */}
+                        <div className="bg-muted/20 rounded-2xl px-3.5 py-2.5 mb-3 flex items-center gap-2 border border-border/20">
+                          <Mail className="w-3.5 h-3.5 text-muted-foreground/60" />
+                          <span className="text-[10px] text-muted-foreground">Formule personnalisée ? Identifiez-vous</span>
+                        </div>
+                        {/* Hours */}
+                        <div className="flex items-center justify-between mb-4 px-0.5">
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-3.5 h-3.5 text-muted-foreground/50" />
+                            <span className="text-[10px] text-emerald-600 font-semibold">Ouvert</span>
+                            <span className="text-[10px] text-muted-foreground">· Ferme à 19h00</span>
+                          </div>
+                          <ChevronRight className="w-3 h-3 text-muted-foreground/40 rotate-90" />
+                        </div>
+                        {/* Formules */}
+                        <p className="text-sm font-bold text-foreground mb-2.5">Nos formules</p>
+                        <div className="grid grid-cols-2 gap-2.5 mb-4">
+                          <div className="rounded-2xl overflow-hidden relative aspect-square">
+                            <img src={mockupExterior} alt="Lavage complet" className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                            <div className="absolute bottom-0 left-0 p-2.5">
+                              <p className="text-[11px] font-bold text-white leading-tight uppercase">Lavage complet</p>
+                              <span className="text-[12px] font-bold text-white">dès 65€</span>
+                            </div>
+                          </div>
+                          <div className="rounded-2xl overflow-hidden relative aspect-square">
+                            <img src={mockupInterior} alt="Nettoyage intérieur" className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                            <div className="absolute bottom-0 left-0 p-2.5">
+                              <p className="text-[11px] font-bold text-white leading-tight">Nettoyage intérieur</p>
+                              <span className="text-[12px] font-bold text-white">dès 50€</span>
+                            </div>
                           </div>
                         </div>
+                        {/* CTA */}
+                        <button className="w-full bg-emerald-500 text-white rounded-2xl py-3 text-[12px] font-semibold tracking-wide mb-4">Réserver</button>
                       </div>
-                      {/* CTA */}
-                      <button className="w-full bg-emerald-500 text-white rounded-2xl py-3 text-[12px] font-semibold tracking-wide mb-4">Réserver</button>
                     </div>
                   </div>
                 </div>
