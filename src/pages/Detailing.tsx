@@ -608,9 +608,9 @@ export default function Detailing() {
           <div className="grid lg:grid-cols-2 gap-0 bg-card rounded-[2rem] overflow-hidden shadow-xl shadow-black/5 ring-1 ring-border/10">
             {/* Left: Text */}
             <div className="p-10 sm:p-12 lg:p-16 flex flex-col justify-center opacity-0 animate-fade-in-up">
-              <span className="text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-4 block">02 — Agenda connecté</span>
+              <span className="text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-4 block">02 — Un planning toujours à jour</span>
               <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-8 leading-[1.08]">
-                Un planning toujours à jour
+                Agenda connecté
               </h2>
               <ul className="space-y-5 mb-10">
                 {[
