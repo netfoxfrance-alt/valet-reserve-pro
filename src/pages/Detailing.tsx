@@ -147,7 +147,7 @@ export default function Detailing() {
 
       {/* Hero Section — taap.it inspired */}
       <section className="relative overflow-hidden bg-background">
-        <div className="relative min-h-[90vh] sm:min-h-[88vh]">
+        <div className="relative min-h-[70vh] sm:min-h-[88vh]">
           
           {/* Floating widgets — LEFT side (desktop only) */}
           <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-[300px] xl:w-[360px] z-10">
@@ -219,12 +219,12 @@ export default function Detailing() {
           </div>
 
           {/* Center: Text + CTA */}
-          <div className="relative z-20 max-w-2xl mx-auto px-4 sm:px-6 text-center pt-14 sm:pt-20 lg:pt-24">
-            <h1 className="opacity-0 animate-fade-in-up text-[2rem] sm:text-[2.75rem] md:text-[3.25rem] lg:text-[3.75rem] font-bold text-foreground tracking-[-0.03em] leading-[1.06] mb-5 sm:mb-6">
+          <div className="relative z-20 max-w-2xl mx-auto px-4 sm:px-6 text-center pt-8 sm:pt-20 lg:pt-24">
+            <h1 className="opacity-0 animate-fade-in-up text-[1.65rem] sm:text-[2.75rem] md:text-[3.25rem] lg:text-[3.75rem] font-bold text-foreground tracking-[-0.03em] leading-[1.1] sm:leading-[1.06] mb-4 sm:mb-6">
               Le logiciel pour les pros du{' '}
               <span className="text-emerald-500">detailing auto</span>
             </h1>
-            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-[15px] sm:text-base sm:leading-relaxed max-w-md mx-auto mb-8 sm:mb-10">
+            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-[13px] sm:text-base sm:leading-relaxed max-w-md mx-auto mb-6 sm:mb-10">
               Réservation en ligne, gestion clients, facturation — tout ce qu'il vous faut pour piloter votre activité.
             </p>
             <div className="opacity-0 animate-fade-in-up stagger-2">
