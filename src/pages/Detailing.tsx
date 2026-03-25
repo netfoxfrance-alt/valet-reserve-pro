@@ -695,7 +695,7 @@ export default function Detailing() {
                     <button
                       key={item.tab}
                       onClick={() => { setDashboardTab(item.tab); setShowClientDetail(false); }}
-                      className="group flex flex-col items-center gap-1.5 sm:gap-2 cursor-pointer transition-all duration-300 flex-shrink-0">
+                      className="group flex flex-col items-center gap-1.5 sm:gap-2 cursor-pointer transition-all duration-300 flex-shrink-0"
                     >
                       <div className={`relative rounded-[22%] transition-all duration-300 ${
                         i === activeIndex
