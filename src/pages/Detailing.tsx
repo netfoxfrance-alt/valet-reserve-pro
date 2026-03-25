@@ -646,7 +646,7 @@ export default function Detailing() {
 
 
       {/* Section 4: Gérez votre activité */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6">
+      <section className="py-12 sm:py-24 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Section Label */}
           <div className="flex items-center gap-2 text-muted-foreground mb-4 opacity-0 animate-fade-in-up">
@@ -654,10 +654,10 @@ export default function Detailing() {
             <span className="text-xs font-medium uppercase tracking-wider">{t('mockup.management')}</span>
           </div>
           
-          <h2 className="opacity-0 animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+          <h2 className="opacity-0 animate-fade-in-up stagger-1 text-xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4">
             Pilotez toute votre activité depuis un seul tableau de bord.
           </h2>
-          <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-base sm:text-lg mb-8 max-w-2xl leading-relaxed">
+          <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-sm sm:text-lg mb-6 sm:mb-8 max-w-2xl leading-relaxed">
             Visualisez, analysez et optimisez en temps réel.
           </p>
 
@@ -674,9 +674,9 @@ export default function Detailing() {
             ];
             const activeIndex = tabs.findIndex(t => t.tab === dashboardTab);
             return (
-              <div className="opacity-0 animate-fade-in-up stagger-3 mb-10">
+              <div className="opacity-0 animate-fade-in-up stagger-3 mb-6 sm:mb-10">
                 {/* Progress bar */}
-                <div className="flex max-w-5xl mx-auto mb-6">
+                <div className="flex max-w-5xl mx-auto mb-4 sm:mb-6">
                   {tabs.map((item, i) => (
                     <button
                       key={item.tab}
@@ -690,12 +690,12 @@ export default function Detailing() {
                   ))}
                 </div>
                 {/* Icons + labels */}
-                <div className="flex items-start justify-center gap-2 sm:gap-4 md:gap-6">
+                <div className="flex items-start justify-start sm:justify-center gap-2 sm:gap-4 md:gap-6 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0" style={{ scrollbarWidth: 'none' }}>
                   {tabs.map((item, i) => (
                     <button
                       key={item.tab}
                       onClick={() => { setDashboardTab(item.tab); setShowClientDetail(false); }}
-                      className="group flex flex-col items-center gap-2 cursor-pointer transition-all duration-300"
+                      className="group flex flex-col items-center gap-1.5 sm:gap-2 cursor-pointer transition-all duration-300 flex-shrink-0">
                     >
                       <div className={`relative rounded-[22%] transition-all duration-300 ${
                         i === activeIndex
