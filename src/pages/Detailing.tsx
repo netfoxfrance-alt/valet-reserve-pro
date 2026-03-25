@@ -746,15 +746,15 @@ export default function Detailing() {
                   {/* === RÉSERVATIONS === */}
                   {dashboardTab === 'reservations' && (
                     <>
-                      <div className="flex items-center justify-between mb-6">
+                       <div className="flex items-center justify-between mb-4 sm:mb-6">
                         <div>
-                           <h3 className="text-lg font-semibold text-foreground tracking-tight">{t('mockup.reservations')}</h3>
-                           <p className="text-xs text-muted-foreground mt-0.5">{t('mockup.wednesday')} 11 {t('mockup.february2026').toLowerCase()}</p>
+                           <h3 className="text-base sm:text-lg font-semibold text-foreground tracking-tight">{t('mockup.reservations')}</h3>
+                           <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{t('mockup.wednesday')} 11 {t('mockup.february2026').toLowerCase()}</p>
                          </div>
-                         <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
+                         <button className="bg-blue-500 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
                            {t('mockup.newBooking')}
                          </button>
-                      </div>
+                       </div>
 
                       {/* KPI row */}
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
@@ -779,11 +779,11 @@ export default function Detailing() {
                       </div>
 
                       {/* Segmented control */}
-                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
-                         <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">{t('mockup.upcoming')}</span>
-                         <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.requestsTab')}</span>
-                         <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.past')}</span>
-                      </div>
+                      <div className="flex gap-0 bg-secondary/50 rounded-full p-0.5 sm:p-1 mb-4 sm:mb-5 w-fit overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                         <span className="text-[10px] sm:text-[11px] font-semibold bg-card shadow-sm px-3 sm:px-4 py-1 sm:py-1.5 rounded-full whitespace-nowrap">{t('mockup.upcoming')}</span>
+                         <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground px-3 sm:px-4 py-1 sm:py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors whitespace-nowrap">{t('mockup.requestsTab')}</span>
+                         <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground px-3 sm:px-4 py-1 sm:py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors whitespace-nowrap">{t('mockup.past')}</span>
+                       </div>
 
                       <div className="space-y-2">
                         {[
