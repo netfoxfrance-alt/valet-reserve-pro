@@ -167,7 +167,7 @@ export default function Detailing() {
                   </div>
                   <div className="flex items-center gap-2 text-[10px]">
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                    <span className="text-muted-foreground">14:00 — Polish carrosserie</span>
+                    <span className="text-muted-foreground">14:00 — Rénovation cuir</span>
                   </div>
                   <div className="flex items-center gap-2 text-[10px]">
                     <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
@@ -233,11 +233,16 @@ export default function Detailing() {
           </div>
 
           {/* Mobile: Compact widgets + phone mockup */}
-          <div className="lg:hidden relative mt-8 pb-6 px-4">
-            <div className="flex items-start gap-3 sm:gap-4 justify-center">
-              {/* Left widgets stack */}
-              <div className="flex flex-col gap-2.5 mt-4 opacity-0" style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards' }}>
-                <div className="bg-card rounded-xl shadow-card p-2.5 border border-border/50 w-[130px] sm:w-[150px]">
+          <div className="lg:hidden relative mt-6 pb-4 overflow-hidden">
+            {/* taap.it style: scattered widgets + phone in bottom-right */}
+            <div className="relative min-h-[280px] sm:min-h-[320px]">
+              
+              {/* Top-left: Agenda widget */}
+              <div 
+                className="absolute top-0 left-4 opacity-0"
+                style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s forwards', transform: 'rotate(-4deg)' }}
+              >
+                <div className="bg-card rounded-xl shadow-card p-2.5 border border-border/50 w-[135px]">
                   <div className="flex items-center gap-2 mb-1.5">
                     <div className="w-6 h-6 rounded-lg overflow-hidden"><img src={appIconAgenda} alt="" className="w-full h-full" /></div>
                     <span className="text-[9px] font-semibold text-foreground">Agenda</span>
@@ -249,11 +254,18 @@ export default function Detailing() {
                     </div>
                     <div className="flex items-center gap-1.5 text-[8px]">
                       <div className="w-1 h-1 rounded-full bg-blue-500" />
-                      <span className="text-muted-foreground">14:00 — Polish</span>
+                      <span className="text-muted-foreground">14:00 — Rénovation cuir</span>
                     </div>
                   </div>
                 </div>
-                <div className="bg-card rounded-xl shadow-card p-2.5 border border-border/50 w-[130px] sm:w-[150px]">
+              </div>
+
+              {/* Middle-left: Stats widget */}
+              <div 
+                className="absolute top-[110px] left-2 opacity-0"
+                style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.7s forwards', transform: 'rotate(3deg)' }}
+              >
+                <div className="bg-card rounded-xl shadow-card p-2.5 border border-border/50 w-[120px]">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="w-6 h-6 rounded-lg overflow-hidden"><img src={appIconStats} alt="" className="w-full h-full" /></div>
                     <span className="text-[9px] font-semibold text-foreground">Ce mois</span>
@@ -264,7 +276,14 @@ export default function Detailing() {
                     <span>+23%</span>
                   </div>
                 </div>
-                <div className="bg-card rounded-xl shadow-card p-2.5 border border-border/50 w-[130px] sm:w-[150px]">
+              </div>
+
+              {/* Bottom-left: Client widget */}
+              <div 
+                className="absolute bottom-2 left-8 opacity-0"
+                style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s forwards', transform: 'rotate(-2deg)' }}
+              >
+                <div className="bg-card rounded-xl shadow-card p-2.5 border border-border/50 w-[125px]">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-lg overflow-hidden"><img src={appIconClients} alt="" className="w-full h-full" /></div>
                     <div>
@@ -275,14 +294,16 @@ export default function Detailing() {
                 </div>
               </div>
 
-              {/* Right: mini phone mockup */}
-              <div className="opacity-0" style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.6s forwards' }}>
+              {/* Right: Phone mockup — anchored bottom-right like taap.it */}
+              <div 
+                className="absolute right-2 bottom-0 opacity-0"
+                style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards', transform: 'rotate(3deg)' }}
+              >
                 <div className="bg-[hsl(var(--border))] rounded-[1.5rem] p-[3px] shadow-xl">
-                  <div className="bg-card rounded-[1.3rem] overflow-hidden w-[150px] sm:w-[170px]">
+                  <div className="bg-card rounded-[1.3rem] overflow-hidden w-[155px] sm:w-[175px]">
                     <div className="flex justify-center pt-1.5 pb-0.5">
                       <div className="w-12 h-2.5 bg-secondary rounded-full" />
                     </div>
-                    {/* Header — logo + call */}
                     <div className="mx-2 mt-0.5 flex items-center justify-between">
                       <div className="w-6 h-6 rounded-lg overflow-hidden bg-white flex items-center justify-center shadow-sm border border-border/20">
                         <img src={sfAutoLogo} alt="" className="w-5 h-5 object-contain" />
@@ -330,6 +351,7 @@ export default function Detailing() {
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
 
