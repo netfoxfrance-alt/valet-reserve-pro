@@ -1628,13 +1628,13 @@ export default function Detailing() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-secondary/20">
+      <section className="py-12 sm:py-24 md:py-32 px-4 sm:px-6 bg-secondary/20">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-10 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4 px-2">
+          <div className="text-center mb-8 sm:mb-16">
+            <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4 px-2">
               {t('landing.pricingTitle')}
             </h2>
-            <p className="text-base sm:text-lg text-muted-foreground px-2">
+            <p className="text-sm sm:text-lg text-muted-foreground px-2">
               {t('landing.pricingDesc')}
             </p>
           </div>
