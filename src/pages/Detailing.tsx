@@ -147,7 +147,7 @@ export default function Detailing() {
 
       {/* Hero Section — taap.it inspired */}
       <section className="relative overflow-hidden bg-background">
-        <div className="relative min-h-[90vh] sm:min-h-[88vh]">
+        <div className="relative min-h-[70vh] sm:min-h-[88vh]">
           
           {/* Floating widgets — LEFT side (desktop only) */}
           <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-[300px] xl:w-[360px] z-10">
@@ -219,12 +219,12 @@ export default function Detailing() {
           </div>
 
           {/* Center: Text + CTA */}
-          <div className="relative z-20 max-w-2xl mx-auto px-4 sm:px-6 text-center pt-14 sm:pt-20 lg:pt-24">
-            <h1 className="opacity-0 animate-fade-in-up text-[2rem] sm:text-[2.75rem] md:text-[3.25rem] lg:text-[3.75rem] font-bold text-foreground tracking-[-0.03em] leading-[1.06] mb-5 sm:mb-6">
+          <div className="relative z-20 max-w-2xl mx-auto px-4 sm:px-6 text-center pt-8 sm:pt-20 lg:pt-24">
+            <h1 className="opacity-0 animate-fade-in-up text-[1.65rem] sm:text-[2.75rem] md:text-[3.25rem] lg:text-[3.75rem] font-bold text-foreground tracking-[-0.03em] leading-[1.1] sm:leading-[1.06] mb-4 sm:mb-6">
               Le logiciel pour les pros du{' '}
               <span className="text-emerald-500">detailing auto</span>
             </h1>
-            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-[15px] sm:text-base sm:leading-relaxed max-w-md mx-auto mb-8 sm:mb-10">
+            <p className="opacity-0 animate-fade-in-up stagger-1 text-muted-foreground text-[13px] sm:text-base sm:leading-relaxed max-w-md mx-auto mb-6 sm:mb-10">
               Réservation en ligne, gestion clients, facturation — tout ce qu'il vous faut pour piloter votre activité.
             </p>
             <div className="opacity-0 animate-fade-in-up stagger-2">
@@ -429,16 +429,16 @@ export default function Detailing() {
       </section>
 
       {/* Section 01 — Page de réservation en ligne */}
-      <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6">
+      <section className="py-12 sm:py-28 lg:py-36 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-20 items-center">
             {/* Left: Text */}
             <div className="opacity-0 animate-fade-in-up">
-              <span className="text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-4 block">01 — Réservation en ligne</span>
-              <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-8 leading-[1.08]">
+              <span className="text-[10px] sm:text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-3 sm:mb-4 block">01 — Réservation en ligne</span>
+              <h2 className="text-2xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-5 sm:mb-8 leading-[1.08]">
                 Vos clients réservent<br />sans vous
               </h2>
-              <ul className="space-y-5 mb-10">
+              <ul className="space-y-3 sm:space-y-5 mb-6 sm:mb-10">
                 {[
                   'Réservation 24h/24, sans appel',
                   'Parcours simple : choix, créneau, paiement',
@@ -446,18 +446,18 @@ export default function Detailing() {
                   'Confirmation et rappels automatiques',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3.5">
-                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-1" strokeWidth={1.5} />
-                    <span className="text-muted-foreground text-[15px] leading-relaxed">{item}</span>
+                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-0.5" strokeWidth={1.5} />
+                    <span className="text-muted-foreground text-[13px] sm:text-[15px] leading-relaxed">{item}</span>
                   </li>
                 ))}
               </ul>
-              <p className="text-foreground text-[15px] leading-relaxed mb-8">
+              <p className="text-foreground text-[13px] sm:text-[15px] leading-relaxed mb-6 sm:mb-8">
                 Une expérience fluide pour vos clients, zéro gestion pour vous.
               </p>
               <TrialButton />
             </div>
             {/* Right: Phone mockup with calendar card behind */}
-            <div className="opacity-0 animate-fade-in-up stagger-2 flex justify-center">
+            <div className="opacity-0 animate-fade-in-up stagger-2 flex justify-center overflow-hidden">
               <div className="relative">
                 {/* BACK phone — slot selection + deposit — peeking behind right */}
                 <div 
@@ -531,9 +531,9 @@ export default function Detailing() {
 
                 {/* FRONT phone — Main booking page */}
                 <div className="relative z-10" style={{ transform: 'rotate(-2deg)' }}>
-                  <div className="bg-[hsl(var(--border))] rounded-[2.5rem] p-[6px] shadow-2xl shadow-foreground/15">
-                    <div className="absolute right-[-3px] top-28 w-[3px] h-8 bg-border rounded-r-sm" />
-                    <div className="bg-card rounded-[2.2rem] overflow-hidden w-[260px] sm:w-[280px] lg:w-[300px]">
+                  <div className="bg-[hsl(var(--border))] rounded-[2rem] sm:rounded-[2.5rem] p-[4px] sm:p-[6px] shadow-2xl shadow-foreground/15">
+                    <div className="absolute right-[-3px] top-28 w-[3px] h-8 bg-border rounded-r-sm hidden sm:block" />
+                    <div className="bg-card rounded-[1.8rem] sm:rounded-[2.2rem] overflow-hidden w-[220px] sm:w-[280px] lg:w-[300px]">
                       <div className="flex justify-center pt-2 pb-1">
                         <div className="w-24 h-5 bg-secondary rounded-full" />
                       </div>
@@ -603,28 +603,28 @@ export default function Detailing() {
       </section>
 
       {/* Section 02 — Agenda connecté — Planity style card layout */}
-      <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6 bg-muted/30">
+      <section className="py-12 sm:py-28 lg:py-36 px-4 sm:px-6 bg-muted/30">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-0 bg-card rounded-[2rem] overflow-hidden shadow-xl shadow-black/5 ring-1 ring-border/10">
+          <div className="grid lg:grid-cols-2 gap-0 bg-card rounded-2xl sm:rounded-[2rem] overflow-hidden shadow-xl shadow-black/5 ring-1 ring-border/10">
             {/* Left: Text */}
-            <div className="p-10 sm:p-12 lg:p-16 flex flex-col justify-center opacity-0 animate-fade-in-up">
-              <span className="text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-4 block">02 — Un planning toujours à jour</span>
-              <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-8 leading-[1.08]">
+            <div className="p-6 sm:p-12 lg:p-16 flex flex-col justify-center opacity-0 animate-fade-in-up">
+              <span className="text-[10px] sm:text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-3 sm:mb-4 block">02 — Un planning toujours à jour</span>
+              <h2 className="text-2xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-5 sm:mb-8 leading-[1.08]">
                 Agenda connecté
               </h2>
-              <ul className="space-y-5 mb-10">
+              <ul className="space-y-3 sm:space-y-5 mb-6 sm:mb-10">
                 {[
                   'Créneaux synchronisés automatiquement',
                   'Accessible sur mobile et ordinateur',
                   'Plus de double réservation',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3.5">
-                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-1" strokeWidth={1.5} />
-                    <span className="text-muted-foreground text-[15px] leading-relaxed">{item}</span>
+                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-0.5" strokeWidth={1.5} />
+                    <span className="text-muted-foreground text-[13px] sm:text-[15px] leading-relaxed">{item}</span>
                   </li>
                 ))}
               </ul>
-              <p className="text-foreground text-[15px] leading-relaxed mb-8">
+              <p className="text-foreground text-[13px] sm:text-[15px] leading-relaxed mb-6 sm:mb-8">
                 Vous gardez le contrôle, sans effort.
               </p>
               <div>
@@ -632,7 +632,7 @@ export default function Detailing() {
               </div>
             </div>
             {/* Right: Premium lifestyle photo */}
-            <div className="relative overflow-hidden min-h-[360px] lg:min-h-0 opacity-0 animate-fade-in-up stagger-2">
+            <div className="relative overflow-hidden min-h-[240px] sm:min-h-[360px] lg:min-h-0 opacity-0 animate-fade-in-up stagger-2">
               <img
                 src={agendaPremium}
                 alt="Agenda sur smartphone tenu en main"
@@ -646,7 +646,7 @@ export default function Detailing() {
 
 
       {/* Section 4: Gérez votre activité */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6">
+      <section className="py-12 sm:py-24 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Section Label */}
           <div className="flex items-center gap-2 text-muted-foreground mb-4 opacity-0 animate-fade-in-up">
@@ -654,10 +654,10 @@ export default function Detailing() {
             <span className="text-xs font-medium uppercase tracking-wider">{t('mockup.management')}</span>
           </div>
           
-          <h2 className="opacity-0 animate-fade-in-up stagger-1 text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4">
+          <h2 className="opacity-0 animate-fade-in-up stagger-1 text-xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4">
             Pilotez toute votre activité depuis un seul tableau de bord.
           </h2>
-          <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-base sm:text-lg mb-8 max-w-2xl leading-relaxed">
+          <p className="opacity-0 animate-fade-in-up stagger-2 text-muted-foreground text-sm sm:text-lg mb-6 sm:mb-8 max-w-2xl leading-relaxed">
             Visualisez, analysez et optimisez en temps réel.
           </p>
 
@@ -674,9 +674,9 @@ export default function Detailing() {
             ];
             const activeIndex = tabs.findIndex(t => t.tab === dashboardTab);
             return (
-              <div className="opacity-0 animate-fade-in-up stagger-3 mb-10">
+              <div className="opacity-0 animate-fade-in-up stagger-3 mb-6 sm:mb-10">
                 {/* Progress bar */}
-                <div className="flex max-w-5xl mx-auto mb-6">
+                <div className="flex max-w-5xl mx-auto mb-4 sm:mb-6">
                   {tabs.map((item, i) => (
                     <button
                       key={item.tab}
@@ -690,12 +690,12 @@ export default function Detailing() {
                   ))}
                 </div>
                 {/* Icons + labels */}
-                <div className="flex items-start justify-center gap-2 sm:gap-4 md:gap-6">
+                <div className="flex items-start justify-start sm:justify-center gap-2 sm:gap-4 md:gap-6 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0" style={{ scrollbarWidth: 'none' }}>
                   {tabs.map((item, i) => (
                     <button
                       key={item.tab}
                       onClick={() => { setDashboardTab(item.tab); setShowClientDetail(false); }}
-                      className="group flex flex-col items-center gap-2 cursor-pointer transition-all duration-300"
+                      className="group flex flex-col items-center gap-1.5 sm:gap-2 cursor-pointer transition-all duration-300 flex-shrink-0"
                     >
                       <div className={`relative rounded-[22%] transition-all duration-300 ${
                         i === activeIndex
@@ -705,7 +705,7 @@ export default function Detailing() {
                         <img
                           src={item.img}
                           alt={item.label}
-                          className="w-11 h-11 sm:w-14 sm:h-14 object-contain"
+                          className="w-9 h-9 sm:w-14 sm:h-14 object-contain"
                         />
                       </div>
                       <span className={`text-[10px] sm:text-xs font-medium transition-colors duration-300 text-center leading-tight max-w-[60px] sm:max-w-[80px] ${
@@ -721,57 +721,57 @@ export default function Detailing() {
           })()}
 
           {/* Dashboard Browser Mockup */}
-          <div className="opacity-0 animate-fade-in-up stagger-4">
-            <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60 max-w-5xl mx-auto">
+          <div className="opacity-0 animate-fade-in-up stagger-4 -mx-4 sm:mx-0">
+            <div className="bg-card rounded-none sm:rounded-2xl shadow-2xl overflow-hidden border-y sm:border border-border/60 max-w-5xl mx-auto">
               {/* Browser Bar */}
-              <div className="bg-secondary/50 px-4 py-3 flex items-center gap-3 border-b border-border/40">
+              <div className="bg-secondary/50 px-3 sm:px-4 py-2 sm:py-3 flex items-center gap-2 sm:gap-3 border-b border-border/40">
                 <div className="flex gap-1.5">
                   <div className="w-3 h-3 rounded-full bg-red-400" />
                   <div className="w-3 h-3 rounded-full bg-yellow-400" />
                   <div className="w-3 h-3 rounded-full bg-green-400" />
                 </div>
                 <div className="flex-1 flex justify-center">
-                  <div className="flex items-center gap-2 bg-background rounded-full px-4 py-1.5 text-xs text-muted-foreground">
-                    <Shield className="w-3 h-3" />
-                    cleaningpage.com/<span className="text-foreground font-medium">dashboard</span>
+                  <div className="flex items-center gap-2 bg-background rounded-full px-3 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-xs text-muted-foreground">
+                    <Shield className="w-3 h-3 hidden sm:block" />
+                    <span className="truncate">cleaningpage.com/<span className="text-foreground font-medium">dashboard</span></span>
                   </div>
                 </div>
               </div>
 
               {/* Dashboard Content */}
-              <div className="flex min-h-[480px]">
+              <div className="flex min-h-[320px] sm:min-h-[480px]">
                 {/* Main Content Area */}
-                <div className="flex-1 p-5 sm:p-6 overflow-y-auto" style={{ background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary)/0.3) 100%)' }}>
+                <div className="flex-1 p-3 sm:p-6 overflow-y-auto overflow-x-hidden" style={{ background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary)/0.3) 100%)' }}>
                   
                   {/* === RÉSERVATIONS === */}
                   {dashboardTab === 'reservations' && (
                     <>
-                      <div className="flex items-center justify-between mb-6">
+                       <div className="flex items-center justify-between mb-4 sm:mb-6">
                         <div>
-                           <h3 className="text-lg font-semibold text-foreground tracking-tight">{t('mockup.reservations')}</h3>
-                           <p className="text-xs text-muted-foreground mt-0.5">{t('mockup.wednesday')} 11 {t('mockup.february2026').toLowerCase()}</p>
+                           <h3 className="text-base sm:text-lg font-semibold text-foreground tracking-tight">{t('mockup.reservations')}</h3>
+                           <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{t('mockup.wednesday')} 11 {t('mockup.february2026').toLowerCase()}</p>
                          </div>
-                         <button className="bg-blue-500 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
+                         <button className="bg-blue-500 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-xs font-semibold shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-colors">
                            {t('mockup.newBooking')}
                          </button>
-                      </div>
+                       </div>
 
                       {/* KPI row */}
-                      <div className="grid grid-cols-3 gap-3 mb-6">
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
+                        <div className="rounded-xl sm:rounded-2xl p-3 sm:p-4 bg-card border border-border/30 shadow-sm">
                            <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.today')}</p>
-                           <p className="text-3xl font-bold tracking-tight leading-none text-foreground">5</p>
+                           <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">5</p>
                            <div className="flex items-center gap-1.5 mt-2">
                              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                              <p className="text-[10px] text-muted-foreground font-medium">2 {t('mockup.pendingCount')}</p>
                            </div>
                          </div>
-                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                         <div className="rounded-xl sm:rounded-2xl p-3 sm:p-4 bg-card border border-border/30 shadow-sm">
                            <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.thisWeek')}</p>
-                           <p className="text-3xl font-bold tracking-tight leading-none text-foreground">23</p>
+                           <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">23</p>
                            <p className="text-[10px] text-muted-foreground mt-2">{t('mockup.includingRequests', { count: 4 })}</p>
                          </div>
-                         <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
+                         <div className="rounded-xl sm:rounded-2xl p-3 sm:p-4 bg-card border border-border/30 shadow-sm hidden sm:block">
                            <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.dailyRevenue')}</p>
                            <p className="text-3xl font-bold tracking-tight leading-none text-foreground">340€</p>
                            <p className="text-[10px] text-emerald-600 font-semibold mt-2">↑ 15%</p>
@@ -779,11 +779,11 @@ export default function Detailing() {
                       </div>
 
                       {/* Segmented control */}
-                      <div className="flex gap-0 bg-secondary/50 rounded-full p-1 mb-5 w-fit">
-                         <span className="text-[11px] font-semibold bg-card shadow-sm px-4 py-1.5 rounded-full">{t('mockup.upcoming')}</span>
-                         <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.requestsTab')}</span>
-                         <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.past')}</span>
-                      </div>
+                      <div className="flex gap-0 bg-secondary/50 rounded-full p-0.5 sm:p-1 mb-4 sm:mb-5 w-fit overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                         <span className="text-[10px] sm:text-[11px] font-semibold bg-card shadow-sm px-3 sm:px-4 py-1 sm:py-1.5 rounded-full whitespace-nowrap">{t('mockup.upcoming')}</span>
+                         <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground px-3 sm:px-4 py-1 sm:py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors whitespace-nowrap">{t('mockup.requestsTab')}</span>
+                         <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground px-3 sm:px-4 py-1 sm:py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors whitespace-nowrap">{t('mockup.past')}</span>
+                       </div>
 
                       <div className="space-y-2">
                         {[
@@ -793,16 +793,16 @@ export default function Detailing() {
                            { name: t('mockup.incomingRequest'), service: t('mockup.couchCleaning'), time: '—', duration: '—', price: t('mockup.onQuote'), status: t('mockup.request'), statusBg: 'bg-blue-500', initials: '?', avatarBg: 'bg-indigo-500' },
                            { name: 'Sophie Leroy', service: 'Pack Intérieur', time: '16:30', duration: '1h', price: '65€', status: t('mockup.confirmed'), statusBg: 'bg-emerald-500', initials: 'SL', avatarBg: 'bg-violet-500' },
                         ].map((booking, i) => (
-                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 hover:shadow-md transition-all cursor-pointer">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 ${booking.avatarBg}`}>
+                          <div key={i} className="flex items-center gap-2 sm:gap-3.5 bg-card rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 border border-border/20 hover:shadow-md transition-all cursor-pointer">
+                            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-[9px] sm:text-[11px] font-bold text-white shrink-0 ${booking.avatarBg}`}>
                               {booking.initials}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[13px] font-semibold text-foreground truncate">{booking.name}</p>
-                              <p className="text-[11px] text-muted-foreground mt-0.5">{booking.service} · {booking.time} · {booking.duration}</p>
+                              <p className="text-[11px] sm:text-[13px] font-semibold text-foreground truncate">{booking.name}</p>
+                              <p className="text-[9px] sm:text-[11px] text-muted-foreground mt-0.5 truncate">{booking.service} · {booking.time}</p>
                             </div>
-                            <span className="text-[13px] font-bold text-foreground hidden sm:block tabular-nums">{booking.price}</span>
-                            <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold text-white ${booking.statusBg}`}>
+                            <span className="text-[11px] sm:text-[13px] font-bold text-foreground hidden sm:block tabular-nums">{booking.price}</span>
+                            <span className={`text-[8px] sm:text-[10px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full font-semibold text-white ${booking.statusBg}`}>
                               {booking.status}
                             </span>
                           </div>
@@ -1136,40 +1136,40 @@ export default function Detailing() {
                   {/* === STATISTIQUES === */}
                   {dashboardTab === 'stats' && (
                     <>
-                      <div className="flex items-center justify-between mb-6">
-                        <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
-                          <ChevronLeft className="w-4 h-4" />
+                      <div className="flex items-center justify-between mb-4 sm:mb-6">
+                        <button className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                          <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </button>
-                        <h3 className="text-lg font-semibold text-foreground tracking-tight">{t('mockup.january2025')}</h3>
+                        <h3 className="text-sm sm:text-lg font-semibold text-foreground tracking-tight">{t('mockup.january2025')}</h3>
                         <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
                           <ChevronRight className="w-4 h-4" />
                         </button>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3 mb-3">
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.reservations')}</p>
-                          <div className="flex items-center gap-2">
-                            <p className="text-3xl font-bold tracking-tight leading-none text-foreground">24</p>
-                            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">↑12%</span>
+                      <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3">
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[9px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.reservations')}</p>
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">24</p>
+                            <span className="text-[8px] sm:text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 sm:px-2 py-0.5 rounded-full">↑12%</span>
                           </div>
                         </div>
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.revenue')}</p>
-                          <div className="flex items-center gap-2">
-                            <p className="text-3xl font-bold tracking-tight leading-none text-foreground">8 450€</p>
-                            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">↑18%</span>
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[9px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.revenue')}</p>
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">8 450€</p>
+                            <span className="text-[8px] sm:text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 sm:px-2 py-0.5 rounded-full">↑18%</span>
                           </div>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-3 mb-6">
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.clients')}</p>
-                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">18</p>
+                      <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-6">
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[9px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.clients')}</p>
+                          <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">18</p>
                         </div>
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.avgBasketStat')}</p>
-                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">352€</p>
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[9px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.avgBasketStat')}</p>
+                          <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">352€</p>
                         </div>
                       </div>
 
@@ -1178,7 +1178,7 @@ export default function Detailing() {
                         <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.servicesTab')}</span>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-3 sm:gap-4">
                         <div className="bg-card rounded-2xl p-5 border border-border/15 shadow-sm">
                           <p className="text-sm font-semibold text-foreground mb-4">{t('mockup.weeklyBookings')}</p>
                           <div className="relative h-32">
@@ -1250,7 +1250,7 @@ export default function Detailing() {
                   {/* === MA PAGE === */}
                   {dashboardTab === 'mypage' && (
                     <div className="h-full flex flex-col">
-                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      <div className="flex-1 grid grid-cols-1 gap-4 sm:gap-8">
                         <div className="flex flex-col order-2 lg:order-1">
                           <div className="flex items-center justify-between mb-4">
                             <span className="text-base font-semibold text-foreground tracking-tight">{t('mockup.preview')}</span>
@@ -1628,13 +1628,13 @@ export default function Detailing() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-secondary/20">
+      <section className="py-12 sm:py-24 md:py-32 px-4 sm:px-6 bg-secondary/20">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-10 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4 px-2">
+          <div className="text-center mb-8 sm:mb-16">
+            <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3 sm:mb-4 px-2">
               {t('landing.pricingTitle')}
             </h2>
-            <p className="text-base sm:text-lg text-muted-foreground px-2">
+            <p className="text-sm sm:text-lg text-muted-foreground px-2">
               {t('landing.pricingDesc')}
             </p>
           </div>
@@ -1708,14 +1708,14 @@ export default function Detailing() {
       </section>
 
       {/* FAQ */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6">
+      <section className="py-12 sm:py-24 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-10 text-center">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-6 sm:mb-10 text-center">
             FAQ
           </h2>
-          <Accordion type="single" collapsible className="w-full space-y-3">
+          <Accordion type="single" collapsible className="w-full space-y-2 sm:space-y-3">
             {([1, 2, 3, 4, 5, 6, 7, 8] as const).map((i) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="border border-border/50 rounded-2xl px-5 data-[state=open]:bg-secondary/20 transition-colors">
+              <AccordionItem key={i} value={`faq-${i}`} className="border border-border/50 rounded-xl sm:rounded-2xl px-3 sm:px-5 data-[state=open]:bg-secondary/20 transition-colors">
                 <AccordionTrigger className="text-left text-sm sm:text-base font-medium hover:no-underline py-5">
                   {t(`landing.faq.q${i}`)}
                 </AccordionTrigger>
@@ -1729,12 +1729,12 @@ export default function Detailing() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6">
+      <section className="py-12 sm:py-24 md:py-32 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 px-2">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 px-2">
             Prêt à digitaliser votre activité de detailing ?
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground mb-8 sm:mb-10 leading-relaxed px-2">
+          <p className="text-sm sm:text-lg text-muted-foreground mb-6 sm:mb-10 leading-relaxed px-2">
             Rejoignez les professionnels qui gagnent du temps et des clients grâce à CleaningPage.
           </p>
           <TrialButton className="rounded-full px-6 sm:px-8" />
