@@ -1136,40 +1136,40 @@ export default function Detailing() {
                   {/* === STATISTIQUES === */}
                   {dashboardTab === 'stats' && (
                     <>
-                      <div className="flex items-center justify-between mb-6">
-                        <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
-                          <ChevronLeft className="w-4 h-4" />
+                      <div className="flex items-center justify-between mb-4 sm:mb-6">
+                        <button className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
+                          <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </button>
-                        <h3 className="text-lg font-semibold text-foreground tracking-tight">{t('mockup.january2025')}</h3>
+                        <h3 className="text-sm sm:text-lg font-semibold text-foreground tracking-tight">{t('mockup.january2025')}</h3>
                         <button className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors">
                           <ChevronRight className="w-4 h-4" />
                         </button>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3 mb-3">
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.reservations')}</p>
-                          <div className="flex items-center gap-2">
-                            <p className="text-3xl font-bold tracking-tight leading-none text-foreground">24</p>
-                            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">↑12%</span>
+                      <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3">
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[9px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.reservations')}</p>
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">24</p>
+                            <span className="text-[8px] sm:text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 sm:px-2 py-0.5 rounded-full">↑12%</span>
                           </div>
                         </div>
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.revenue')}</p>
-                          <div className="flex items-center gap-2">
-                            <p className="text-3xl font-bold tracking-tight leading-none text-foreground">8 450€</p>
-                            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">↑18%</span>
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[9px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.revenue')}</p>
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">8 450€</p>
+                            <span className="text-[8px] sm:text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 sm:px-2 py-0.5 rounded-full">↑18%</span>
                           </div>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-3 mb-6">
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.clients')}</p>
-                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">18</p>
+                      <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-6">
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[9px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.clients')}</p>
+                          <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">18</p>
                         </div>
-                        <div className="rounded-2xl p-4 bg-card border border-border/30 shadow-sm">
-                          <p className="text-[11px] text-muted-foreground mb-1">{t('mockup.avgBasketStat')}</p>
-                          <p className="text-3xl font-bold tracking-tight leading-none text-foreground">352€</p>
+                        <div className="rounded-xl sm:rounded-2xl p-2.5 sm:p-4 bg-card border border-border/30 shadow-sm">
+                          <p className="text-[9px] sm:text-[11px] text-muted-foreground mb-1">{t('mockup.avgBasketStat')}</p>
+                          <p className="text-xl sm:text-3xl font-bold tracking-tight leading-none text-foreground">352€</p>
                         </div>
                       </div>
 
@@ -1178,7 +1178,7 @@ export default function Detailing() {
                         <span className="text-[11px] font-medium text-muted-foreground px-4 py-1.5 rounded-full cursor-pointer hover:text-foreground transition-colors">{t('mockup.servicesTab')}</span>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-3 sm:gap-4">
                         <div className="bg-card rounded-2xl p-5 border border-border/15 shadow-sm">
                           <p className="text-sm font-semibold text-foreground mb-4">{t('mockup.weeklyBookings')}</p>
                           <div className="relative h-32">
