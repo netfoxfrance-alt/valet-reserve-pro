@@ -15,6 +15,10 @@ import mockupBanner from '@/assets/mockup-banner-v2.jpg';
 import sofaBanner from '@/assets/sofa-cleaning-banner.jpg';
 import heroDetailingPhoto from '@/assets/hero-detailing-pro.png';
 import gocleanLogo from '@/assets/gocleaning-logo.png';
+import sfAutoLogo from '@/assets/sf-auto-logo.png';
+import citadineImg from '@/assets/citadine.png';
+import berlineImg from '@/assets/berline.png';
+import suvImg from '@/assets/suv.png';
 import mockupCarCleaning from '@/assets/mockup-car-cleaning.jpg';
 import mockupLogoClean from '@/assets/mockup-logo-cleaning.png';
 import mockupInterior from '@/assets/mockup-interior-cleaning.png';
@@ -228,74 +232,85 @@ export default function Detailing() {
             </div>
           </div>
 
-          {/* Mobile: Widgets below CTA */}
-          <div className="lg:hidden relative mt-8 h-[240px] sm:h-[280px] overflow-hidden">
-            <div 
-              className="absolute left-[-15px] sm:left-[3%] top-[8%] w-[170px] sm:w-[190px] opacity-0"
-              style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards', transform: 'rotate(-5deg)' }}
-            >
-              <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-7 h-7 rounded-xl overflow-hidden"><img src={appIconAgenda} alt="" className="w-full h-full" /></div>
-                  <span className="text-[10px] font-semibold text-foreground">Agenda</span>
-                </div>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-[9px]">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span className="text-muted-foreground">10:00 — Lavage complet</span>
+          {/* Mobile: Compact widgets + phone mockup */}
+          <div className="lg:hidden relative mt-8 pb-6 px-4">
+            <div className="flex items-start gap-3 sm:gap-4 justify-center">
+              {/* Left widgets stack */}
+              <div className="flex flex-col gap-2.5 mt-4 opacity-0" style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards' }}>
+                <div className="bg-card rounded-xl shadow-card p-2.5 border border-border/50 w-[130px] sm:w-[150px]">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <div className="w-6 h-6 rounded-lg overflow-hidden"><img src={appIconAgenda} alt="" className="w-full h-full" /></div>
+                    <span className="text-[9px] font-semibold text-foreground">Agenda</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[9px]">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                    <span className="text-muted-foreground">14:00 — Polish</span>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 text-[8px]">
+                      <div className="w-1 h-1 rounded-full bg-emerald-500" />
+                      <span className="text-muted-foreground">10:00 — Lavage</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[8px]">
+                      <div className="w-1 h-1 rounded-full bg-blue-500" />
+                      <span className="text-muted-foreground">14:00 — Polish</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div 
-              className="absolute right-[-10px] sm:right-[3%] top-[3%] w-[165px] sm:w-[185px] opacity-0"
-              style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.6s forwards', transform: 'rotate(4deg)' }}
-            >
-              <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-7 h-7 rounded-xl overflow-hidden"><img src={appIconStats} alt="" className="w-full h-full" /></div>
-                  <span className="text-[10px] font-semibold text-foreground">Ce mois</span>
+                <div className="bg-card rounded-xl shadow-card p-2.5 border border-border/50 w-[130px] sm:w-[150px]">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-6 h-6 rounded-lg overflow-hidden"><img src={appIconStats} alt="" className="w-full h-full" /></div>
+                    <span className="text-[9px] font-semibold text-foreground">Ce mois</span>
+                  </div>
+                  <div className="text-sm font-bold text-foreground">4 280 €</div>
+                  <div className="flex items-center gap-1 text-[8px] text-emerald-600">
+                    <ArrowRight className="w-2 h-2 rotate-[-45deg]" />
+                    <span>+23%</span>
+                  </div>
                 </div>
-                <div className="text-lg font-bold text-foreground">4 280 €</div>
-                <div className="flex items-center gap-1 text-[9px] text-emerald-600">
-                  <ArrowRight className="w-2.5 h-2.5 rotate-[-45deg]" />
-                  <span>+23%</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom-left — cropped by overflow */}
-            <div 
-              className="absolute left-[5%] bottom-[-25px] w-[155px] sm:w-[170px] opacity-0"
-              style={{ animation: 'hero-float-in-left 0.8s cubic-bezier(0.16,1,0.3,1) 0.75s forwards', transform: 'rotate(2deg)' }}
-            >
-              <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-xl overflow-hidden"><img src={appIconClients} alt="" className="w-full h-full" /></div>
-                  <div>
-                    <span className="text-[10px] font-semibold text-foreground block">Marc D.</span>
-                    <span className="text-[8px] text-muted-foreground">Client fidèle</span>
+                <div className="bg-card rounded-xl shadow-card p-2.5 border border-border/50 w-[130px] sm:w-[150px]">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg overflow-hidden"><img src={appIconClients} alt="" className="w-full h-full" /></div>
+                    <div>
+                      <span className="text-[9px] font-semibold text-foreground block">Marc D.</span>
+                      <span className="text-[7px] text-muted-foreground">Client fidèle · 12 RDV</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Bottom-right — cropped */}
-            <div 
-              className="absolute right-[3%] bottom-[-30px] w-[150px] sm:w-[165px] opacity-0"
-              style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.85s forwards', transform: 'rotate(-3deg)' }}
-            >
-              <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg overflow-hidden"><img src={appIconMaPage} alt="" className="w-full h-full" /></div>
-                  <div>
-                    <span className="text-[10px] font-semibold text-foreground block">Ma Page</span>
-                    <span className="text-[8px] text-muted-foreground">En ligne ✓</span>
+              {/* Right: mini phone mockup */}
+              <div className="opacity-0" style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.6s forwards' }}>
+                <div className="bg-[hsl(var(--border))] rounded-[1.5rem] p-[3px] shadow-xl">
+                  <div className="bg-card rounded-[1.3rem] overflow-hidden w-[150px] sm:w-[170px]">
+                    <div className="flex justify-center pt-1.5 pb-0.5">
+                      <div className="w-12 h-2.5 bg-secondary rounded-full" />
+                    </div>
+                    <div className="px-2 pb-2">
+                      <div className="flex items-center justify-between py-1.5">
+                        <div className="w-5 h-5 rounded-full overflow-hidden bg-white flex items-center justify-center">
+                          <img src={sfAutoLogo} alt="" className="w-4 h-4 object-contain" />
+                        </div>
+                        <div className="flex items-center gap-0.5 bg-foreground text-background rounded-full px-1.5 py-0.5 text-[6px] font-medium">
+                          <Phone className="w-2 h-2" />
+                          Appeler
+                        </div>
+                      </div>
+                      <div className="text-center mb-1.5">
+                        <h3 className="text-[8px] font-extrabold text-foreground tracking-wide">SF AUTO</h3>
+                        <p className="text-[6px] text-muted-foreground">Detailing premium</p>
+                      </div>
+                      <p className="text-[6px] text-muted-foreground text-center mb-1.5">Que voulez-vous laver ?</p>
+                      <div className="space-y-1">
+                        {[
+                          { name: 'Citadine', img: citadineImg },
+                          { name: 'Berline', img: berlineImg },
+                          { name: 'SUV', img: suvImg },
+                        ].map((v) => (
+                          <div key={v.name} className="rounded-lg overflow-hidden border border-border/20 relative">
+                            <img src={v.img} alt={v.name} className="w-full h-[32px] object-cover" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                            <span className="absolute bottom-0.5 left-1.5 text-[6px] font-semibold text-white">{v.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -307,7 +322,7 @@ export default function Detailing() {
             <div className="w-full h-px bg-border/40" />
           </div>
 
-          {/* Phone mockup — RIGHT side like MrBeast card on taap.it, with "Ma Page" widget overlapping */}
+          {/* Phone mockup — RIGHT side with "Ma Page" widget overlapping */}
           <div 
             className="hidden lg:block absolute bottom-0 right-[8%] xl:right-[12%] z-20 opacity-0"
             style={{ animation: 'hero-float-in-right 1s cubic-bezier(0.16,1,0.3,1) 0.6s forwards', transform: 'rotate(2deg)' }}
@@ -321,8 +336,8 @@ export default function Detailing() {
                   </div>
                   <div className="px-3">
                     <div className="flex items-center justify-between py-2">
-                      <div className="w-7 h-7 rounded-full overflow-hidden bg-foreground">
-                        <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
+                      <div className="w-7 h-7 rounded-full overflow-hidden bg-white flex items-center justify-center">
+                        <img src={sfAutoLogo} alt="" className="w-5 h-5 object-contain" />
                       </div>
                       <div className="flex items-center gap-1 bg-foreground text-background rounded-full px-2.5 py-1 text-[8px] font-medium">
                         <Phone className="w-2.5 h-2.5" />
@@ -330,8 +345,8 @@ export default function Detailing() {
                       </div>
                     </div>
                     <div className="pt-2 pb-1.5 text-center">
-                      <h3 className="text-[11px] font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
-                      <p className="text-[7px] text-muted-foreground mt-0.5">Expert nettoyage auto depuis 2018</p>
+                      <h3 className="text-[11px] font-extrabold text-foreground tracking-wide">SF AUTO</h3>
+                      <p className="text-[7px] text-muted-foreground mt-0.5">Detailing premium depuis 2020</p>
                     </div>
                     <div className="flex justify-center gap-2 mb-2">
                       <div className="w-6 h-6 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
@@ -341,27 +356,27 @@ export default function Detailing() {
                         <Facebook className="w-3 h-3 text-muted-foreground" />
                       </div>
                     </div>
-                    <div className="space-y-1.5 pb-1">
-                      <div className="bg-secondary/30 rounded-xl p-2 border border-border/20">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[8px] font-semibold text-foreground">Lavage Premium</span>
-                          <span className="text-[8px] font-bold text-foreground">89€</span>
+                    <p className="text-[8px] text-muted-foreground text-center mb-2 font-medium">Que voulez-vous laver ?</p>
+                    <div className="space-y-1.5 pb-2">
+                      {[
+                        { name: 'Citadine', img: citadineImg },
+                        { name: 'Berline', img: berlineImg },
+                        { name: 'SUV', img: suvImg },
+                      ].map((v) => (
+                        <div key={v.name} className="rounded-xl overflow-hidden border border-border/20 relative">
+                          <img src={v.img} alt={v.name} className="w-full h-[48px] xl:h-[54px] object-cover" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                          <span className="absolute bottom-1 left-2 text-[9px] font-semibold text-white">{v.name}</span>
                         </div>
-                      </div>
-                      <div className="bg-secondary/30 rounded-xl p-2 border border-border/20">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[8px] font-semibold text-foreground">Polish + Céramique</span>
-                          <span className="text-[8px] font-bold text-foreground">249€</span>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* "Ma Page" widget overlapping the phone mockup — top-left */}
+              {/* "Ma Page" widget overlapping the phone mockup */}
               <div 
-                className="absolute -left-[100px] xl:-left-[110px] top-[30%] w-[150px] opacity-0"
+                className="absolute -left-[100px] xl:-left-[110px] top-[28%] w-[150px] opacity-0"
                 style={{ animation: 'hero-float-in-left 0.7s cubic-bezier(0.16,1,0.3,1) 1.1s forwards', transform: 'rotate(-3deg)' }}
               >
                 <div className="bg-card rounded-2xl shadow-card p-3 border border-border/50">
