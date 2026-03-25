@@ -1708,14 +1708,14 @@ export default function Detailing() {
       </section>
 
       {/* FAQ */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6">
+      <section className="py-12 sm:py-24 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-10 text-center">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-6 sm:mb-10 text-center">
             FAQ
           </h2>
-          <Accordion type="single" collapsible className="w-full space-y-3">
+          <Accordion type="single" collapsible className="w-full space-y-2 sm:space-y-3">
             {([1, 2, 3, 4, 5, 6, 7, 8] as const).map((i) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="border border-border/50 rounded-2xl px-5 data-[state=open]:bg-secondary/20 transition-colors">
+              <AccordionItem key={i} value={`faq-${i}`} className="border border-border/50 rounded-xl sm:rounded-2xl px-3 sm:px-5 data-[state=open]:bg-secondary/20 transition-colors">
                 <AccordionTrigger className="text-left text-sm sm:text-base font-medium hover:no-underline py-5">
                   {t(`landing.faq.q${i}`)}
                 </AccordionTrigger>
