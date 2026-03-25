@@ -279,34 +279,49 @@ export default function Detailing() {
               <div className="opacity-0" style={{ animation: 'hero-float-in-right 0.8s cubic-bezier(0.16,1,0.3,1) 0.6s forwards' }}>
                 <div className="bg-[hsl(var(--border))] rounded-[1.5rem] p-[3px] shadow-xl">
                   <div className="bg-card rounded-[1.3rem] overflow-hidden w-[150px] sm:w-[170px]">
+                    {/* Notch */}
                     <div className="flex justify-center pt-1.5 pb-0.5">
                       <div className="w-12 h-2.5 bg-secondary rounded-full" />
                     </div>
-                    <div className="px-2 pb-2">
-                      <div className="flex items-center justify-between py-1.5">
-                        <div className="w-5 h-5 rounded-full overflow-hidden bg-white flex items-center justify-center">
-                          <img src={sfAutoLogo} alt="" className="w-4 h-4 object-contain" />
+                    {/* Mini header bar */}
+                    <div className="mx-2 mt-1 bg-secondary/40 rounded-lg px-2 py-1 flex items-center justify-between border border-border/20">
+                      <div className="flex items-center gap-1">
+                        <div className="w-3.5 h-3.5 rounded-full overflow-hidden bg-white flex items-center justify-center">
+                          <img src={sfAutoLogo} alt="" className="w-3 h-3 object-contain" />
                         </div>
-                        <div className="flex items-center gap-0.5 bg-foreground text-background rounded-full px-1.5 py-0.5 text-[6px] font-medium">
-                          <Phone className="w-2 h-2" />
-                          Appeler
-                        </div>
+                        <span className="text-[6px] font-bold text-foreground">SF AUTO</span>
                       </div>
-                      <div className="text-center mb-1.5">
+                      <div className="flex gap-[2px]">
+                        <div className="w-[3px] h-[3px] bg-muted-foreground/40 rounded-full" />
+                        <div className="w-[3px] h-[3px] bg-muted-foreground/40 rounded-full" />
+                        <div className="w-[3px] h-[3px] bg-muted-foreground/40 rounded-full" />
+                      </div>
+                    </div>
+                    <div className="px-2 pb-2 pt-1.5">
+                      {/* Name + stars */}
+                      <div className="text-center mb-1">
                         <h3 className="text-[8px] font-extrabold text-foreground tracking-wide">SF AUTO</h3>
-                        <p className="text-[6px] text-muted-foreground">Detailing premium</p>
+                        <div className="flex justify-center gap-[1px] mt-0.5">
+                          {[...Array(5)].map((_, i) => (
+                            <Star key={i} className="w-2 h-2 fill-amber-400 text-amber-400" />
+                          ))}
+                          <span className="text-[5px] text-muted-foreground ml-0.5 mt-[1px]">4.9</span>
+                        </div>
+                        <p className="text-[5px] text-muted-foreground mt-0.5">Detailing premium · Lyon</p>
                       </div>
-                      <p className="text-[6px] text-muted-foreground text-center mb-1.5">Que voulez-vous laver ?</p>
-                      <div className="space-y-1">
+                      {/* Section title */}
+                      <p className="text-[6px] text-foreground font-semibold mb-1">Que voulez-vous laver ?</p>
+                      {/* Vehicle grid — 3 square cards */}
+                      <div className="grid grid-cols-3 gap-1">
                         {[
                           { name: 'Citadine', img: citadineImg },
                           { name: 'Berline', img: berlineImg },
                           { name: 'SUV', img: suvImg },
                         ].map((v) => (
-                          <div key={v.name} className="rounded-lg overflow-hidden border border-border/20 relative">
-                            <img src={v.img} alt={v.name} className="w-full h-[32px] object-cover" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                            <span className="absolute bottom-0.5 left-1.5 text-[6px] font-semibold text-white">{v.name}</span>
+                          <div key={v.name} className="rounded-lg overflow-hidden relative aspect-square">
+                            <img src={v.img} alt={v.name} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                            <span className="absolute bottom-[2px] left-[3px] text-[5px] font-semibold text-white leading-none">{v.name}</span>
                           </div>
                         ))}
                       </div>
@@ -331,42 +346,48 @@ export default function Detailing() {
               {/* Phone shell */}
               <div className="bg-[hsl(var(--border))] rounded-t-[2.5rem] p-[5px] shadow-2xl shadow-foreground/10">
                 <div className="bg-card rounded-t-[2.2rem] overflow-hidden w-[240px] xl:w-[270px]">
+                  {/* Notch */}
                   <div className="flex justify-center pt-2 pb-1">
                     <div className="w-20 h-4 bg-secondary rounded-full" />
                   </div>
-                  <div className="px-3">
-                    <div className="flex items-center justify-between py-2">
-                      <div className="w-7 h-7 rounded-full overflow-hidden bg-white flex items-center justify-center">
-                        <img src={sfAutoLogo} alt="" className="w-5 h-5 object-contain" />
+                  {/* Header bar */}
+                  <div className="mx-3 mt-1 bg-secondary/40 rounded-xl px-3 py-1.5 flex items-center justify-between border border-border/20">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-5 h-5 rounded-full overflow-hidden bg-white flex items-center justify-center">
+                        <img src={sfAutoLogo} alt="" className="w-4 h-4 object-contain" />
                       </div>
-                      <div className="flex items-center gap-1 bg-foreground text-background rounded-full px-2.5 py-1 text-[8px] font-medium">
-                        <Phone className="w-2.5 h-2.5" />
-                        Appeler
-                      </div>
+                      <span className="text-[9px] font-bold text-foreground">SF AUTO</span>
                     </div>
-                    <div className="pt-2 pb-1.5 text-center">
-                      <h3 className="text-[11px] font-extrabold text-foreground tracking-wide">SF AUTO</h3>
-                      <p className="text-[7px] text-muted-foreground mt-0.5">Detailing premium depuis 2020</p>
+                    <div className="flex items-center gap-1">
+                      <Phone className="w-3 h-3 text-muted-foreground" />
+                      <MapPin className="w-3 h-3 text-muted-foreground" />
                     </div>
-                    <div className="flex justify-center gap-2 mb-2">
-                      <div className="w-6 h-6 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
-                        <Instagram className="w-3 h-3 text-muted-foreground" />
+                  </div>
+                  <div className="px-3 pt-3 pb-2">
+                    {/* Business name + stars */}
+                    <div className="text-center mb-3">
+                      <h3 className="text-[12px] font-extrabold text-foreground tracking-wide">SF AUTO</h3>
+                      <div className="flex justify-center items-center gap-[2px] mt-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                        ))}
+                        <span className="text-[8px] text-muted-foreground ml-1">4.9 (127 avis)</span>
                       </div>
-                      <div className="w-6 h-6 bg-secondary/40 rounded-full flex items-center justify-center border border-border/30">
-                        <Facebook className="w-3 h-3 text-muted-foreground" />
-                      </div>
+                      <p className="text-[7px] text-muted-foreground mt-1">Detailing premium · Lyon 3ème</p>
                     </div>
-                    <p className="text-[8px] text-muted-foreground text-center mb-2 font-medium">Que voulez-vous laver ?</p>
-                    <div className="space-y-1.5 pb-2">
+                    {/* Section title */}
+                    <p className="text-[9px] text-foreground font-semibold mb-2">Que voulez-vous laver ?</p>
+                    {/* Vehicle grid — 3 square cards side by side */}
+                    <div className="grid grid-cols-3 gap-1.5">
                       {[
                         { name: 'Citadine', img: citadineImg },
                         { name: 'Berline', img: berlineImg },
                         { name: 'SUV', img: suvImg },
                       ].map((v) => (
-                        <div key={v.name} className="rounded-xl overflow-hidden border border-border/20 relative">
-                          <img src={v.img} alt={v.name} className="w-full h-[48px] xl:h-[54px] object-cover" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                          <span className="absolute bottom-1 left-2 text-[9px] font-semibold text-white">{v.name}</span>
+                        <div key={v.name} className="rounded-xl overflow-hidden relative aspect-square shadow-sm border border-border/10">
+                          <img src={v.img} alt={v.name} className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                          <span className="absolute bottom-1 left-0 right-0 text-center text-[8px] font-semibold text-white leading-none">{v.name}</span>
                         </div>
                       ))}
                     </div>
