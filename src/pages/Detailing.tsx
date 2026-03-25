@@ -537,55 +537,35 @@ export default function Detailing() {
                   </div>
                 </div>
 
-                {/* Calendar + deposit widget — to the right of phone */}
-                <div className="relative z-0 mt-12 lg:mt-20 -ml-6" style={{ transform: 'rotate(3deg)' }}>
-                  <div className="bg-card rounded-2xl shadow-xl shadow-foreground/10 border border-border/50 w-[200px] sm:w-[220px] overflow-hidden">
-                    {/* Week strip calendar */}
-                    <div className="px-3 pt-3 pb-2">
-                      <div className="flex items-center justify-between mb-2.5">
-                        <ChevronLeft className="w-3 h-3 text-muted-foreground" />
-                        <span className="text-[10px] font-semibold text-foreground">mars 2026</span>
-                        <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                {/* Créneau + acompte widget — clean Apple card */}
+                <div className="relative z-0 mt-20 lg:mt-28 -ml-8 hidden sm:block" style={{ transform: 'rotate(2deg)' }}>
+                  <div className="bg-card rounded-[1.25rem] shadow-[0_8px_30px_-8px_hsl(var(--foreground)/0.08)] w-[210px] lg:w-[230px]">
+                    <div className="p-4 pb-3">
+                      {/* Tiny label */}
+                      <p className="text-[9px] text-muted-foreground mb-3 font-medium">Jeu. 26 mars · 14h00</p>
+                      {/* Selected slot highlight */}
+                      <div className="flex items-center gap-2.5 mb-3">
+                        <div className="w-10 h-10 rounded-2xl bg-foreground text-background flex flex-col items-center justify-center leading-none">
+                          <span className="text-[7px] font-medium opacity-70">JEU</span>
+                          <span className="text-[15px] font-bold">26</span>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold text-foreground">14:00 — 16:30</p>
+                          <p className="text-[9px] text-muted-foreground">Lavage Complet · Berline</p>
+                        </div>
                       </div>
-                      {/* Day labels */}
-                      <div className="grid grid-cols-7 gap-0 text-center mb-1">
-                        {['LUN.','MAR.','MER.','JEU.','VEN.','SAM.','DIM.'].map((d) => (
-                          <span key={d} className="text-[5px] text-muted-foreground font-medium tracking-wide">{d}</span>
-                        ))}
-                      </div>
-                      {/* Day numbers */}
-                      <div className="grid grid-cols-7 gap-0 text-center">
-                        {[23,24,25,26,27,28,29].map((n) => (
-                          <div key={n} className="flex flex-col items-center">
-                            <div className={`w-7 h-7 flex items-center justify-center rounded-xl text-[11px] font-bold ${
-                              n === 26 
-                                ? 'bg-foreground text-background ring-2 ring-blue-500/50' 
-                                : 'text-foreground'
-                            }`}>
-                              {n}
-                            </div>
-                          </div>
-                        ))}
+                      {/* Separator */}
+                      <div className="w-full h-px bg-border/40 mb-3" />
+                      {/* Price line */}
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-[10px] text-muted-foreground">Total</span>
+                        <span className="text-[13px] font-bold text-foreground">89,00 €</span>
                       </div>
                     </div>
-                    {/* Time slots */}
-                    <div className="px-3 pb-2">
-                      <p className="text-[8px] text-muted-foreground mb-1.5">Créneaux disponibles le 26 mars</p>
-                      <div className="grid grid-cols-3 gap-1">
-                        {['14:00','14:30','15:00','15:30','16:00','16:30'].map((t, i) => (
-                          <div key={t} className={`text-[8px] text-center py-1.5 rounded-lg font-medium ${
-                            i === 0 ? 'bg-foreground text-background' : 'bg-secondary/40 text-foreground'
-                          }`}>
-                            {t}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    {/* Deposit CTA */}
-                    <div className="px-3 pb-3 pt-1">
-                      <div className="w-full bg-emerald-500 text-white rounded-xl py-2 text-center">
-                        <span className="text-[9px] font-semibold block">Payer l'acompte — 20,00 €</span>
-                        <span className="text-[7px] text-emerald-100/80">Sécurisez votre créneau</span>
+                    {/* Deposit CTA — full width bottom */}
+                    <div className="px-3 pb-3">
+                      <div className="w-full bg-foreground text-background rounded-xl py-2.5 text-center">
+                        <span className="text-[10px] font-semibold">Payer l'acompte · 20,00 €</span>
                       </div>
                     </div>
                   </div>
