@@ -537,34 +537,55 @@ export default function Detailing() {
                   </div>
                 </div>
 
-                {/* Confirmation widget — positioned to the right, behind phone */}
-                <div className="relative z-0 mt-16 lg:mt-24 -ml-4" style={{ transform: 'rotate(3deg)' }}>
-                  <div className="bg-card rounded-2xl shadow-xl shadow-foreground/10 border border-border/50 p-3.5 w-[190px] sm:w-[210px]">
-                    <div className="flex items-center gap-2 mb-2.5">
-                      <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
-                        <Check className="w-3.5 h-3.5 text-white" />
+                {/* Calendar + deposit widget — to the right of phone */}
+                <div className="relative z-0 mt-12 lg:mt-20 -ml-6" style={{ transform: 'rotate(3deg)' }}>
+                  <div className="bg-card rounded-2xl shadow-xl shadow-foreground/10 border border-border/50 w-[200px] sm:w-[220px] overflow-hidden">
+                    {/* Week strip calendar */}
+                    <div className="px-3 pt-3 pb-2">
+                      <div className="flex items-center justify-between mb-2.5">
+                        <ChevronLeft className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-[10px] font-semibold text-foreground">mars 2026</span>
+                        <ChevronRight className="w-3 h-3 text-muted-foreground" />
                       </div>
-                      <span className="text-[11px] font-bold text-foreground">Réservation confirmée</span>
+                      {/* Day labels */}
+                      <div className="grid grid-cols-7 gap-0 text-center mb-1">
+                        {['LUN.','MAR.','MER.','JEU.','VEN.','SAM.','DIM.'].map((d) => (
+                          <span key={d} className="text-[5px] text-muted-foreground font-medium tracking-wide">{d}</span>
+                        ))}
+                      </div>
+                      {/* Day numbers */}
+                      <div className="grid grid-cols-7 gap-0 text-center">
+                        {[23,24,25,26,27,28,29].map((n) => (
+                          <div key={n} className="flex flex-col items-center">
+                            <div className={`w-7 h-7 flex items-center justify-center rounded-xl text-[11px] font-bold ${
+                              n === 26 
+                                ? 'bg-foreground text-background ring-2 ring-blue-500/50' 
+                                : 'text-foreground'
+                            }`}>
+                              {n}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className="bg-secondary/30 rounded-xl p-2.5 space-y-1.5 mb-2.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[8px] text-muted-foreground">Formule</span>
-                        <span className="text-[9px] font-semibold text-foreground">Lavage Complet</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[8px] text-muted-foreground">Créneau</span>
-                        <span className="text-[9px] font-semibold text-foreground">Mer. 15 juin, 14h</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[8px] text-muted-foreground">Total</span>
-                        <span className="text-[9px] font-bold text-foreground">89,00 €</span>
+                    {/* Time slots */}
+                    <div className="px-3 pb-2">
+                      <p className="text-[8px] text-muted-foreground mb-1.5">Créneaux disponibles le 26 mars</p>
+                      <div className="grid grid-cols-3 gap-1">
+                        {['14:00','14:30','15:00','15:30','16:00','16:30'].map((t, i) => (
+                          <div key={t} className={`text-[8px] text-center py-1.5 rounded-lg font-medium ${
+                            i === 0 ? 'bg-foreground text-background' : 'bg-secondary/40 text-foreground'
+                          }`}>
+                            {t}
+                          </div>
+                        ))}
                       </div>
                     </div>
-                    <div className="bg-emerald-500/10 rounded-lg px-2.5 py-2 flex items-center gap-2 border border-emerald-500/20">
-                      <Shield className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-                      <div>
-                        <span className="text-[8px] font-semibold text-emerald-700 block">Acompte payé — 20,00 €</span>
-                        <span className="text-[7px] text-emerald-600/70">Reste sur place : 69,00 €</span>
+                    {/* Deposit CTA */}
+                    <div className="px-3 pb-3 pt-1">
+                      <div className="w-full bg-emerald-500 text-white rounded-xl py-2 text-center">
+                        <span className="text-[9px] font-semibold block">Payer l'acompte — 20,00 €</span>
+                        <span className="text-[7px] text-emerald-100/80">Sécurisez votre créneau</span>
                       </div>
                     </div>
                   </div>
