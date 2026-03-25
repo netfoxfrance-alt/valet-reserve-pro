@@ -705,7 +705,7 @@ export default function Detailing() {
                         <img
                           src={item.img}
                           alt={item.label}
-                          className="w-11 h-11 sm:w-14 sm:h-14 object-contain"
+                          className="w-9 h-9 sm:w-14 sm:h-14 object-contain"
                         />
                       </div>
                       <span className={`text-[10px] sm:text-xs font-medium transition-colors duration-300 text-center leading-tight max-w-[60px] sm:max-w-[80px] ${
@@ -721,27 +721,27 @@ export default function Detailing() {
           })()}
 
           {/* Dashboard Browser Mockup */}
-          <div className="opacity-0 animate-fade-in-up stagger-4">
-            <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/60 max-w-5xl mx-auto">
+          <div className="opacity-0 animate-fade-in-up stagger-4 -mx-4 sm:mx-0">
+            <div className="bg-card rounded-none sm:rounded-2xl shadow-2xl overflow-hidden border-y sm:border border-border/60 max-w-5xl mx-auto">
               {/* Browser Bar */}
-              <div className="bg-secondary/50 px-4 py-3 flex items-center gap-3 border-b border-border/40">
+              <div className="bg-secondary/50 px-3 sm:px-4 py-2 sm:py-3 flex items-center gap-2 sm:gap-3 border-b border-border/40">
                 <div className="flex gap-1.5">
                   <div className="w-3 h-3 rounded-full bg-red-400" />
                   <div className="w-3 h-3 rounded-full bg-yellow-400" />
                   <div className="w-3 h-3 rounded-full bg-green-400" />
                 </div>
                 <div className="flex-1 flex justify-center">
-                  <div className="flex items-center gap-2 bg-background rounded-full px-4 py-1.5 text-xs text-muted-foreground">
-                    <Shield className="w-3 h-3" />
-                    cleaningpage.com/<span className="text-foreground font-medium">dashboard</span>
+                  <div className="flex items-center gap-2 bg-background rounded-full px-3 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-xs text-muted-foreground">
+                    <Shield className="w-3 h-3 hidden sm:block" />
+                    <span className="truncate">cleaningpage.com/<span className="text-foreground font-medium">dashboard</span></span>
                   </div>
                 </div>
               </div>
 
               {/* Dashboard Content */}
-              <div className="flex min-h-[480px]">
+              <div className="flex min-h-[320px] sm:min-h-[480px]">
                 {/* Main Content Area */}
-                <div className="flex-1 p-5 sm:p-6 overflow-y-auto" style={{ background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary)/0.3) 100%)' }}>
+                <div className="flex-1 p-3 sm:p-6 overflow-y-auto overflow-x-hidden" style={{ background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary)/0.3) 100%)' }}>
                   
                   {/* === RÉSERVATIONS === */}
                   {dashboardTab === 'reservations' && (
