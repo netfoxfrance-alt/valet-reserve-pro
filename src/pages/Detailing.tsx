@@ -1250,7 +1250,7 @@ export default function Detailing() {
                   {/* === MA PAGE === */}
                   {dashboardTab === 'mypage' && (
                     <div className="h-full flex flex-col">
-                      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      <div className="flex-1 grid grid-cols-1 gap-4 sm:gap-8">
                         <div className="flex flex-col order-2 lg:order-1">
                           <div className="flex items-center justify-between mb-4">
                             <span className="text-base font-semibold text-foreground tracking-tight">{t('mockup.preview')}</span>
@@ -1729,12 +1729,12 @@ export default function Detailing() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6">
+      <section className="py-12 sm:py-24 md:py-32 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 px-2">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-4 sm:mb-6 px-2">
             Prêt à digitaliser votre activité de detailing ?
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground mb-8 sm:mb-10 leading-relaxed px-2">
+          <p className="text-sm sm:text-lg text-muted-foreground mb-6 sm:mb-10 leading-relaxed px-2">
             Rejoignez les professionnels qui gagnent du temps et des clients grâce à CleaningPage.
           </p>
           <TrialButton className="rounded-full px-6 sm:px-8" />
