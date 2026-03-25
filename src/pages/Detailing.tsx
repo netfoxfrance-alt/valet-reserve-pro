@@ -588,9 +588,17 @@ export default function Detailing() {
                             <svg className="w-4 h-4 text-foreground/60" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.73a8.19 8.19 0 0 0 4.77 1.53V6.81a4.82 4.82 0 0 1-1-.12z"/></svg>
                           </div>
                         </div>
-                        <div className="bg-muted/20 rounded-2xl px-3.5 py-2.5 mb-3 flex items-center gap-2 border border-border/20">
-                          <Mail className="w-3.5 h-3.5 text-muted-foreground/60" />
-                          <span className="text-[10px] text-muted-foreground">Formule personnalisée ? Identifiez-vous</span>
+                        <div className="bg-muted/20 rounded-2xl px-3.5 py-2.5 mb-3 border border-border/20">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <div className="flex gap-[1px]">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                              ))}
+                            </div>
+                            <span className="text-[10px] font-semibold text-foreground">4.9</span>
+                            <span className="text-[9px] text-muted-foreground">(127 avis)</span>
+                          </div>
+                          <p className="text-[9px] text-muted-foreground italic">"Super prestation, véhicule comme neuf !"</p>
                         </div>
                         <div className="flex items-center justify-between mb-4 px-0.5">
                           <div className="flex items-center gap-2">
