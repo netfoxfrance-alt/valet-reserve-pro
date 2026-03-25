@@ -108,7 +108,7 @@ export default function Detailing() {
   const TrialButton = ({ className = '' }: { className?: string }) => (
     <Button
       size="lg"
-      className={`text-base px-8 shadow-lg shadow-emerald-500/25 bg-emerald-500 hover:bg-emerald-600 ${className}`}
+      className={`text-sm sm:text-base px-6 sm:px-8 w-full sm:w-auto shadow-lg shadow-emerald-500/25 bg-emerald-500 hover:bg-emerald-600 ${className}`}
       onClick={handleStartTrial}
       disabled={isCheckoutLoading}
     >
