@@ -429,16 +429,16 @@ export default function Detailing() {
       </section>
 
       {/* Section 01 — Page de réservation en ligne */}
-      <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6">
+      <section className="py-12 sm:py-28 lg:py-36 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-20 items-center">
             {/* Left: Text */}
             <div className="opacity-0 animate-fade-in-up">
-              <span className="text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-4 block">01 — Réservation en ligne</span>
-              <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-8 leading-[1.08]">
+              <span className="text-[10px] sm:text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-3 sm:mb-4 block">01 — Réservation en ligne</span>
+              <h2 className="text-2xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-5 sm:mb-8 leading-[1.08]">
                 Vos clients réservent<br />sans vous
               </h2>
-              <ul className="space-y-5 mb-10">
+              <ul className="space-y-3 sm:space-y-5 mb-6 sm:mb-10">
                 {[
                   'Réservation 24h/24, sans appel',
                   'Parcours simple : choix, créneau, paiement',
@@ -446,12 +446,12 @@ export default function Detailing() {
                   'Confirmation et rappels automatiques',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3.5">
-                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-1" strokeWidth={1.5} />
-                    <span className="text-muted-foreground text-[15px] leading-relaxed">{item}</span>
+                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-0.5" strokeWidth={1.5} />
+                    <span className="text-muted-foreground text-[13px] sm:text-[15px] leading-relaxed">{item}</span>
                   </li>
                 ))}
               </ul>
-              <p className="text-foreground text-[15px] leading-relaxed mb-8">
+              <p className="text-foreground text-[13px] sm:text-[15px] leading-relaxed mb-6 sm:mb-8">
                 Une expérience fluide pour vos clients, zéro gestion pour vous.
               </p>
               <TrialButton />
