@@ -793,16 +793,16 @@ export default function Detailing() {
                            { name: t('mockup.incomingRequest'), service: t('mockup.couchCleaning'), time: '—', duration: '—', price: t('mockup.onQuote'), status: t('mockup.request'), statusBg: 'bg-blue-500', initials: '?', avatarBg: 'bg-indigo-500' },
                            { name: 'Sophie Leroy', service: 'Pack Intérieur', time: '16:30', duration: '1h', price: '65€', status: t('mockup.confirmed'), statusBg: 'bg-emerald-500', initials: 'SL', avatarBg: 'bg-violet-500' },
                         ].map((booking, i) => (
-                          <div key={i} className="flex items-center gap-3.5 bg-card rounded-2xl p-3.5 border border-border/20 hover:shadow-md transition-all cursor-pointer">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 ${booking.avatarBg}`}>
+                          <div key={i} className="flex items-center gap-2 sm:gap-3.5 bg-card rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 border border-border/20 hover:shadow-md transition-all cursor-pointer">
+                            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-[9px] sm:text-[11px] font-bold text-white shrink-0 ${booking.avatarBg}`}>
                               {booking.initials}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[13px] font-semibold text-foreground truncate">{booking.name}</p>
-                              <p className="text-[11px] text-muted-foreground mt-0.5">{booking.service} · {booking.time} · {booking.duration}</p>
+                              <p className="text-[11px] sm:text-[13px] font-semibold text-foreground truncate">{booking.name}</p>
+                              <p className="text-[9px] sm:text-[11px] text-muted-foreground mt-0.5 truncate">{booking.service} · {booking.time}</p>
                             </div>
-                            <span className="text-[13px] font-bold text-foreground hidden sm:block tabular-nums">{booking.price}</span>
-                            <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold text-white ${booking.statusBg}`}>
+                            <span className="text-[11px] sm:text-[13px] font-bold text-foreground hidden sm:block tabular-nums">{booking.price}</span>
+                            <span className={`text-[8px] sm:text-[10px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full font-semibold text-white ${booking.statusBg}`}>
                               {booking.status}
                             </span>
                           </div>
