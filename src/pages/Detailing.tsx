@@ -531,9 +531,9 @@ export default function Detailing() {
 
                 {/* FRONT phone — Main booking page */}
                 <div className="relative z-10" style={{ transform: 'rotate(-2deg)' }}>
-                  <div className="bg-[hsl(var(--border))] rounded-[2.5rem] p-[6px] shadow-2xl shadow-foreground/15">
-                    <div className="absolute right-[-3px] top-28 w-[3px] h-8 bg-border rounded-r-sm" />
-                    <div className="bg-card rounded-[2.2rem] overflow-hidden w-[260px] sm:w-[280px] lg:w-[300px]">
+                  <div className="bg-[hsl(var(--border))] rounded-[2rem] sm:rounded-[2.5rem] p-[4px] sm:p-[6px] shadow-2xl shadow-foreground/15">
+                    <div className="absolute right-[-3px] top-28 w-[3px] h-8 bg-border rounded-r-sm hidden sm:block" />
+                    <div className="bg-card rounded-[1.8rem] sm:rounded-[2.2rem] overflow-hidden w-[220px] sm:w-[280px] lg:w-[300px]">
                       <div className="flex justify-center pt-2 pb-1">
                         <div className="w-24 h-5 bg-secondary rounded-full" />
                       </div>
@@ -603,28 +603,28 @@ export default function Detailing() {
       </section>
 
       {/* Section 02 — Agenda connecté — Planity style card layout */}
-      <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6 bg-muted/30">
+      <section className="py-12 sm:py-28 lg:py-36 px-4 sm:px-6 bg-muted/30">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-0 bg-card rounded-[2rem] overflow-hidden shadow-xl shadow-black/5 ring-1 ring-border/10">
+          <div className="grid lg:grid-cols-2 gap-0 bg-card rounded-2xl sm:rounded-[2rem] overflow-hidden shadow-xl shadow-black/5 ring-1 ring-border/10">
             {/* Left: Text */}
-            <div className="p-10 sm:p-12 lg:p-16 flex flex-col justify-center opacity-0 animate-fade-in-up">
-              <span className="text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-4 block">02 — Un planning toujours à jour</span>
-              <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-8 leading-[1.08]">
+            <div className="p-6 sm:p-12 lg:p-16 flex flex-col justify-center opacity-0 animate-fade-in-up">
+              <span className="text-[10px] sm:text-xs font-medium text-muted-foreground/60 tracking-[0.2em] uppercase mb-3 sm:mb-4 block">02 — Un planning toujours à jour</span>
+              <h2 className="text-2xl sm:text-4xl md:text-[2.75rem] font-semibold text-foreground tracking-tight mb-5 sm:mb-8 leading-[1.08]">
                 Agenda connecté
               </h2>
-              <ul className="space-y-5 mb-10">
+              <ul className="space-y-3 sm:space-y-5 mb-6 sm:mb-10">
                 {[
                   'Créneaux synchronisés automatiquement',
                   'Accessible sur mobile et ordinateur',
                   'Plus de double réservation',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3.5">
-                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-1" strokeWidth={1.5} />
-                    <span className="text-muted-foreground text-[15px] leading-relaxed">{item}</span>
+                    <Check className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-0.5" strokeWidth={1.5} />
+                    <span className="text-muted-foreground text-[13px] sm:text-[15px] leading-relaxed">{item}</span>
                   </li>
                 ))}
               </ul>
-              <p className="text-foreground text-[15px] leading-relaxed mb-8">
+              <p className="text-foreground text-[13px] sm:text-[15px] leading-relaxed mb-6 sm:mb-8">
                 Vous gardez le contrôle, sans effort.
               </p>
               <div>
@@ -632,7 +632,7 @@ export default function Detailing() {
               </div>
             </div>
             {/* Right: Premium lifestyle photo */}
-            <div className="relative overflow-hidden min-h-[360px] lg:min-h-0 opacity-0 animate-fade-in-up stagger-2">
+            <div className="relative overflow-hidden min-h-[240px] sm:min-h-[360px] lg:min-h-0 opacity-0 animate-fade-in-up stagger-2">
               <img
                 src={agendaPremium}
                 alt="Agenda sur smartphone tenu en main"
