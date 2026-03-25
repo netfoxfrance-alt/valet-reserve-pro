@@ -1639,49 +1639,70 @@ export default function Detailing() {
             </p>
           </div>
           <div className="max-w-lg mx-auto">
-            <Card variant="elevated" className="p-5 sm:p-8 rounded-xl sm:rounded-2xl ring-2 ring-foreground relative hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 bg-foreground text-primary-foreground py-2 sm:py-2.5 px-4 text-center">
-                <p className="text-xs sm:text-sm font-medium">{t('landing.trialBanner')}</p>
-              </div>
-              <div className="mb-4 sm:mb-6 mt-8 sm:mt-10">
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-1">{t('landing.proName')}</h3>
-                <p className="text-muted-foreground text-xs sm:text-sm">{t('landing.proDesc')}</p>
-              </div>
-              <div className="mb-4 sm:mb-6">
-                <span className="text-3xl sm:text-4xl font-semibold text-foreground">39€</span>
-                <span className="text-muted-foreground text-sm sm:text-base ml-2">{t('landing.perMonth')}</span>
-                <p className="text-xs text-muted-foreground mt-1">{t('landing.afterTrial')}</p>
-              </div>
-              <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
-                {(t('landing.features', { returnObjects: true }) as string[]).map((feature: string) => (
-                  <li key={feature} className="flex items-start gap-2.5 sm:gap-3">
-                    <div className="w-4 h-4 sm:w-5 sm:h-5 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary" />
+            <div className="relative">
+              {/* Glow effect behind card */}
+              <div className="absolute -inset-1 bg-gradient-to-b from-primary/20 via-primary/5 to-transparent rounded-[2rem] blur-xl opacity-60" />
+              
+              <div className="relative bg-card rounded-[1.75rem] shadow-[0_2px_40px_-12px_rgba(0,0,0,0.12)] overflow-hidden border border-border/30">
+                {/* Trial banner — pill style */}
+                <div className="bg-foreground rounded-b-2xl mx-auto max-w-[280px] sm:max-w-xs py-2.5 px-6 text-center">
+                  <p className="text-xs sm:text-sm font-medium text-primary-foreground tracking-wide">{t('landing.trialBanner')}</p>
+                </div>
+                
+                <div className="p-6 sm:p-10">
+                  {/* Header */}
+                  <div className="mb-6 sm:mb-8">
+                    <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-1.5 tracking-tight">{t('landing.proName')}</h3>
+                    <p className="text-muted-foreground text-sm">{t('landing.proDesc')}</p>
+                  </div>
+                  
+                  {/* Price */}
+                  <div className="mb-8 sm:mb-10">
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-5xl sm:text-6xl font-bold text-foreground tracking-tighter">39€</span>
+                      <span className="text-muted-foreground text-base font-medium">/ mois</span>
                     </div>
-                    <span className="text-foreground text-xs sm:text-sm">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button
-                size="lg"
-                className="w-full rounded-full text-sm bg-emerald-500 hover:bg-emerald-600"
-                onClick={handleStartTrial}
-                disabled={isCheckoutLoading}
-              >
-                {isCheckoutLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    {t('mockup.loading')}
-                  </>
-                ) : (
-                  <>
-                    {t('landing.tryFree30')}
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </>
-                )}
-              </Button>
-              <p className="text-center text-xs text-muted-foreground mt-3">{t('landing.noCommitmentCancel')}</p>
-            </Card>
+                    <p className="text-xs text-muted-foreground/70 mt-2">{t('landing.afterTrial')}</p>
+                  </div>
+                  
+                  {/* Divider */}
+                  <div className="h-px bg-border/50 mb-6 sm:mb-8" />
+                  
+                  {/* Features */}
+                  <ul className="space-y-4 sm:space-y-5 mb-8 sm:mb-10">
+                    {(t('landing.features', { returnObjects: true }) as string[]).map((feature: string) => (
+                      <li key={feature} className="flex items-center gap-3.5">
+                        <div className="w-6 h-6 bg-emerald-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Check className="w-3.5 h-3.5 text-emerald-500" />
+                        </div>
+                        <span className="text-foreground text-sm font-medium">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  {/* CTA */}
+                  <Button
+                    size="xl"
+                    className="w-full rounded-2xl text-base font-semibold bg-emerald-500 hover:bg-emerald-400 text-white shadow-[0_4px_20px_-4px_rgba(16,185,129,0.45)] hover:shadow-[0_6px_28px_-4px_rgba(16,185,129,0.55)] transition-all duration-300"
+                    onClick={handleStartTrial}
+                    disabled={isCheckoutLoading}
+                  >
+                    {isCheckoutLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        {t('mockup.loading')}
+                      </>
+                    ) : (
+                      <>
+                        {t('landing.tryFree30')}
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </>
+                    )}
+                  </Button>
+                  <p className="text-center text-[11px] text-muted-foreground/60 mt-4 tracking-wide">{t('landing.noCommitmentCancel')}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
