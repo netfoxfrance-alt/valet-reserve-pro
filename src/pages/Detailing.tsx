@@ -458,20 +458,86 @@ export default function Detailing() {
             </div>
             {/* Right: Phone mockup with calendar card behind */}
             <div className="opacity-0 animate-fade-in-up stagger-2 flex justify-center lg:justify-end">
-              <div className="relative flex items-start gap-0">
-                {/* FRONT card — Main booking page mockup — shifted left */}
-                <div className="relative z-10 -mr-8 lg:-mr-12" style={{ transform: 'rotate(-2deg)' }}>
-                  <div className="bg-[hsl(var(--border))] rounded-[2.5rem] p-[6px] shadow-2xl shadow-foreground/15">
-                    {/* Side button right */}
-                    <div className="absolute right-[-3px] top-28 w-[3px] h-8 bg-border rounded-r-sm" />
+              <div className="relative">
+                {/* BACK phone — slot selection + deposit — peeking behind right */}
+                <div 
+                  className="absolute top-4 left-[55%] sm:left-[52%] lg:left-[50%] z-0 hidden sm:block"
+                  style={{ transform: 'rotate(4deg)' }}
+                >
+                  <div className="bg-[hsl(var(--border))] rounded-[2.5rem] p-[5px] shadow-xl shadow-foreground/5">
                     <div className="bg-card rounded-[2.2rem] overflow-hidden w-[260px] sm:w-[280px] lg:w-[300px]">
                       {/* Notch */}
                       <div className="flex justify-center pt-2 pb-1">
                         <div className="w-24 h-5 bg-secondary rounded-full" />
                       </div>
-                      {/* App content */}
-                      <div className="px-3.5 lg:px-4">
+                      <div className="px-4 pt-3 pb-6">
                         {/* Header */}
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-full overflow-hidden ring-1 ring-border/30 bg-black">
+                              <img src={gocleanLogo} alt="" className="w-full h-full object-cover" />
+                            </div>
+                            <span className="text-[11px] font-bold text-foreground">GO CLEANING</span>
+                          </div>
+                        </div>
+                        
+                        <p className="text-sm font-bold text-foreground mb-3">Choix du créneau</p>
+                        
+                        {/* Week strip */}
+                        <div className="flex items-center justify-between mb-2">
+                          <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />
+                          <span className="text-[11px] font-semibold text-foreground">mars 2026</span>
+                          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+                        </div>
+                        <div className="flex justify-between mb-4">
+                          {[
+                            { d: 'LUN', n: 23 }, { d: 'MAR', n: 24 }, { d: 'MER', n: 25 },
+                            { d: 'JEU', n: 26 }, { d: 'VEN', n: 27 }, { d: 'SAM', n: 28 }, { d: 'DIM', n: 29 },
+                          ].map(({ d, n }) => (
+                            <div key={n} className="flex flex-col items-center gap-1">
+                              <span className="text-[7px] text-muted-foreground font-medium">{d}</span>
+                              <div className={`w-8 h-8 flex items-center justify-center rounded-xl text-[12px] font-bold ${
+                                n === 26 ? 'bg-foreground text-background' : 'text-foreground'
+                              }`}>
+                                {n}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <p className="text-[10px] text-muted-foreground mb-2">Créneaux disponibles</p>
+                        <div className="grid grid-cols-3 gap-2 mb-5">
+                          {['14:00','14:30','15:00','15:30','16:00','16:30'].map((t, i) => (
+                            <div key={t} className={`text-[10px] text-center py-2 rounded-xl font-medium ${
+                              i === 0 ? 'bg-foreground text-background' : 'bg-secondary/40 text-foreground'
+                            }`}>
+                              {t}
+                            </div>
+                          ))}
+                        </div>
+                        
+                        {/* Deposit CTA */}
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-[10px] text-muted-foreground">Lavage Complet · Berline</span>
+                          <span className="text-[13px] font-bold text-foreground">89 €</span>
+                        </div>
+                        <button className="w-full bg-foreground text-background rounded-2xl py-3 text-[12px] font-semibold">
+                          Payer l'acompte · 20,00 €
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* FRONT phone — Main booking page */}
+                <div className="relative z-10" style={{ transform: 'rotate(-2deg)' }}>
+                  <div className="bg-[hsl(var(--border))] rounded-[2.5rem] p-[6px] shadow-2xl shadow-foreground/15">
+                    <div className="absolute right-[-3px] top-28 w-[3px] h-8 bg-border rounded-r-sm" />
+                    <div className="bg-card rounded-[2.2rem] overflow-hidden w-[260px] sm:w-[280px] lg:w-[300px]">
+                      <div className="flex justify-center pt-2 pb-1">
+                        <div className="w-24 h-5 bg-secondary rounded-full" />
+                      </div>
+                      <div className="px-3.5 lg:px-4">
                         <div className="flex items-center justify-between py-2">
                           <div className="w-9 h-9 rounded-full overflow-hidden ring-1 ring-border/30 bg-black">
                             <img src={gocleanLogo} alt="GoCleaning Logo" className="w-full h-full object-cover" />
@@ -482,12 +548,10 @@ export default function Detailing() {
                           </button>
                         </div>
                         <div className="border-t border-border/20" />
-                        {/* Profile */}
                         <div className="pt-4 pb-2 text-center">
                           <h3 className="text-base lg:text-lg font-extrabold text-foreground tracking-wide">GO CLEANING</h3>
                           <p className="text-[9px] lg:text-[10px] text-muted-foreground mt-0.5">Expert du nettoyage automobile depuis 2018</p>
                         </div>
-                        {/* Social */}
                         <div className="flex justify-center gap-3 mb-3">
                           <div className="w-9 h-9 bg-secondary/20 rounded-full flex items-center justify-center border border-border/30">
                             <Instagram className="w-4 h-4 text-foreground/60" />
@@ -496,12 +560,10 @@ export default function Detailing() {
                             <svg className="w-4 h-4 text-foreground/60" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.73a8.19 8.19 0 0 0 4.77 1.53V6.81a4.82 4.82 0 0 1-1-.12z"/></svg>
                           </div>
                         </div>
-                        {/* Contact bar */}
                         <div className="bg-muted/20 rounded-2xl px-3.5 py-2.5 mb-3 flex items-center gap-2 border border-border/20">
                           <Mail className="w-3.5 h-3.5 text-muted-foreground/60" />
                           <span className="text-[10px] text-muted-foreground">Formule personnalisée ? Identifiez-vous</span>
                         </div>
-                        {/* Hours */}
                         <div className="flex items-center justify-between mb-4 px-0.5">
                           <div className="flex items-center gap-2">
                             <Clock className="w-3.5 h-3.5 text-muted-foreground/50" />
@@ -510,7 +572,6 @@ export default function Detailing() {
                           </div>
                           <ChevronRight className="w-3 h-3 text-muted-foreground/40 rotate-90" />
                         </div>
-                        {/* Formules */}
                         <p className="text-sm font-bold text-foreground mb-2.5">Nos formules</p>
                         <div className="grid grid-cols-2 gap-2.5 mb-4">
                           <div className="rounded-2xl overflow-hidden relative aspect-square">
@@ -530,42 +591,7 @@ export default function Detailing() {
                             </div>
                           </div>
                         </div>
-                        {/* CTA */}
                         <button className="w-full bg-emerald-500 text-white rounded-2xl py-3 text-[12px] font-semibold tracking-wide mb-4">Réserver</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Créneau + acompte widget — clean Apple card */}
-                <div className="relative z-0 mt-20 lg:mt-28 -ml-8 hidden sm:block" style={{ transform: 'rotate(2deg)' }}>
-                  <div className="bg-card rounded-[1.25rem] shadow-[0_8px_30px_-8px_hsl(var(--foreground)/0.08)] w-[210px] lg:w-[230px]">
-                    <div className="p-4 pb-3">
-                      {/* Tiny label */}
-                      <p className="text-[9px] text-muted-foreground mb-3 font-medium">Jeu. 26 mars · 14h00</p>
-                      {/* Selected slot highlight */}
-                      <div className="flex items-center gap-2.5 mb-3">
-                        <div className="w-10 h-10 rounded-2xl bg-foreground text-background flex flex-col items-center justify-center leading-none">
-                          <span className="text-[7px] font-medium opacity-70">JEU</span>
-                          <span className="text-[15px] font-bold">26</span>
-                        </div>
-                        <div>
-                          <p className="text-[11px] font-semibold text-foreground">14:00 — 16:30</p>
-                          <p className="text-[9px] text-muted-foreground">Lavage Complet · Berline</p>
-                        </div>
-                      </div>
-                      {/* Separator */}
-                      <div className="w-full h-px bg-border/40 mb-3" />
-                      {/* Price line */}
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-[10px] text-muted-foreground">Total</span>
-                        <span className="text-[13px] font-bold text-foreground">89,00 €</span>
-                      </div>
-                    </div>
-                    {/* Deposit CTA — full width bottom */}
-                    <div className="px-3 pb-3">
-                      <div className="w-full bg-foreground text-background rounded-xl py-2.5 text-center">
-                        <span className="text-[10px] font-semibold">Payer l'acompte · 20,00 €</span>
                       </div>
                     </div>
                   </div>
