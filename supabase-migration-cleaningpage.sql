@@ -2267,19 +2267,8 @@ WITH CHECK (
   AND vehicle_type IS NOT NULL
 );
 ALTER TABLE public.packs ADD COLUMN IF NOT EXISTS location_type text NOT NULL DEFAULT 'on_site';
-COMMENT ON COLUMN public.packs.location_type IS 'Service location: on_site, at_home, or both';ALTER TABLE public.invoices ADD COLUMN service_created boolean NOT NULL DEFAULT false;-- Fix custom_requests INSERT policy: require center_id IS NOT NULL
-DROP POLICY IF EXISTS "Centers can insert their own requests" ON public.custom_requests;
-
-CREATE POLICY "Centers can insert their own requests"
-ON public.custom_requests
-FOR INSERT
-TO public
-WITH CHECK (
-  center_id IS NOT NULL
-  AND auth.uid() IN (
-    SELECT centers.owner_id FROM centers WHERE centers.id = custom_requests.center_id
-  )
-);
+COMMENT ON COLUMN public.packs.location_type IS 'Service location: on_site, at_home, or both';
+ALTER TABLE public.invoices ADD COLUMN IF NOT EXISTS service_created boolean NOT NULL DEFAULT false;
 -- Drop existing function first (return type change requires it)
 DROP FUNCTION IF EXISTS public.create_recognized_appointment(uuid, uuid, uuid, date, time without time zone, text, text);
 
